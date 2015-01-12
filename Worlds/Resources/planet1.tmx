@@ -2013,15 +2013,16 @@
  </layer>
  <objectgroup name="ground">
   <object name="Bounds" type="Bounds" x="0" y="630" width="1050" height="70"/>
-  <object x="700" y="630">
+  <object name="Bounds" type="Bounds" x="700" y="630">
    <polygon points="0,0 210,-210 210,0"/>
   </object>
-  <object x="910" y="420" width="140" height="70"/>
-  <object x="1120" y="420" width="140" height="70"/>
-  <object x="1120" y="630" width="5880" height="70"/>
-  <object x="1260" y="420">
+  <object name="Bounds" type="Bounds" x="910" y="420" width="140" height="70"/>
+  <object name="Bounds" type="Bounds" x="1120" y="420" width="140" height="70"/>
+  <object name="Bounds" type="Bounds" x="1120" y="630" width="5880" height="70"/>
+  <object name="Bounds" type="Bounds" x="1260" y="420">
    <polygon points="0,0 0,210 210,210"/>
   </object>
   <object name="Start" type="Start" x="70" y="560" width="70" height="70"/>
+  <object name="Ladder" type="Ladder" x="1050" y="420" width="70" height="280"/>
  </objectgroup>
 </map>
