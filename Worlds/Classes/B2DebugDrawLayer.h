@@ -18,7 +18,7 @@
 #define __B2_DEBUG_DRAW_LAYER__
 
 #include "cocos2d.h"
-#include "Box2D/Box2D.h"
+#include "Box2D.h"
 #include "GLESRender.h"
 #include "VisibleRect.h"
 

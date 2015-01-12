@@ -2,7 +2,7 @@
 #define __FranticAlien__CONTACT_LISTENER_H__
 
 #include "cocos2d.h"
-#include "Box2D\Box2D.h"
+#include "Box2D.h"
 
 using namespace cocos2d;
 

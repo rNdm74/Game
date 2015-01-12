@@ -168,11 +168,6 @@ World::World()
 	background = WorldParallaxBackGround::create();
 	this->addChild(background);
 
-	for (const auto& child : background->getChildren())
-	{
-		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
-	}
-
 	level = new Level();
 	level->loadMap(kLevelTMX);
 	//level->prepareLayers();

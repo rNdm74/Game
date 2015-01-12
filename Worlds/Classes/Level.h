@@ -2,11 +2,12 @@
 #define __FranticAlien__LEVEL_H__
 
 #include "cocos2d.h"
-#include "Box2D\Box2D.h"
+#include "Box2D.h"
 
 class GameObject;
 
 using namespace cocos2d;
+
 
 class Level : public Node, public b2ContactListener
 {
