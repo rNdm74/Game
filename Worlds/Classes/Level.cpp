@@ -4,6 +4,7 @@
 #include "ContactListener.h"
 #include "GameObject.h"
 #include "Level.h"
+#include "Box2dFactory.h"
 
 void Level::loadMap(std::string mapname){
 
@@ -25,8 +26,7 @@ void Level::loadMap(std::string mapname){
 
 Level::Level()
 {
-	// initialize variables, load the tmx, create the objects, etc...
-	createPhysicsWorld();
+	
 }
 
 Level::~Level(void)
@@ -75,11 +75,14 @@ void Level::EndContact(b2Contact* contact)
 
 void Level::createPhysicsWorld()
 {
+	// initialize variables, load the tmx, create the objects, etc...
 	physicsWorld = new b2World(b2Vec2(0, kGravity));
-	
+
 	physicsWorld->SetAllowSleeping(true);
 	physicsWorld->SetContinuousPhysics(true);
 	physicsWorld->SetContactListener(new ContactListener());
+
+	factory = new Box2dFactory(map, physicsWorld);
 }
 void Level::prepareLayers()
 {
@@ -295,9 +298,9 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 	else if (className == "GhostLadderTop")
 		this->createGhostFixture(x, y, width, height, false, kFilterCatagory::LADDER, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
 	else if (className == "Ladder")
-		this->createRectangularFixture(x, y, width, height, true, kFilterCatagory::LADDER, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
+		factory->createBody(kFilterCatagory::LADDER, Rect(x, y, width, height));
 	else if (className == "Bounds")	
-		this->createRectangularFixture(x, y, width, height, false, kFilterCatagory::BOUNDARY, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
+		factory->createBody(kFilterCatagory::BOUNDARY, Rect(x, y, width, height));
 	else if (className == "Sensor")
 		this->createRectangularFixture(x, y, width, height, true, kFilterCatagory::SENSOR, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
 	else if (className == "Start")

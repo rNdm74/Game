@@ -170,7 +170,7 @@ World::World()
 
 	level = new Level();
 	level->loadMap(kLevelTMX);
-	//level->prepareLayers();
+	level->createPhysicsWorld();
 	level->addObjects();
 	this->addChild(level->getMap());
 
@@ -181,8 +181,8 @@ World::World()
 	player->addFixturesToBody();
 	this->addChild(player, 99);
 
-	//debugDraw = B2DebugDrawLayer::create(level->getPhysicsWorld(), kPixelsPerMeter, 0);
-	//this->addChild(debugDraw);
+	debugDraw = B2DebugDrawLayer::create(level->getPhysicsWorld(), kPixelsPerMeter, 0);
+	this->addChild(debugDraw);
 }
 
 World::~World()

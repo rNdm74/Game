@@ -5,9 +5,9 @@
 #include "Box2D.h"
 
 class GameObject;
+class Box2dFactory;
 
 using namespace cocos2d;
-
 
 class Level : public Node, public b2ContactListener
 {
@@ -40,6 +40,8 @@ public:
 private:
 	TMXTiledMap* map;
 	b2World* physicsWorld;
+
+	Box2dFactory* factory;
 
 	int objectCount;
 };

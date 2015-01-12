@@ -56,7 +56,7 @@ const float kGravity							= -9.8f; // adjust this to taste
 const float kUpdateInterval						= 1.0f / 60.0f;
 const double kSecondsPerUpdate					= 0.1;
 
-const std::string kLevelTMX						= "planet1.tmx";
+const std::string kLevelTMX						= "level1.tmx";
 const std::string kPlayerFileName				= "alienBeige.png";
 
 //enumeration of possible input states
@@ -96,6 +96,11 @@ enum
 	kTagNode,
 	kTagPlayer,
 	kTagStartPosition
+};
+
+enum EBody
+{
+
 };
 
 #endif /* defined(__CONSTANTS__) */
