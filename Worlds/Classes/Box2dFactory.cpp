@@ -11,11 +11,11 @@ Body* Box2dFactory::createBody(kFilterCatagory catagory, Rect rect)
 		break;
 
 	case kFilterCatagory::LADDER:
-		body = new Boundary(rect, _map, _physicsWorld);
+		body = new Ladder(rect, _map, _physicsWorld);
 		break;
 
 	case kFilterCatagory::SENSOR:
-		body = new Boundary(rect, _map, _physicsWorld);
+		body = new MapLevel(rect, _map, _physicsWorld);
 		break;
 	}
 

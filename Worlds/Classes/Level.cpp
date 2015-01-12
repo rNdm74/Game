@@ -265,20 +265,28 @@ void Level::createPolyLineFixture(std::vector<b2Vec2> vectors, int32 count, bool
 
 void Level::addObjects()
 {
+    auto group = map->getObjectGroup("ground");
+    auto slope = group->getObject("Slope");
+    float x1 = slope["x"].asFloat();
+    float y1 = slope["y"].asFloat();
+    auto points = slope["polylinePoints"].();//["polylinePoints"].asValueVector();
+    //points[]
+    //createPolyline(map->getObjectGroup("ground")->getObject("Slope"));
+    
 	// loop over the object groups in this tmx file
 	auto objectGroups = map->getObjectGroups();
-	for (auto& objectGroup : objectGroups)
+    
+    for (auto& objectGroup : objectGroups)
 	{
 		auto objects = objectGroup->getObjects();
-		for (auto& object : objects)
+        
+        for (auto& object : objects)
 		{
-			auto test = object.getType();
-
 			auto properties = object.asValueMap();
 			auto type = properties.at("type");
 
 			if (!type.isNull())
-			{
+            {
 				this->addObject(type.asString().c_str(), properties);
 				this->objectCount++;
 			}
@@ -295,8 +303,8 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 
 	if (className == "Ghost")
 		this->createGhostFixture(x, y, width, height, false, kFilterCatagory::BOUNDARY, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
-	else if (className == "GhostLadderTop")
-		this->createGhostFixture(x, y, width, height, false, kFilterCatagory::LADDER, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
+	else if (className == "Slope")
+		this->createRectangularFixture(x, y, width, height, false, kFilterCatagory::BOUNDARY, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
 	else if (className == "Ladder")
 		factory->createBody(kFilterCatagory::LADDER, Rect(x, y, width, height));
 	else if (className == "Bounds")	
@@ -304,9 +312,7 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 	else if (className == "Sensor")
 		this->createRectangularFixture(x, y, width, height, true, kFilterCatagory::SENSOR, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
 	else if (className == "Start")
-		AppGlobal::getInstance()->StartPosition = Vec2(x, y);
-		//this->createRectangularFixture(x, y, width, height, true, kFilterCatagory::SENSOR, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
-		
+        AppGlobal::getInstance()->StartPosition = Vec2(x, y);
 
 	// create the object
 	GameObject* o = nullptr;
@@ -331,11 +337,53 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 	return o;
 }
 
+
+void Level::createPolyline(ValueMap object)
+{
+    ValueVector pointsVector = object["polylinePoints"].asValueVector();
+    auto position = Point(object["x"].asFloat() / kPixelsPerMeter, object["y"].asFloat() / kPixelsPerMeter);
+    
+    //CCLOG("Size of pointsVector: %f", pointsVector.size());
+    
+    b2ChainShape polylineshape;
+    float verticesSize = pointsVector.size()+ 1;
+    b2Vec2 vertices[30];
+    int vindex = 0;
+    
+    // create the body
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_staticBody;
+    bodyDef.position.Set(0, 0);
+    
+    b2Body* body = physicsWorld->CreateBody(&bodyDef);
+    
+    b2FixtureDef fixtureDef;;
+    
+    for(Value point : pointsVector) {
+        //CCLOG("Initializing vector at index: %d", vindex);
+        vertices[vindex].x = (point.asValueMap()["x"].asFloat() / kPixelsPerMeter + position.x);
+        vertices[vindex].y = (-point.asValueMap()["y"].asFloat() / kPixelsPerMeter + position.y);
+        vindex++;
+    }
+    
+    polylineshape.CreateChain(vertices, vindex);
+    
+    fixtureDef.shape = &polylineshape;
+    fixtureDef.density = 0.0f;
+    fixtureDef.friction = 0.2f;
+    fixtureDef.restitution = 0.02f;
+    fixtureDef.filter.categoryBits = kFilterCatagory::BOUNDARY;
+    fixtureDef.filter.maskBits = kFilterCatagory::PLAYER | kFilterCatagory::ENEMY;
+    fixtureDef.isSensor = false;
+    body->CreateFixture(&fixtureDef);
+    
+}
+
 void Level::update(float& delta)
 {
-	float currentX = map->getPositionX();
-	currentX += 150 * delta * -1;
-	map->setPositionX(currentX);
+//	float currentX = map->getPositionX();
+//	currentX += 150 * delta * -1;
+//	map->setPositionX(currentX);
 
 	physicsWorld->Step(delta, 1, 1);
 }

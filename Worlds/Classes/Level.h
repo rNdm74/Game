@@ -28,6 +28,8 @@ public:
 	void createRectangularFixture(float x, float y, float width, float height, bool isSensor, uint16 categoryBits, uint16 maskBits);
 	void createGhostFixture(float x, float y, float width, float height, bool isSensor, uint16 categoryBits, uint16 maskBits);
 	void createPolyLineFixture(std::vector<b2Vec2> vectors, int32 count, bool isSensor, uint16 categoryBits, uint16 maskBits);
+    
+    void createPolyline(ValueMap object);
 	void addObjects();
 
 	GameObject* addObject(std::string className, ValueMap& properties);

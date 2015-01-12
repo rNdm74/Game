@@ -7,10 +7,10 @@
 
 using namespace cocos2d;
 
-__interface IBox2dFactory
+class IBox2dFactory
 {
 public:
-	Body* createBody(kFilterCatagory catagory, Rect rect);
+	virtual Body* createBody(kFilterCatagory catagory, Rect rect) = 0;
 };
 
 class Box2dFactory : public IBox2dFactory
@@ -24,7 +24,7 @@ public:
 
 	~Box2dFactory(){};
 	
-	Body* createBody(kFilterCatagory catagory, Rect rect);
+	virtual Body* createBody(kFilterCatagory catagory, Rect rect);
 
 private:
 	TMXTiledMap* _map;
