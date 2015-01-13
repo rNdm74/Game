@@ -10,18 +10,69 @@ void Level::loadMap(std::string mapname){
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	Vec2 mapOrigin = Vec2(origin.x + visibleSize.width / 2, (origin.y + visibleSize.height / 2) + 30);
+	Vec2 mapOrigin = Vec2(origin.x + visibleSize.width / 2, (origin.y + visibleSize.height / 2));
 
 	map = TMXTiledMap::create(mapname);
 	map->retain();
+		
+	auto background = map->getChildren();
 
-	map->setAnchorPoint(Vec2::ZERO);
-	map->setPosition(Vec2::ZERO);
+	ParallaxNode* parallaxNode = ParallaxNode::create();
+	parallaxNode->setAnchorPoint(Vec2(0.0f,0.0f));
+	parallaxNode->setPosition(Vec2(0.0f, 0.0f));
 
-	for (const auto& child : map->getChildren())
+	TMXLayer* foregroundLayer = map->layerNamed("foreground");
+	foregroundLayer->retain();
+	foregroundLayer->removeFromParentAndCleanup(false);	
+	foregroundLayer->getTexture()->setAntiAliasTexParameters();
+	foregroundLayer->setAnchorPoint(Vec2(0.5f, 0.5f));
+	parallaxNode->addChild(foregroundLayer, 1, Vec2(0.5f, 0.0f), mapOrigin);//some points
+	foregroundLayer->release();
+	
+	TMXLayer* backgroundLayer = map->layerNamed("background");
+	backgroundLayer->retain();
+	backgroundLayer->removeFromParentAndCleanup(false);
+	backgroundLayer->setAnchorPoint(Vec2(0.5f, 0.5f));
+	parallaxNode->addChild(backgroundLayer, -1, Vec2(0.4f, 0.5f), mapOrigin);//some points
+	backgroundLayer->release();
+
+	map->addChild(parallaxNode);
+		
+	// create all the rectangular fixtures for each tile
+	Size layerSize = foregroundLayer->getLayerSize();
+	for (int y = 0; y < layerSize.height; y++)
 	{
-		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
+		for (int x = 0; x < layerSize.width; x++)
+		{
+			// create a fixture if this tile has a sprite
+			auto tileSprite = foregroundLayer->getTileAt(Point(x, y));
+			
+			if (tileSprite)
+			{
+				auto shadow = getShadowForNode(tileSprite);
+				parallaxNode->addChild(shadow, 0, Vec2(0.5f, 0.0f), Point(x * 70, origin.y + visibleSize.height - (y * 70)));//some points			
+			}
+		}
 	}
+}
+
+Node* Level::getShadowForNode(Node* node)
+{
+	// Step 1
+	auto shadow = Sprite::create();
+
+	auto object = (Sprite*)node;
+	shadow->setSpriteFrame(object->getSpriteFrame());
+
+	// Step 2
+	shadow->setAnchorPoint(Point(0.6f, 0.6f)); // position it to the center of the target node
+	//shadow->setPosition(Point(0, 0));
+
+	// Step 6
+	shadow->setColor(Color3B(0, 0, 0));
+	shadow->setOpacity(50);
+	
+	return shadow;
 }
 
 Level::Level()
@@ -32,45 +83,6 @@ Level::Level()
 Level::~Level(void)
 {
 	map->release();
-}
-
-void Level::BeginContact(b2Contact* contact)
-{
-	log("contact begin");
-	// call the appropriate LevelObject's beginContact function
-	//if (contact && contact->IsTouching())
-	//{
-	//	// turn fixtures into level objects
-	//	LevelObject* A = static_cast<LevelObject*>
-	//		(contact->GetFixtureA()->GetBody()->GetUserData());
-	//	LevelObject* B = static_cast<LevelObject*>
-	//		(contact->GetFixtureB()->GetBody()->GetUserData());
-
-	//	// turn fixtures into player
-	//	Player* player = dynamic_cast<Player*>(A);
-	//	LevelObject* other = B;
-	//	if (player == nullptr)
-	//	{
-	//		player = dynamic_cast<Player*>(B);
-	//		other = A;
-	//	}
-
-	//	// call the begin contact
-	//	if (A && B)
-	//	{
-	//		// always prefer to call the player's version of beginContact
-	//		if (player && other)
-	//			player->beginContact(other, contact);
-	//		else
-	//			A->beginContact(B, contact);
-	//	}
-	//}
-}
-
-void Level::EndContact(b2Contact* contact)
-{
-	log("contact end");
-	// nothing to do here for the current implementation
 }
 
 void Level::createPhysicsWorld()
@@ -265,11 +277,11 @@ void Level::createPolyLineFixture(std::vector<b2Vec2> vectors, int32 count, bool
 
 void Level::addObjects()
 {
-    auto group = map->getObjectGroup("ground");
-    auto slope = group->getObject("Slope");
-    float x1 = slope["x"].asFloat();
-    float y1 = slope["y"].asFloat();
-    auto points = slope["polylinePoints"].();//["polylinePoints"].asValueVector();
+ //   auto group = map->getObjectGroup("ground");
+	//auto slope = group->getObject("Slope");// ["polylinePoints"].asValueVector();
+ //   float x1 = slope["x"].asFloat();
+ //   float y1 = slope["y"].asFloat();
+ //   auto points = slope["points"].asValueVector();//["polylinePoints"].asValueVector();
     //points[]
     //createPolyline(map->getObjectGroup("ground")->getObject("Slope"));
     
@@ -304,7 +316,7 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 	if (className == "Ghost")
 		this->createGhostFixture(x, y, width, height, false, kFilterCatagory::BOUNDARY, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
 	else if (className == "Slope")
-		this->createRectangularFixture(x, y, width, height, false, kFilterCatagory::BOUNDARY, kFilterCatagory::PLAYER | kFilterCatagory::ENEMY);
+		this->createPolyline(properties);
 	else if (className == "Ladder")
 		factory->createBody(kFilterCatagory::LADDER, Rect(x, y, width, height));
 	else if (className == "Bounds")	
@@ -340,7 +352,7 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 
 void Level::createPolyline(ValueMap object)
 {
-    ValueVector pointsVector = object["polylinePoints"].asValueVector();
+    ValueVector pointsVector = object["points"].asValueVector();
     auto position = Point(object["x"].asFloat() / kPixelsPerMeter, object["y"].asFloat() / kPixelsPerMeter);
     
     //CCLOG("Size of pointsVector: %f", pointsVector.size());
@@ -369,9 +381,9 @@ void Level::createPolyline(ValueMap object)
     polylineshape.CreateChain(vertices, vindex);
     
     fixtureDef.shape = &polylineshape;
-    fixtureDef.density = 0.0f;
-    fixtureDef.friction = 0.2f;
-    fixtureDef.restitution = 0.02f;
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.0f;
+    fixtureDef.restitution = 0;
     fixtureDef.filter.categoryBits = kFilterCatagory::BOUNDARY;
     fixtureDef.filter.maskBits = kFilterCatagory::PLAYER | kFilterCatagory::ENEMY;
     fixtureDef.isSensor = false;
@@ -381,9 +393,38 @@ void Level::createPolyline(ValueMap object)
 
 void Level::update(float& delta)
 {
-//	float currentX = map->getPositionX();
-//	currentX += 150 * delta * -1;
-//	map->setPositionX(currentX);
-
 	physicsWorld->Step(delta, 1, 1);
+
+	
+
+	switch (AppGlobal::getInstance()->state)
+	{
+	case STATE_LEFT:
+	{
+		float currentX = map->getPositionX();
+		currentX += 50 * delta * 1;
+		map->setPositionX(currentX);
+	}
+	break;
+
+	case STATE_STOP:
+
+		break;
+
+	case STATE_RIGHT:
+	{
+		float currentX = map->getPositionX();
+		currentX += 50 * delta * -1;
+		map->setPositionX(currentX);
+	}
+	break;
+
+	case STATE_UP:
+
+		break;
+
+	case STATE_DOWN:
+
+		break;
+	}
 }

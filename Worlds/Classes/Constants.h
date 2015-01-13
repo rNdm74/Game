@@ -40,19 +40,19 @@
 
 #define PI 3.14159265
 
-const float kMinVelocityX						= 1.0f;
+const float kMinVelocityX						= 2.0f;
 const float kMaxVelocityX						= 15.0f;
 const float kStopVelocity						= 0.70f; // 98%
 
 const float kGameObjectFixtureDensity			= 1.0f;
-const float kGameObjectFixtureFriction			= 0.3f;
-const float kGameObjectFixtureRestitution		= 0.1f;
+const float kGameObjectFixtureFriction			= 0.1f;
+const float kGameObjectFixtureRestitution		= 0.0f;
 const int	kGameObjectFixtureFilterMaskBits	= 0xffff;
 
 
 
 const float kPixelsPerMeter						= 32.0f;
-const float kGravity							= -9.8f; // adjust this to taste
+const float kGravity							= -100.0f; // adjust this to taste
 const float kUpdateInterval						= 1.0f / 60.0f;
 const double kSecondsPerUpdate					= 0.1;
 

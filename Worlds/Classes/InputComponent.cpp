@@ -56,11 +56,8 @@ void PlayerInputComponent::update(GameObject& gameObject, float& delta)
 			body->SetTransform(b2Vec2(body->GetPosition().x, sensorCenter.y - (diff / 2) + 0.13), 0);
 		}
 
-		body->ApplyLinearImpulse(b2Vec2(impulseX, impulseY), body->GetWorldCenter(), true);
+		body->ApplyLinearImpulse(b2Vec2(impulseX, 0), body->GetWorldCenter(), true);
 	}
-
-	
-	
 	
 	if (gameObject.ladder != nullptr && gameObject.setTouchLadder)
 	{

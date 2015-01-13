@@ -9,18 +9,17 @@ class Box2dFactory;
 
 using namespace cocos2d;
 
-class Level : public Node, public b2ContactListener
+class Level : public Node
 {
 public:
 
 	void loadMap(std::string mapname);
 	
+	Node* getShadowForNode(Node* node);
+
 	Level();
 	virtual ~Level(void);
-
-	void BeginContact(b2Contact* contact);
-	void EndContact(b2Contact* contact);
-
+		
 	void createPhysicsWorld();
 	void prepareLayers();
 	void createFixtures(TMXLayer& layer);
