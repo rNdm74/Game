@@ -5,7 +5,7 @@
 
 // PNG assets
 #define BACKGROUND_PNG		"background.png"
-#define CHARACTERS_PNG		"characters.png"
+#define CHARACTERS_PNG		"characters-sd.png"
 #define CONTROLS_PNG		"controls.png"
 #define HUD_PNG				"hud.png"
 #define ITEMS_PNG			"items.png"
@@ -14,7 +14,7 @@
 
 // PLIST assets
 #define BACKGROUND_PLIST	"background.plist"
-#define CHARACTERS_PLIST	"characters.plist"
+#define CHARACTERS_PLIST	"characters-sd.plist"
 #define CONTROLS_PLIST		"controls.plist"
 #define HUD_PLIST			"hud.plist"
 #define ITEMS_PLIST			"items.plist"
@@ -40,8 +40,12 @@
 
 #define PI 3.14159265
 
-const float kMinVelocityX						= 2.0f;
-const float kMaxVelocityX						= 15.0f;
+const float kMapBoundsX = 0;
+const float kMapBoundsY = 1.0f;
+
+
+const float kMinVelocityX						= 1.0f;
+const float kMaxVelocityX						= 10.0f;
 const float kStopVelocity						= 0.70f; // 98%
 
 const float kGameObjectFixtureDensity			= 1.0f;
@@ -75,9 +79,9 @@ enum EState {
 
 enum kFilterCatagory 
 {
-	BOUNDARY		= 0x0001,
-	PLAYER			= 0x0002,
-	LADDER			= 0x0004,
+	SOLID_PLATFORM	= 0x0001,
+	SOLID_SLOPE		= 0x0002,
+	PLAYER			= 0x0004,
 	ENEMY			= 0x0008,
 	SENSOR			= 0x0010,
 	//FRIENDLY_TOWER = 0x0020,

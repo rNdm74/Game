@@ -8,7 +8,7 @@ void ContactListener::BeginContact(b2Contact* contact)
 
 	if (isSensor(contact, gameObject))
 	{
-		gameObject->sensor = getSensorFixture(contact);
+		//gameObject->sensor = getSensorFixture(contact);
 
 		return;
 	}
@@ -18,7 +18,7 @@ void ContactListener::BeginContact(b2Contact* contact)
 	// THEN gameObject is touching ground
 	if (isOnGround(contact, gameObject))
 	{
-		gameObject->setTouchGround = true;
+		//gameObject->setTouchGround = true;
 	}
 
 	// ON begin contact
@@ -27,9 +27,9 @@ void ContactListener::BeginContact(b2Contact* contact)
 	// FINALLY log ladder fixture
 	if (isOnLadder(contact, gameObject))
 	{
-		gameObject->setTouchLadder = true;
+		//gameObject->setTouchLadder = true;
 
-		gameObject->ladder = getLadderFixture(contact);
+		//gameObject->ladder = getLadderFixture(contact);
 
 		return;
 	}
@@ -41,22 +41,22 @@ void ContactListener::BeginContact(b2Contact* contact)
 	// ELSE IF gameObject is at bottom of ladder
 	// THEN gameObject is at bottom of ladder
 	// ELSE gameObject is not on top and bottom of ladder
-	if (gameObject->setTouchGround && gameObject->setTouchLadder)
-	{		
-		// get ladder fixture information
-		if (isTopLadder(gameObject->ladder, *gameObject))
-		{			
-			// at top of ladder
-			gameObject->atTopLadder = true;
-			gameObject->atBottomLadder = false;
-		}
-		else if (isBottomLadder(gameObject->ladder, *gameObject))
-		{
-			// at bottom of ladder
-			gameObject->atTopLadder = false;
-			gameObject->atBottomLadder = true;
-		}
-	}
+	//if (gameObject->setTouchGround && gameObject->setTouchLadder)
+	//{		
+	//	// get ladder fixture information
+	//	if (isTopLadder(gameObject->ladder, *gameObject))
+	//	{			
+	//		// at top of ladder
+	//		gameObject->atTopLadder = true;
+	//		gameObject->atBottomLadder = false;
+	//	}
+	//	else if (isBottomLadder(gameObject->ladder, *gameObject))
+	//	{
+	//		// at bottom of ladder
+	//		gameObject->atTopLadder = false;
+	//		gameObject->atBottomLadder = true;
+	//	}
+	//}
 			
 	/*log("################ Begin Contact ###################");
 	log("touching ground:\t %i, touching ladder:\t %i", gameObject->setTouchGround, gameObject->setTouchLadder);
@@ -81,7 +81,7 @@ void ContactListener::EndContact(b2Contact* contact)
 	// THEN gameObject is not touching ground
 	if (isOnGround(contact, gameObject))
 	{
-		gameObject->setTouchGround = false;	
+		//gameObject->setTouchGround = false;	
 	}
 
 	// ON end contact
@@ -89,18 +89,18 @@ void ContactListener::EndContact(b2Contact* contact)
 	// THEN gameObject is not touch ladder
 	if (isOnLadder(contact, gameObject))
 	{
-		gameObject->setTouchLadder = false;
+		//gameObject->setTouchLadder = false;
 	}
 	
 	// ON end contact
 	// IF gameObject is touching ground 
 	// AND gameObject is not touching ladder
 	// THEN gameObject is not at top or bottom of ladder
-	if (gameObject->setTouchGround && gameObject->setTouchLadder == false)
+	/*if (gameObject->setTouchGround && gameObject->setTouchLadder == false)
 	{		
 		gameObject->atTopLadder = false;
 		gameObject->atBottomLadder = false;
-	}
+	}*/
 
 	// ## GAMEOBJECT IS AT CLIMBING UP LADDER ##
 	//
@@ -108,14 +108,14 @@ void ContactListener::EndContact(b2Contact* contact)
 	// IF gameObject is not touching ground 
 	// AND gameObject is touching the ladder
 	// THEN gameObject is not at the bottom of a ladder
-	if (gameObject->setTouchGround == false && gameObject->setTouchLadder)
-	{
-		// check that gameObject is not at the top of ladder
-		if (isTopLadder(gameObject->ladder, *gameObject) == false)
-		{			
-			gameObject->atBottomLadder = false;
-		}
-	}
+	//if (gameObject->setTouchGround == false && gameObject->setTouchLadder)
+	//{
+	//	// check that gameObject is not at the top of ladder
+	//	if (isTopLadder(gameObject->ladder, *gameObject) == false)
+	//	{			
+	//		gameObject->atBottomLadder = false;
+	//	}
+	//}
 
 	// ## GAMEOBJECT IS AT TOP OF LADDER ##
 	//
@@ -177,8 +177,8 @@ bool ContactListener::isOnGround(b2Contact* contact, GameObject*& gameObject)
 	b2Fixture* fixtureA = contact->GetFixtureA();
 	b2Fixture* fixtureB = contact->GetFixtureB();
 
-	bool isFixtureABoundary = fixtureA->GetFilterData().categoryBits == kFilterCatagory::BOUNDARY;
-	bool isFixtureBBoundry = fixtureB->GetFilterData().categoryBits == kFilterCatagory::BOUNDARY;
+	bool isFixtureABoundary = fixtureA->GetFilterData().categoryBits == kFilterCatagory::SOLID_PLATFORM;
+	bool isFixtureBBoundry = fixtureB->GetFilterData().categoryBits == kFilterCatagory::SOLID_PLATFORM;
 	
 	if (isFixtureABoundary) // fixture B must be gameObject
 	{
@@ -199,8 +199,8 @@ bool ContactListener::isOnLadder(b2Contact* contact, GameObject*& gameObject)
 	b2Fixture* fixtureA = contact->GetFixtureA();
 	b2Fixture* fixtureB = contact->GetFixtureB();
 
-	bool isFixtureALadder = fixtureA->GetFilterData().categoryBits == kFilterCatagory::LADDER;
-	bool isFixtureBLadder = fixtureB->GetFilterData().categoryBits == kFilterCatagory::LADDER;
+	bool isFixtureALadder = fixtureA->GetFilterData().categoryBits == kFilterCatagory::SENSOR;
+	bool isFixtureBLadder = fixtureB->GetFilterData().categoryBits == kFilterCatagory::SENSOR;
 
 	if (isFixtureALadder) // fixture B must be gameObject
 	{
@@ -256,9 +256,9 @@ b2Fixture* ContactListener::getLadderFixture(b2Contact* contact)
 	b2Fixture* fixtureA = contact->GetFixtureA();
 	b2Fixture* fixtureB = contact->GetFixtureB();
 
-	if (fixtureA->GetFilterData().categoryBits == kFilterCatagory::LADDER) 
+	if (fixtureA->GetFilterData().categoryBits == kFilterCatagory::SENSOR) 
 		return fixtureA;
-	else if (fixtureB->GetFilterData().categoryBits == kFilterCatagory::LADDER) 
+	else if (fixtureB->GetFilterData().categoryBits == kFilterCatagory::SENSOR) 
 		return fixtureB;
 }
 

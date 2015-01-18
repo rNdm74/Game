@@ -86,10 +86,10 @@ void GameplayScene::actionFinished()
 {	
 }
 
-bool GameplayScene::onContactBegin(PhysicsContact &contact)
-{
-	return true;
-}
+//bool GameplayScene::onContactBegin(PhysicsContact &contact)
+//{
+//	return true;
+//}
 
 bool GameplayScene::onTouchBegan(Touch* touch, Event  *event)
 {

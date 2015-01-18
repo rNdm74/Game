@@ -160,28 +160,14 @@ World* World::create()
 }
 
 World::World()
-{
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	Vec2 mapOrigin = Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 50);
-
-	background = WorldParallaxBackGround::create();
-	this->addChild(background);
-
+{		
 	level = new Level();
 	level->loadMap(kLevelTMX);
 	level->createPhysicsWorld();
 	level->addObjects();
 	this->addChild(level->getMap());
-
-	player = GamePlayer::createWithFrameName(kPlayerFileName);
-	player->setPosition(AppGlobal::getInstance()->StartPosition);
-	player->getTexture()->setAntiAliasTexParameters();
-	player->addBodyToWorld(*level->getPhysicsWorld());
-	player->addFixturesToBody();
-	this->addChild(player, 99);
-
-	debugDraw = B2DebugDrawLayer::create(level->getPhysicsWorld(), kPixelsPerMeter, 0);
+		
+	debugDraw = B2DebugDrawLayer::create(level->getWorld(), kPixelsPerMeter, 0);
 	this->addChild(debugDraw);
 }
 
@@ -193,9 +179,7 @@ World::~World()
 
 void World::update(float& delta)
 {
-	background->update(delta);
 	level->update(delta);
-	player->update(delta, *level->getPhysicsWorld());
 }
 
 #pragma endregion World

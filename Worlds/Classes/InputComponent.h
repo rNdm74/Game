@@ -11,13 +11,13 @@ class InputComponent
 {
 public:
     virtual ~InputComponent(){};
-    virtual void update(GameObject& gameObject, float& delta) = 0;
+    virtual void update(GameObject& gameObject) = 0;
 };
 
 class PlayerInputComponent : public InputComponent
 {
 public:
-	void update(GameObject& gameObject, float& delta);
+	void update(GameObject& gameObject);
 
 private:	
 };

@@ -8,11 +8,14 @@ AppGlobal* AppGlobal::getInstance()
     return m_pInstance ? m_pInstance : m_pInstance = new AppGlobal();
 }
 
-AppGlobal::AppGlobal() {
+AppGlobal::AppGlobal() 
+{
     ActiveLevel = 1;
 
-	state = STATE_STOP;
-	previousState = state;
+	states.JUMP =
+	states.LEFT =
+	states.RIGHT =
+	states.ESCAPE = false;
 }
 
 AppGlobal::~AppGlobal()
@@ -73,63 +76,43 @@ void AppGlobal::initKeyboardListener()
 	auto listener = EventListenerKeyboard::create();
 
 	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event *event)
-	{
-		// track the previous pressed key
-		previousState = state;
-
-		switch (keyCode)
-		{
-			case EventKeyboard::KeyCode::KEY_SHIFT:
-				state = STATE_SPRINT;
-				break;
-			case EventKeyboard::KeyCode::KEY_SPACE:
-				state = STATE_HUD;
-				break;
-			case EventKeyboard::KeyCode::KEY_ESCAPE:
-				state = STATE_ESCAPE;
-				break;
-			case EventKeyboard::KeyCode::KEY_TAB:
-				state = STATE_HUD;
-				break;
-			case EventKeyboard::KeyCode::KEY_ENTER:
-				state = STATE_ENTER;
-				break;
-			case EventKeyboard::KeyCode::KEY_KP_ENTER:
-				state = STATE_ENTER;
-				break;
-			case EventKeyboard::KeyCode::KEY_RETURN:
-				state = STATE_ENTER;
-				break;
-			case EventKeyboard::KeyCode::KEY_W:
-				state = STATE_UP;
-				break;
-			case EventKeyboard::KeyCode::KEY_S:
-				state = STATE_DOWN;
-				break;
-			case EventKeyboard::KeyCode::KEY_A:
-				state = STATE_LEFT;
-				break;
-			case EventKeyboard::KeyCode::KEY_D:
-				state = STATE_RIGHT;
-				break;
-			case EventKeyboard::KeyCode::KEY_UP_ARROW:
-				state = STATE_UP;
-				break;
-			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-				state = STATE_DOWN;
-				break;
-			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-				state = STATE_LEFT;
-				break;
-			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-				state = STATE_RIGHT;
-				break;
-		}
+	{		
+		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
+		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
+		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
+		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
+		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
+		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
+		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
+		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
+		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
+		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
+		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
+		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
+		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
+		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
+		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
+		states.STOP		= false;
 	};
 
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{
-		state = STATE_STOP;
+		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
+		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
+		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
+		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
+		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
+		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
+		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
+		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
+		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
+		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
+		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
+		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
+		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
+		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
+		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
+		states.STOP		= true;
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
@@ -149,7 +132,7 @@ float AppGlobal::getRandom(float begin, float end)
 {
     double value;
     
-    value = (double)rand() / RAND_MAX;
+    value = static_cast<double>(rand()) / RAND_MAX;
     value = value * (end - begin) + begin;
     
     return value;

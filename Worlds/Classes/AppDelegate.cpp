@@ -34,7 +34,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         glview = GLViewImpl::create("Worlds");
 		//glview = GLViewImpl::createWithRect("Worlds", Rect(0,0, 480,320), 1.0f);
 		//glview = GLViewImpl::createWithFullScreen("Worlds");
-   				
+   		//		
 		static_cast<GLViewImpl*>(glview)->setCursorVisible(false);
 		
 		director->setOpenGLView(glview);
@@ -46,8 +46,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
 
+	// set directors projection
+	director->setProjection(kCCDirectorProjection2D);
+
 	//
-	glview->setDesignResolutionSize(960.0f, 640.0f, ResolutionPolicy::NO_BORDER);
+	glview->setDesignResolutionSize(960, 640, ResolutionPolicy::NO_BORDER);
 
 	// create global resources manager
 	auto appResources = AppResources::getInstance();

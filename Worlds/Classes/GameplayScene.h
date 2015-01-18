@@ -29,7 +29,7 @@ public:
     
 private:
 	void actionFinished();
-	bool onContactBegin(PhysicsContact &contact);
+	//bool onContactBegin(PhysicsContact &contact);
 
     void Pause(Ref* sender);
     void GameplaySceneFinished(Ref* sender);

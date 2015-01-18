@@ -1,233 +1,160 @@
 #include "AppGlobal.h"
 #include "Box2D.h"
+#include "Box2dHelper.h"
 #include "Constants.h"
 #include "GameObject.h"
+#include "GameObjectFactory.h"
 #include "GraphicsComponent.h"
 #include "InputComponent.h"
 #include "MenuComponent.h"
 #include "PhysicsComponent.h"
 
-#pragma region Menu
-bool GameObject::isMenuActive() 
-{ 
-	return _menu->isActive(); 
-}
-
-void GameObject::addMenu()
+GameObject::GameObject(ValueMap& properties)
 {
-	_menu->addMenu(*this);
-}
+	this->setAnchorPoint(Vec2(0.5f, 0.5f));
+	this->setProperties(properties);
+};
 
-void GameObject::showMenu()
-{
-	_menu->showMenu(*this);
-}
-
-void GameObject::hideMenu()
-{
-	_menu->hideMenu(*this);
-}
-#pragma endregion Menu
-
-#pragma region Box2D
+void GameObject::update(Node* node)
+{	
+	Vec2 pos = node->convertToWorldSpace(this->getPosition());
+		
+	b2Vec2 b2Position = b2Vec2
+	(
+		(pos.x + _rect.size.width / 2.0f) / kPixelsPerMeter,
+		(pos.y + _rect.size.height / 2.0f) / kPixelsPerMeter
+	);
+	
+	_body->SetTransform(b2Position, 0);
+};
 
 void GameObject::addBodyToWorld(b2World& world)
 {
-	// add a dynamic body to world
-	// (subclasses can use other body types by overriding
-	// this method and calling body->SetType())
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set
-	(
-		this->getPositionX() / kPixelsPerMeter,
-		this->getPositionY() / kPixelsPerMeter
-	);
-	
-	bodyDef.userData = this;
-	bodyDef.fixedRotation = true;
-	this->_body = world.CreateBody(&bodyDef);
-	//this->_body->SetGravityScale(0);
-	
-}
+	_body = Box2dHelper::createBody(world, _bodyDef, _fixtureDef);
+};
 
-void GameObject::addCircularHeadFixtureToBody(float radius, b2Vec2 offset)
+//
+// CHILD CLASSES
+//
+
+SolidPlatform::SolidPlatform(ValueMap& properties) : super(properties)
 {
-	b2CircleShape shape;
-	shape.m_radius = (radius * this->getScale()) / kPixelsPerMeter;
-	shape.m_p = offset;
-	this->createFixture(&shape, false, kFilterCatagory::PLAYER, kFilterCatagory::ENEMY);
-}
-
-void GameObject::addCircularBodyFixtureToBody(float radius, b2Vec2 offset)
-{
-	b2CircleShape shape;
-	shape.m_radius = (radius * this->getScale()) / kPixelsPerMeter;
-	shape.m_p = offset;
-	this->createFixture(&shape, false, kFilterCatagory::PLAYER, kFilterCatagory::BOUNDARY | kFilterCatagory::LADDER);
-}
-
-void GameObject::addPolygonShapeToBody()
-{
-	//setup platform shape for reuse
-	b2PolygonShape polygonShape;
-	b2Vec2 verts[8];
-
-	verts[0].Set(0.25,	0);		// center point
-	verts[1].Set(1.075,	0.5);	// right bottom
-	verts[2].Set(1.075,	1);		// right bottom
-	verts[3].Set(0.25,	2.15);	// right top
-	verts[4].Set(-0.25, 2.15);	// left top
-	verts[5].Set(-1.075,	1);		// right bottom
-	verts[6].Set(-1.075,	0.5);	// left bottom
-	verts[7].Set(-0.25, 0);		// center point
-
-	polygonShape.Set(verts, 8);
-
-	this->createFixture(&polygonShape, false, kFilterCatagory::PLAYER, kFilterCatagory::BOUNDARY | kFilterCatagory::LADDER | kFilterCatagory::SENSOR);
-}
-
-void GameObject::addRectangularFixtureToBody(float width, float height)
-{	
-	b2PolygonShape shape;
-	shape.SetAsBox
-	(
-		(width / kPixelsPerMeter) * 0.5f,
-		(height / kPixelsPerMeter) * 0.5f,
-		b2Vec2(0, 1.1),
-		0.0f
-	);
-	
-	this->createFixture(&shape, false, kFilterCatagory::PLAYER, kFilterCatagory::BOUNDARY | kFilterCatagory::ENEMY | kFilterCatagory::LADDER | kFilterCatagory::SENSOR);
-}
-
-void GameObject::addSensorRectangleToBody(float offset)
-{
-	b2PolygonShape shape;
-	shape.SetAsBox
-	(
-		(40 / kPixelsPerMeter) * 0.5f,
-		(1 / kPixelsPerMeter) * 0.5f,
-		b2Vec2(0, offset),
-		0.0f
-	);
-
-	this->createFixture(&shape, true, kFilterCatagory::PLAYER, kFilterCatagory::LADDER);
-}
-
-void GameObject::createFixture(b2Shape* shape, bool isSensor, uint16 categoryBits, uint16 maskBits)
-{
-	// note that friction, etc. can be modified later by looping
-	// over the body's fixtures and calling fixture->SetFriction()
-	b2FixtureDef fixtureDef;
-
-	fixtureDef.shape = shape;
-	fixtureDef.density = kGameObjectFixtureDensity;
-	fixtureDef.friction = kGameObjectFixtureFriction;
-	//fixtureDef.restitution = kGameObjectFixtureRestitution;
-	fixtureDef.filter.categoryBits = categoryBits;
-	fixtureDef.filter.maskBits = maskBits;
-	fixtureDef.isSensor = isSensor;
-
-	this->_body->CreateFixture(&fixtureDef);
-}
-
-void GameObject::setProperties(ValueMap& properties)
-{
-	this->setPosition
-	(
-		Point
-		(
-			properties["x"].asFloat(),
-			properties["y"].asFloat()
-		)
-	);
-}
-
-#pragma endregion Box2D
-
-void GameObject::initListeners()
-{
-	auto listener = EventListenerTouchOneByOne::create();
-	
-	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) -> bool {
-
-		auto touchEvent = static_cast<EventTouch*>(event);
-
-		auto node = touchEvent->getCurrentTarget();
+	float x = properties["x"].asFloat();
+	float y = properties["y"].asFloat();
+	float width = properties["width"].asFloat();
+	float height = properties["height"].asFloat();
 		
-		if (node->getBoundingBox().containsPoint(touch->getLocation()))
-		{
-			log("Bingo");
-			
-			auto player = static_cast<GamePlayer*>(node);
+	// converts world position to box2d world position
+	float x_ = (x + width / 2.0f) / kPixelsPerMeter;
+	float y_ = (y + height / 2.0f) / kPixelsPerMeter;
 
-			auto scaleUpAction = ScaleTo::create(0.1, 1.1);
-			auto scaleDownAction = ScaleTo::create(0.1, 1.0);
+	_bodyDef = Box2dHelper::createBodyDef(b2_kinematicBody, x_, y_, this);
 
-			// GameObject selected effect
-			node->runAction(Sequence::createWithTwoActions(scaleUpAction, scaleDownAction));
+	_shape = Box2dHelper::createBoxShape(width, height);
 
-			if (player->isMenuActive())
-			{
-				player->hideMenu();
-			}
-			else
-			{
-				player->showMenu();
-			}			
-		}
-
-		return true;
-	};
-
-	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-}
-
-GamePlayer* GamePlayer::createWithFrameName(const std::string& arg)
-{
-	auto sprite = new GamePlayer
+	_rect = Rect(x, y, width, height);
+	
+	_fixtureDef = Box2dHelper::createFixtureDef
 	(
-		new PlayerMenuComponent(),
-		new PlayerInputComponent(),
-		new PlayerPhysicsComponent(),
-		new PlayerGraphicsComponent()
+		_shape,
+		2.0f,
+		0.2f,
+		0.0f,
+		kFilterCatagory::SOLID_PLATFORM,
+		kFilterCatagory::PLAYER | kFilterCatagory::ENEMY,
+		false
 	);
-    
-    auto spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(arg);
-    
-    if(sprite && sprite->initWithSpriteFrame(spriteFrame))
-    {
-        sprite->autorelease();
-        sprite->setAnchorPoint(Vec2(0.5, 0));
-		sprite->setName("Player");
-		sprite->initListeners();
-		sprite->addMenu();
-		sprite->hideMenu();
-		                
-        return sprite;
-    }
-    
-    CC_SAFE_DELETE(sprite);
-    
-    return NULL;
-}
+		
+	
+	this->setPosition(Vec2(x, y));
+};
 
-void GamePlayer::addFixturesToBody()
+SolidSlope::SolidSlope(ValueMap& properties) : super(properties)
 {
-	auto size = this->getContentSize();
-	//this->addRectangularFixtureToBody(40,70);
-	this->addCircularHeadFixtureToBody(33, b2Vec2(0, 1.8));
-	//this->addCircularBodyFixtureToBody(20, b2Vec2(0, 0.6));
-	//this->addSensorRectangleToBody(0);
-	this->addPolygonShapeToBody();
-}
+	ValueVector pointsVector = properties["points"].asValueVector();
 
-void GamePlayer::update(float& delta, b2World& physics)
+	float x = properties["x"].asFloat();
+	float y = properties["y"].asFloat();
+
+	float verticesSize = pointsVector.size() + 1;
+	b2Vec2 vertices[30];
+	int vindex = 0;
+
+	Vec2 position = Vec2((x) / kPixelsPerMeter, y / kPixelsPerMeter);
+
+	for (Value point : pointsVector)
+	{
+		vertices[vindex].x = (point.asValueMap()["x"].asFloat() / kPixelsPerMeter + position.x);
+		vertices[vindex].y = (-point.asValueMap()["y"].asFloat() / kPixelsPerMeter + position.y);
+		vindex++;
+	}
+
+	_bodyDef = Box2dHelper::createBodyDef(b2_kinematicBody, 0.0f, 0.0f, this);
+
+	_shape.CreateChain(vertices, vindex);
+	
+	_fixtureDef = Box2dHelper::createFixtureDef
+	(
+		_shape,
+		2.0f,
+		0.2f,
+		0.0f,
+		kFilterCatagory::SOLID_SLOPE,
+		kFilterCatagory::PLAYER | kFilterCatagory::ENEMY,
+		false
+	);
+};
+
+Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics) : super(properties)
 {
-	_physics->update(*this);
-	_input->update(*this, delta);    
+	_menu = menu;
+	_input = input;
+	_physics = physics;
+	_graphics = graphics;
+
+	_sprite = Sprite::createWithSpriteFrameName(kPlayerFileName);
+	_sprite->getTexture()->setAliasTexParameters();
+	_sprite->getTexture()->setAntiAliasTexParameters();
+	_sprite->setScale(1.0f);
+	
+	auto shadow = Sprite::create();
+	shadow->setSpriteFrame(_sprite->getSpriteFrame());
+	shadow->setAnchorPoint(Vec2(-0.1f, 0.0f)); // position it to the center of the target node
+	shadow->setColor(Color3B(0, 0, 0));
+	shadow->setOpacity(50);
+	_sprite->addChild(shadow, -1);
+
+	float x = properties["x"].asFloat();
+	float y = properties["y"].asFloat();
+	float width = _sprite->getContentSize().width;
+	float height = _sprite->getContentSize().height;
+	
+	float x_ = x / kPixelsPerMeter;
+	float y_ = y / kPixelsPerMeter;
+
+	_bodyDef = Box2dHelper::createBodyDef(b2_dynamicBody, x_, y_, this);
+
+	_shape = Box2dHelper::createBoxShape(width * _sprite->getScale(), height * _sprite->getScale());
+
+	_fixtureDef = Box2dHelper::createFixtureDef
+	(
+		_shape,
+		1.0f,
+		0.1f,
+		0.0f,
+		kFilterCatagory::PLAYER,
+		kFilterCatagory::SOLID_PLATFORM | kFilterCatagory::SOLID_SLOPE,
+		false
+	);
+
+	this->addChild(_sprite);
+	this->setPosition(Vec2(x, y));
+};
+
+void Player::update(Node* node)
+{		
+	//_physics->update(*this);
 	_graphics->update(*this);
-}
-
-
+	_input->update(*this);
+	
+};

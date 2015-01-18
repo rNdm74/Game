@@ -5,7 +5,7 @@
 #include "Box2D.h"
 
 class GameObject;
-class Box2dFactory;
+class GameObjectFactory;
 
 using namespace cocos2d;
 
@@ -21,28 +21,33 @@ public:
 	virtual ~Level(void);
 		
 	void createPhysicsWorld();
-	void prepareLayers();
-	void createFixtures(TMXLayer& layer);
-	void createRectangularFixture(TMXLayer& layer, int x, int y, int width, int height);
-	void createRectangularFixture(float x, float y, float width, float height, bool isSensor, uint16 categoryBits, uint16 maskBits);
-	void createGhostFixture(float x, float y, float width, float height, bool isSensor, uint16 categoryBits, uint16 maskBits);
-	void createPolyLineFixture(std::vector<b2Vec2> vectors, int32 count, bool isSensor, uint16 categoryBits, uint16 maskBits);
-    
-    void createPolyline(ValueMap object);
+	
 	void addObjects();
 
 	GameObject* addObject(std::string className, ValueMap& properties);
 
 	void update(float& delta);
 
+	void setAliasTexParameters(TMXLayer* layer);
+
 	TMXTiledMap* getMap() { return map; }
-	b2World* getPhysicsWorld() { return physicsWorld; }
+	b2World* getWorld() { return world; }
+	GameObject* getPlayer() { return player; }
 
 private:
-	TMXTiledMap* map;
-	b2World* physicsWorld;
+	GameObject* player;
 
-	Box2dFactory* factory;
+	TMXTiledMap* map;
+	b2World* world;
+
+	//GameObjectFactory* factory;
+
+	ParallaxNode* parallaxNode;
+	Node* collisionLayer;
+
+	Vec2 origin;
+	Vec2 mapOrigin;
+	Size visibleSize;
 
 	int objectCount;
 };

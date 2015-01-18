@@ -1,119 +1,130 @@
-#ifndef __FranticAlien__GAME_OBJECT_H__
-#define __FranticAlien__GAME_OBJECT_H__
+#ifndef __Worlds__GAME_OBJECT_H__
+#define __Worlds__GAME_OBJECT_H__
 
 #include "cocos2d.h"
 #include "Box2D.h"
+#include "Constants.h"
 
+class Box2dHelper;
 class MenuComponent;
 class InputComponent;
 class PhysicsComponent;
 class GraphicsComponent;
-class b2World;
-class b2Shape;
-class b2Body;
 
 using namespace cocos2d;
 
-class GameObject : public Sprite
+class IGameObject
 {
-	typedef Sprite super;
+public:
+	virtual void update(Node* node) = 0;
+	virtual void addBodyToWorld(b2World& world) = 0;
+};
+
+/// <summary>
+/// Summary for Constructor
+///	
+/// PRE-CONDITION:	Must provide the type of the stack
+/// POST-CONDITION: The head and tail are assigned nullptr's 
+/// </summary>
+class GameObject : public IGameObject, public Node
+{
+	typedef Node super;
 	typedef GameObject self;
-
-public:
-    Vec2 velocity;
     
 public:
-    // "creator" methods first
-	bool setTouchGround;
-	bool setTouchLadder;
-	bool atTopLadder;
-	bool atBottomLadder;
-	bool climb;
-
-	b2Fixture* ladder;
-	b2Fixture* sensor;
-
-	b2Vec2 ladderTopPosition;
-	b2Vec2 ladderBottomPosition;
-    
     // If applicable, then Constructors and the Destructor
-	GameObject(MenuComponent* menu, InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics)
-	{
-		_menu = menu;
-		_input = input;
-		_physics = physics;
-		_graphics = graphics;
-
-		setTouchGround = false;
-		setTouchLadder = false;
-		atTopLadder = false;
-		atBottomLadder = false;
-		climb = false;
-		
-		ladder = nullptr;
-		sensor = nullptr;
-
-		ladderTopPosition = b2Vec2(0,0);
-		ladderBottomPosition = b2Vec2(0, 0);
-	}
-
+	GameObject(ValueMap& properties);
 	virtual ~GameObject(){};
     
     // Then the init methods
-	virtual void initListeners();
-
-    // Then methods of the instance
-	virtual void addMenu();
-	virtual void showMenu();
-	virtual void hideMenu();
-	virtual void update(float& delta, b2World& physics){}
-
-	virtual void addBodyToWorld(b2World& world);
-	virtual void addCircularHeadFixtureToBody(float radius, b2Vec2 offset);
-	virtual void addCircularBodyFixtureToBody(float radius, b2Vec2 offset);
-	virtual void addPolygonShapeToBody();
-	virtual	void addRectangularFixtureToBody(float width, float height);
-	virtual void addSensorRectangleToBody(float offset);
-	virtual void addFixturesToBody(){}
-	virtual void createFixture(b2Shape* shape, bool isSensor, uint16 categoryBits, uint16 maskBits);
-	virtual void setProperties(ValueMap& properties);
-
-    // Then the overrides
-	virtual bool isMenuActive();
-	virtual b2Body* getBody() { return _body;  }
-
-protected:
-    MenuComponent* _menu;
-    InputComponent* _input;
-    PhysicsComponent* _physics;
-    GraphicsComponent* _graphics;
-    
-	b2Body* _body;
-
-private:
-	bool _selected;
-
-public:
-};
-
-class GamePlayer : public GameObject
-{
-private:
-	typedef GameObject super;
-	typedef GamePlayer self;
-
-public:
-	GamePlayer(MenuComponent* menu, InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics) 
-	: super(menu, input, physics, graphics){}
 	
-	//
-    static GamePlayer* createWithFrameName(const std::string& arg);
- 
-	//
-	void addFixturesToBody();
+    // Then methods of the instance
+	virtual void update(Node* node);
+	virtual void addBodyToWorld(b2World& world);
+	
+    // Then the overrides
 
-    //
-	virtual void update(float& delta, b2World& physics) override;
+	//
+	virtual void setProperties(ValueMap& properties) { _properties = properties; }
+
+	virtual ValueMap getProperties(){ return _properties;  };
+	virtual b2Body* getBody() { return _body; }
+
+protected: 
+	b2Body* _body;
+	b2BodyDef _bodyDef;	
+	b2FixtureDef _fixtureDef;
+
+	Rect _rect;
+
+private:
+	ValueMap _properties;
 };
 
-#endif /* defined(__FranticAlien__GameObject__) */
+/// <summary>
+/// Summary for SolidPlatform
+///	
+/// PRE-CONDITION:	Must provide the type of the stack
+/// POST-CONDITION: The head and tail are assigned nullptr's 
+/// </summary>
+class SolidPlatform : public GameObject
+{
+	typedef GameObject super;
+	typedef SolidPlatform self;
+
+public:
+	SolidPlatform(ValueMap& properties);
+	~SolidPlatform(){};
+
+private:
+	b2PolygonShape _shape;
+};
+
+/// <summary>
+/// Summary for SolidSlope
+///	
+/// PRE-CONDITION:	Must provide the type of the stack
+/// POST-CONDITION: The head and tail are assigned nullptr's 
+/// </summary>
+class SolidSlope : public GameObject
+{
+	typedef GameObject super;
+	typedef SolidSlope self;
+
+public:
+	SolidSlope(ValueMap& properties);
+	~SolidSlope(){};
+
+private:
+	b2ChainShape _shape;
+};
+
+/// <summary>
+/// Summary for Player
+///	
+/// PRE-CONDITION:	Must provide the type of the stack
+/// POST-CONDITION: The head and tail are assigned nullptr's 
+/// </summary>
+class Player : public GameObject
+{
+	typedef GameObject super;
+	typedef Player self;
+
+public:
+	Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics);
+	~Player(){};
+
+	virtual void update(Node* node) override;
+
+private:
+	Sprite* _sprite;
+
+	b2PolygonShape _shape;
+
+	MenuComponent* _menu;
+	InputComponent* _input;
+	PhysicsComponent* _physics;
+	GraphicsComponent* _graphics;	
+};
+
+#endif /* defined(__Worlds__GAME_OBJECT_H__) */

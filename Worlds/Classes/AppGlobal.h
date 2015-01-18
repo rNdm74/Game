@@ -6,6 +6,19 @@
 
 using namespace cocos2d;
 
+struct GameStates {
+	bool SPRINT;
+	bool JUMP;
+	bool ESCAPE;
+	bool HUD;
+	bool ENTER;
+	bool UP;
+	bool DOWN;
+	bool LEFT;
+	bool RIGHT;
+	bool STOP;
+};
+
 class  AppGlobal
 {
 public:
@@ -18,8 +31,10 @@ public:
 	bool mouseDown;
 	Vec2 mouseScroll;	
 
-	EState state;
-	EState previousState;
+	//EState state;
+	//EState previousState;
+
+	GameStates states;
     
 public:
     static AppGlobal* getInstance();
