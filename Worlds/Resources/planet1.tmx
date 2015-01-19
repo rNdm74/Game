@@ -179,7 +179,7 @@
  </layer>
  <layer name="foreground" width="17" height="10">
   <data>
-   <tile gid="43"/>
+   <tile gid="9"/>
    <tile gid="43"/>
    <tile gid="43"/>
    <tile gid="7"/>
@@ -195,8 +195,8 @@
    <tile gid="7"/>
    <tile gid="43"/>
    <tile gid="43"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="43"/>
    <tile gid="68"/>
    <tile gid="0"/>
@@ -212,8 +212,8 @@
    <tile gid="0"/>
    <tile gid="56"/>
    <tile gid="43"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -229,8 +229,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
@@ -246,8 +246,8 @@
    <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -263,8 +263,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
@@ -280,8 +280,8 @@
    <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -297,8 +297,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
@@ -314,8 +314,8 @@
    <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -331,8 +331,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="43"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
    <tile gid="71"/>
    <tile gid="71"/>
    <tile gid="71"/>
@@ -348,7 +348,7 @@
    <tile gid="71"/>
    <tile gid="71"/>
    <tile gid="71"/>
-   <tile gid="43"/>
+   <tile gid="21"/>
   </data>
  </layer>
  <objectgroup name="ground">
