@@ -45,7 +45,7 @@ const float kMapBoundsY = 1.0f;
 
 
 const float kMinVelocityX						= 1.0f;
-const float kMaxVelocityX						= 10.0f;
+const float kMaxVelocityX						= 15.0f;
 const float kStopVelocity						= 0.70f; // 98%
 
 const float kGameObjectFixtureDensity			= 1.0f;

@@ -40,7 +40,6 @@ public:
 	void addBackground();
 	void addBushs();
 	void addClouds();
-
 };
 
 class World : public Node

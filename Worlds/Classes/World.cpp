@@ -165,7 +165,8 @@ World::World()
 	level->loadMap(kLevelTMX);
 	level->createPhysicsWorld();
 	level->addObjects();
-	this->addChild(level->getMap());
+	level->followPlayer();
+	this->addChild(level);
 		
 	debugDraw = B2DebugDrawLayer::create(level->getWorld(), kPixelsPerMeter, 0);
 	this->addChild(debugDraw);
@@ -174,8 +175,6 @@ World::World()
 World::~World()
 {
 }
-
-
 
 void World::update(float& delta)
 {

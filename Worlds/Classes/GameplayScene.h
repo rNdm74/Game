@@ -33,16 +33,6 @@ private:
 
     void Pause(Ref* sender);
     void GameplaySceneFinished(Ref* sender);
-    
-	bool onTouchBegan(Touch* touch, Event  *event);
-	void onTouchMoved(Touch* touch, Event  *event);
-	void onTouchEnded(Touch* touch, Event  *event);
-
-    void onTouchesMoved(const std::vector<Touch*>& touches, Event  *event);
-    
-    void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);
-    void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);
-
 };
 
 #endif // __GAMEPLAY_SCENE_H__

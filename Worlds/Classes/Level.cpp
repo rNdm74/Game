@@ -18,7 +18,7 @@ void Level::loadMap(std::string mapname)
 	map->retain();
 	
 	parallaxNode = ParallaxNode::create();
-	map->addChild(parallaxNode);
+	this->addChild(parallaxNode);
 
 	TMXLayer* backgroundLayer = map->layerNamed("background");
 	backgroundLayer->retain();
@@ -104,11 +104,11 @@ void Level::loadMap(std::string mapname)
 	TMXLayer* foregroundLayer = map->layerNamed("foreground");
 	foregroundLayer->retain();
 	foregroundLayer->removeFromParentAndCleanup(false);
-	parallaxNode->addChild(foregroundLayer, 1, Vec2(0.4f, 0.4f), Vec2::ZERO);
+	parallaxNode->addChild(foregroundLayer, 1, Vec2(1.0f, 0.4f), Vec2::ZERO);
 	foregroundLayer->release();
 		
 	Node* shadowLayer = Node::create();
-	parallaxNode->addChild(shadowLayer, 0, Vec2(0.4f, 0.4f), Vec2::ZERO);
+	parallaxNode->addChild(shadowLayer, 0, Vec2(1.0f, 0.4f), Vec2::ZERO);
 
 	// create all the rectangular fixtures for each tile
 	Size layerSize = foregroundLayer->getLayerSize();
@@ -130,7 +130,13 @@ void Level::loadMap(std::string mapname)
 	}
 		
 	collisionLayer = Node::create();
-	parallaxNode->addChild(collisionLayer, 2, Vec2(0.4f, 0.4f), Vec2::ZERO);
+	parallaxNode->addChild(collisionLayer, 2, Vec2(1.0f, 0.4f), Vec2::ZERO);
+}
+
+void Level::followPlayer()
+{	
+	//
+	player = static_cast<GameObject*>(collisionLayer->getChildByName("Player"));
 }
 
 void Level::setAliasTexParameters(TMXLayer* layer)
@@ -228,30 +234,26 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 }
 
 void Level::update(float& delta)
-{	
-	// 
-	GameObject* player = static_cast<GameObject*>(collisionLayer->getChildByName("Player"));	
-	b2Vec2 linearVelocity = player->getBody()->GetLinearVelocity();
-	Vec2 mapPosition = map->getPosition();
-	Vec2 playerPosition = player->getPosition();
-
-	Rect mapBoundingBox = map->getBoundingBox();
-
+{		
 	// call update functions of entities that uses cocos2d-x action methods, so the physics of this entities syncs with its sprites
-	if (playerPosition.x < mapOrigin.x || playerPosition.x > mapOrigin.x)
-		mapBoundingBox.origin.x -= linearVelocity.x;
-	if (playerPosition.y < mapOrigin.y || playerPosition.y > mapOrigin.y)
-		mapPosition.y -= linearVelocity.y;
+	Rect mapBoundingBox = map->getBoundingBox();
+	Vec2 playerPosition = this->convertToWorldSpaceAR(player->getPosition());
 
-	// only update if within bounds
-	bool top = mapPosition.y < kMapBoundsY;
-	bool left = mapBoundingBox.getMinX() <= origin.x;
-	bool right = mapBoundingBox.getMaxX() > (origin.x + visibleSize.width);
-	bool bottom = mapPosition.y > -kMapBoundsY;
+	// Creates a point that the view port will be drawn to based on the players position with the player in the centre
+	float newViewportWorldX = visibleSize.width - (playerPosition.x + mapBoundingBox.getMidX());
+	float newViewportWorldY = visibleSize.height - (playerPosition.y + mapBoundingBox.getMidY());
 
-	//if (left && right)
-		map->setPosition(mapBoundingBox.origin);
-		
+	// Gets the viewport width 
+	float viewportWidth = (origin.x + visibleSize.width) - mapBoundingBox.getMaxX();
+	float viewportHeight = (origin.y + visibleSize.height) - mapBoundingBox.getMaxY();
+
+	// Checks if viewport can move
+	if (newViewportWorldX < 0 && newViewportWorldX > viewportWidth)
+		this->setPositionX(newViewportWorldX);
+
+	if (newViewportWorldY < 0 && newViewportWorldY > viewportHeight)
+		this->setPositionY(newViewportWorldY);
+
 
 	// call world step
 	world->Step(delta, 1, 1);
@@ -261,9 +263,7 @@ void Level::update(float& delta)
 	// update entities that syncs its sprites with body positions
 	for (b2Body* body = world->GetBodyList(); body; body = body->GetNext())
 		static_cast<GameObject*>(body->GetUserData())->update(collisionLayer);
-
-
-	
+		
 	// debug
-	log("x: %f, y: %f", mapBoundingBox.getMaxX(), origin.x + visibleSize.width);
+	log(": %f, : %f, : %f , : %f ", newViewportWorldY, playerPosition.y, viewportHeight, getPositionY());
 }

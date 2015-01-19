@@ -33,19 +33,6 @@ bool GameplayScene::init()
     {
         return false;
     }
-	    
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(GameplayScene::onTouchBegan, this);
-	listener->onTouchMoved = CC_CALLBACK_2(GameplayScene::onTouchMoved, this);
-	listener->onTouchEnded = CC_CALLBACK_2(GameplayScene::onTouchEnded, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-    
-    // Keyboard input
-    auto keyListener = EventListenerKeyboard::create();
-    keyListener->onKeyPressed = CC_CALLBACK_2(GameplayScene::onKeyPressed, this);
-    keyListener->onKeyReleased = CC_CALLBACK_2(GameplayScene::onKeyReleased, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
-    
 
     // create and initialize a menu
     auto menu_item_1 = MenuItemFont::create("Pause", CC_CALLBACK_1(GameplayScene::Pause, this));
@@ -57,8 +44,8 @@ bool GameplayScene::init()
 	this->addChild(menu, 100);
 
 	world = World::create();
-	this->addChild(world);
-	    
+	this->addChild(world);   
+
 	//
     this->scheduleUpdateWithPriority(42);   
     
@@ -83,65 +70,6 @@ void GameplayScene::update(float delta)
 }
 
 void GameplayScene::actionFinished()
-{	
-}
-
-//bool GameplayScene::onContactBegin(PhysicsContact &contact)
-//{
-//	return true;
-//}
-
-bool GameplayScene::onTouchBegan(Touch* touch, Event  *event)
-{
-	return true;
-}
-
-void GameplayScene::onTouchMoved(Touch* touch, Event  *event)
-{
-}
-
-void GameplayScene::onTouchEnded(Touch* touch, Event  *event)
-{
-}
-
-void GameplayScene::onTouchesMoved(const std::vector<Touch*>& touches, Event  *event)
-{
-}
-
-void GameplayScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
-{        
-    if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE)
-    {
-        Scene* menuScene = MenuScene::createScene();
-        Director::getInstance()->pushScene(menuScene);
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_SHIFT)
-    {       
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_SPACE)
-    {       
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_W)
-    {       
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_S)
-    {        
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_A)
-    {       
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_D)
-    { 
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_Q)
-    {       
-    }
-    else if(keyCode == EventKeyboard::KeyCode::KEY_E)
-    {        
-    }
-}
-
-void GameplayScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {	
 }
 

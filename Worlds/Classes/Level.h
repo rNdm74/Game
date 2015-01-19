@@ -23,6 +23,7 @@ public:
 	void createPhysicsWorld();
 	
 	void addObjects();
+	void followPlayer();
 
 	GameObject* addObject(std::string className, ValueMap& properties);
 
