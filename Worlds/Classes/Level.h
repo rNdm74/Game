@@ -32,6 +32,8 @@ public:
 	void update(float& delta);
 
 	void setAliasTexParameters(TMXLayer* layer);
+    
+    void setViewPointCenter(Vec2 position);
 
 	TMXTiledMap* getMap() { return map; }
 	b2World* getWorld() { return world; }

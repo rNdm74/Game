@@ -163,6 +163,8 @@ void Level::followPlayer()
 	
 	//player->setPosition(center);
 	player->getBody()->SetGravityScale(0);
+    
+    this->setViewPointCenter(player->getPosition());
 
 }
 
@@ -260,41 +262,38 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 	return o;
 }
 
+void Level::setViewPointCenter(Vec2 position)
+{
+    Size mapSize = map->getMapSize();
+    Size tileSize = map->getTileSize();
+    Size winSize = Director::getInstance()->getWinSize();
+    
+    int x = MAX(position.x, winSize.width / 2);
+    int y = MAX(position.y, winSize.height / 2);
+    x = MIN(x, (mapSize.width * tileSize.width) - winSize.width / 2);
+    y = MIN(y, (mapSize.height * tileSize.height) - winSize.height / 2);
+    
+    Vec2 actualPosition = Vec2(x, y);
+    
+    Vec2 centerOfView = Vec2(winSize.width / 2, winSize.height / 2);
+    Vec2 viewPoint = centerOfView - actualPosition;
+    
+    parallaxNode->setPosition(viewPoint);
+}
+
 void Level::update(float& delta)
 {		
 	// call update functions of entities that uses cocos2d-x action methods, so the physics of this entities syncs with its sprites
-	//player->update(collisionLayer);
+    this->setViewPointCenter(player->getPosition());
 
-	// call world update
-	Rect mapBoundingBox = map->getBoundingBox();
-	Vec2 mapCenter = Vec2(mapBoundingBox.getMidX(), mapBoundingBox.getMidY());
-	Vec2 playerPosition = player->getPosition();
-
-	//// Creates a point that the view port will be drawn to based on the players position with the player in the centre
-	float newViewportWorldX = (origin.x + size.width) - (playerPosition.x + mapBoundingBox.getMidX());
-	float newViewportWorldY = (origin.y + size.height) - (playerPosition.y + mapBoundingBox.getMidY());
-
-	//// Gets the viewport width 
-	float viewportWidth = (origin.x + size.width) - mapBoundingBox.getMaxX();
-	float viewportHeight = (origin.y + size.height) - mapBoundingBox.getMaxY();
-
-	//// Checks if viewport can move
-	if (newViewportWorldX < 0 && newViewportWorldX > viewportWidth)
-		parallaxNode->setPositionX(newViewportWorldX);
-
-	if (newViewportWorldY < 0 && newViewportWorldY > viewportHeight)
-		parallaxNode->setPositionY(newViewportWorldY);
-		
 	// update world step
-	world->Step(1.0f / 60, 1, 1);
+	world->Step(1.0f / 60, 8, 1);
 
 	// manage the contacts registered by the contacts listenner that saves the contacts into a vector when they happens inside BeginContact
 	
 	// update entities that syncs its sprites with body positions
 	for (b2Body* body = world->GetBodyList(); body; body = body->GetNext())
-	{
 		static_cast<GameObject*>(body->GetUserData())->update(collisionLayer);
-	}
 
 	// debug
 	//log(": %f, : %f, : %f , : %f ", mapCenter.x, playerPosition.x, mapCenter.y, playerPosition.y);
