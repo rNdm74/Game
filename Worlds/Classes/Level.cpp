@@ -8,15 +8,33 @@
 
 void Level::loadMap(std::string mapname)
 {
-	this->createPhysicsWorld();
-
-	visibleSize = Director::getInstance()->getVisibleSize();
+	this->setAnchorPoint(Vec2(0.5f, 0.5f));
+	
+	size = Director::getInstance()->getVisibleSize();
 	origin = Director::getInstance()->getVisibleOrigin();
-	mapOrigin = Vec2(origin.x + visibleSize.width / 2, (origin.y + visibleSize.height / 2));
+	center = Vec2(origin.x + size.width / 2, (origin.y + size.height / 2));
 
+	//get screen resolution 
+	auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
+	
+	//get design resolution
+	auto winSize = Director::getInstance()->getWinSize();
+	
+	//get design resolution’s visable area size
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	
+	//get origin of the visable area of design resolution
+	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
+		
 	map = TMXTiledMap::create(mapname);
 	map->retain();
-	
+
+	this->createPhysicsWorld();
+	this->load();
+}
+
+void Level::load()
+{
 	parallaxNode = ParallaxNode::create();
 	this->addChild(parallaxNode);
 
@@ -37,22 +55,22 @@ void Level::loadMap(std::string mapname)
 		rockGrassDown->setTag(1000 + i);
 
 		Size s = rockGrassDown->getContentSize();
-		
+
 		auto shadow = getShadowForNode(rockGrassDown);
 		shadow->setAnchorPoint(Vec2(-0.05f, 0.01f));
 		shadow->setPosition(rockGrassDown->getPosition());
 		rockGrassDown->addChild(shadow, -1);
 
 		parallaxNode->addChild
-		(
-			rockGrassDown, 
+			(
+			rockGrassDown,
 			// Set z-index of rock
-			3, 
+			3,
 			// Set ration (rocks don't move)
-			Vec2(0.0f, 0.4f), 
+			Vec2(0.0f, 0.4f),
 			// Set position with random component
-			Vec2(((visibleSize.width/2) / rocksQuantity) * (i) + RAND(0, s.width/2), top)
-		);
+			Vec2(((size.width / 2) / rocksQuantity) * (i)+RAND(0, s.width / 2), top)
+			);
 
 		rockGrassDown->getTexture()->setAntiAliasTexParameters();
 	}
@@ -70,9 +88,9 @@ void Level::loadMap(std::string mapname)
 		shadow->setAnchorPoint(Vec2(-0.05f, 0.01f));
 		shadow->setPosition(rockGrassDown->getPosition());
 		rockGrassDown->addChild(shadow, -1);
-				
+
 		parallaxNode->addChild
-		(
+			(
 			rockGrassDown,
 			// Set z-index of rock
 			3,
@@ -81,14 +99,14 @@ void Level::loadMap(std::string mapname)
 			// Set position with random component
 			Vec2
 			(
-				(visibleSize.width / 1.6) + ((visibleSize.width / 2) / rocksQuantity) * (i) + RAND(0, s.width / 2), 
-				top
+			(size.width / 1.6) + ((size.width / 2) / rocksQuantity) * (i)+RAND(0, s.width / 2),
+			top
 			)
-		);
+			);
 
 		rockGrassDown->getTexture()->setAntiAliasTexParameters();
 	}
-	
+
 	Sprite* groundGrass = Sprite::createWithSpriteFrameName("groundDirt.png");
 	groundGrass->setAnchorPoint(Vec2(0, 0));
 	auto shadow = getShadowForNode(groundGrass);
@@ -98,17 +116,17 @@ void Level::loadMap(std::string mapname)
 	parallaxNode->addChild(groundGrass, 3, Vec2(0.0f, 0.4f), Vec2(0, 0));
 	groundGrass->getTexture()->setAntiAliasTexParameters();
 	groundGrass = Sprite::createWithSpriteFrameName("groundDirt.png");
-	groundGrass->setAnchorPoint(Vec2(0, 0));	
+	groundGrass->setAnchorPoint(Vec2(0, 0));
 	parallaxNode->addChild(groundGrass, 3, Vec2(0.0f, 0.4f), Vec2(groundGrass->getContentSize().width, 0));
 
 	TMXLayer* foregroundLayer = map->layerNamed("foreground");
 	foregroundLayer->retain();
 	foregroundLayer->removeFromParentAndCleanup(false);
-	parallaxNode->addChild(foregroundLayer, 1, Vec2(1.0f, 0.4f), Vec2::ZERO);
+	parallaxNode->addChild(foregroundLayer, 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	foregroundLayer->release();
-		
+
 	Node* shadowLayer = Node::create();
-	parallaxNode->addChild(shadowLayer, 0, Vec2(1.0f, 0.4f), Vec2::ZERO);
+	parallaxNode->addChild(shadowLayer, 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
 	// create all the rectangular fixtures for each tile
 	Size layerSize = foregroundLayer->getLayerSize();
@@ -119,24 +137,33 @@ void Level::loadMap(std::string mapname)
 		{
 			// create a fixture if this tile has a sprite
 			auto tileSprite = foregroundLayer->getTileAt(Point(x, y));
-			
+
 			if (tileSprite)
 			{
 				auto shadow = getShadowForNode(tileSprite);
 				shadow->setPosition(shadowLayer->convertToWorldSpace(tileSprite->getPosition()));
-				shadowLayer->addChild(shadow);			
+				shadowLayer->addChild(shadow);
 			}
 		}
 	}
-		
+
 	collisionLayer = Node::create();
-	parallaxNode->addChild(collisionLayer, 2, Vec2(1.0f, 0.4f), Vec2::ZERO);
+	parallaxNode->addChild(collisionLayer, 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
 }
 
 void Level::followPlayer()
 {	
 	//
 	player = static_cast<GameObject*>(collisionLayer->getChildByName("Player"));
+
+	player->retain();
+	player->removeFromParentAndCleanup(false);
+	this->addChild(player);
+	player->release();
+	
+	//player->setPosition(center);
+	player->getBody()->SetGravityScale(0);
+
 }
 
 void Level::setAliasTexParameters(TMXLayer* layer)
@@ -236,34 +263,39 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 void Level::update(float& delta)
 {		
 	// call update functions of entities that uses cocos2d-x action methods, so the physics of this entities syncs with its sprites
+	//player->update(collisionLayer);
+
+	// call world update
 	Rect mapBoundingBox = map->getBoundingBox();
-	Vec2 playerPosition = this->convertToWorldSpaceAR(player->getPosition());
+	Vec2 mapCenter = Vec2(mapBoundingBox.getMidX(), mapBoundingBox.getMidY());
+	Vec2 playerPosition = player->getPosition();
 
-	// Creates a point that the view port will be drawn to based on the players position with the player in the centre
-	float newViewportWorldX = visibleSize.width - (playerPosition.x + mapBoundingBox.getMidX());
-	float newViewportWorldY = visibleSize.height - (playerPosition.y + mapBoundingBox.getMidY());
+	//// Creates a point that the view port will be drawn to based on the players position with the player in the centre
+	float newViewportWorldX = (origin.x + size.width) - (playerPosition.x + mapBoundingBox.getMidX());
+	float newViewportWorldY = (origin.y + size.height) - (playerPosition.y + mapBoundingBox.getMidY());
 
-	// Gets the viewport width 
-	float viewportWidth = (origin.x + visibleSize.width) - mapBoundingBox.getMaxX();
-	float viewportHeight = (origin.y + visibleSize.height) - mapBoundingBox.getMaxY();
+	//// Gets the viewport width 
+	float viewportWidth = (origin.x + size.width) - mapBoundingBox.getMaxX();
+	float viewportHeight = (origin.y + size.height) - mapBoundingBox.getMaxY();
 
-	// Checks if viewport can move
+	//// Checks if viewport can move
 	if (newViewportWorldX < 0 && newViewportWorldX > viewportWidth)
-		this->setPositionX(newViewportWorldX);
+		parallaxNode->setPositionX(newViewportWorldX);
 
 	if (newViewportWorldY < 0 && newViewportWorldY > viewportHeight)
-		this->setPositionY(newViewportWorldY);
-
-
-	// call world step
-	world->Step(delta, 1, 1);
+		parallaxNode->setPositionY(newViewportWorldY);
+		
+	// update world step
+	world->Step(1.0f / 60, 1, 1);
 
 	// manage the contacts registered by the contacts listenner that saves the contacts into a vector when they happens inside BeginContact
-
+	
 	// update entities that syncs its sprites with body positions
 	for (b2Body* body = world->GetBodyList(); body; body = body->GetNext())
+	{
 		static_cast<GameObject*>(body->GetUserData())->update(collisionLayer);
-		
+	}
+
 	// debug
-	log(": %f, : %f, : %f , : %f ", newViewportWorldY, playerPosition.y, viewportHeight, getPositionY());
+	//log(": %f, : %f, : %f , : %f ", mapCenter.x, playerPosition.x, mapCenter.y, playerPosition.y);
 }

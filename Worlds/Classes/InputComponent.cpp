@@ -6,40 +6,51 @@
 
 void PlayerInputComponent::update(GameObject& gameObject)
 {
-	auto global = AppGlobal::getInstance();
-
+	auto global = AppGlobal::getInstance();		
 	auto body = gameObject.getBody();
-
-	auto vel = body->GetLinearVelocity();
-
-	float desiredVelX = 0.0f;
-
-	float impulse = 0.0f;
 	
+	b2Vec2 velocity = body->GetLinearVelocity();
+	b2Vec2 desiredVel = b2Vec2(0.0f, 0.0f);
+
 	if (global->states.LEFT)
 	{
-		desiredVelX = b2Max(vel.x - kMinVelocityX, -kMaxVelocityX);
-
+		desiredVel.x = b2Max(velocity.x - kMinVelocityX, -kMaxVelocityX);
 	}
 
 	if (global->states.RIGHT)
 	{
-		desiredVelX = b2Min(vel.x + kMinVelocityX, kMaxVelocityX);
+		desiredVel.x = b2Min(velocity.x + kMinVelocityX, kMaxVelocityX);
 	}
 
-	if (global->states.JUMP)
+	if (global->states.DOWN)
 	{
-		float impulse = body->GetMass() * 3;
-		body->ApplyLinearImpulse(b2Vec2(0, impulse), body->GetWorldCenter(), true);
+		desiredVel.y = b2Max(velocity.y - kMinVelocityX, -kMaxVelocityX);
+	}
+
+	if (global->states.UP)
+	{
+		desiredVel.y = b2Min(velocity.y + kMinVelocityX, kMaxVelocityX);
 	}
 
 	if (global->states.STOP)
 	{
-		desiredVelX = vel.x * kStopVelocity;
+		desiredVel.x = velocity.x * kStopVelocity;
+		desiredVel.y = velocity.y * kStopVelocity;
 	}
 	
-	float velChangeX = desiredVelX - vel.x;	
-	float impulseX = body->GetMass() * velChangeX;
-	body->ApplyLinearImpulse(b2Vec2(impulseX, impulse), body->GetWorldCenter(), true);
-	
+	b2Vec2 velChange = b2Vec2
+	(
+		desiredVel.x - velocity.x,
+		desiredVel.y - velocity.y
+	);
+
+	b2Vec2 impulse = b2Vec2
+	(
+		body->GetMass() * velChange.x, //disregard time factor
+		body->GetMass() * velChange.y
+	);
+
+	body->ApplyLinearImpulse(impulse, body->GetWorldCenter(), true);
+
+
 }

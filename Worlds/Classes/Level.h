@@ -20,6 +20,8 @@ public:
 	Level();
 	virtual ~Level(void);
 		
+	void load();
+
 	void createPhysicsWorld();
 	
 	void addObjects();
@@ -47,10 +49,39 @@ private:
 	Node* collisionLayer;
 
 	Vec2 origin;
-	Vec2 mapOrigin;
-	Size visibleSize;
+	Vec2 center;
+	Size size;
 
 	int objectCount;
+
+	//
+	// Base values.
+	Size _worldSizeMeters;
+	Size _screenSizePixels;
+	// How much of the world (meters) is projected
+	// onto the screen.  At 1.0, the scale is 1:1.
+	float _vScale;
+	// The location of the center of the viewport
+	// in terms of the physics world (meters).
+	Vec2 _vCenterMeters;
+	Vec2 _vBottomLeftMeters;
+	Vec2 _vTopRightMeters;
+	Size _vSizeMeters;
+
+	// Min/Max Scale Limits
+	float _vScaleMin;
+	float _vScaleMax;
+
+	// Values for converting meters to pixels.
+	Point _vScalePixelToMeter;
+	Point _vOffsetPixels;
+
+	// Aspect ratio of the screen
+	float _aspectRatio;
+
+	// Pixels to meters ratio of the screen.
+	// This is based on the viewport pixels to meters.
+	float _ptmRatio;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */

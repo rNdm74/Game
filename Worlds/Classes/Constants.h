@@ -64,7 +64,8 @@ const std::string kLevelTMX						= "planet1.tmx";
 const std::string kPlayerFileName				= "alienBeige.png";
 
 //enumeration of possible input states
-enum EState {
+enum EState 
+{
 	STATE_STOP,
 	STATE_LEFT,
 	STATE_RIGHT,
