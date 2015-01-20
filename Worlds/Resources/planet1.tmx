@@ -1,10 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="17" height="10" tilewidth="70" tileheight="70">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="17" height="12" tilewidth="70" tileheight="70">
  <tileset firstgid="1" name="tileset" tilewidth="70" tileheight="70">
   <image source="tileset.png" width="840" height="490"/>
  </tileset>
- <layer name="background" width="17" height="10">
+ <layer name="background" width="17" height="12">
   <data>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
    <tile gid="49"/>
    <tile gid="49"/>
    <tile gid="49"/>
@@ -177,7 +211,7 @@
    <tile gid="49"/>
   </data>
  </layer>
- <layer name="foreground" width="17" height="10">
+ <layer name="foreground" width="17" height="12">
   <data>
    <tile gid="9"/>
    <tile gid="43"/>
@@ -311,6 +345,40 @@
    <tile gid="36"/>
    <tile gid="0"/>
    <tile gid="60"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="36"/>
+   <tile gid="0"/>
+   <tile gid="60"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
    <tile gid="48"/>
@@ -352,10 +420,10 @@
   </data>
  </layer>
  <objectgroup name="ground">
-  <object name="Solid" type="Solid" x="70" y="630" width="1050" height="70"/>
-  <object name="Solid" type="Solid" x="1120" y="0" width="70" height="700"/>
+  <object name="Solid" type="Solid" x="70" y="770" width="1050" height="70"/>
+  <object name="Solid" type="Solid" x="1120" y="0" width="70" height="840"/>
   <object name="Player" type="Player" x="560" y="0" width="70" height="70"/>
-  <object name="Solid" type="Solid" x="0" y="0" width="70" height="700"/>
+  <object name="Solid" type="Solid" x="0" y="0" width="70" height="840"/>
   <object name="Solid" type="Solid" x="70" y="210" width="280" height="40"/>
   <object name="Solid" type="Solid" x="420" y="210" width="350" height="40"/>
   <object name="Solid" type="Solid" x="840" y="210" width="280" height="40"/>
@@ -380,5 +448,7 @@
   </object>
   <object name="Solid" type="Solid" x="70" y="70" width="70" height="70"/>
   <object name="Solid" type="Solid" x="1050" y="70" width="70" height="70"/>
+  <object name="Solid" type="Solid" x="70" y="630" width="490" height="40"/>
+  <object name="Solid" type="Solid" x="630" y="630" width="490" height="40"/>
  </objectgroup>
 </map>
