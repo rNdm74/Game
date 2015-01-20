@@ -1,10 +1,214 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="17" height="12" tilewidth="70" tileheight="70">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="17" height="24" tilewidth="70" tileheight="70">
  <tileset firstgid="1" name="tileset" tilewidth="70" tileheight="70">
   <image source="tileset.png" width="840" height="490"/>
  </tileset>
- <layer name="background" width="17" height="12">
+ <layer name="background" width="17" height="24">
   <data>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
+   <tile gid="49"/>
    <tile gid="49"/>
    <tile gid="49"/>
    <tile gid="49"/>
@@ -211,7 +415,7 @@
    <tile gid="49"/>
   </data>
  </layer>
- <layer name="foreground" width="17" height="12">
+ <layer name="foreground" width="17" height="24">
   <data>
    <tile gid="9"/>
    <tile gid="43"/>
@@ -407,9 +611,9 @@
    <tile gid="71"/>
    <tile gid="71"/>
    <tile gid="71"/>
-   <tile gid="71"/>
-   <tile gid="71"/>
-   <tile gid="71"/>
+   <tile gid="57"/>
+   <tile gid="0"/>
+   <tile gid="72"/>
    <tile gid="71"/>
    <tile gid="71"/>
    <tile gid="71"/>
@@ -417,21 +621,225 @@
    <tile gid="71"/>
    <tile gid="71"/>
    <tile gid="21"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="33"/>
+   <tile gid="0"/>
+   <tile gid="45"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="68"/>
+   <tile gid="0"/>
+   <tile gid="56"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="43"/>
+   <tile gid="43"/>
+   <tile gid="67"/>
+   <tile gid="68"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="56"/>
+   <tile gid="8"/>
+   <tile gid="9"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="60"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="36"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="36"/>
+   <tile gid="0"/>
+   <tile gid="60"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="36"/>
+   <tile gid="0"/>
+   <tile gid="60"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="36"/>
+   <tile gid="0"/>
+   <tile gid="60"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="36"/>
+   <tile gid="0"/>
+   <tile gid="60"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="48"/>
+   <tile gid="21"/>
+   <tile gid="9"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="21"/>
+   <tile gid="33"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="71"/>
+   <tile gid="45"/>
   </data>
  </layer>
  <objectgroup name="ground">
-  <object name="Solid" type="Solid" x="70" y="770" width="1050" height="70"/>
-  <object name="Solid" type="Solid" x="1120" y="0" width="70" height="840"/>
-  <object name="Player" type="Player" x="560" y="0" width="70" height="70"/>
-  <object name="Solid" type="Solid" x="0" y="0" width="70" height="840"/>
+  <object name="Solid" type="Solid" x="70" y="1610" width="1050" height="70"/>
+  <object name="Solid" type="Solid" x="1120" y="0" width="70" height="1680"/>
+  <object name="Player" type="Player" x="560" y="840" width="70" height="70"/>
+  <object name="Solid" type="Solid" x="-1.4174" y="0.124286" width="70" height="1680"/>
   <object name="Solid" type="Solid" x="70" y="210" width="280" height="40"/>
-  <object name="Solid" type="Solid" x="420" y="210" width="350" height="40"/>
+  <object name="Solid" type="Solid" x="420" y="1050" width="350" height="40"/>
   <object name="Solid" type="Solid" x="840" y="210" width="280" height="40"/>
-  <object name="Solid" type="Solid" x="70" y="350" width="490" height="40"/>
-  <object name="Solid" type="Solid" x="630" y="350" width="490" height="40"/>
-  <object name="Solid" type="Solid" x="70" y="490" width="280" height="40"/>
-  <object name="Solid" type="Solid" x="420" y="490" width="350" height="40"/>
-  <object name="Solid" type="Solid" x="840" y="490" width="280" height="40"/>
+  <object name="Solid" type="Solid" x="70" y="1190" width="490" height="40"/>
+  <object name="Solid" type="Solid" x="630" y="1190" width="490" height="40"/>
+  <object name="Solid" type="Solid" x="70" y="1330" width="210" height="40"/>
+  <object name="Solid" type="Solid" x="350" y="1330" width="490" height="40"/>
+  <object name="Solid" type="Solid" x="910" y="1330" width="210" height="40"/>
   <object name="Solid" type="Solid" x="70" y="0" width="420" height="70"/>
   <object name="Solid" type="Solid" x="700" y="0" width="420" height="70"/>
   <object name="SolidSlope" type="SolidSlope" x="210" y="70">
@@ -448,7 +856,31 @@
   </object>
   <object name="Solid" type="Solid" x="70" y="70" width="70" height="70"/>
   <object name="Solid" type="Solid" x="1050" y="70" width="70" height="70"/>
+  <object name="Solid" type="Solid" x="70" y="1470" width="490" height="40"/>
+  <object name="Solid" type="Solid" x="630" y="1470" width="490" height="40"/>
+  <object name="Slope" type="Slope" x="70" y="1050">
+   <polygon points="0,0 70,-70 0,-70"/>
+  </object>
+  <object name="Slope" type="Slope" x="1050" y="980">
+   <polygon points="0,0 70,70 70,0"/>
+  </object>
+  <object name="Solid" type="Solid" x="70" y="770" width="490" height="140"/>
+  <object name="Solid" type="Solid" x="630" y="770" width="490" height="140"/>
+  <object name="Solid" type="Solid" x="700" y="910" width="420" height="70"/>
+  <object name="Solid" type="Solid" x="70" y="910" width="420" height="70"/>
+  <object name="Slope" type="Slope" x="630" y="910">
+   <polygon points="0,0 70,70 70,0"/>
+  </object>
+  <object name="Slope" type="Slope" x="490" y="980">
+   <polygon points="0,0 70,-70 0,-70"/>
+  </object>
+  <object name="Solid" type="Solid" x="420" y="210" width="350" height="40"/>
+  <object name="Solid" type="Solid" x="70" y="350" width="490" height="40"/>
+  <object name="Solid" type="Solid" x="70" y="490" width="280" height="40"/>
   <object name="Solid" type="Solid" x="70" y="630" width="490" height="40"/>
   <object name="Solid" type="Solid" x="630" y="630" width="490" height="40"/>
+  <object name="Solid" type="Solid" x="420" y="490" width="350" height="40"/>
+  <object name="Solid" type="Solid" x="840" y="490" width="280" height="40"/>
+  <object name="Solid" type="Solid" x="630" y="350" width="490" height="40"/>
  </objectgroup>
 </map>
