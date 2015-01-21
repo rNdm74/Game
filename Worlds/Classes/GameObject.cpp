@@ -148,7 +148,8 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	);
 
 	this->addChild(_sprite);
-	this->setPosition(Vec2(x, y));
+	//this->setPosition(Vec2(x, y));
+	this->setAnchorPoint(Vec2(0.5, 0.5));
 };
 
 void Player::update(Node* node)

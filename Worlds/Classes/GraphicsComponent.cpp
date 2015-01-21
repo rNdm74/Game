@@ -10,5 +10,5 @@ void PlayerGraphicsComponent::update(GameObject &gameObject)
 
 	Vec2 nodePos = gameObject.getParent()->convertToNodeSpace(Vec2(bodyPos.x * kPixelsPerMeter, bodyPos.y * kPixelsPerMeter));
 
-	gameObject.setPosition(nodePos);
+	//gameObject.setPosition(nodePos);
 }

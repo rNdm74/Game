@@ -29,6 +29,9 @@ void Level::loadMap(std::string mapname)
 	map = TMXTiledMap::create(mapname);
 	map->retain();
 
+	mapInfo = TMXMapInfo::formatWithTMXFile(mapname.c_str());
+	tileProperties = mapInfo->getTileProperties();
+
 	this->createPhysicsWorld();
 	this->load();
 }
@@ -36,9 +39,12 @@ void Level::loadMap(std::string mapname)
 void Level::load()
 {
 	parallaxNode = ParallaxNode::create();
+	parallaxNode->setContentSize(map->getContentSize());
+	parallaxNode->setAnchorPoint(Vec2::ZERO);
+
 	this->addChild(parallaxNode);
 
-	TMXLayer* backgroundLayer = map->layerNamed("background");
+	backgroundLayer = map->getLayer("background");
 	backgroundLayer->retain();
 	backgroundLayer->removeFromParentAndCleanup(false);
 	parallaxNode->addChild(backgroundLayer, -1, Vec2(0.2f, 0.2f), Vec2::ZERO);
@@ -119,7 +125,7 @@ void Level::load()
 	groundGrass->setAnchorPoint(Vec2(0, 0));
 	parallaxNode->addChild(groundGrass, 3, Vec2(0.0f, 0.4f), Vec2(groundGrass->getContentSize().width, 0));
 
-	TMXLayer* foregroundLayer = map->layerNamed("foreground");
+	foregroundLayer = map->getLayer("foreground");
 	foregroundLayer->retain();
 	foregroundLayer->removeFromParentAndCleanup(false);
 	parallaxNode->addChild(foregroundLayer, 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
@@ -154,14 +160,14 @@ void Level::load()
 void Level::followPlayer()
 {	
 	//
-	player = static_cast<GameObject*>(collisionLayer->getChildByName("Player"));
+	player = static_cast<Player*>(collisionLayer->getChildByName("Player"));
 
-	player->retain();
+	/*player->retain();
 	player->removeFromParentAndCleanup(false);
 	this->addChild(player);
-	player->release();
+	player->release();*/
 	
-	//player->setPosition(center);
+	player->setPosition(center);
 	player->getBody()->SetGravityScale(0);
     
     this->setViewPointCenter(player->getPosition());
@@ -268,8 +274,8 @@ void Level::setViewPointCenter(Vec2 position)
     Size tileSize = map->getTileSize();
     Size winSize = Director::getInstance()->getWinSize();
     
-    int x = MAX(position.x, winSize.width / 2);
-    int y = MAX(position.y, winSize.height / 2);
+    float x = MAX(position.x, winSize.width / 2);
+	float y = MAX(position.y, winSize.height / 2);
     x = MIN(x, (mapSize.width * tileSize.width) - winSize.width / 2);
     y = MIN(y, (mapSize.height * tileSize.height) - winSize.height / 2);
     
@@ -282,19 +288,89 @@ void Level::setViewPointCenter(Vec2 position)
 }
 
 void Level::update(float& delta)
-{		
+{	
+	Size mapSize = map->getMapSize();
+	Size tileSize = map->getTileSize();
+
 	// call update functions of entities that uses cocos2d-x action methods, so the physics of this entities syncs with its sprites
-    this->setViewPointCenter(player->getPosition());
+	Vec2 playerPos = player->getPosition();
+	Vec2 velocity = Vec2(250, 250);
+	Vec2 desiredVel = Vec2::ZERO;
+	Vec2 direction = Vec2::ZERO;
+	
+	AppGlobal* global = AppGlobal::getInstance();
+
+	if (global->states.LEFT)	
+		direction.x = -1;
+	if (global->states.RIGHT)	
+		direction.x = 1;
+	if (global->states.DOWN)	
+		direction.y = -1;
+	if (global->states.UP)		
+		direction.y = 1;
+	if (global->states.STOP)
+		direction = Vec2::ZERO;
+	
+	playerPos.x += velocity.x * delta * direction.x;
+	playerPos.y += velocity.y * delta * direction.y;
+
+	// safety check on the bounds of the map
+	if (playerPos.x <= (this->map->getMapSize().width * this->map->getTileSize().width) && playerPos.x >= 0 &&
+		playerPos.y <= (this->map->getMapSize().height * this->map->getTileSize().height) && playerPos.y >= 0)
+	{	
+		int x = playerPos.x / tileSize.width;
+		int y = ((mapSize.height * tileSize.height) - playerPos.y) / tileSize.height;
+
+		
+
+		int left = (playerPos.x - (player->getSize().width / 2)) / tileSize.width;
+		int right = (playerPos.x + (player->getSize().width / 2)) / tileSize.width;
+
+		int top = ((mapSize.height * tileSize.height) - (playerPos.y + (player->getSize().height / 2))) / tileSize.height;
+		int bottom = ((mapSize.height * tileSize.height) - (playerPos.y - (player->getSize().height / 2))) / tileSize.height;
+
+		int directions[] =
+		{
+			left,
+			right,
+			top,
+			bottom
+		};
+
+		int gid = foregroundLayer->getTileGIDAt(Vec2(x, y));
+		
+		log("left: %i, right: %i, top: %i, bottom: %i", left, right, top, bottom);
+
+		bool collided = false;
+
+		for (int i = 0; i < 4; i++)
+		{
+			int gid = foregroundLayer->getTileGIDAt(Vec2(directions[i], y));
+
+			if (gid)
+			{
+				auto valuemap = tileProperties[gid].asValueMap();
+				collided = valuemap["Collidable"].asBool();
+			}
+		}
+		
+		if (collided == false)
+		{
+			player->setPosition(playerPos);
+		}
+	}
+	
+	this->setViewPointCenter(player->getPosition());
 
 	// update world step
 	world->Step(1.0f / 60, 8, 1);
 
-	// manage the contacts registered by the contacts listenner that saves the contacts into a vector when they happens inside BeginContact
+	// manage the contacts registered by the contacts listener that saves the contacts into a vector when they happens inside BeginContact
 	
-	// update entities that syncs its sprites with body positions
+	// update entities that syncs its sprites with body position
 	for (b2Body* body = world->GetBodyList(); body; body = body->GetNext())
 		static_cast<GameObject*>(body->GetUserData())->update(collisionLayer);
 
 	// debug
-	//log(": %f, : %f, : %f , : %f ", mapCenter.x, playerPosition.x, mapCenter.y, playerPosition.y);
+	//log(": %f, : %f", parallaxNode->getContentSize().width, parallaxNode->getContentSize().height);
 }

@@ -115,7 +115,7 @@ public:
 	~Player(){};
 
 	virtual void update(Node* node) override;
-
+	Size getSize() { return _sprite->getContentSize(); }
 private:
 	Sprite* _sprite;
 

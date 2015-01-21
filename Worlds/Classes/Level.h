@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "Box2D.h"
 
+class Player;
 class GameObject;
 class GameObjectFactory;
 
@@ -37,12 +38,19 @@ public:
 
 	TMXTiledMap* getMap() { return map; }
 	b2World* getWorld() { return world; }
-	GameObject* getPlayer() { return player; }
+	Player* getPlayer() { return player; }
 
 private:
-	GameObject* player;
+	Player* player;
 
 	TMXTiledMap* map;
+	TMXMapInfo* mapInfo;
+	
+	TMXLayer* backgroundLayer;
+	TMXLayer* foregroundLayer;
+
+	ValueMapIntKey tileProperties;
+
 	b2World* world;
 
 	//GameObjectFactory* factory;
@@ -55,35 +63,6 @@ private:
 	Size size;
 
 	int objectCount;
-
-	//
-	// Base values.
-	Size _worldSizeMeters;
-	Size _screenSizePixels;
-	// How much of the world (meters) is projected
-	// onto the screen.  At 1.0, the scale is 1:1.
-	float _vScale;
-	// The location of the center of the viewport
-	// in terms of the physics world (meters).
-	Vec2 _vCenterMeters;
-	Vec2 _vBottomLeftMeters;
-	Vec2 _vTopRightMeters;
-	Size _vSizeMeters;
-
-	// Min/Max Scale Limits
-	float _vScaleMin;
-	float _vScaleMax;
-
-	// Values for converting meters to pixels.
-	Point _vScalePixelToMeter;
-	Point _vOffsetPixels;
-
-	// Aspect ratio of the screen
-	float _aspectRatio;
-
-	// Pixels to meters ratio of the screen.
-	// This is based on the viewport pixels to meters.
-	float _ptmRatio;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */

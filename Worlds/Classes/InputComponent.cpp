@@ -50,7 +50,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 		body->GetMass() * velChange.y
 	);
 
-	body->ApplyLinearImpulse(impulse, body->GetWorldCenter(), true);
+	//body->ApplyLinearImpulse(impulse, body->GetWorldCenter(), true);
 
 
 }

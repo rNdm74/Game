@@ -15,6 +15,8 @@ AppGlobal::AppGlobal()
 	states.JUMP =
 	states.LEFT =
 	states.RIGHT =
+	states.UP =
+	states.DOWN =
 	states.ESCAPE = false;
 }
 

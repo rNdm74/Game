@@ -168,8 +168,8 @@ World::World()
 	level->followPlayer();
 	this->addChild(level);
 		
-	//debugDraw = B2DebugDrawLayer::create(level->getWorld(), kPixelsPerMeter, 0);
-	//this->addChild(debugDraw);
+	debugDraw = B2DebugDrawLayer::create(level->getWorld(), kPixelsPerMeter, 0);
+	this->addChild(debugDraw);
 }
 
 World::~World()
