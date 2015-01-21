@@ -291,10 +291,14 @@ void Level::update(float& delta)
 {	
 	Size mapSize = map->getMapSize();
 	Size tileSize = map->getTileSize();
+    Size playerSize = player->getSize();
+    
+    float mapWidthPixels = mapSize.width * tileSize.width;
+    float mapHeightPixels = mapSize.height * tileSize.height;
 
 	// call update functions of entities that uses cocos2d-x action methods, so the physics of this entities syncs with its sprites
-	Vec2 playerPos = player->getPosition();
-	Vec2 velocity = Vec2(250, 250);
+	Vec2 newPlayerPos = player->getPosition();
+	Vec2 velocity = Vec2(350, 350);
 	Vec2 desiredVel = Vec2::ZERO;
 	Vec2 direction = Vec2::ZERO;
 	
@@ -311,52 +315,48 @@ void Level::update(float& delta)
 	if (global->states.STOP)
 		direction = Vec2::ZERO;
 	
-	playerPos.x += velocity.x * delta * direction.x;
-	playerPos.y += velocity.y * delta * direction.y;
+	newPlayerPos.x += velocity.x * delta * direction.x;
+	newPlayerPos.y += velocity.y * delta * direction.y;
 
+    bool xBounds = newPlayerPos.x <= mapWidthPixels && newPlayerPos.x >= 0;
+    bool yBounds = newPlayerPos.y <= mapHeightPixels && newPlayerPos.y >= 0;
+    
 	// safety check on the bounds of the map
-	if (playerPos.x <= (this->map->getMapSize().width * this->map->getTileSize().width) && playerPos.x >= 0 &&
-		playerPos.y <= (this->map->getMapSize().height * this->map->getTileSize().height) && playerPos.y >= 0)
-	{	
-		int x = playerPos.x / tileSize.width;
-		int y = ((mapSize.height * tileSize.height) - playerPos.y) / tileSize.height;
+	if (xBounds && yBounds)
+	{
+        // player origin vector converted to tile co-ordinates
+		int x = newPlayerPos.x / tileSize.width;
+		int y = (mapHeightPixels - newPlayerPos.y) / tileSize.height;
 
-		
+        // calculate left, right, top, bottom tile co-ordinates of player
+		int left = (newPlayerPos.x - playerSize.width / 2) / tileSize.width;
+		int right = (newPlayerPos.x + playerSize.width / 2) / tileSize.width;
+		int top = (mapHeightPixels - (newPlayerPos.y + playerSize.height / 2)) / tileSize.height;
+		int bottom = (mapHeightPixels - (newPlayerPos.y - playerSize.height / 2)) / tileSize.height;
 
-		int left = (playerPos.x - (player->getSize().width / 2)) / tileSize.width;
-		int right = (playerPos.x + (player->getSize().width / 2)) / tileSize.width;
-
-		int top = ((mapSize.height * tileSize.height) - (playerPos.y + (player->getSize().height / 2))) / tileSize.height;
-		int bottom = ((mapSize.height * tileSize.height) - (playerPos.y - (player->getSize().height / 2))) / tileSize.height;
-
-		int directions[] =
-		{
-			left,
-			right,
-			top,
-			bottom
-		};
-
-		int gid = foregroundLayer->getTileGIDAt(Vec2(x, y));
+        // depending on direction player moving get gid
+        Vec2 tileOrdinate = Vec2(x,y);
+        
+        if(direction.x == 1) tileOrdinate = Vec2(right, y);
+        if(direction.x == -1) tileOrdinate = Vec2(left, y);
+        if(direction.y == 1) tileOrdinate = Vec2(x, top);
+        if(direction.y == -1) tileOrdinate = Vec2(x, bottom);
+        
+		int gid = foregroundLayer->getTileGIDAt(tileOrdinate);
 		
 		log("left: %i, right: %i, top: %i, bottom: %i", left, right, top, bottom);
 
 		bool collided = false;
 
-		for (int i = 0; i < 4; i++)
-		{
-			int gid = foregroundLayer->getTileGIDAt(Vec2(directions[i], y));
-
-			if (gid)
-			{
-				auto valuemap = tileProperties[gid].asValueMap();
-				collided = valuemap["Collidable"].asBool();
-			}
-		}
+        if (gid)
+        {
+            auto valuemap = tileProperties[gid].asValueMap();
+            collided = valuemap["Collidable"].asBool();
+        }
 		
 		if (collided == false)
 		{
-			player->setPosition(playerPos);
+			player->setPosition(newPlayerPos);
 		}
 	}
 	
