@@ -2,10 +2,8 @@
 #define __Worlds__GAME_OBJECT_H__
 
 #include "cocos2d.h"
-#include "Box2D.h"
 #include "Constants.h"
 
-class Box2dHelper;
 class MenuComponent;
 class InputComponent;
 class PhysicsComponent;
@@ -17,7 +15,6 @@ class IGameObject
 {
 public:
 	virtual void update(Node* node) = 0;
-	virtual void addBodyToWorld(b2World& world) = 0;
 };
 
 /// <summary>
@@ -40,63 +37,18 @@ public:
 	
     // Then methods of the instance
 	virtual void update(Node* node);
-	virtual void addBodyToWorld(b2World& world);
 	
     // Then the overrides
 
 	//
 	virtual void setProperties(ValueMap& properties) { _properties = properties; }
-
 	virtual ValueMap getProperties(){ return _properties;  };
-	virtual b2Body* getBody() { return _body; }
+
 
 protected: 
-	b2Body* _body;
-	b2BodyDef _bodyDef;	
-	b2FixtureDef _fixtureDef;
-
-	Rect _rect;
 
 private:
 	ValueMap _properties;
-};
-
-/// <summary>
-/// Summary for SolidPlatform
-///	
-/// PRE-CONDITION:	Must provide the type of the stack
-/// POST-CONDITION: The head and tail are assigned nullptr's 
-/// </summary>
-class SolidPlatform : public GameObject
-{
-	typedef GameObject super;
-	typedef SolidPlatform self;
-
-public:
-	SolidPlatform(ValueMap& properties);
-	~SolidPlatform(){};
-
-private:
-	b2PolygonShape _shape;
-};
-
-/// <summary>
-/// Summary for SolidSlope
-///	
-/// PRE-CONDITION:	Must provide the type of the stack
-/// POST-CONDITION: The head and tail are assigned nullptr's 
-/// </summary>
-class SolidSlope : public GameObject
-{
-	typedef GameObject super;
-	typedef SolidSlope self;
-
-public:
-	SolidSlope(ValueMap& properties);
-	~SolidSlope(){};
-
-private:
-	b2ChainShape _shape;
 };
 
 /// <summary>
@@ -116,15 +68,17 @@ public:
 
 	virtual void update(Node* node) override;
 	Size getSize() { return _sprite->getContentSize(); }
+	Vec2* getDirection() { return _direction; }
+
 private:
 	Sprite* _sprite;
-
-	b2PolygonShape _shape;
 
 	MenuComponent* _menu;
 	InputComponent* _input;
 	PhysicsComponent* _physics;
 	GraphicsComponent* _graphics;	
+
+	Vec2* _direction;
 };
 
 #endif /* defined(__Worlds__GAME_OBJECT_H__) */

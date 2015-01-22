@@ -11,6 +11,7 @@ AppGlobal* AppGlobal::getInstance()
 AppGlobal::AppGlobal() 
 {
     ActiveLevel = 1;
+	scale = 1.0f;
 
 	states.JUMP =
 	states.LEFT =
@@ -25,7 +26,7 @@ AppGlobal::~AppGlobal()
 }
 
 void AppGlobal::initMouseListener()
-{	
+{
 	auto listener = EventListenerMouse::create();
 
 	listener->onMouseMove = [=](Event* event)
@@ -42,7 +43,7 @@ void AppGlobal::initMouseListener()
 			auto cursor = layer->getChildByTag(kTagCursor);
 
 			cursor->setPosition(cursorMove);
-		}		
+		}
 	};
 
 	listener->onMouseDown = [=](Event* event)
@@ -68,6 +69,32 @@ void AppGlobal::initMouseListener()
 		this->mouseUp = true;
 		this->mouseDown = false;
 	};
+
+	listener->onMouseScroll = [=](Event* event)
+	{
+		auto eventMouse = static_cast<EventMouse*>(event);
+		
+
+		int delta = eventMouse->getScrollY();
+
+		if (delta > 0)
+		{
+			scale += -0.1;
+		}
+		else if (delta < 0)
+		{
+			scale += 0.1;
+		}
+
+		if (scale < 0.81f)
+			scale = 0.81f;
+		if (scale > 2.0f)
+			scale = 2.05f;
+
+		log("%f", scale);
+
+	};
+
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }

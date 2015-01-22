@@ -5,7 +5,7 @@
 
 // PNG assets
 #define BACKGROUND_PNG		"background.png"
-#define CHARACTERS_PNG		"characters-sd.png"
+#define CHARACTERS_PNG		"characters.png"
 #define CONTROLS_PNG		"controls.png"
 #define HUD_PNG				"hud.png"
 #define ITEMS_PNG			"items.png"
@@ -14,7 +14,7 @@
 
 // PLIST assets
 #define BACKGROUND_PLIST	"background.plist"
-#define CHARACTERS_PLIST	"characters-sd.plist"
+#define CHARACTERS_PLIST	"characters.plist"
 #define CONTROLS_PLIST		"controls.plist"
 #define HUD_PLIST			"hud.plist"
 #define ITEMS_PLIST			"items.plist"
@@ -60,7 +60,7 @@ const float kGravity							= -100.0f; // adjust this to taste
 const float kUpdateInterval						= 1.0f / 60.0f;
 const double kSecondsPerUpdate					= 0.1;
 
-const std::string kLevelTMX						= "planet1.tmx";
+const std::string kLevelTMX						= "grassPlanet.tmx";
 const std::string kPlayerFileName				= "alienBeige.png";
 
 //enumeration of possible input states
@@ -103,9 +103,12 @@ enum
 	kTagStartPosition
 };
 
-enum EBody
+enum EBearing
 {
-
+	NORTH,
+	SOUTH,
+	EAST,
+	WEST
 };
 
 #endif /* defined(__CONSTANTS__) */

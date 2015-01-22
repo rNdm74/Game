@@ -10,21 +10,10 @@ void Level::loadMap(std::string mapname)
 {
 	this->setAnchorPoint(Vec2(0.5f, 0.5f));
 	
+	global = AppGlobal::getInstance();
 	size = Director::getInstance()->getVisibleSize();
 	origin = Director::getInstance()->getVisibleOrigin();
 	center = Vec2(origin.x + size.width / 2, (origin.y + size.height / 2));
-
-	//get screen resolution 
-	auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
-	
-	//get design resolution
-	auto winSize = Director::getInstance()->getWinSize();
-	
-	//get design resolution’s visable area size
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	
-	//get origin of the visable area of design resolution
-	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
 		
 	map = TMXTiledMap::create(mapname);
 	map->retain();
@@ -32,7 +21,6 @@ void Level::loadMap(std::string mapname)
 	mapInfo = TMXMapInfo::formatWithTMXFile(mapname.c_str());
 	tileProperties = mapInfo->getTileProperties();
 
-	this->createPhysicsWorld();
 	this->load();
 }
 
@@ -41,13 +29,15 @@ void Level::load()
 	parallaxNode = ParallaxNode::create();
 	parallaxNode->setContentSize(map->getContentSize());
 	parallaxNode->setAnchorPoint(Vec2::ZERO);
-
 	this->addChild(parallaxNode);
-
+		
 	backgroundLayer = map->getLayer("background");
 	backgroundLayer->retain();
 	backgroundLayer->removeFromParentAndCleanup(false);
-	parallaxNode->addChild(backgroundLayer, -1, Vec2(0.2f, 0.2f), Vec2::ZERO);
+	backgroundLayer->setScale(1.0f);
+
+	parallaxNode->addChild(backgroundLayer, -1, Vec2(0.4f, 0.4f), Vec2(0, 0));
+	backgroundLayer->getTexture()->setAntiAliasTexParameters();
 	backgroundLayer->release();
 
 	float top = backgroundLayer->getBoundingBox().getMaxY();
@@ -67,16 +57,16 @@ void Level::load()
 		shadow->setPosition(rockGrassDown->getPosition());
 		rockGrassDown->addChild(shadow, -1);
 
-		parallaxNode->addChild
-			(
-			rockGrassDown,
-			// Set z-index of rock
-			3,
-			// Set ration (rocks don't move)
-			Vec2(0.0f, 0.4f),
-			// Set position with random component
-			Vec2(((size.width / 2) / rocksQuantity) * (i)+RAND(0, s.width / 2), top)
-			);
+		//parallaxNode->addChild
+		//	(
+		//	rockGrassDown,
+		//	// Set z-index of rock
+		//	3,
+		//	// Set ration (rocks don't move)
+		//	Vec2(0.0f, 0.4f),
+		//	// Set position with random component
+		//	Vec2(((size.width / 2) / rocksQuantity) * (i)+RAND(0, s.width / 2), top)
+		//	);
 
 		rockGrassDown->getTexture()->setAntiAliasTexParameters();
 	}
@@ -95,20 +85,20 @@ void Level::load()
 		shadow->setPosition(rockGrassDown->getPosition());
 		rockGrassDown->addChild(shadow, -1);
 
-		parallaxNode->addChild
-			(
-			rockGrassDown,
-			// Set z-index of rock
-			3,
-			// Set ration (rocks don't move)
-			Vec2(0.0f, 0.4f),
-			// Set position with random component
-			Vec2
-			(
-			(size.width / 1.6) + ((size.width / 2) / rocksQuantity) * (i)+RAND(0, s.width / 2),
-			top
-			)
-			);
+		//parallaxNode->addChild
+		//	(
+		//	rockGrassDown,
+		//	// Set z-index of rock
+		//	3,
+		//	// Set ration (rocks don't move)
+		//	Vec2(0.0f, 0.4f),
+		//	// Set position with random component
+		//	Vec2
+		//	(
+		//	(size.width / 1.6) + ((size.width / 2) / rocksQuantity) * (i)+RAND(0, s.width / 2),
+		//	top
+		//	)
+		//	);
 
 		rockGrassDown->getTexture()->setAntiAliasTexParameters();
 	}
@@ -119,11 +109,11 @@ void Level::load()
 	shadow->setAnchorPoint(Vec2(-0.005f, 0.01f));
 	shadow->setPosition(groundGrass->getPosition());
 	groundGrass->addChild(shadow, -1);
-	parallaxNode->addChild(groundGrass, 3, Vec2(0.0f, 0.4f), Vec2(0, 0));
+	//parallaxNode->addChild(groundGrass, 3, Vec2(0.0f, 0.4f), Vec2(0, 0));
 	groundGrass->getTexture()->setAntiAliasTexParameters();
 	groundGrass = Sprite::createWithSpriteFrameName("groundDirt.png");
 	groundGrass->setAnchorPoint(Vec2(0, 0));
-	parallaxNode->addChild(groundGrass, 3, Vec2(0.0f, 0.4f), Vec2(groundGrass->getContentSize().width, 0));
+	//parallaxNode->addChild(groundGrass, 3, Vec2(0.0f, 0.4f), Vec2(groundGrass->getContentSize().width, 0));
 
 	foregroundLayer = map->getLayer("foreground");
 	foregroundLayer->retain();
@@ -134,14 +124,11 @@ void Level::load()
 	Node* shadowLayer = Node::create();
 	parallaxNode->addChild(shadowLayer, 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
-	// create all the rectangular fixtures for each tile
 	Size layerSize = foregroundLayer->getLayerSize();
-
 	for (int y = 0; y < layerSize.height; y++)
 	{
 		for (int x = 0; x < layerSize.width; x++)
 		{
-			// create a fixture if this tile has a sprite
 			auto tileSprite = foregroundLayer->getTileAt(Point(x, y));
 
 			if (tileSprite)
@@ -159,19 +146,8 @@ void Level::load()
 
 void Level::followPlayer()
 {	
-	//
 	player = static_cast<Player*>(collisionLayer->getChildByName("Player"));
-
-	/*player->retain();
-	player->removeFromParentAndCleanup(false);
-	this->addChild(player);
-	player->release();*/
-	
-	player->setPosition(center);
-	player->getBody()->SetGravityScale(0);
-    
     this->setViewPointCenter(player->getPosition());
-
 }
 
 void Level::setAliasTexParameters(TMXLayer* layer)
@@ -182,7 +158,6 @@ void Level::setAliasTexParameters(TMXLayer* layer)
 	{
 		for (int x = 0; x < layerSize.width; x++)
 		{
-			// create a fixture if this tile has a sprite
 			auto tileSprite = layer->getTileAt(Point(x, y));
 
 			if (tileSprite)
@@ -217,16 +192,6 @@ Level::~Level(void)
 	map->release();
 }
 
-void Level::createPhysicsWorld()
-{
-	// initialize variables, load the tmx, create the objects, etc...
-	world = new b2World(b2Vec2(0, kGravity));
-
-	world->SetAllowSleeping(true);
-	world->SetContinuousPhysics(true);
-	world->SetContactListener(new ContactListener());
-}
-
 void Level::addObjects()
 {   
 	// loop over the object groups in this tmx file
@@ -259,8 +224,7 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 	if (o != nullptr)
 	{
 		o->setName(className);
-		o->addBodyToWorld(*world);
-
+		
 		collisionLayer->addChild(o);
 	}
 		
@@ -272,23 +236,25 @@ void Level::setViewPointCenter(Vec2 position)
 {
     Size mapSize = map->getMapSize();
     Size tileSize = map->getTileSize();
-    Size winSize = Director::getInstance()->getWinSize();
-    
+	Size winSize = Director::getInstance()->getWinSize() / this->getScale();
+	
     float x = MAX(position.x, winSize.width / 2);
 	float y = MAX(position.y, winSize.height / 2);
-    x = MIN(x, (mapSize.width * tileSize.width) - winSize.width / 2);
-    y = MIN(y, (mapSize.height * tileSize.height) - winSize.height / 2);
+	x = MIN(x, (mapSize.width * tileSize.width) - winSize.width / 2);
+	y = MIN(y, (mapSize.height * tileSize.height) - winSize.height / 2);
     
-    Vec2 actualPosition = Vec2(x, y);
+	Vec2 actualPosition = Vec2(x, y);
     
-    Vec2 centerOfView = Vec2(winSize.width / 2, winSize.height / 2);
+	Vec2 centerOfView = Vec2(winSize.width / 2, winSize.height / 2);
     Vec2 viewPoint = centerOfView - actualPosition;
     
-    parallaxNode->setPosition(viewPoint);
+	parallaxNode->setPosition(viewPoint);
 }
 
 void Level::update(float& delta)
-{	
+{		
+	this->setScale(global->scale);
+
 	Size mapSize = map->getMapSize();
 	Size tileSize = map->getTileSize();
     Size playerSize = player->getSize();
@@ -298,12 +264,10 @@ void Level::update(float& delta)
 
 	// call update functions of entities that uses cocos2d-x action methods, so the physics of this entities syncs with its sprites
 	Vec2 newPlayerPos = player->getPosition();
-	Vec2 velocity = Vec2(350, 350);
+	Vec2 velocity = Vec2(15 * kPixelsPerMeter, 15 * kPixelsPerMeter);
 	Vec2 desiredVel = Vec2::ZERO;
 	Vec2 direction = Vec2::ZERO;
-	
-	AppGlobal* global = AppGlobal::getInstance();
-
+		
 	if (global->states.LEFT)	
 		direction.x = -1;
 	if (global->states.RIGHT)	
@@ -315,9 +279,11 @@ void Level::update(float& delta)
 	if (global->states.STOP)
 		direction = Vec2::ZERO;
 	
+	//
 	newPlayerPos.x += velocity.x * delta * direction.x;
 	newPlayerPos.y += velocity.y * delta * direction.y;
 
+	//
     bool xBounds = newPlayerPos.x <= mapWidthPixels && newPlayerPos.x >= 0;
     bool yBounds = newPlayerPos.y <= mapHeightPixels && newPlayerPos.y >= 0;
     
@@ -335,17 +301,21 @@ void Level::update(float& delta)
 		int bottom = (mapHeightPixels - (newPlayerPos.y - playerSize.height / 2)) / tileSize.height;
 
         // depending on direction player moving get gid
-        Vec2 tileOrdinate = Vec2(x,y);
+        Vec2 tileOrdinate = Vec2(x,y);        
+        if (direction.x == 1) tileOrdinate = Vec2(right, bottom);
+		if (direction.x == -1) tileOrdinate = Vec2(left, bottom);
+        if (direction.y == 1) tileOrdinate = Vec2(x, top);
+        if (direction.y == -1) tileOrdinate = Vec2(x, bottom);
         
-        if(direction.x == 1) tileOrdinate = Vec2(right, y);
-        if(direction.x == -1) tileOrdinate = Vec2(left, y);
-        if(direction.y == 1) tileOrdinate = Vec2(x, top);
-        if(direction.y == -1) tileOrdinate = Vec2(x, bottom);
-        
-		int gid = foregroundLayer->getTileGIDAt(tileOrdinate);
-		
-		log("left: %i, right: %i, top: %i, bottom: %i", left, right, top, bottom);
+		int gid = 0;
 
+		//check if tileOrdinate is valid
+		if (tileOrdinate.x < mapSize.width && tileOrdinate.x > 0 &&
+			tileOrdinate.y < mapSize.height && tileOrdinate.y > 0)
+		{
+			gid = foregroundLayer->getTileGIDAt(tileOrdinate);
+		}
+		
 		bool collided = false;
 
         if (gid)
@@ -361,16 +331,4 @@ void Level::update(float& delta)
 	}
 	
 	this->setViewPointCenter(player->getPosition());
-
-	// update world step
-	world->Step(1.0f / 60, 8, 1);
-
-	// manage the contacts registered by the contacts listener that saves the contacts into a vector when they happens inside BeginContact
-	
-	// update entities that syncs its sprites with body position
-	for (b2Body* body = world->GetBodyList(); body; body = body->GetNext())
-		static_cast<GameObject*>(body->GetUserData())->update(collisionLayer);
-
-	// debug
-	//log(": %f, : %f", parallaxNode->getContentSize().width, parallaxNode->getContentSize().height);
 }

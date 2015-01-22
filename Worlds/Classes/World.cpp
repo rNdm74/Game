@@ -160,16 +160,16 @@ World* World::create()
 }
 
 World::World()
-{		
+{
+	background = WorldParallaxBackGround::create();
+
+	this->addChild(background);
+
 	level = new Level();
 	level->loadMap(kLevelTMX);
-	level->createPhysicsWorld();
 	level->addObjects();
 	level->followPlayer();
 	this->addChild(level);
-		
-	debugDraw = B2DebugDrawLayer::create(level->getWorld(), kPixelsPerMeter, 0);
-	this->addChild(debugDraw);
 }
 
 World::~World()
@@ -178,6 +178,7 @@ World::~World()
 
 void World::update(float& delta)
 {
+	background->update(delta);
 	level->update(delta);
 }
 

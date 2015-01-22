@@ -9,15 +9,7 @@ GameObject* GameObjectFactory::create(std::string className, ValueMap& propertie
 {
 	GameObject* gameObject = nullptr;
 
-	if (className == "Solid")
-	{
-		gameObject = new SolidPlatform(properties);
-	}
-	else if (className == "SolidSlope")
-	{
-		gameObject = new SolidSlope(properties);
-	}
-	else if (className == "Player")
+	if (className == "Player")
 	{
 		gameObject = new Player
 		(

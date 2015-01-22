@@ -2,8 +2,8 @@
 #define __FranticAlien__LEVEL_H__
 
 #include "cocos2d.h"
-#include "Box2D.h"
 
+class AppGlobal;
 class Player;
 class GameObject;
 class GameObjectFactory;
@@ -21,10 +21,7 @@ public:
 	Level();
 	virtual ~Level(void);
 		
-	void load();
-
-	void createPhysicsWorld();
-	
+	void load();	
 	void addObjects();
 	void followPlayer();
 
@@ -37,10 +34,12 @@ public:
     void setViewPointCenter(Vec2 position);
 
 	TMXTiledMap* getMap() { return map; }
-	b2World* getWorld() { return world; }
+	
 	Player* getPlayer() { return player; }
 
 private:
+	AppGlobal* global;
+
 	Player* player;
 
 	TMXTiledMap* map;
@@ -50,11 +49,7 @@ private:
 	TMXLayer* foregroundLayer;
 
 	ValueMapIntKey tileProperties;
-
-	b2World* world;
-
-	//GameObjectFactory* factory;
-
+	
 	ParallaxNode* parallaxNode;
 	Node* collisionLayer;
 

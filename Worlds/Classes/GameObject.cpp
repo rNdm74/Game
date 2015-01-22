@@ -1,6 +1,4 @@
 #include "AppGlobal.h"
-#include "Box2D.h"
-#include "Box2dHelper.h"
 #include "Constants.h"
 #include "GameObject.h"
 #include "GameObjectFactory.h"
@@ -17,93 +15,12 @@ GameObject::GameObject(ValueMap& properties)
 
 void GameObject::update(Node* node)
 {	
-	Vec2 pos = node->convertToWorldSpace(this->getPosition());
-		
-	b2Vec2 b2Position = b2Vec2
-	(
-		(pos.x + _rect.size.width / 2.0f) / kPixelsPerMeter,
-		(pos.y + _rect.size.height / 2.0f) / kPixelsPerMeter
-	);
 	
-	_body->SetTransform(b2Position, 0);
-};
-
-void GameObject::addBodyToWorld(b2World& world)
-{
-	_body = Box2dHelper::createBody(world, _bodyDef, _fixtureDef);
 };
 
 //
 // CHILD CLASSES
 //
-
-SolidPlatform::SolidPlatform(ValueMap& properties) : super(properties)
-{
-	float x = properties["x"].asFloat();
-	float y = properties["y"].asFloat();
-	float width = properties["width"].asFloat();
-	float height = properties["height"].asFloat();
-		
-	// converts world position to box2d world position
-	float x_ = (x + width / 2.0f) / kPixelsPerMeter;
-	float y_ = (y + height / 2.0f) / kPixelsPerMeter;
-
-	_bodyDef = Box2dHelper::createBodyDef(b2_kinematicBody, x_, y_, this);
-
-	_shape = Box2dHelper::createBoxShape(width, height);
-
-	_rect = Rect(x, y, width, height);
-	
-	_fixtureDef = Box2dHelper::createFixtureDef
-	(
-		_shape,
-		2.0f,
-		0.2f,
-		0.0f,
-		kFilterCatagory::SOLID_PLATFORM,
-		kFilterCatagory::PLAYER | kFilterCatagory::ENEMY,
-		false
-	);
-		
-	
-	this->setPosition(Vec2(x, y));
-};
-
-SolidSlope::SolidSlope(ValueMap& properties) : super(properties)
-{
-	ValueVector pointsVector = properties["points"].asValueVector();
-
-	float x = properties["x"].asFloat();
-	float y = properties["y"].asFloat();
-
-	float verticesSize = pointsVector.size() + 1;
-	b2Vec2 vertices[30];
-	int vindex = 0;
-
-	Vec2 position = Vec2((x) / kPixelsPerMeter, y / kPixelsPerMeter);
-
-	for (Value point : pointsVector)
-	{
-		vertices[vindex].x = (point.asValueMap()["x"].asFloat() / kPixelsPerMeter + position.x);
-		vertices[vindex].y = (-point.asValueMap()["y"].asFloat() / kPixelsPerMeter + position.y);
-		vindex++;
-	}
-
-	_bodyDef = Box2dHelper::createBodyDef(b2_kinematicBody, 0.0f, 0.0f, this);
-
-	_shape.CreateChain(vertices, vindex);
-	
-	_fixtureDef = Box2dHelper::createFixtureDef
-	(
-		_shape,
-		2.0f,
-		0.2f,
-		0.0f,
-		kFilterCatagory::SOLID_SLOPE,
-		kFilterCatagory::PLAYER | kFilterCatagory::ENEMY,
-		false
-	);
-};
 
 Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics) : super(properties)
 {
@@ -128,34 +45,22 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	float y = properties["y"].asFloat();
 	float width = _sprite->getContentSize().width;
 	float height = _sprite->getContentSize().height;
-	
-	float x_ = x / kPixelsPerMeter;
-	float y_ = y / kPixelsPerMeter;
-
-	_bodyDef = Box2dHelper::createBodyDef(b2_dynamicBody, x_, y_, this);
-
-	_shape = Box2dHelper::createBoxShape(width * _sprite->getScale(), height * _sprite->getScale());
-
-	_fixtureDef = Box2dHelper::createFixtureDef
-	(
-		_shape,
-		1.0f,
-		0.1f,
-		0.0f,
-		kFilterCatagory::PLAYER,
-		kFilterCatagory::SOLID_PLATFORM | kFilterCatagory::SOLID_SLOPE,
-		false
-	);
-
+		
 	this->addChild(_sprite);
-	//this->setPosition(Vec2(x, y));
+	this->setPosition(Vec2(x, y));
 	this->setAnchorPoint(Vec2(0.5, 0.5));
+
+	_direction = new Vec2[4];
+
+	_direction[NORTH] = Vec2(0, 1);
+	_direction[SOUTH] = Vec2(0, -1);
+	_direction[EAST] = Vec2(-1, 0);
+	_direction[WEST] = Vec2(1, 0);
 };
 
 void Player::update(Node* node)
 {		
 	//_physics->update(*this);
 	_graphics->update(*this);
-	_input->update(*this);
-	
+	_input->update(*this);	
 };

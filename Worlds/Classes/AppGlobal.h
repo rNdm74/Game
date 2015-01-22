@@ -29,7 +29,7 @@ public:
 	Vec2 cursorMove;
 	bool mouseUp;
 	bool mouseDown;
-	Vec2 mouseScroll;	
+	float scale;	
 
 	//EState state;
 	//EState previousState;
