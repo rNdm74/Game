@@ -147,6 +147,9 @@ void Level::load()
 void Level::followPlayer()
 {	
 	player = static_cast<Player*>(collisionLayer->getChildByName("Player"));
+
+	gameObjectList.push_back(player);
+
     this->setViewPointCenter(player->getPosition());
 }
 
@@ -252,83 +255,302 @@ void Level::setViewPointCenter(Vec2 position)
 }
 
 void Level::update(float& delta)
-{		
+{	
+	// updates scale creates zoom effect
 	this->setScale(global->scale);
 
-	Size mapSize = map->getMapSize();
+	// update gameobjects
+	for (auto& gameObject : gameObjectList) 
+		gameObject->update(this);
+				
+	// check collisions in level
+	checkCollisions();
+
+	// centre view port on player
+	this->setViewPointCenter(player->getPosition());
+}
+
+//void Level::checkCollisions()
+//{
+//	Size mapSize = map->getMapSize();
+//	Size tileSize = map->getTileSize();
+//
+//	float mapWidthPixels = mapSize.width * tileSize.width;
+//	float mapHeightPixels = mapSize.height * tileSize.height;
+//
+//	for (auto& gameObject : gameObjectList)
+//	{
+//		// Variables
+//		EBearing bearing = gameObject->getBearing();
+//		Vec2* direction = gameObject->getDirection();
+//		Rect boundingBox = gameObject->getBoundingBox();
+//		Size size = Size
+//		(
+//			boundingBox.size.width / 2,
+//			boundingBox.size.height / 2
+//		);
+//		
+//		// Update gameObject position
+//		boundingBox.origin.x += kGameObjectVelocity.x * kUpdateInterval * direction[bearing].x;
+//		boundingBox.origin.y += kGameObjectVelocity.y * kUpdateInterval * direction[bearing].y;
+//
+//		// Get gameObject bounds
+//		float gameObjectTop = boundingBox.origin.y + size.height;
+//		float gameObjectLeft = boundingBox.origin.x - size.width;
+//		float gameObjectRight = boundingBox.origin.x + size.width;
+//		float gameObjectBottom = boundingBox.origin.y - size.height;
+//
+//		// Check if gameObject is within screenbounds
+//		bool xBounds = gameObjectRight <= mapWidthPixels && gameObjectLeft >= 0;
+//		bool yBounds = gameObjectTop <= mapHeightPixels && gameObjectBottom >= 0;
+//
+//		if (xBounds && yBounds) // Everything is all good
+//		{		
+//			// Variables
+//			int gid = 0;
+//			bool collided = false;   
+//			Sprite* tile = nullptr;
+//			
+//			// Which tile is needed to be checked
+//			Vec2 tileCoordinate = Vec2
+//			(
+//				boundingBox.origin.x / tileSize.width,
+//				(mapHeightPixels - boundingBox.origin.y) / tileSize.height
+//			);
+//
+//			switch (bearing)
+//			{
+//				case NORTH :
+//					tileCoordinate.y = (mapHeightPixels - gameObjectTop) / tileSize.height;
+//					break;
+//				case EAST :
+//					tileCoordinate.x = gameObjectLeft / tileSize.width;
+//					break;
+//				case WEST :
+//					tileCoordinate.x = gameObjectRight / tileSize.width;
+//					break; 
+//				case SOUTH :
+//					tileCoordinate.y = (mapHeightPixels - gameObjectBottom) / tileSize.height;
+//					break;
+//			}
+//			
+//			// Get the tile and gid of tile gameObject has moved on
+//			if (tileCoordinate.x < mapSize.width && tileCoordinate.x > 0 &&
+//				tileCoordinate.y < mapSize.height && tileCoordinate.y > 0)
+//			{
+//				gid = foregroundLayer->getTileGIDAt(tileCoordinate);
+//				tile = foregroundLayer->getTileAt(tileCoordinate);
+//			}
+//
+//			// If gid is valid
+//			if (gid)
+//			{				
+//				ValueMap valuemap = tileProperties[gid].asValueMap();				
+//				collided = valuemap["Collidable"].asBool();	
+//			}
+//						
+//			if (collided == false)
+//			{
+//				gameObject->setPosition(boundingBox.origin);
+//			}
+//			else// If tile is valid
+//			{
+//				log("hit tile");
+//
+//				Rect tileBoundingBox = tile->getBoundingBox();
+//
+//				float tileTop = tileBoundingBox.getMaxY();
+//				float tileLeft = tileBoundingBox.getMinX();
+//				float tileRight = tileBoundingBox.getMaxX();
+//				float tileBottom = tileBoundingBox.getMinY();
+//
+//				// get distance 
+//				Vec2 distance = boundingBox.origin - tileBoundingBox.origin;
+//
+//				if (bearing == NORTH)
+//				{
+//					gameObject->setPositionY(tileBottom - size.height);
+//				}
+//
+//				if (bearing == EAST)
+//				{
+//					gameObject->setPositionX(tileRight + size.width);
+//				}
+//
+//				if (bearing == WEST)
+//				{
+//					gameObject->setPositionX(tileLeft - size.width);
+//				}
+//
+//				if (bearing == SOUTH)
+//				{
+//					gameObject->setPositionY(tileTop + size.height);
+//				}
+//			}
+//		}
+//	}
+//}
+
+
+Vec2 Level::tileCoordForPosition(Vec2 position)
+{
 	Size tileSize = map->getTileSize();
-    Size playerSize = player->getSize();
-    
-    float mapWidthPixels = mapSize.width * tileSize.width;
-    float mapHeightPixels = mapSize.height * tileSize.height;
+	Size mapSize = map->getMapSize();
 
-	// call update functions of entities that uses cocos2d-x action methods, so the physics of this entities syncs with its sprites
-	Vec2 newPlayerPos = player->getPosition();
-	Vec2 velocity = Vec2(15 * kPixelsPerMeter, 15 * kPixelsPerMeter);
-	Vec2 desiredVel = Vec2::ZERO;
-	Vec2 direction = Vec2::ZERO;
-		
-	if (global->states.LEFT)	
-		direction.x = -1;
-	if (global->states.RIGHT)	
-		direction.x = 1;
-	if (global->states.DOWN)	
-		direction.y = -1;
-	if (global->states.UP)		
-		direction.y = 1;
-	if (global->states.STOP)
-		direction = Vec2::ZERO;
-	
-	//
-	newPlayerPos.x += velocity.x * delta * direction.x;
-	newPlayerPos.y += velocity.y * delta * direction.y;
+	float x = floor(position.x / tileSize.width);
 
-	//
-    bool xBounds = newPlayerPos.x <= mapWidthPixels && newPlayerPos.x >= 0;
-    bool yBounds = newPlayerPos.y <= mapHeightPixels && newPlayerPos.y >= 0;
-    
-	// safety check on the bounds of the map
-	if (xBounds && yBounds)
+	float levelHeightInPixels = mapSize.height * tileSize.height;
+
+	float y = floor((levelHeightInPixels - position.y) / tileSize.height);
+
+	return Vec2(x, y);
+}
+
+Rect Level::tileRectFromTileCoords(Vec2 tileCoords)
+{
+	Size tileSize = map->getTileSize();
+	Size mapSize = map->getMapSize();
+
+	float levelHeightInPixels = mapSize.height * tileSize.height;
+
+	Vec2 origin = Vec2(tileCoords.x * tileSize.width, levelHeightInPixels - ((tileCoords.y + 1) * tileSize.height));
+
+	return Rect(origin.x, origin.y, tileSize.width, tileSize.height);
+}
+
+Rect Level::RectIntersection(Rect r1, Rect r2)
+{
+	Rect intersection;
+
+	intersection = Rect(std::max(r1.getMinX(), r2.getMinX()), std::max(r1.getMinY(), r2.getMinY()), 0, 0);
+	intersection.size.width = std::min(r1.getMaxX(), r2.getMaxX()) - intersection.getMinX();
+	intersection.size.height = std::min(r1.getMaxY(), r2.getMaxY()) - intersection.getMinY();
+
+	return intersection;
+}
+
+
+
+std::vector<TileData> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
+{
+	Vec2 plPos = tileCoordForPosition(position);
+
+	std::vector<TileData> gids;
+
+	for (int i = 0; i < 9; i++) 
 	{
-        // player origin vector converted to tile co-ordinates
-		int x = newPlayerPos.x / tileSize.width;
-		int y = (mapHeightPixels - newPlayerPos.y) / tileSize.height;
+		int c = i % 3;
+		int r = (int)(i / 3); 
 
-        // calculate left, right, top, bottom tile co-ordinates of player
-		int left = (newPlayerPos.x - playerSize.width / 2) / tileSize.width;
-		int right = (newPlayerPos.x + playerSize.width / 2) / tileSize.width;
-		int top = (mapHeightPixels - (newPlayerPos.y + playerSize.height / 2)) / tileSize.height;
-		int bottom = (mapHeightPixels - (newPlayerPos.y - playerSize.height / 2)) / tileSize.height;
+		Vec2 tilePos = Vec2(plPos.x + (c - 1), plPos.y + (r - 1));
 
-        // depending on direction player moving get gid
-        Vec2 tileOrdinate = Vec2(x,y);        
-        if (direction.x == 1) tileOrdinate = Vec2(right, bottom);
-		if (direction.x == -1) tileOrdinate = Vec2(left, bottom);
-        if (direction.y == 1) tileOrdinate = Vec2(x, top);
-        if (direction.y == -1) tileOrdinate = Vec2(x, bottom);
-        
-		int gid = 0;
+		int tgid = layer->getTileGIDAt(tilePos); 
 
-		//check if tileOrdinate is valid
-		if (tileOrdinate.x < mapSize.width && tileOrdinate.x > 0 &&
-			tileOrdinate.y < mapSize.height && tileOrdinate.y > 0)
+		Rect tileRect = tileRectFromTileCoords(tilePos);
+
+		TileData tileData;		
+		tileData.gid = tgid;
+		tileData.x = tileRect.origin.x;
+		tileData.y = tileRect.origin.y;
+		tileData.pos = tilePos;
+
+		gids.push_back(tileData); //6
+	}
+
+	[gids removeObjectAtIndex : 4];
+	[gids insertObject : [gids objectAtIndex : 2] atIndex : 6];
+	[gids removeObjectAtIndex : 2];
+	[gids exchangeObjectAtIndex : 4 withObjectAtIndex : 6];
+	[gids exchangeObjectAtIndex : 0 withObjectAtIndex : 4]; //7
+
+	return gids;
+}
+
+void Level::checkForAndResolveCollisions(GameObject* gameObject)
+{
+	std::vector<TileData> tiles = getSurroundingTilesAtPosition(gameObject->getPosition(), foregroundLayer); //1
+
+	gameObject->onGround = false; //////Here
+
+	for (TileData data : tiles) 
+	{
+		Rect pRect = gameObject->getBoundingBox(); //3
+
+		int gid = [[dic objectForKey : @"gid"] intValue]; //4
+
+		if (gid) 
 		{
-			gid = foregroundLayer->getTileGIDAt(tileOrdinate);
-		}
-		
-		bool collided = false;
+			Rect tileRect = Rect(data.x, data.x, map->getTileSize().width, map->getTileSize().height); //5
 
-        if (gid)
-        {
-            auto valuemap = tileProperties[gid].asValueMap();
-            collided = valuemap["Collidable"].asBool();
-        }
-		
-		if (collided == false)
-		{
-			player->setPosition(newPlayerPos);
+			if (pRect.intersectsRect(tileRect)) 
+			{
+				Rect intersection = RectIntersection(pRect, tileRect);
+
+				int tileIndx = tiles.// indexOfObject : dic];
+
+				if (tileIndx == 0) 
+				{
+					//tile is directly below player
+					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
+					gameObject->velocity = Vec2(gameObject->velocity.x, 0.0); //////Here
+					gameObject->onGround = true; //////Here
+				}
+				else if (tileIndx == 1) 
+				{
+					//tile is directly above player
+					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y - intersection.size.height);
+					gameObject->velocity = Vec2(gameObject->velocity.x, 0.0); //////Here
+				}
+				else if (tileIndx == 2) 
+				{
+					//tile is left of player
+					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + intersection.size.width, gameObject->desiredPosition.y);
+				}
+				else if (tileIndx == 3) 
+				{
+					//tile is right of player
+					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x - intersection.size.width, gameObject->desiredPosition.y);
+				}
+				else 
+				{
+					if (intersection.size.width > intersection.size.height) 
+					{
+						//tile is diagonal, but resolving collision vertially
+						gameObject->velocity = Vec2(gameObject->velocity.x, 0.0); //////Here
+
+						float resolutionHeight;
+						
+						if (tileIndx > 5) 
+						{
+							resolutionHeight = intersection.size.height;
+							gameObject->onGround = true; //////Here
+						}
+						else 
+						{
+							resolutionHeight = -intersection.size.height;
+						}
+
+						gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
+					}
+					else 
+					{
+						float resolutionWidth;
+
+						if (tileIndx == 6 || tileIndx == 4) 
+						{
+							resolutionWidth = intersection.size.width;
+						}
+						else 
+						{
+							resolutionWidth = -intersection.size.width;
+						}
+
+						gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + resolutionWidth);
+					}
+				}
+			}
 		}
 	}
-	
-	this->setViewPointCenter(player->getPosition());
+
+	gameObject->setPosition(gameObject->desiredPosition); //8
 }

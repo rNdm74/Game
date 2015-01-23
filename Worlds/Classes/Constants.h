@@ -5,7 +5,7 @@
 
 // PNG assets
 #define BACKGROUND_PNG		"background.png"
-#define CHARACTERS_PNG		"characters.png"
+#define CHARACTERS_PNG		"characters-sd.png"
 #define CONTROLS_PNG		"controls.png"
 #define HUD_PNG				"hud.png"
 #define ITEMS_PNG			"items.png"
@@ -14,7 +14,7 @@
 
 // PLIST assets
 #define BACKGROUND_PLIST	"background.plist"
-#define CHARACTERS_PLIST	"characters.plist"
+#define CHARACTERS_PLIST	"characters-sd.plist"
 #define CONTROLS_PLIST		"controls.plist"
 #define HUD_PLIST			"hud.plist"
 #define ITEMS_PLIST			"items.plist"
@@ -31,7 +31,6 @@
 #define kBackgroundLayer 1
 #define kMidgroundLayer 2
 #define kForegroundLayer 3
-#define PTM_RATIO 32.0
 
 #define FILE_PREFIX "alien"
 #define FILE_SUFFIX "_badge2.png"
@@ -40,9 +39,13 @@
 
 #define PI 3.14159265
 
+const float kPixelsPerMeter = 32.0f;
+const float kGravity = -100.0f; // adjust this to taste
+const float kUpdateInterval = 1.0f / 60.0f;
+const double kSecondsPerUpdate = 0.1;
+
 const float kMapBoundsX = 0;
 const float kMapBoundsY = 1.0f;
-
 
 const float kMinVelocityX						= 1.0f;
 const float kMaxVelocityX						= 15.0f;
@@ -53,12 +56,7 @@ const float kGameObjectFixtureFriction			= 0.1f;
 const float kGameObjectFixtureRestitution		= 0.0f;
 const int	kGameObjectFixtureFilterMaskBits	= 0xffff;
 
-
-
-const float kPixelsPerMeter						= 32.0f;
-const float kGravity							= -100.0f; // adjust this to taste
-const float kUpdateInterval						= 1.0f / 60.0f;
-const double kSecondsPerUpdate					= 0.1;
+#define kGameObjectVelocity	( Vec2( kPixelsPerMeter * kMaxVelocityX, kPixelsPerMeter * kMaxVelocityX ) )
 
 const std::string kLevelTMX						= "grassPlanet.tmx";
 const std::string kPlayerFileName				= "alienBeige.png";
@@ -89,26 +87,21 @@ enum kFilterCatagory
 	//RADAR_SENSOR = 0x0040,
 };
 
-enum
-{
-	kFilterCategoryLevel = 0x01,
-	kFilterCategorySolidObject = 0x02,
-	kFilterCategoryNonSolidObject = 0x04
-};
-
-enum
-{
-	kTagNode,
-	kTagPlayer,
-	kTagStartPosition
-};
-
 enum EBearing
 {
 	NORTH,
 	SOUTH,
 	EAST,
-	WEST
+	WEST,
+	STOP
+};
+
+struct TileData
+{
+	float x;
+	float y;
+	Vec2 pos;
+	int gid;
 };
 
 #endif /* defined(__CONSTANTS__) */

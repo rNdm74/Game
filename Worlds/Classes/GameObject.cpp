@@ -51,11 +51,13 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	this->setAnchorPoint(Vec2(0.5, 0.5));
 
 	_direction = new Vec2[4];
-
 	_direction[NORTH] = Vec2(0, 1);
 	_direction[SOUTH] = Vec2(0, -1);
 	_direction[EAST] = Vec2(-1, 0);
 	_direction[WEST] = Vec2(1, 0);
+	_direction[STOP] = Vec2(0, 0);
+
+	_bearing = STOP;
 };
 
 void Player::update(Node* node)

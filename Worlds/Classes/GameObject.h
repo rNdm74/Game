@@ -15,6 +15,7 @@ class IGameObject
 {
 public:
 	virtual void update(Node* node) = 0;
+	virtual Rect getBoundingBox() = 0;
 };
 
 /// <summary>
@@ -43,9 +44,19 @@ public:
 	//
 	virtual void setProperties(ValueMap& properties) { _properties = properties; }
 	virtual ValueMap getProperties(){ return _properties;  };
+	virtual Vec2* getDirection() { return _direction; };
+	virtual void setBearing(EBearing bearing) { _bearing = bearing; }
+	virtual EBearing getBearing() { return _bearing;  };
+	virtual Size getSize(){ return this->getContentSize();  };
+	virtual Rect getBoundingBox(){ return this->getBoundingBox(); };
 
+	bool onGround;
+	Vec2 velocity;
+	Vec2 desiredPosition;
 
 protected: 
+	Vec2* _direction;
+	EBearing _bearing;
 
 private:
 	ValueMap _properties;
@@ -67,8 +78,9 @@ public:
 	~Player(){};
 
 	virtual void update(Node* node) override;
-	Size getSize() { return _sprite->getContentSize(); }
-	Vec2* getDirection() { return _direction; }
+	virtual Size getSize() override { return _sprite->getContentSize(); };
+
+	virtual Rect getBoundingBox() override { return Rect(this->getPosition().x, this->getPosition().y, _sprite->getContentSize().width, _sprite->getContentSize().height); };
 
 private:
 	Sprite* _sprite;
@@ -76,9 +88,7 @@ private:
 	MenuComponent* _menu;
 	InputComponent* _input;
 	PhysicsComponent* _physics;
-	GraphicsComponent* _graphics;	
-
-	Vec2* _direction;
+	GraphicsComponent* _graphics;		
 };
 
 #endif /* defined(__Worlds__GAME_OBJECT_H__) */

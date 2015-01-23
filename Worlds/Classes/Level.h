@@ -28,10 +28,16 @@ public:
 	GameObject* addObject(std::string className, ValueMap& properties);
 
 	void update(float& delta);
+	void checkCollisions();
 
-	void setAliasTexParameters(TMXLayer* layer);
-    
+	void setAliasTexParameters(TMXLayer* layer);    
     void setViewPointCenter(Vec2 position);
+
+	Vec2 tileCoordForPosition(Vec2 position);
+	Rect tileRectFromTileCoords(Vec2 tileCoords);
+	Rect RectIntersection(Rect r1, Rect r2);
+	std::vector<TileData> getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
+	void checkForAndResolveCollisions(GameObject* gameObject);
 
 	TMXTiledMap* getMap() { return map; }
 	
@@ -58,6 +64,8 @@ private:
 	Size size;
 
 	int objectCount;
+
+	std::vector<GameObject*> gameObjectList;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */

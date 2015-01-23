@@ -162,7 +162,6 @@ World* World::create()
 World::World()
 {
 	background = WorldParallaxBackGround::create();
-
 	this->addChild(background);
 
 	level = new Level();
