@@ -100,7 +100,7 @@ struct TileData
 {
 	float x;
 	float y;
-	Vec2 pos;
+    cocos2d::Vec2 pos;
 	int gid;
 };
 

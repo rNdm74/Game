@@ -261,10 +261,14 @@ void Level::update(float& delta)
 
 	// update gameobjects
 	for (auto& gameObject : gameObjectList) 
-		gameObject->update(this);
-				
+    {
+        gameObject->update(this);
+        checkForAndResolveCollisions(gameObject);
+    }
+    
 	// check collisions in level
-	checkCollisions();
+	//checkCollisions();
+    
 
 	// centre view port on player
 	this->setViewPointCenter(player->getPosition());
@@ -434,7 +438,7 @@ Rect Level::RectIntersection(Rect r1, Rect r2)
 std::vector<TileData> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
 {
 	Vec2 plPos = tileCoordForPosition(position);
-
+    
 	std::vector<TileData> gids;
 
 	for (int i = 0; i < 9; i++) 
@@ -444,24 +448,28 @@ std::vector<TileData> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLay
 
 		Vec2 tilePos = Vec2(plPos.x + (c - 1), plPos.y + (r - 1));
 
-		int tgid = layer->getTileGIDAt(tilePos); 
-
-		Rect tileRect = tileRectFromTileCoords(tilePos);
-
-		TileData tileData;		
-		tileData.gid = tgid;
-		tileData.x = tileRect.origin.x;
-		tileData.y = tileRect.origin.y;
-		tileData.pos = tilePos;
-
-		gids.push_back(tileData); //6
+        if(tilePos.x < map->getMapSize().width && tilePos.x > 0 &&
+           tilePos.y < map->getMapSize().height && tilePos.y > 0)
+        {
+            int tgid = layer->getTileGIDAt(tilePos);
+            
+            Rect tileRect = tileRectFromTileCoords(tilePos);
+            
+            TileData tileData;
+            tileData.gid = tgid;
+            tileData.x = tileRect.origin.x;
+            tileData.y = tileRect.origin.y;
+            tileData.pos = tilePos;
+            
+            gids.push_back(tileData); //6
+        }
 	}
 
-	[gids removeObjectAtIndex : 4];
-	[gids insertObject : [gids objectAtIndex : 2] atIndex : 6];
-	[gids removeObjectAtIndex : 2];
-	[gids exchangeObjectAtIndex : 4 withObjectAtIndex : 6];
-	[gids exchangeObjectAtIndex : 0 withObjectAtIndex : 4]; //7
+	//[gids removeObjectAtIndex : 4];
+	//[gids insertObject : [gids objectAtIndex : 2] atIndex : 6];
+	//[gids removeObjectAtIndex : 2];
+	//[gids exchangeObjectAtIndex : 4 withObjectAtIndex : 6];
+	//[gids exchangeObjectAtIndex : 0 withObjectAtIndex : 4]; //7
 
 	return gids;
 }
@@ -472,11 +480,13 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 
 	gameObject->onGround = false; //////Here
 
+    int tileIndx = 0;
+    
 	for (TileData data : tiles) 
 	{
 		Rect pRect = gameObject->getBoundingBox(); //3
 
-		int gid = [[dic objectForKey : @"gid"] intValue]; //4
+		int gid = data.gid; //4
 
 		if (gid) 
 		{
@@ -486,7 +496,7 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 			{
 				Rect intersection = RectIntersection(pRect, tileRect);
 
-				int tileIndx = tiles.// indexOfObject : dic];
+				//int tileIndx = tiles.// indexOfObject : dic];
 
 				if (tileIndx == 0) 
 				{

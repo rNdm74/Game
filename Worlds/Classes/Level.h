@@ -28,7 +28,7 @@ public:
 	GameObject* addObject(std::string className, ValueMap& properties);
 
 	void update(float& delta);
-	void checkCollisions();
+	//void checkCollisions();
 
 	void setAliasTexParameters(TMXLayer* layer);    
     void setViewPointCenter(Vec2 position);
