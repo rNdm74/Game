@@ -461,18 +461,32 @@ std::vector<TileData*> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLa
 				tileData->pos = tilePos;
 
 				gids.push_back(tileData);
-
-				//delete tileData;
-			}   
+            }
 			else
 			{
-				gids.push_back(nullptr);
+                gids.push_back(nullptr);
 			}
 
 			
         }
 	}
-
+    
+    // swap bottom tile to 0
+    auto temp = gids[0];
+    gids[0] = gids[7];
+    gids[7] = temp;
+    
+    temp = gids[2];
+    gids[2] = gids[3]; // swap 3 -> 2
+    gids[3] = gids[5]; // swap 5 -> 3
+    gids[5] = temp;    // swap 2 -> 5
+    
+    /* OLD | NEW
+     * 012 | 713
+     * 345 | 542
+     * 678 | 608
+     */
+    
 	return gids;
 }
 
@@ -497,13 +511,25 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 				Rect intersection = RectIntersection(gameObjectBoundingBox, tileRect);
 				Rect rectUnion = gameObjectBoundingBox.unionWithRect(tileRect);
 			
-				if (i == 7) // tile is below gameobject
+				if (i == 0) // tile is below gameobject
 				{					
 					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
 					gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);					
 					gameObject->onGround = true;
-					
 				}
+                else if (i == 1) // top tile
+                {
+                    gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y - intersection.size.height);
+                    gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
+                }
+                else if (i == 2) // left tile
+                {
+                    gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + intersection.size.width, gameObject->desiredPosition.y);
+                }
+                else if (i == 3) // right tile
+                {
+                    gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x - intersection.size.width, gameObject->desiredPosition.y);
+                }
 			}
 		}
 	}

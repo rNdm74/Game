@@ -55,10 +55,10 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	Vec2 minMovement = Vec2(0.0, -450.0);
 	Vec2 maxMovement = Vec2(120.0, 250.0);
 
-	gameObject.velocity.clamp(minMovement, maxMovement);
+	//gameObject.velocity.clamp(minMovement, maxMovement);
 
 	Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
 
 	// 
-	gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;		
+	gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;
 }
