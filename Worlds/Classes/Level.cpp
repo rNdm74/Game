@@ -263,13 +263,13 @@ void Level::update(float& delta)
 	for (auto& gameObject : gameObjectList) 
     {
         gameObject->update(this);
+
         checkForAndResolveCollisions(gameObject);
     }
     
 	// check collisions in level
 	//checkCollisions();
     
-
 	// centre view port on player
 	this->setViewPointCenter(player->getPosition());
 }
@@ -407,7 +407,7 @@ Vec2 Level::tileCoordForPosition(Vec2 position)
 
 	float y = floor((levelHeightInPixels - position.y) / tileSize.height);
 
-	return Vec2(x, y);
+	return Vec2(x, y - 1);
 }
 
 Rect Level::tileRectFromTileCoords(Vec2 tileCoords)
@@ -433,134 +433,80 @@ Rect Level::RectIntersection(Rect r1, Rect r2)
 	return intersection;
 }
 
-
-
-std::vector<TileData> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
+std::vector<TileData*> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
 {
-	Vec2 plPos = tileCoordForPosition(position);
+	Vec2 gameObjectPosition = tileCoordForPosition(position);
     
-	std::vector<TileData> gids;
+	std::vector<TileData*> gids;
 
 	for (int i = 0; i < 9; i++) 
 	{
-		int c = i % 3;
-		int r = (int)(i / 3); 
+		int column = i % 3;
+		int row = (int)(i / 3); 
 
-		Vec2 tilePos = Vec2(plPos.x + (c - 1), plPos.y + (r - 1));
+		Vec2 tilePos = Vec2(gameObjectPosition.x + (column - 1), gameObjectPosition.y + (row - 1));
 
-        if(tilePos.x < map->getMapSize().width && tilePos.x > 0 &&
-           tilePos.y < map->getMapSize().height && tilePos.y > 0)
+        if(tilePos.x < map->getMapSize().width && tilePos.x >= 0 &&  tilePos.y < map->getMapSize().height && tilePos.y >= 0)
         {
             int tgid = layer->getTileGIDAt(tilePos);
             
-            Rect tileRect = tileRectFromTileCoords(tilePos);
-            
-            TileData tileData;
-            tileData.gid = tgid;
-            tileData.x = tileRect.origin.x;
-            tileData.y = tileRect.origin.y;
-            tileData.pos = tilePos;
-            
-            gids.push_back(tileData); //6
+			if (tgid)
+			{
+				Rect tileRect = tileRectFromTileCoords(tilePos);
+
+				TileData* tileData = new TileData();
+				tileData->gid = tgid;
+				tileData->x = tileRect.origin.x;
+				tileData->y = tileRect.origin.y;
+				tileData->pos = tilePos;
+
+				gids.push_back(tileData);
+
+				//delete tileData;
+			}   
+			else
+			{
+				gids.push_back(nullptr);
+			}
+
+			
         }
 	}
-
-	//[gids removeObjectAtIndex : 4];
-	//[gids insertObject : [gids objectAtIndex : 2] atIndex : 6];
-	//[gids removeObjectAtIndex : 2];
-	//[gids exchangeObjectAtIndex : 4 withObjectAtIndex : 6];
-	//[gids exchangeObjectAtIndex : 0 withObjectAtIndex : 4]; //7
 
 	return gids;
 }
 
 void Level::checkForAndResolveCollisions(GameObject* gameObject)
 {
-	std::vector<TileData> tiles = getSurroundingTilesAtPosition(gameObject->getPosition(), foregroundLayer); //1
+	std::vector<TileData*> tiles = getSurroundingTilesAtPosition(gameObject->desiredPosition, foregroundLayer);
+		
+	gameObject->onGround = false;
+	gameObject->canJump = false;
 
-	gameObject->onGround = false; //////Here
-
-    int tileIndx = 0;
-    
-	for (TileData data : tiles) 
+	for (int i = 0; i < tiles.size(); i++)
 	{
-		Rect pRect = gameObject->getBoundingBox(); //3
+		TileData* tileData = tiles[i];
 
-		int gid = data.gid; //4
+		if (tileData)
+		{			
+			Rect gameObjectBoundingBox = gameObject->getBoundingBox();
+			Rect tileRect = Rect(tileData->x, tileData->y, map->getTileSize().width, map->getTileSize().height);
 
-		if (gid) 
-		{
-			Rect tileRect = Rect(data.x, data.x, map->getTileSize().width, map->getTileSize().height); //5
-
-			if (pRect.intersectsRect(tileRect)) 
+			if (gameObjectBoundingBox.intersectsRect(tileRect))
 			{
-				Rect intersection = RectIntersection(pRect, tileRect);
-
-				//int tileIndx = tiles.// indexOfObject : dic];
-
-				if (tileIndx == 0) 
-				{
-					//tile is directly below player
+				Rect intersection = RectIntersection(gameObjectBoundingBox, tileRect);
+				Rect rectUnion = gameObjectBoundingBox.unionWithRect(tileRect);
+			
+				if (i == 7) // tile is below gameobject
+				{					
 					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
-					gameObject->velocity = Vec2(gameObject->velocity.x, 0.0); //////Here
-					gameObject->onGround = true; //////Here
-				}
-				else if (tileIndx == 1) 
-				{
-					//tile is directly above player
-					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y - intersection.size.height);
-					gameObject->velocity = Vec2(gameObject->velocity.x, 0.0); //////Here
-				}
-				else if (tileIndx == 2) 
-				{
-					//tile is left of player
-					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + intersection.size.width, gameObject->desiredPosition.y);
-				}
-				else if (tileIndx == 3) 
-				{
-					//tile is right of player
-					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x - intersection.size.width, gameObject->desiredPosition.y);
-				}
-				else 
-				{
-					if (intersection.size.width > intersection.size.height) 
-					{
-						//tile is diagonal, but resolving collision vertially
-						gameObject->velocity = Vec2(gameObject->velocity.x, 0.0); //////Here
-
-						float resolutionHeight;
-						
-						if (tileIndx > 5) 
-						{
-							resolutionHeight = intersection.size.height;
-							gameObject->onGround = true; //////Here
-						}
-						else 
-						{
-							resolutionHeight = -intersection.size.height;
-						}
-
-						gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
-					}
-					else 
-					{
-						float resolutionWidth;
-
-						if (tileIndx == 6 || tileIndx == 4) 
-						{
-							resolutionWidth = intersection.size.width;
-						}
-						else 
-						{
-							resolutionWidth = -intersection.size.width;
-						}
-
-						gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + resolutionWidth);
-					}
+					gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);					
+					gameObject->onGround = true;
+					
 				}
 			}
 		}
 	}
 
-	gameObject->setPosition(gameObject->desiredPosition); //8
+	gameObject->setPosition(gameObject->desiredPosition);
 }

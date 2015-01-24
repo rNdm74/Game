@@ -51,6 +51,8 @@ public:
 	virtual Rect getBoundingBox(){ return this->getBoundingBox(); };
 
 	bool onGround;
+	bool canJump;
+	bool move;
 	Vec2 velocity;
 	Vec2 desiredPosition;
 
@@ -79,9 +81,8 @@ public:
 
 	virtual void update(Node* node) override;
 	virtual Size getSize() override { return _sprite->getContentSize(); };
-
 	virtual Rect getBoundingBox() override { return Rect(this->getPosition().x, this->getPosition().y, _sprite->getContentSize().width, _sprite->getContentSize().height); };
-
+	
 private:
 	Sprite* _sprite;
 

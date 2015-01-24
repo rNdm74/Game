@@ -9,8 +9,8 @@
 
 GameObject::GameObject(ValueMap& properties)
 {
-	this->setAnchorPoint(Vec2(0.5f, 0.5f));
 	this->setProperties(properties);
+	this->setAnchorPoint(Vec2::ZERO);
 };
 
 void GameObject::update(Node* node)
@@ -33,6 +33,16 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	_sprite->getTexture()->setAliasTexParameters();
 	_sprite->getTexture()->setAntiAliasTexParameters();
 	_sprite->setScale(1.0f);
+	_sprite->setAnchorPoint(Vec2::ZERO);
+
+	_direction = new Vec2[4];
+	_direction[NORTH] = Vec2(0, 1);
+	_direction[SOUTH] = Vec2(0, -1);
+	_direction[EAST] = Vec2(-1, 0);
+	_direction[WEST] = Vec2(1, 0);
+	_direction[STOP] = Vec2(0, 0);
+
+	_bearing = STOP;
 	
 	auto shadow = Sprite::create();
 	shadow->setSpriteFrame(_sprite->getSpriteFrame());
@@ -48,16 +58,6 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 		
 	this->addChild(_sprite);
 	this->setPosition(Vec2(x, y));
-	this->setAnchorPoint(Vec2(0.5, 0.5));
-
-	_direction = new Vec2[4];
-	_direction[NORTH] = Vec2(0, 1);
-	_direction[SOUTH] = Vec2(0, -1);
-	_direction[EAST] = Vec2(-1, 0);
-	_direction[WEST] = Vec2(1, 0);
-	_direction[STOP] = Vec2(0, 0);
-
-	_bearing = STOP;
 };
 
 void Player::update(Node* node)

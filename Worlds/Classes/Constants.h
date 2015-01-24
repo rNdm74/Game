@@ -2,6 +2,7 @@
 #define __FranticAlien__CONSTANTS_H__
 
 #include <string>
+#include "cocos2d.h"
 
 // PNG assets
 #define BACKGROUND_PNG		"background.png"

@@ -36,8 +36,12 @@ public:
 	Vec2 tileCoordForPosition(Vec2 position);
 	Rect tileRectFromTileCoords(Vec2 tileCoords);
 	Rect RectIntersection(Rect r1, Rect r2);
-	std::vector<TileData> getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
+
+	std::vector<TileData*>  getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
+	
 	void checkForAndResolveCollisions(GameObject* gameObject);
+
+	
 
 	TMXTiledMap* getMap() { return map; }
 	
