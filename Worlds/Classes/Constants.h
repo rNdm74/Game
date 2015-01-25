@@ -40,6 +40,7 @@
 
 #define PI 3.14159265
 
+
 const float kPixelsPerMeter = 32.0f;
 const float kGravity = -100.0f; // adjust this to taste
 const float kUpdateInterval = 1.0f / 60.0f;
@@ -97,6 +98,18 @@ enum EBearing
 	STOP
 };
 
+enum ETileGrid
+{
+	BOTTOM,
+	TOP,
+	LEFT,
+	RIGHT,
+	TOP_LEFT,
+	TOP_RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM_RIGHT,
+};
+
 struct TileData
 {
 	float x;
@@ -104,5 +117,7 @@ struct TileData
     cocos2d::Vec2 pos;
 	int gid;
 };
+
+
 
 #endif /* defined(__CONSTANTS__) */

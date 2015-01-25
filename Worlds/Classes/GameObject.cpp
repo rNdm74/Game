@@ -18,6 +18,46 @@ void GameObject::update(Node* node)
 	
 };
 
+void GameObject::setProperties(ValueMap& properties) 
+{
+	_properties = properties; 
+};
+
+ValueMap GameObject::getProperties()
+{ 
+	return _properties;
+};
+
+Vec2* GameObject::getDirection() 
+{ 
+	return _direction; 
+};
+
+void GameObject::setBearing(EBearing bearing) 
+{ 
+	_bearing = bearing; 
+}
+
+EBearing GameObject::getBearing() 
+{ 
+	return _bearing; 
+};
+
+Size GameObject::getSize()
+{ 
+	return this->getContentSize(); 
+};
+
+Rect GameObject::getBoundingBox()
+{ 
+	return this->getBoundingBox(); 
+};
+
+Rect GameObject::getCollisionBoundingBox()
+{ 
+	return this->getBoundingBox();
+};
+
 //
 // CHILD CLASSES
 //
@@ -66,3 +106,32 @@ void Player::update(Node* node)
 	_graphics->update(*this);
 	_input->update(*this);	
 };
+
+Size Player::getSize()
+{
+	return _sprite->getContentSize();
+}
+
+Rect Player::getBoundingBox()
+{
+	return Rect
+	(
+		this->getPosition().x, 
+		this->getPosition().y, 
+		_sprite->getContentSize().width, 
+		_sprite->getContentSize().height
+	);
+}
+
+Rect Player::getCollisionBoundingBox()
+{
+	Rect collisionBox = getBoundingBox();
+
+	Vec2 diff = desiredPosition - getPosition();
+
+	collisionBox.origin = collisionBox.origin + diff;
+
+	Rect returnBoundingBox = collisionBox;//CGRectOffset(collisionBox, diff.x, diff.y);
+	
+	return returnBoundingBox;
+}

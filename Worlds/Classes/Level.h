@@ -70,6 +70,8 @@ private:
 	int objectCount;
 
 	std::vector<GameObject*> gameObjectList;
+
+	DrawNode* drawNode;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */

@@ -7,12 +7,22 @@ void PlayerInputComponent::update(GameObject& gameObject)
 {
 	auto global = AppGlobal::getInstance();
 
-	
+	float direction = 0;
 
 	if (global->states.LEFT)
-		gameObject.move = true;//gameObject.setBearing(EAST);
+	{
+		gameObject.move = true; 
+		direction = -1;
+		//gameObject.setBearing(EAST);
+	}
+		
 	if (global->states.RIGHT)
-		gameObject.move = true;//gameObject.setBearing(WEST);
+	{
+		gameObject.move = true; 
+		direction = 1;
+		//gameObject.setBearing(WEST);
+	}
+			
 	if (global->states.DOWN)
 		gameObject.setBearing(SOUTH);
 	if (global->states.UP)
@@ -49,7 +59,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 
 	if (gameObject.move) 
 	{
-		gameObject.velocity = gameObject.velocity + forwardStep;
+		gameObject.velocity = gameObject.velocity + forwardStep * direction;
 	}
 
 	Vec2 minMovement = Vec2(0.0, -450.0);
