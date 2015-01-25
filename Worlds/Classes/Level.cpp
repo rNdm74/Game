@@ -387,9 +387,9 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 
 	Rect gameObjectBoundingBox = gameObject->getCollisionBoundingBox();
 	// draw gameObject bounding box
-	drawNode->clear();
-	drawNode->drawRect(gameObjectBoundingBox.origin, Vec2(gameObjectBoundingBox.getMaxX(), gameObjectBoundingBox.getMaxY()), Color4F(1.0f, 0.3f, 0.3f, 1));
 
+    drawNode->clear();
+    
 	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < tiles.size(); tileIndex++)
 	{
 		TileData* tileData = tiles[tileIndex];
@@ -398,6 +398,13 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 		{	
 			Rect tileRect = Rect(tileData->x, tileData->y, map->getTileSize().width, map->getTileSize().height);
 
+            drawNode->drawRect
+            (
+                foregroundLayer->convertToWorldSpace(tileRect.origin),
+                Vec2(tileRect.origin.x + 70, tileRect.origin.y + 70),
+                Color4F(1.0f, 0.3f, 0.3f, 1)
+            );
+            
 			if (tileRect.intersectsRect(gameObjectBoundingBox))
 			{
 				Rect intersection = RectIntersection(gameObjectBoundingBox, tileRect);
