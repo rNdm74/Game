@@ -10,7 +10,7 @@
 GameObject::GameObject(ValueMap& properties)
 {
 	this->setProperties(properties);
-	this->setAnchorPoint(Vec2::ZERO);
+	//this->setAnchorPoint(Vec2::ZERO);
 };
 
 void GameObject::update(Node* node)
@@ -97,6 +97,7 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	float height = _sprite->getContentSize().height;
 		
 	this->addChild(_sprite);
+	
 	this->setPosition(Vec2(x, y));
 };
 
@@ -118,8 +119,8 @@ Rect Player::getBoundingBox()
 	(
 		this->getPosition().x, 
 		this->getPosition().y, 
-		_sprite->getContentSize().width, 
-		_sprite->getContentSize().height
+		this->getSize().width, 
+		this->getSize().height
 	);
 }
 
@@ -127,11 +128,9 @@ Rect Player::getCollisionBoundingBox()
 {
 	Rect collisionBox = getBoundingBox();
 
-	Vec2 diff = desiredPosition - getPosition();
+	Vec2 diff = desiredPosition - collisionBox.origin;
 
 	collisionBox.origin = collisionBox.origin + diff;
-
-	Rect returnBoundingBox = collisionBox;//CGRectOffset(collisionBox, diff.x, diff.y);
-	
-	return returnBoundingBox;
+			
+	return collisionBox;
 }

@@ -2,6 +2,7 @@
 #define __FranticAlien__LEVEL_H__
 
 #include "cocos2d.h"
+#include <array>
 
 class AppGlobal;
 class Player;
@@ -10,8 +11,10 @@ class GameObjectFactory;
 
 using namespace cocos2d;
 
+typedef TileData* TileDataArray[9];
+
 class Level : public Node
-{
+{	
 public:
 
 	void loadMap(std::string mapname);
@@ -36,13 +39,12 @@ public:
 	Vec2 tileCoordForPosition(Vec2 position);
 	Rect tileRectFromTileCoords(Vec2 tileCoords);
 	Rect RectIntersection(Rect r1, Rect r2);
+	bool RectIntersectsRect(Rect r1, Rect r2);
 
-	std::vector<TileData*>  getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
+	std::array<TileData*, 8> getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
 	
 	void checkForAndResolveCollisions(GameObject* gameObject);
-
 	
-
 	TMXTiledMap* getMap() { return map; }
 	
 	Player* getPlayer() { return player; }

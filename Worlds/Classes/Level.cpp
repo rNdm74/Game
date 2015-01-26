@@ -22,9 +22,6 @@ void Level::loadMap(std::string mapname)
 	tileProperties = mapInfo->getTileProperties();
 
 	this->load();
-
-	drawNode = DrawNode::create();
-	this->addChild(drawNode, 99);
 }
 
 void Level::load()
@@ -145,12 +142,14 @@ void Level::load()
 
 	collisionLayer = Node::create();
 	parallaxNode->addChild(collisionLayer, 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
+
+	drawNode = DrawNode::create();
+	collisionLayer->addChild(drawNode, 99);
 }
 
 void Level::followPlayer()
 {	
 	player = static_cast<Player*>(collisionLayer->getChildByName("Player"));
-
 	gameObjectList.push_back(player);
 
     this->setViewPointCenter(player->getPosition());
@@ -229,8 +228,7 @@ GameObject* Level::addObject(std::string className, ValueMap& properties)
 	// process the new object
 	if (o != nullptr)
 	{
-		o->setName(className);
-		
+		o->setName(className);		
 		collisionLayer->addChild(o);
 	}
 		
@@ -314,13 +312,24 @@ Rect Level::RectIntersection(Rect r1, Rect r2)
 	return intersection;
 }
 
-std::vector<TileData*> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
+bool Level::RectIntersectsRect(Rect r1, Rect r2)
+{
+	return !
+	(
+		r1.getMaxX() < r2.getMinX() ||
+		r2.getMaxX() < r1.getMinX() ||
+		r1.getMaxY() < r2.getMinY() ||
+		r2.getMaxY() < r1.getMinY()
+	);
+}
+
+std::array<TileData*, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
 {
 	Vec2 gameObjectPosition = tileCoordForPosition(position);
     
-	std::vector<TileData*> gids;
+	std::array<TileData*, 9> gids;
 
-	for (int i = 0; i < 9; i++) 
+	for (int i = 0; i < gids.size(); i++) 
 	{
 		int column = i % 3;
 		int row = (int)(i / 3); 
@@ -342,32 +351,28 @@ std::vector<TileData*> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLa
 				tileData->x = tileRect.origin.x;
 				tileData->y = tileRect.origin.y;
 				tileData->pos = tilePos;
-
-				gids.push_back(tileData);
+				
+				gids[i] = tileData;
             }
 			else
 			{
-                gids.push_back(nullptr);
+				gids[i] = nullptr;
 			}			
         }
 	}
     
-	// delete the center tile
-	gids.erase(gids.begin() + 4);
+	std::array<TileData*, 8> tileDataArray;
 
-    // swap bottom tile to 0
-    auto temp = gids[0];
-    gids[0] = gids[6];
-    gids[6] = temp;
-    
-    temp = gids[2];
-    gids[2] = gids[3]; // swap 3 -> 2
-    gids[3] = gids[4]; // swap 5 -> 3
-	gids[4] = gids[6]; // swap 2 -> 5
-	gids[6] = gids[5];
-	gids[5] = temp;
-
-    /* 
+	tileDataArray[ETileGrid::BOTTOM]	   = gids[7];
+	tileDataArray[ETileGrid::TOP]		   = gids[1];
+	tileDataArray[ETileGrid::LEFT]		   = gids[3];
+	tileDataArray[ETileGrid::RIGHT]		   = gids[5];
+	tileDataArray[ETileGrid::TOP_LEFT]	   = gids[0];
+	tileDataArray[ETileGrid::TOP_RIGHT]	   = gids[2];
+	tileDataArray[ETileGrid::BOTTOM_LEFT]  = gids[6];
+	tileDataArray[ETileGrid::BOTTOM_RIGHT] = gids[8];
+			
+	/* 
 	 * OLD | NEW
 	 * --- + ---
      * 012 | 415
@@ -375,21 +380,33 @@ std::vector<TileData*> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLa
      * 567 | 607
      */
     
-	return gids;
+	return tileDataArray;
 }
 
 void Level::checkForAndResolveCollisions(GameObject* gameObject)
-{
-	std::vector<TileData*> tiles = getSurroundingTilesAtPosition(gameObject->getPosition(), foregroundLayer);
+{	
+	Vec2 newPosition = gameObject->getPosition();
+	newPosition.x = newPosition.x + gameObject->getSize().width / 2;
+	//newPosition.y = newPosition.y + gameObject->getSize().height / 2;
+
+	std::array<TileData*, 8> tiles = getSurroundingTilesAtPosition(gameObject->getPosition(), foregroundLayer);
 		
 	gameObject->onGround = false;
 	gameObject->canJump = false;
 
 	Rect gameObjectBoundingBox = gameObject->getCollisionBoundingBox();
-	// draw gameObject bounding box
+	
+	//log("x: %f, y: %f", gameObject->getAnchorPoint().x, gameObject->getAnchorPoint().y);
 
     drawNode->clear();
-    
+		
+	drawNode->drawRect
+	(
+		gameObjectBoundingBox.origin,
+		Vec2(gameObjectBoundingBox.getMaxX(), gameObjectBoundingBox.getMaxY()),
+		Color4F(0.3f, 1.0f, 0.3f, 1)
+	);
+	    
 	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < tiles.size(); tileIndex++)
 	{
 		TileData* tileData = tiles[tileIndex];
@@ -397,15 +414,15 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 		if (tileData)
 		{	
 			Rect tileRect = Rect(tileData->x, tileData->y, map->getTileSize().width, map->getTileSize().height);
-
+						
             drawNode->drawRect
             (
-                foregroundLayer->convertToWorldSpace(tileRect.origin),
-                Vec2(tileRect.origin.x + 70, tileRect.origin.y + 70),
+				tileRect.origin,
+                Vec2(tileRect.getMaxX(), tileRect.getMaxY()),
                 Color4F(1.0f, 0.3f, 0.3f, 1)
             );
             
-			if (tileRect.intersectsRect(gameObjectBoundingBox))
+			if (RectIntersectsRect(gameObjectBoundingBox, tileRect))
 			{
 				Rect intersection = RectIntersection(gameObjectBoundingBox, tileRect);
 			
@@ -430,14 +447,14 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
                 }
 				else
 				{
-					//if (intersection.size.width > intersection.size.height) 
+					//if (intersection.size.width < intersection.size.height) 
 					//{
 					//	//tile is diagonal, but resolving collision vertically
 					//	gameObject->velocity = Vec2(gameObject->velocity.x, 0.0);
 
 					//	float resolutionHeight;
 					//	
-					//	if (i == 6 || i ==7)
+					//	if (tileIndex > ETileGrid::TOP_LEFT)
 					//	{
 					//		resolutionHeight = -intersection.size.height;
 					//		gameObject->onGround = true;
@@ -447,16 +464,13 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 					//		resolutionHeight = intersection.size.height;
 					//	}
 
-					//	gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + resolutionHeight);
+					//	//gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + resolutionHeight);
 					//}
 					//else 
-					//{
-					//	//tile is diagonal, but resolving collision horizontally
-					//	gameObject->velocity = Vec2(0.0, gameObject->velocity.y);
-
+					//{						
 					//	float resolutionWidth;
 
-					//	if (i == 4 || i == 5) 
+					//	if (tileIndex > 3)
 					//	{
 					//		resolutionWidth = intersection.size.width;
 					//	}
@@ -465,13 +479,14 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 					//		resolutionWidth = -intersection.size.width;
 					//	}
 
-					//	gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + resolutionWidth, gameObject->desiredPosition.y);
-
+					//	//gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + resolutionWidth, gameObject->desiredPosition.y);
 					//}
 				}
 			}
 		}
 	}
+
+	drawNode->drawPoint(newPosition, 5.0f, Color4F(0.3f, 0.3f, 1.0f, 1));
 
 	gameObject->setPosition(gameObject->desiredPosition);
 }
