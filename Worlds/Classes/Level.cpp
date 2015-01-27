@@ -265,11 +265,9 @@ void Level::update(float& delta)
     {
         gameObject->update(this);
 
+        //
         checkForAndResolveCollisions(gameObject);
     }
-    
-	// check collisions in level
-	//checkCollisions();
     
 	// centre view port on player
 	this->setViewPointCenter(player->getPosition());
@@ -323,13 +321,13 @@ bool Level::RectIntersectsRect(Rect r1, Rect r2)
 	);
 }
 
-std::array<TileData*, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
+std::array<TileData, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
 {
 	Size mapSize = map->getMapSize();
 
 	Vec2 gameObjectPosition = tileCoordForPosition(position);
     
-	std::array<TileData*, 9> gids;
+	std::array<TileData, 9> gids;
 
 	for (int i = 0; i < gids.size(); i++) 
 	{
@@ -344,28 +342,28 @@ std::array<TileData*, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMX
         {
 			//            			
         }
-
+        
 		int tgid = layer->getTileGIDAt(tilePos);
 
 		if (tgid)
 		{
 			Rect tileRect = tileRectFromTileCoords(tilePos);
 
-			TileData* tileData = new TileData();
-			tileData->gid = tgid;
-			tileData->x = tileRect.origin.x;
-			tileData->y = tileRect.origin.y;
-			tileData->pos = tilePos;
+            TileData tileData;// = new TileData();
+			tileData.gid = tgid;
+			tileData.x = tileRect.origin.x;
+			tileData.y = tileRect.origin.y;
+			tileData.pos = tilePos;
 
 			gids[i] = tileData;
 		}
-		else
-		{
-			gids[i] = nullptr;
-		}
+//		else
+//		{
+//			gids[i] = nullptr;
+//		}
 	}
-    
-	std::array<TileData*, 8> tileDataArray;
+
+	std::array<TileData, 8> tileDataArray;
 
 	tileDataArray[ETileGrid::BOTTOM]	   = gids[7];
 	tileDataArray[ETileGrid::TOP]		   = gids[1];
@@ -393,7 +391,7 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 	newPosition.x = newPosition.x + gameObject->getSize().width / 2;
 	newPosition.y = newPosition.y + gameObject->getSize().height / 2;
 
-	std::array<TileData*, 8> tiles = getSurroundingTilesAtPosition(newPosition, foregroundLayer);
+	std::array<TileData, 8> tiles = getSurroundingTilesAtPosition(newPosition, foregroundLayer);
 		
 	gameObject->onGround = false;
 	gameObject->canJump = false;
@@ -410,11 +408,11 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 	    
 	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < tiles.size(); tileIndex++)
 	{
-		TileData* tileData = tiles[tileIndex];
+		TileData tileData = tiles[tileIndex];
 				
-		if (tileData)
+		if (tileData.gid > 0)
 		{	
-			Rect tileRect = Rect(tileData->x, tileData->y, map->getTileSize().width, map->getTileSize().height);						
+			Rect tileRect = Rect(tileData.x, tileData.y, map->getTileSize().width, map->getTileSize().height);
             drawNode->drawSolidRect
             (
 				tileRect.origin,
@@ -446,10 +444,12 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 				else if (tileIndex == ETileGrid::LEFT) // left tile
                 {
                     gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + intersection.size.width, gameObject->desiredPosition.y);
+                    gameObject->velocity = Vec2(0.0f, gameObject->velocity.y);
                 }
 				else if (tileIndex == ETileGrid::RIGHT) // right tile
                 {
                     gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x - intersection.size.width, gameObject->desiredPosition.y);
+                    gameObject->velocity = Vec2(0.0f, gameObject->velocity.y);
                 }
 				else
 				{
@@ -475,6 +475,8 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 					else 
 					{	
 						//tile is diagonal, but resolving collision horizontally
+                        //gameObject->velocity = Vec2(0.0f, gameObject->velocity.y);
+                        
 						float resolutionWidth;
 
 						if (tileIndex == ETileGrid::TOP_LEFT || tileIndex == ETileGrid::BOTTOM_LEFT)

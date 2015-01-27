@@ -41,7 +41,7 @@ public:
 	Rect RectIntersection(Rect r1, Rect r2);
 	bool RectIntersectsRect(Rect r1, Rect r2);
 
-	std::array<TileData*, 8> getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
+	std::array<TileData, 8> getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
 	
 	void checkForAndResolveCollisions(GameObject* gameObject);
 	

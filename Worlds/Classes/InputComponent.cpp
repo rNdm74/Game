@@ -34,8 +34,8 @@ void PlayerInputComponent::update(GameObject& gameObject)
 
 	
 
-	Vec2 jumpForce = Vec2(0.0, 310.0);
-	float jumpCutoff = 150.0;
+	Vec2 jumpForce = Vec2(0.0, 610.0);
+	float jumpCutoff = 300.0;
 
 	if (gameObject.canJump && gameObject.onGround) 
 	{
@@ -47,7 +47,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	}
 
 	//
-	Vec2 gravity = Vec2(0.0, -450.0);
+	Vec2 gravity = Vec2(0.0, -850.0);
 	Vec2 gravityStep = gravity *  kUpdateInterval;
 	//
 	Vec2 forwardMove = Vec2(1600.0, 0.0);
@@ -62,8 +62,8 @@ void PlayerInputComponent::update(GameObject& gameObject)
 		gameObject.velocity = gameObject.velocity + forwardStep * direction;
 	}
 
-	Vec2 minMovement = Vec2(-240.0, -450.0);
-	Vec2 maxMovement = Vec2(240.0, 250.0);
+	Vec2 minMovement = Vec2(-240.0, -850.0);
+	Vec2 maxMovement = Vec2(240.0, 500.0);
 
 	gameObject.velocity.clamp(minMovement, maxMovement);
 
