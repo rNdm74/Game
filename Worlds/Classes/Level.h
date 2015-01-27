@@ -11,7 +11,7 @@ class GameObjectFactory;
 
 using namespace cocos2d;
 
-typedef TileData* TileDataArray[9];
+typedef std::array<TileData, 8> TileDataArray;
 
 class Level : public Node
 {	
@@ -41,7 +41,7 @@ public:
 	Rect RectIntersection(Rect r1, Rect r2);
 	bool RectIntersectsRect(Rect r1, Rect r2);
 
-	std::array<TileData, 8> getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
+	TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
 	
 	void checkForAndResolveCollisions(GameObject* gameObject);
 	

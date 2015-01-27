@@ -321,58 +321,57 @@ bool Level::RectIntersectsRect(Rect r1, Rect r2)
 	);
 }
 
-std::array<TileData, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
+TileDataArray Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
 {
 	Size mapSize = map->getMapSize();
 
 	Vec2 gameObjectPosition = tileCoordForPosition(position);
     
-	std::array<TileData, 9> gids;
+	TileDataArray gids;
 
-	for (int i = 0; i < gids.size(); i++) 
+	int count = 0;
+
+	for (int i = 0; i < 9; i++)
 	{
 		int column = i % 3;
-		int row = (int)(i / 3); 
+		int row = static_cast<int>(i / 3); 
 
-		Vec2 tilePos = Vec2(gameObjectPosition.x + (column - 1), gameObjectPosition.y + (row - 1));
+		// 0,0 | 0,1 | 0,2
+		// 1,0 | 1,1 | 1,2
+		// 2,0 | 2,1 | 2,2
+		if (column == 1 && row == 1)
+			continue;
+				
+		Vec2 tileCoordinates = Vec2(gameObjectPosition.x + (column - 1), gameObjectPosition.y + (row - 1));
 
 		// if its a valid tilepos for layer
-		if (tilePos.x <= 0 || tilePos.x > mapSize.width || 
-			tilePos.y <= 0 || tilePos.y > mapSize.height)
+		if (tileCoordinates.x <= 0 || tileCoordinates.x > mapSize.width ||
+			tileCoordinates.y <= 0 || tileCoordinates.y > mapSize.height)
         {
 			//            			
         }
         
-		int tgid = layer->getTileGIDAt(tilePos);
+		int tileGid = layer->getTileGIDAt(tileCoordinates);
 
-		if (tgid)
+		if (tileGid)
 		{
-			Rect tileRect = tileRectFromTileCoords(tilePos);
-
-            TileData tileData;// = new TileData();
-			tileData.gid = tgid;
-			tileData.x = tileRect.origin.x;
-			tileData.y = tileRect.origin.y;
-			tileData.pos = tilePos;
-
-			gids[i] = tileData;
+			Rect tileRect = tileRectFromTileCoords(tileCoordinates);
+						
+			gids[count].gid = tileGid;
+			gids[count].tile = tileRect;
+			gids[count].coordinates = tileCoordinates;
 		}
-//		else
-//		{
-//			gids[i] = nullptr;
-//		}
+
+		count++;
 	}
+		
+	// top left and bottom
+	std::swap(gids[0], gids[6]); // bottom now in position 0 
+	std::swap(gids[2], gids[3]); // left now in position 2
+	std::swap(gids[3], gids[4]); // right now in position 3
 
-	std::array<TileData, 8> tileDataArray;
-
-	tileDataArray[ETileGrid::BOTTOM]	   = gids[7];
-	tileDataArray[ETileGrid::TOP]		   = gids[1];
-	tileDataArray[ETileGrid::LEFT]		   = gids[3];
-	tileDataArray[ETileGrid::RIGHT]		   = gids[5];
-	tileDataArray[ETileGrid::TOP_LEFT]	   = gids[0];
-	tileDataArray[ETileGrid::TOP_RIGHT]	   = gids[2];
-	tileDataArray[ETileGrid::BOTTOM_LEFT]  = gids[6];
-	tileDataArray[ETileGrid::BOTTOM_RIGHT] = gids[8];
+	std::swap(gids[4], gids[6]); // top left now in position 4
+	std::swap(gids[5], gids[6]); // top right now in position 5
 			
 	/* 
 	 * OLD | NEW
@@ -382,7 +381,7 @@ std::array<TileData, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMXL
      * 567 | 607
      */
     
-	return tileDataArray;
+	return gids;
 }
 
 void Level::checkForAndResolveCollisions(GameObject* gameObject)
@@ -391,7 +390,7 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 	newPosition.x = newPosition.x + gameObject->getSize().width / 2;
 	newPosition.y = newPosition.y + gameObject->getSize().height / 2;
 
-	std::array<TileData, 8> tiles = getSurroundingTilesAtPosition(newPosition, foregroundLayer);
+	TileDataArray tiles = getSurroundingTilesAtPosition(newPosition, foregroundLayer);
 		
 	gameObject->onGround = false;
 	gameObject->canJump = false;
@@ -412,7 +411,7 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 				
 		if (tileData.gid > 0)
 		{	
-			Rect tileRect = Rect(tileData.x, tileData.y, map->getTileSize().width, map->getTileSize().height);
+			Rect tileRect = tileData.tile;
             drawNode->drawSolidRect
             (
 				tileRect.origin,

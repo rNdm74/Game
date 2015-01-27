@@ -112,9 +112,8 @@ enum ETileGrid
 
 struct TileData
 {
-	float x;
-	float y;
-    cocos2d::Vec2 pos;
+	cocos2d::Rect tile;
+    cocos2d::Vec2 coordinates;
 	int gid;
 };
 
