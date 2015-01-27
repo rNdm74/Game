@@ -342,16 +342,22 @@ TileDataArray Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* laye
 		if (column == 1 && row == 1)
 			continue;
 				
-		Vec2 tileCoordinates = Vec2(gameObjectPosition.x + (column - 1), gameObjectPosition.y + (row - 1));
+		Vec2 tileCoordinates = Vec2
+        (
+            gameObjectPosition.x + (column - 1),
+            gameObjectPosition.y + (row - 1)
+        );
 
+        int tileGid = 0;
+        
 		// if its a valid tilepos for layer
-		if (tileCoordinates.x <= 0 || tileCoordinates.x > mapSize.width ||
-			tileCoordinates.y <= 0 || tileCoordinates.y > mapSize.height)
+		if (tileCoordinates.x >= 0 && tileCoordinates.x < mapSize.width &&
+			tileCoordinates.y >= 0 && tileCoordinates.y < mapSize.height)
         {
-			//            			
+            tileGid = layer->getTileGIDAt(tileCoordinates);
         }
         
-		int tileGid = layer->getTileGIDAt(tileCoordinates);
+        
 
 		if (tileGid)
 		{
