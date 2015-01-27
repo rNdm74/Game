@@ -286,7 +286,7 @@ Vec2 Level::tileCoordForPosition(Vec2 position)
 
 	float y = floor((levelHeightInPixels - position.y) / tileSize.height);
 
-	return Vec2(x, y - 1);
+	return Vec2(x, y);
 }
 
 Rect Level::tileRectFromTileCoords(Vec2 tileCoords)
@@ -325,6 +325,8 @@ bool Level::RectIntersectsRect(Rect r1, Rect r2)
 
 std::array<TileData*, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer)
 {
+	Size mapSize = map->getMapSize();
+
 	Vec2 gameObjectPosition = tileCoordForPosition(position);
     
 	std::array<TileData*, 9> gids;
@@ -337,28 +339,30 @@ std::array<TileData*, 8> Level::getSurroundingTilesAtPosition(Vec2 position, TMX
 		Vec2 tilePos = Vec2(gameObjectPosition.x + (column - 1), gameObjectPosition.y + (row - 1));
 
 		// if its a valid tilepos for layer
-        if(tilePos.x < map->getMapSize().width && tilePos.x >= 0 &&  tilePos.y < map->getMapSize().height && tilePos.y >= 0)
+		if (tilePos.x <= 0 || tilePos.x > mapSize.width || 
+			tilePos.y <= 0 || tilePos.y > mapSize.height)
         {
-			// 
-            int tgid = layer->getTileGIDAt(tilePos);
-            
-			if (tgid)
-			{
-				Rect tileRect = tileRectFromTileCoords(tilePos);
-
-				TileData* tileData = new TileData();
-				tileData->gid = tgid;
-				tileData->x = tileRect.origin.x;
-				tileData->y = tileRect.origin.y;
-				tileData->pos = tilePos;
-				
-				gids[i] = tileData;
-            }
-			else
-			{
-				gids[i] = nullptr;
-			}			
+			//            			
         }
+
+		int tgid = layer->getTileGIDAt(tilePos);
+
+		if (tgid)
+		{
+			Rect tileRect = tileRectFromTileCoords(tilePos);
+
+			TileData* tileData = new TileData();
+			tileData->gid = tgid;
+			tileData->x = tileRect.origin.x;
+			tileData->y = tileRect.origin.y;
+			tileData->pos = tilePos;
+
+			gids[i] = tileData;
+		}
+		else
+		{
+			gids[i] = nullptr;
+		}
 	}
     
 	std::array<TileData*, 8> tileDataArray;
@@ -387,44 +391,46 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 {	
 	Vec2 newPosition = gameObject->getPosition();
 	newPosition.x = newPosition.x + gameObject->getSize().width / 2;
-	//newPosition.y = newPosition.y + gameObject->getSize().height / 2;
+	newPosition.y = newPosition.y + gameObject->getSize().height / 2;
 
-	std::array<TileData*, 8> tiles = getSurroundingTilesAtPosition(gameObject->getPosition(), foregroundLayer);
+	std::array<TileData*, 8> tiles = getSurroundingTilesAtPosition(newPosition, foregroundLayer);
 		
 	gameObject->onGround = false;
 	gameObject->canJump = false;
 
 	Rect gameObjectBoundingBox = gameObject->getCollisionBoundingBox();
-	
-	//log("x: %f, y: %f", gameObject->getAnchorPoint().x, gameObject->getAnchorPoint().y);
-
-    drawNode->clear();
 		
-	drawNode->drawRect
+    drawNode->clear();
+	drawNode->drawSolidRect
 	(
 		gameObjectBoundingBox.origin,
 		Vec2(gameObjectBoundingBox.getMaxX(), gameObjectBoundingBox.getMaxY()),
-		Color4F(0.3f, 1.0f, 0.3f, 1)
+		Color4F(0.3f, 1.0f, 0.3f, 0.5f)
 	);
 	    
 	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < tiles.size(); tileIndex++)
 	{
 		TileData* tileData = tiles[tileIndex];
-
+				
 		if (tileData)
 		{	
-			Rect tileRect = Rect(tileData->x, tileData->y, map->getTileSize().width, map->getTileSize().height);
-						
-            drawNode->drawRect
+			Rect tileRect = Rect(tileData->x, tileData->y, map->getTileSize().width, map->getTileSize().height);						
+            drawNode->drawSolidRect
             (
 				tileRect.origin,
                 Vec2(tileRect.getMaxX(), tileRect.getMaxY()),
-                Color4F(1.0f, 0.3f, 0.3f, 1)
+                Color4F(1.0f, 0.3f, 0.3f, 0.5f)
             );
             
 			if (RectIntersectsRect(gameObjectBoundingBox, tileRect))
 			{
 				Rect intersection = RectIntersection(gameObjectBoundingBox, tileRect);
+				drawNode->drawSolidRect
+				(
+					intersection.origin,
+					Vec2(intersection.getMaxX(), intersection.getMaxY()),
+					Color4F(0.3f, 0.3f, 1.0f, 0.5f)
+				);
 			
 				if (tileIndex == ETileGrid::BOTTOM) // tile is below gameobject
 				{					
@@ -447,46 +453,45 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
                 }
 				else
 				{
-					//if (intersection.size.width < intersection.size.height) 
-					//{
-					//	//tile is diagonal, but resolving collision vertically
-					//	gameObject->velocity = Vec2(gameObject->velocity.x, 0.0);
+					if (intersection.size.width > intersection.size.height) 
+					{
+						//tile is diagonal, but resolving collision vertically
+						gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
 
-					//	float resolutionHeight;
-					//	
-					//	if (tileIndex > ETileGrid::TOP_LEFT)
-					//	{
-					//		resolutionHeight = -intersection.size.height;
-					//		gameObject->onGround = true;
-					//	}
-					//	else 
-					//	{
-					//		resolutionHeight = intersection.size.height;
-					//	}
+						float resolutionHeight;
+						
+						if (tileIndex > ETileGrid::TOP_RIGHT)
+						{
+							resolutionHeight = intersection.size.height;
+							gameObject->onGround = true;
+						}
+						else 
+						{
+							resolutionHeight = -intersection.size.height;
+						}
 
-					//	//gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + resolutionHeight);
-					//}
-					//else 
-					//{						
-					//	float resolutionWidth;
+						gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + resolutionHeight);
+					}
+					else 
+					{	
+						//tile is diagonal, but resolving collision horizontally
+						float resolutionWidth;
 
-					//	if (tileIndex > 3)
-					//	{
-					//		resolutionWidth = intersection.size.width;
-					//	}
-					//	else 
-					//	{
-					//		resolutionWidth = -intersection.size.width;
-					//	}
+						if (tileIndex == ETileGrid::TOP_LEFT || tileIndex == ETileGrid::BOTTOM_LEFT)
+						{
+							resolutionWidth = intersection.size.width;
+						}
+						else 
+						{
+							resolutionWidth = -intersection.size.width;
+						}
 
-					//	//gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + resolutionWidth, gameObject->desiredPosition.y);
-					//}
+						gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x + resolutionWidth, gameObject->desiredPosition.y);
+					}
 				}
 			}
 		}
 	}
-
-	drawNode->drawPoint(newPosition, 5.0f, Color4F(0.3f, 0.3f, 1.0f, 1));
 
 	gameObject->setPosition(gameObject->desiredPosition);
 }

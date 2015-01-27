@@ -50,7 +50,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	Vec2 gravity = Vec2(0.0, -450.0);
 	Vec2 gravityStep = gravity *  kUpdateInterval;
 	//
-	Vec2 forwardMove = Vec2(800.0, 0.0);
+	Vec2 forwardMove = Vec2(1600.0, 0.0);
 	Vec2 forwardStep = forwardMove * kUpdateInterval;
 
 	// 
@@ -62,10 +62,10 @@ void PlayerInputComponent::update(GameObject& gameObject)
 		gameObject.velocity = gameObject.velocity + forwardStep * direction;
 	}
 
-	Vec2 minMovement = Vec2(0.0, -450.0);
-	Vec2 maxMovement = Vec2(120.0, 250.0);
+	Vec2 minMovement = Vec2(-240.0, -450.0);
+	Vec2 maxMovement = Vec2(240.0, 250.0);
 
-	//gameObject.velocity.clamp(minMovement, maxMovement);
+	gameObject.velocity.clamp(minMovement, maxMovement);
 
 	Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
 
