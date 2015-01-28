@@ -161,12 +161,12 @@ World* World::create()
 
 World::World()
 {
-	background = WorldParallaxBackGround::create();
-	this->addChild(background);
+	//background = WorldParallaxBackGround::create();
+	//this->addChild(background);
 
 	level = new Level();
 	level->loadMap(kLevelTMX);
-	level->addObjects();
+	//level->addObjects();
 	level->followPlayer();
 	this->addChild(level);
 }
@@ -177,7 +177,7 @@ World::~World()
 
 void World::update(float& delta)
 {
-	background->update(delta);
+	//background->update(delta);
 	level->update(delta);
 }
 

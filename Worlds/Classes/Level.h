@@ -8,6 +8,7 @@ class AppGlobal;
 class Player;
 class GameObject;
 class GameObjectFactory;
+class ParallaxTileMap;
 
 using namespace cocos2d;
 
@@ -16,54 +17,27 @@ typedef std::array<TileData, 8> TileDataArray;
 class Level : public Node
 {	
 public:
-
-	void loadMap(std::string mapname);
-	
-	Node* getShadowForNode(Node* node);
-
 	Level();
 	virtual ~Level(void);
+
+	void loadMap(std::string mapname);
 		
-	void load();	
-	void addObjects();
 	void followPlayer();
-
-	GameObject* addObject(std::string className, ValueMap& properties);
-
+	
 	void update(float& delta);
-	//void checkCollisions();
-
-	void setAliasTexParameters(TMXLayer* layer);    
+		    
     void setViewPointCenter(Vec2 position);
-
-	Vec2 tileCoordForPosition(Vec2 position);
-	Rect tileRectFromTileCoords(Vec2 tileCoords);
-	Rect RectIntersection(Rect r1, Rect r2);
-	bool RectIntersectsRect(Rect r1, Rect r2);
-
-	TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer);
-	
+		
 	void checkForAndResolveCollisions(GameObject* gameObject);
-	
-	TMXTiledMap* getMap() { return map; }
-	
-	Player* getPlayer() { return player; }
 
 private:
 	AppGlobal* global;
 
 	Player* player;
 
-	TMXTiledMap* map;
-	TMXMapInfo* mapInfo;
-	
-	TMXLayer* backgroundLayer;
-	TMXLayer* foregroundLayer;
-
 	ValueMapIntKey tileProperties;
 	
-	ParallaxNode* parallaxNode;
-	Node* collisionLayer;
+	ParallaxTileMap* parallaxTileMap;
 
 	Vec2 origin;
 	Vec2 center;
@@ -71,6 +45,7 @@ private:
 
 	int objectCount;
 
+	std::stack<ParallaxTileMap*> activeMap;
 	std::vector<GameObject*> gameObjectList;
 
 	DrawNode* drawNode;
