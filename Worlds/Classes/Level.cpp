@@ -28,14 +28,14 @@ void Level::loadMap(std::string mapname)
 	this->setAnchorPoint(Vec2(0.5f, 0.5f));
 	this->addChild(parallaxTileMap);
 
-	auto testMap = ParallaxTileMap::create("planet1.tmx");
+	//auto testMap = ParallaxTileMap::create("planet1.tmx");
 	
-	this->addChild(testMap);
+	//this->addChild(testMap);
 
-	testMap->setAnchorPoint(Vec2(0.5, 1));
-	testMap->setPositionY(70);
+	//testMap->setAnchorPoint(Vec2(0.5, 1));
+	//testMap->setPositionY(70);
 
-	this->runAction(MoveBy::create(5.0f, Vec2(0.0, size.height/2)));
+	//this->runAction(MoveBy::create(5.0f, Vec2(0.0, size.height/2)));
 }
 
 void Level::followPlayer()
@@ -160,6 +160,9 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 				}
 				else if (tileIndex == ETileGrid::TOP) // top tile
                 {
+                    Sprite* tile = parallaxTileMap->getForegroundLayer()->getTileAt(tileData.coordinates);
+                    
+                    
                     gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y - intersection.size.height);
                     gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
                 }
@@ -227,6 +230,7 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 		this->removeAllChildrenWithCleanup(true);
 
 		parallaxTileMap = ParallaxTileMap::create("planet1.tmx");
+        parallaxTileMap->addObjects();
 		this->addChild(parallaxTileMap);
 
 		drawNode = DrawNode::create();
