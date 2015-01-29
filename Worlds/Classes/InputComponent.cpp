@@ -24,12 +24,19 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	}
 			
 	if (global->states.DOWN)
-		gameObject.setBearing(SOUTH);
+	{
+
+		//gameObject.setBearing(SOUTH);
+	}
+		
 	if (global->states.UP)
 		gameObject.setBearing(NORTH);
 	if (global->states.STOP)
+	{
 		gameObject.move = false;//gameObject.setBearing(STOP);
-	if (global->states.JUMP)
+		//gameObject.velocity = Vec2(gameObject.velocity.x * kStopVelocity, gameObject.velocity.y);
+	}
+	if (global->states.JUMP) 
 		gameObject.canJump = true;
 
 	
@@ -53,9 +60,19 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	Vec2 forwardMove = Vec2(1600.0, 0.0);
 	Vec2 forwardStep = forwardMove * kUpdateInterval;
 
+	Vec2 climb = Vec2(0.0, -450.0);
+	Vec2 climbStep = climb * kUpdateInterval;
+
 	// 
-	gameObject.velocity = gameObject.velocity + gravityStep;
+	
+	
+	if (gameObject.isClimbing == false)
+		gameObject.velocity = gameObject.velocity + gravityStep;	
+	
 	gameObject.velocity = Vec2(gameObject.velocity.x * 0.90, gameObject.velocity.y);
+
+	//if (gameObject.onLadder && gameObject.isClimbing)
+		//gameObject.velocity = gameObject.velocity - gravityStep;
 
 	if (gameObject.move) 
 	{
@@ -68,6 +85,14 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	gameObject.velocity.clamp(minMovement, maxMovement);
 
 	Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
+
+	/*if (gameObject.onLadder && global->states.DOWN)
+	{
+		log("On ladder");
+		float position = gameObject.getPositionY();
+		position -= 250 * kUpdateInterval;
+		gameObject.setPositionY(position);
+	}*/
 
 	// 
 	gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;

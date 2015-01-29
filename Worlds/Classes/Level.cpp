@@ -93,7 +93,7 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 	// Get active mapsize and tilesize
 	Size mapSize = parallaxTileMap->getMapSize();
 	Size tileSize = parallaxTileMap->getTileSize();
-	
+			
 	// get gameobjects center
 	Vec2 newPosition = gameObject->getPosition();
 	newPosition.x = newPosition.x + gameObject->getSize().width / 2;
@@ -129,7 +129,7 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 		{	
 			//
 			Rect tileRect = tileData.tile;
-            
+						
 			// debug
 			drawNode->drawSolidRect
             (
@@ -154,15 +154,31 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 			
 				if (tileIndex == ETileGrid::BOTTOM) // tile is below gameobject
 				{					
-					gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
-					gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);					
-					gameObject->onGround = true;
+					// check tile type
+					ValueMap properties = parallaxTileMap->getPropertiesForGID(tileData.gid).asValueMap();
+					
+					if (properties["Solid"].asBool())
+					{
+						gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
+						gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
+						gameObject->onGround = true;
+					}					
+										
+					//if (properties["Ladder"].asBool() && AppGlobal::getInstance()->states.DOWN)
+					//{
+					//	gameObject->desiredPosition = Vec2(tileRect.getMidX() - gameObjectBoundingBox.size.width / 2, gameObject->desiredPosition.y);
+					//	//gameObject->velocity = Vec2(gameObject->velocity.x, gameObject->velocity.y);
+					//	gameObject->onLadder = true;
+					//}
+					//else
+					//{
+					//	gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + intersection.size.height);
+					//	gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
+					//}
+					
 				}
 				else if (tileIndex == ETileGrid::TOP) // top tile
                 {
-                    Sprite* tile = parallaxTileMap->getForegroundLayer()->getTileAt(tileData.coordinates);
-                    
-                    
                     gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y - intersection.size.height);
                     gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
                 }
@@ -240,6 +256,41 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 	}
 		//gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, mapSize.height * tileSize.height);
 
+	TileData ladder = Utils::getTileAtPosition(newPosition, *parallaxTileMap->getLadderLayer(), mapSize, tileSize);
+
+	gameObject->isClimbing = false;
+
+	if (ladder.gid > 0)
+	{
+		//
+		Rect tileRect = ladder.tile;
+
+		if (tileRect.containsPoint(newPosition))
+		{
+			//log("touching ladder");
+			// debug
+			drawNode->drawSolidRect
+			(
+				tileRect.origin,
+				Vec2(tileRect.getMaxX(), tileRect.getMaxY()),
+				Color4F(0.5f, 0.3f, 1.0f, 0.5f)
+			);
+
+			if (AppGlobal::getInstance()->states.UP)
+			{
+				gameObject->desiredPosition = Vec2(tileRect.getMidX() - gameObjectBoundingBox.size.width / 2, gameObject->desiredPosition.y + 1.0f);
+				//gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
+				gameObject->isClimbing = true;
+			}
+			else if (AppGlobal::getInstance()->states.DOWN)
+			{
+				gameObject->desiredPosition = Vec2(tileRect.getMidX() - gameObjectBoundingBox.size.width / 2, gameObject->desiredPosition.y - 1.0f);
+				//gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
+				gameObject->isClimbing = true;
+			}
+		}
+	}
+	
 	// update gameobject position
 	gameObject->setPosition(gameObject->desiredPosition);
 }

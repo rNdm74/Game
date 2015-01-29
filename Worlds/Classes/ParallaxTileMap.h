@@ -32,15 +32,19 @@ public:
 	Player* getPlayer();
 
 	TMXLayer* getForegroundLayer();
+	TMXLayer* getLadderLayer();
 	Node* getObjectLayer();
 
 	Size getMapSize();
 	Size getTileSize();
 
+	Value getPropertiesForGID(int GID);
+
 private:
 	TMXTiledMap* tileMap;
 	TMXLayer* backgroundLayer;
 	TMXLayer* foregroundLayer;
+	TMXLayer* ladderLayer;
 	Node* shadowLayer;
 	Node* objectLayer;
 	

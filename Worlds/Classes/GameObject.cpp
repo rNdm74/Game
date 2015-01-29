@@ -95,6 +95,10 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	float y = properties["y"].asFloat();
 	float width = _sprite->getContentSize().width;
 	float height = _sprite->getContentSize().height;
+
+	onGround = false;
+	onLadder = false;
+	isClimbing = false;
 		
 	this->addChild(_sprite);
     this->setContentSize(Size(width, height));
@@ -111,6 +115,11 @@ void Player::update(Node* node)
 Size Player::getSize()
 {
 	return _sprite->getContentSize();
+}
+
+Sprite* Player::getSprite()
+{
+	return _sprite;
 }
 
 Rect Player::getBoundingBox()

@@ -41,6 +41,13 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	foregroundLayer->getTexture()->setAntiAliasTexParameters();
 	foregroundLayer->release();
 
+	// get foreground layer
+	ladderLayer = tileMap->getLayer("ladders");
+	ladderLayer->retain();
+	ladderLayer->removeFromParentAndCleanup(false);
+	ladderLayer->getTexture()->setAntiAliasTexParameters();
+	ladderLayer->release();
+
 	// create shadow layer
 	shadowLayer = Node::create();
 
@@ -53,6 +60,7 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	this->addChild(backgroundLayer,	-1, Vec2(0.4f, 0.4f), Vec2::ZERO);
 	this->addChild(shadowLayer,		 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(foregroundLayer,	 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(ladderLayer,      1, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(objectLayer,		 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
 }
 
@@ -149,6 +157,11 @@ TMXLayer* ParallaxTileMap::getForegroundLayer()
 	return foregroundLayer;
 }
 
+TMXLayer* ParallaxTileMap::getLadderLayer()
+{
+	return ladderLayer;
+}
+
 Node* ParallaxTileMap::getObjectLayer()
 {
 	return objectLayer;
@@ -162,4 +175,9 @@ Size ParallaxTileMap::getMapSize()
 Size ParallaxTileMap::getTileSize()
 {
 	return tileMap->getTileSize();
+}
+
+Value ParallaxTileMap::getPropertiesForGID(int GID)
+{
+	return tileMap->getPropertiesForGID(GID);
 }

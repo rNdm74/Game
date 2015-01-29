@@ -16,6 +16,8 @@ class IUtils
 	static Rect RectIntersection(Rect r1, Rect r2);
 	static bool RectIntersectsRect(Rect r1, Rect r2);
 	static TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer, Size mapSize, Size tileSize);
+	static TileData getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
+	static bool pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);
 };
 
 class Utils : public IUtils
@@ -28,6 +30,8 @@ public:
 	static Rect RectIntersection(Rect r1, Rect r2);
 	static bool RectIntersectsRect(Rect r1, Rect r2);
 	static TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
+	static TileData getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
+	static bool pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);
 };
 
 #endif /* defined(__FranticAlien__UTILS_H__) */

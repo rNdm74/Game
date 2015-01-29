@@ -55,6 +55,8 @@ public:
 	virtual Size getSize();
 	
 	// public variables
+	bool isClimbing;
+	bool onLadder;
 	bool onGround;
 	bool canJump;
 	bool move;
@@ -86,6 +88,7 @@ public:
 
 	virtual void update(Node* node) override;
 	virtual Size getSize() override;
+	virtual Sprite* getSprite();
 	virtual Rect getBoundingBox() override;	
 	virtual Rect getCollisionBoundingBox() override;
 	

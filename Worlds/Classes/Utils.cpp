@@ -107,3 +107,93 @@ TileDataArray Utils::getSurroundingTilesAtPosition(Vec2 position, TMXLayer& laye
 
 	return gids;
 }
+
+
+TileData Utils::getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize)
+{
+	int tileGid;
+	TileData tileData;
+
+	Vec2 tileCoordinates = tileCoordForPosition(position, mapSize, tileSize);
+
+	if (tileCoordinates.x >= 0 && tileCoordinates.x < mapSize.width &&
+		tileCoordinates.y >= 0 && tileCoordinates.y < mapSize.height)
+	{
+		tileGid = layer.getTileGIDAt(tileCoordinates);
+	}
+
+	if (tileGid)
+	{
+		Rect tileRect = tileRectFromTileCoords(tileCoordinates, mapSize, tileSize);
+
+		tileData.gid = tileGid;
+		tileData.tile = tileRect;
+		tileData.coordinates = tileCoordinates;
+	}
+
+	return tileData;
+}
+
+
+
+bool Utils::pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision)
+{
+	bool isColliding = false;
+
+	// If not checking for pixel perfect collisions, return true
+	if (pixelCollision == false)
+		return true;
+
+	unsigned int x = intersection.origin.x;
+	unsigned int y = intersection.origin.y;
+	unsigned int w = intersection.size.width;
+	unsigned int h = intersection.size.height;
+
+	unsigned int numPixels = w * h;
+
+	// If no intersection, return false
+	if (numPixels <= 0) 
+		return false;
+
+	// Draw into the RenderTexture
+	Size size = Director::getInstance()->getWinSize();
+	RenderTexture *rt = RenderTexture::create(size.width, size.height, Texture2D::PixelFormat::RGBA8888);
+	rt->beginWithClear(0, 0, 0, 0);
+
+	// Render both sprites: first one in RED and second one in GREEN
+	glColorMask(1, 0, 0, 1);
+	s1->visit();
+	glColorMask(0, 1, 0, 1);
+	s2->visit();
+	glColorMask(1, 1, 1, 1);
+
+	// Get color values of intersection area
+	Color4B* buffer = static_cast<Color4B*>(malloc(sizeof(Color4B) * numPixels));
+	glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+	rt->end();
+
+	// Read buffer
+	unsigned int step = 1;
+
+	for (unsigned int i = 0; i < numPixels; i += step) 
+	{
+		Color4B color = buffer[i];
+		
+		log("Pixel color: %d, %d, %d", color.r, color.g, color.b);
+
+		if (color.r > 0 && color.g > 0) 
+		{
+			isColliding = true;
+
+			log("Colliding");
+			
+			break;
+		}
+	}
+
+	// Free buffer memory
+	free(buffer);
+
+	return isColliding;
+}
