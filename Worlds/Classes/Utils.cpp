@@ -43,6 +43,11 @@ bool Utils::RectIntersectsRect(Rect r1, Rect r2)
 	);
 }
 
+bool Utils::RectContainsRect(Rect r1, Rect r2)
+{
+	return true;
+}
+
 TileDataArray Utils::getSurroundingTilesAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize)
 {
 	Vec2 gameObjectPosition = tileCoordForPosition(position, mapSize, tileSize);
@@ -111,7 +116,7 @@ TileDataArray Utils::getSurroundingTilesAtPosition(Vec2 position, TMXLayer& laye
 
 TileData Utils::getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize)
 {
-	int tileGid;
+	int tileGid = 0;
 	TileData tileData;
 
 	Vec2 tileCoordinates = tileCoordForPosition(position, mapSize, tileSize);

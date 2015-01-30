@@ -66,7 +66,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	// 
 	
 	
-	if (gameObject.isClimbing == false)
+	if (gameObject.isClimbing == false && gameObject.onLadderTop == false)
 		gameObject.velocity = gameObject.velocity + gravityStep;	
 	
 	gameObject.velocity = Vec2(gameObject.velocity.x * 0.90, gameObject.velocity.y);

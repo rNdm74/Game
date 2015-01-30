@@ -15,6 +15,7 @@ class IUtils
 	static Rect tileRectFromTileCoords(Vec2 tileCoords, Size mapSize, Size tileSize);
 	static Rect RectIntersection(Rect r1, Rect r2);
 	static bool RectIntersectsRect(Rect r1, Rect r2);
+	static bool RectContainsRect(Rect r1, Rect r2);
 	static TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer, Size mapSize, Size tileSize);
 	static TileData getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
 	static bool pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);
@@ -29,6 +30,7 @@ public:
 	static Rect tileRectFromTileCoords(Vec2 tileCoords, Size mapSize, Size tileSize);
 	static Rect RectIntersection(Rect r1, Rect r2);
 	static bool RectIntersectsRect(Rect r1, Rect r2);
+	static bool RectContainsRect(Rect r1, Rect r2);
 	static TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
 	static TileData getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
 	static bool pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);

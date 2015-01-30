@@ -254,38 +254,84 @@ void Level::checkForAndResolveCollisions(GameObject* gameObject)
 
 		followPlayer();
 	}
-		//gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, mapSize.height * tileSize.height);
+	
 
-	TileData ladder = Utils::getTileAtPosition(newPosition, *parallaxTileMap->getLadderLayer(), mapSize, tileSize);
+	Vec2 gameObjectPosition = gameObject->getPosition();
+	gameObjectPosition.x = gameObjectPosition.x + gameObject->getSize().width / 2;
+	
+	TileData ladder = Utils::getTileAtPosition(gameObjectPosition, *parallaxTileMap->getLadderLayer(), mapSize, tileSize);
 
-	gameObject->isClimbing = false;
+	/*gameObject->isClimbing = false;
+	gameObject->onLadderTop = false;*/
+
+	//if (gameObject->collideLadder == false || gameObject->onGround)
+	//{
+	//	gameObject->climbLadder = false;
+	//}
+
+	//// if we fall onto the top of a ladder, we start climbing it
+	//if (gameObject->prevCollideLadder == false && Map.IsTileLadder(m_collideLadder) && gameObject->onGround == false)
+	//{
+	//	gameObject->climbLadder = true;
+	//	// gameobject animation
+	//}
+
+	//if (gameObject->onGround == false && m_OnGroundLast && m_vel.m_y > 0)
+	//{
+	//	m_animationController.PlayOnce(kFallAnim);
+	//}
+
 
 	if (ladder.gid > 0)
 	{
 		//
+		ValueMap tileProperties = parallaxTileMap->getPropertiesForGID(ladder.gid).asValueMap();
 		Rect tileRect = ladder.tile;
 
-		if (tileRect.containsPoint(newPosition))
+		drawNode->drawSolidRect
+		(
+			tileRect.origin,
+			Vec2(tileRect.getMaxX(), tileRect.getMaxY()),
+			Color4F(0.5f, 0.3f, 1.0f, 0.5f)
+		);
+
+		if (tileProperties["LadderTop"].asBool())
 		{
-			//log("touching ladder");
-			// debug
-			drawNode->drawSolidRect
-			(
-				tileRect.origin,
-				Vec2(tileRect.getMaxX(), tileRect.getMaxY()),
-				Color4F(0.5f, 0.3f, 1.0f, 0.5f)
-			);
+			float diff = gameObjectPosition.y - tileRect.getMaxY();
 
 			if (AppGlobal::getInstance()->states.UP)
 			{
 				gameObject->desiredPosition = Vec2(tileRect.getMidX() - gameObjectBoundingBox.size.width / 2, gameObject->desiredPosition.y + 1.0f);
-				//gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
 				gameObject->isClimbing = true;
 			}
 			else if (AppGlobal::getInstance()->states.DOWN)
 			{
 				gameObject->desiredPosition = Vec2(tileRect.getMidX() - gameObjectBoundingBox.size.width / 2, gameObject->desiredPosition.y - 1.0f);
-				//gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
+				gameObject->isClimbing = true;
+			}
+			else
+			{
+				gameObject->desiredPosition = Vec2(gameObject->desiredPosition.x, gameObject->desiredPosition.y + diff);
+				gameObject->velocity = Vec2(gameObject->velocity.x, 0.0f);
+				gameObject->onLadderTop = true;
+				gameObject->onGround = true;
+				gameObject->isClimbing = false;
+
+				AppGlobal::getInstance()->states.UP = false;
+				AppGlobal::getInstance()->states.DOWN = false;
+			}			
+		}
+
+		if (tileProperties["LadderMid"].asBool())
+		{			
+			if (AppGlobal::getInstance()->states.UP)
+			{
+				gameObject->desiredPosition = Vec2(tileRect.getMidX() - gameObjectBoundingBox.size.width / 2, gameObject->desiredPosition.y + 1.0f);
+				gameObject->isClimbing = true;
+			}
+			else if (AppGlobal::getInstance()->states.DOWN)
+			{
+				gameObject->desiredPosition = Vec2(tileRect.getMidX() - gameObjectBoundingBox.size.width / 2, gameObject->desiredPosition.y - 1.0f);
 				gameObject->isClimbing = true;
 			}
 		}

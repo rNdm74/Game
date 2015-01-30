@@ -55,8 +55,15 @@ public:
 	virtual Size getSize();
 	
 	// public variables
+	bool collideLadder;
+	bool prevCollideLadder;
+	bool checkLadderMiddle;
+	bool climbLadder;
+	bool onLadderTop;
+	bool disableLadderTopCollision;
+
 	bool isClimbing;
-	bool onLadder;
+	//bool onLadderTop;
 	bool onGround;
 	bool canJump;
 	bool move;
