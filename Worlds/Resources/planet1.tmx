@@ -4,12 +4,12 @@
   <image source="tileset.png" width="1704" height="1704"/>
   <tile id="73">
    <properties>
-    <property name="Ladder" value="true"/>
+    <property name="LadderTop" value="true"/>
    </properties>
   </tile>
   <tile id="97">
    <properties>
-    <property name="Ladder" value="true"/>
+    <property name="LadderMid" value="true"/>
    </properties>
   </tile>
   <tile id="168">
