@@ -113,26 +113,31 @@ TileDataArray Utils::getSurroundingTilesAtPosition(Vec2 position, TMXLayer& laye
 	return gids;
 }
 
+int Utils::getTilesetMaxGID(TMXLayer& layer)
+{
+	TMXTilesetInfo* t = layer.getTileSet();		
+	return (t->_imageSize.width / t->_tileSize.width) * (t->_imageSize.height / t->_tileSize.height);
+}
 
 TileData Utils::getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize)
 {
-	int tileGid = 0;
+	// Variables
+	int tileGID = 0;
 	TileData tileData;
+	Vec2 tileCoordinates;
+	
+	// Get the tiles TMX coordinates (pixels --> tile coords)
+	tileCoordinates = tileCoordForPosition(position, mapSize, tileSize);
 
-	Vec2 tileCoordinates = tileCoordForPosition(position, mapSize, tileSize);
-
-	if (tileCoordinates.x >= 0 && tileCoordinates.x < mapSize.width &&
-		tileCoordinates.y >= 0 && tileCoordinates.y < mapSize.height)
+	// Make sure the coordinates are valid
+	if (tileCoordinates.x < mapSize.width && tileCoordinates.x >= 0 && tileCoordinates.y < mapSize.height && tileCoordinates.y >= 0)
+		tileGID = layer.getTileGIDAt(tileCoordinates);
+		
+	// Make sure GID is valid
+	if (tileGID)
 	{
-		tileGid = layer.getTileGIDAt(tileCoordinates);
-	}
-
-	if (tileGid)
-	{
-		Rect tileRect = tileRectFromTileCoords(tileCoordinates, mapSize, tileSize);
-
-		tileData.gid = tileGid;
-		tileData.tile = tileRect;
+		tileData.gid = tileGID;
+		tileData.tile = tileRectFromTileCoords(tileCoordinates, mapSize, tileSize);
 		tileData.coordinates = tileCoordinates;
 	}
 

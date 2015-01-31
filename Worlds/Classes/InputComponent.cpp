@@ -7,34 +7,40 @@ void PlayerInputComponent::update(GameObject& gameObject)
 {
 	auto global = AppGlobal::getInstance();
 
-	float direction = 0;
+	Vec2 direction = Vec2::ZERO;
 
 	if (global->states.LEFT)
 	{
 		gameObject.move = true; 
-		direction = -1;
+		direction.x = -1;
 		//gameObject.setBearing(EAST);
 	}
 		
 	if (global->states.RIGHT)
 	{
 		gameObject.move = true; 
-		direction = 1;
+		direction.x = 1;
 		//gameObject.setBearing(WEST);
 	}
 			
 	if (global->states.DOWN)
 	{
-
+		gameObject.move = true;
+		direction.y = -1;
 		//gameObject.setBearing(SOUTH);
 	}
 		
 	if (global->states.UP)
-		gameObject.setBearing(NORTH);
-	if (global->states.STOP)
 	{
-		gameObject.move = false;//gameObject.setBearing(STOP);
-		//gameObject.velocity = Vec2(gameObject.velocity.x * kStopVelocity, gameObject.velocity.y);
+		gameObject.move = true;
+		direction.y = 1;
+		//gameObject.setBearing(NORTH);
+	}
+		
+	if (global->states.STOP && global->states.JUMP == false)
+	{
+		gameObject.move = false;
+		gameObject.velocity = Vec2(gameObject.velocity.x * kStopVelocity, gameObject.velocity.y * kStopVelocity);
 	}
 	if (global->states.JUMP) 
 		gameObject.canJump = true;
@@ -60,23 +66,27 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	Vec2 forwardMove = Vec2(1600.0, 0.0);
 	Vec2 forwardStep = forwardMove * kUpdateInterval;
 
-	Vec2 climb = Vec2(0.0, -450.0);
+	Vec2 climb = Vec2(0.0, 1600.0);
 	Vec2 climbStep = climb * kUpdateInterval;
 
 	// 
+	//gameObject.velocity = Vec2(gameObject.velocity.x * kStopVelocity, gameObject.velocity.y * kStopVelocity);
 	
-	
+	// When gameObject is not climbing or on top of a ladder apply gravity
 	if (gameObject.isClimbing == false && gameObject.onLadderTop == false)
-		gameObject.velocity = gameObject.velocity + gravityStep;	
-	
-	gameObject.velocity = Vec2(gameObject.velocity.x * 0.90, gameObject.velocity.y);
-
-	//if (gameObject.onLadder && gameObject.isClimbing)
-		//gameObject.velocity = gameObject.velocity - gravityStep;
-
-	if (gameObject.move) 
 	{
-		gameObject.velocity = gameObject.velocity + forwardStep * direction;
+		gameObject.velocity = gameObject.velocity + gravityStep;
+		//gameObject.velocity = Vec2(gameObject.velocity.x, gameObject.velocity.y);
+	}
+		
+	if (gameObject.move)
+	{
+		gameObject.velocity.x = gameObject.velocity.x + forwardStep.x * direction.x;		
+	}
+
+	if (gameObject.move && gameObject.disableLadderTopCollision)
+	{
+		gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
 	}
 
 	Vec2 minMovement = Vec2(-240.0, -850.0);
@@ -85,15 +95,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	gameObject.velocity.clamp(minMovement, maxMovement);
 
 	Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
-
-	/*if (gameObject.onLadder && global->states.DOWN)
-	{
-		log("On ladder");
-		float position = gameObject.getPositionY();
-		position -= 250 * kUpdateInterval;
-		gameObject.setPositionY(position);
-	}*/
-
+	
 	// 
 	gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;
 }

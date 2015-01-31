@@ -18,6 +18,7 @@ class IUtils
 	static bool RectContainsRect(Rect r1, Rect r2);
 	static TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer* layer, Size mapSize, Size tileSize);
 	static TileData getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
+	static int getTilesetMaxGID(TMXLayer& layer);
 	static bool pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);
 };
 
@@ -33,6 +34,7 @@ public:
 	static bool RectContainsRect(Rect r1, Rect r2);
 	static TileDataArray getSurroundingTilesAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
 	static TileData getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize);
+	static int getTilesetMaxGID(TMXLayer& layer);
 	static bool pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);
 };
 

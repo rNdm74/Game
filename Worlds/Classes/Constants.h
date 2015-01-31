@@ -114,7 +114,7 @@ struct TileData
 {
 	cocos2d::Rect tile;
     cocos2d::Vec2 coordinates;
-	int gid;
+	int gid = 0;
 };
 
 
