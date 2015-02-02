@@ -1,7 +1,7 @@
 #include "Utils.h"
 
 
-Vec2 Utils::tileCoordForPosition(Vec2 position, Size mapSize, Size tileSize)
+Vec2 Utils::getTileCoordForPosition(Vec2 position, Size mapSize, Size tileSize)
 {
 	float x = floor(position.x / tileSize.width);
 
@@ -12,7 +12,7 @@ Vec2 Utils::tileCoordForPosition(Vec2 position, Size mapSize, Size tileSize)
 	return Vec2(x, y);
 }
 
-Rect Utils::tileRectFromTileCoords(Vec2 tileCoords, Size mapSize, Size tileSize)
+Rect Utils::getTileRectFromTileCoords(Vec2 tileCoords, Size mapSize, Size tileSize)
 {	
 	float levelHeightInPixels = mapSize.height * tileSize.height;
 
@@ -21,7 +21,7 @@ Rect Utils::tileRectFromTileCoords(Vec2 tileCoords, Size mapSize, Size tileSize)
 	return Rect(origin.x, origin.y, tileSize.width, tileSize.height);
 }
 
-Rect Utils::RectIntersection(Rect r1, Rect r2)
+Rect Utils::getRectIntersection(Rect r1, Rect r2)
 {
 	Rect intersection;
 
@@ -32,7 +32,7 @@ Rect Utils::RectIntersection(Rect r1, Rect r2)
 	return intersection;
 }
 
-bool Utils::RectIntersectsRect(Rect r1, Rect r2)
+bool Utils::isRectIntersectsRect(Rect r1, Rect r2)
 {
 	return !
 	(
@@ -43,74 +43,9 @@ bool Utils::RectIntersectsRect(Rect r1, Rect r2)
 	);
 }
 
-bool Utils::RectContainsRect(Rect r1, Rect r2)
+bool Utils::isRectContainsRect(Rect r1, Rect r2)
 {
 	return true;
-}
-
-TileDataArray Utils::getSurroundingTilesAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize)
-{
-	Vec2 gameObjectPosition = tileCoordForPosition(position, mapSize, tileSize);
-
-	TileDataArray gids;
-
-	int count = 0;
-
-	for (int i = 0; i < 9; i++)
-	{
-		int column = i % 3;
-		int row = static_cast<int>(i / 3);
-
-		// 0,0 | 0,1 | 0,2
-		// 1,0 | 1,1 | 1,2
-		// 2,0 | 2,1 | 2,2
-		if (column == 1 && row == 1)
-			continue;
-
-		Vec2 tileCoordinates = Vec2
-		(
-			gameObjectPosition.x + (column - 1),
-			gameObjectPosition.y + (row - 1)
-		);
-
-		int tileGid = 0;
-
-		// if its a valid tilepos for layer
-		if (tileCoordinates.x >= 0 && tileCoordinates.x < mapSize.width &&
-			tileCoordinates.y >= 0 && tileCoordinates.y < mapSize.height)
-		{
-			tileGid = layer.getTileGIDAt(tileCoordinates);
-		}
-
-		if (tileGid)
-		{
-			Rect tileRect = tileRectFromTileCoords(tileCoordinates, mapSize, tileSize);
-
-			gids[count].gid = tileGid;
-			gids[count].tile = tileRect;
-			gids[count].coordinates = tileCoordinates;
-		}
-
-		count++;
-	}
-
-	// top left and bottom
-	std::swap(gids[0], gids[6]); // bottom now in position 0 
-	std::swap(gids[2], gids[3]); // left now in position 2
-	std::swap(gids[3], gids[4]); // right now in position 3
-
-	std::swap(gids[4], gids[6]); // top left now in position 4
-	std::swap(gids[5], gids[6]); // top right now in position 5
-
-	/*
-	* OLD | NEW
-	* --- + ---
-	* 012 | 415
-	* 3 4 | 2 3
-	* 567 | 607
-	*/
-
-	return gids;
 }
 
 int Utils::getTilesetMaxGID(TMXLayer& layer)
@@ -119,34 +54,8 @@ int Utils::getTilesetMaxGID(TMXLayer& layer)
 	return (t->_imageSize.width / t->_tileSize.width) * (t->_imageSize.height / t->_tileSize.height);
 }
 
-TileData Utils::getTileAtPosition(Vec2 position, TMXLayer& layer, Size mapSize, Size tileSize)
-{
-	// Variables
-	int tileGID = 0;
-	TileData tileData;
-	Vec2 tileCoordinates;
-	
-	// Get the tiles TMX coordinates (pixels --> tile coords)
-	tileCoordinates = tileCoordForPosition(position, mapSize, tileSize);
 
-	// Make sure the coordinates are valid
-	if (tileCoordinates.x < mapSize.width && tileCoordinates.x >= 0 && tileCoordinates.y < mapSize.height && tileCoordinates.y >= 0)
-		tileGID = layer.getTileGIDAt(tileCoordinates);
-		
-	// Make sure GID is valid
-	if (tileGID)
-	{
-		tileData.gid = tileGID;
-		tileData.tile = tileRectFromTileCoords(tileCoordinates, mapSize, tileSize);
-		tileData.coordinates = tileCoordinates;
-	}
-
-	return tileData;
-}
-
-
-
-bool Utils::pixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision)
+bool Utils::isPixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision)
 {
 	bool isColliding = false;
 

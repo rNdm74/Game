@@ -3,7 +3,7 @@
 #include "GraphicsComponent.h"
 #include "InputComponent.h"
 #include "MenuComponent.h"
-#include "PhysicsComponent.h"
+#include "CollisionComponent.h"
 
 GameObject* GameObjectFactory::create(std::string className, ValueMap& properties)
 {
@@ -16,7 +16,7 @@ GameObject* GameObjectFactory::create(std::string className, ValueMap& propertie
 			properties,
 			new PlayerMenuComponent(),
 			new PlayerInputComponent(),
-			new PlayerPhysicsComponent(),
+			new GameObjectCollisionComponent(),
 			new PlayerGraphicsComponent()
 		);
 	}		

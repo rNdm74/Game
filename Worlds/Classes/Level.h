@@ -47,8 +47,6 @@ private:
 
 	std::stack<ParallaxTileMap*> activeMap;
 	std::vector<GameObject*> gameObjectList;
-
-	DrawNode* drawNode;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */

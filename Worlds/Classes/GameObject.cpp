@@ -5,7 +5,7 @@
 #include "GraphicsComponent.h"
 #include "InputComponent.h"
 #include "MenuComponent.h"
-#include "PhysicsComponent.h"
+#include "CollisionComponent.h"
 
 GameObject::GameObject(ValueMap& properties)
 {
@@ -48,6 +48,15 @@ Size GameObject::getSize()
 	return this->getContentSize(); 
 };
 
+Vec2 GameObject::getCenterPosition()
+{
+	return Vec2
+	(
+		this->getPosition().x + this->getSize().width / 2,
+		this->getPosition().y + this->getSize().height / 2
+	);
+}
+
 Rect GameObject::getBoundingBox()
 { 
 	return this->getBoundingBox(); 
@@ -62,11 +71,11 @@ Rect GameObject::getCollisionBoundingBox()
 // CHILD CLASSES
 //
 
-Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics) : super(properties)
+Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties)
 {
 	_menu = menu;
 	_input = input;
-	_physics = physics;
+	_collision = collision;
 	_graphics = graphics;
 
 	_sprite = Sprite::createWithSpriteFrameName(kPlayerFileName);
@@ -110,12 +119,22 @@ void Player::update(Node* node)
 	//_physics->update(*this);
 	_graphics->update(*this);
 	_input->update(*this);	
+	_collision->update(*node, *this);
 };
 
 Size Player::getSize()
 {
 	return _sprite->getContentSize();
 }
+
+//Vec2 Player::getCenterPosition()
+//{
+//	return Vec2
+//	(
+//		this->getPosition().x + getSize().width / 2,
+//		this->getPosition().y + getSize().height / 2		
+//	);
+//}
 
 Sprite* Player::getSprite()
 {

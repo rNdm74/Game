@@ -6,7 +6,7 @@
 
 class MenuComponent;
 class InputComponent;
-class PhysicsComponent;
+class CollisionComponent;
 class GraphicsComponent;
 
 using namespace cocos2d;
@@ -53,6 +53,7 @@ public:
 	
 	virtual Vec2* getDirection();
 	virtual Size getSize();
+	virtual Vec2 getCenterPosition();
 	
 	// public variables
 	bool collideLadder;
@@ -90,11 +91,12 @@ class Player : public GameObject
 	typedef Player self;
 
 public:
-	Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, PhysicsComponent* physics, GraphicsComponent* graphics);
+	Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, CollisionComponent* collision, GraphicsComponent* graphics);
 	~Player(){};
 
 	virtual void update(Node* node) override;
 	virtual Size getSize() override;
+	//virtual Vec2 getCenterPosition() override;
 	virtual Sprite* getSprite();
 	virtual Rect getBoundingBox() override;	
 	virtual Rect getCollisionBoundingBox() override;
@@ -104,7 +106,7 @@ private:
 
 	MenuComponent* _menu;
 	InputComponent* _input;
-	PhysicsComponent* _physics;
+	CollisionComponent* _collision;
 	GraphicsComponent* _graphics;		
 };
 
