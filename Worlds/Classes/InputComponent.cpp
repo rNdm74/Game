@@ -71,7 +71,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 
 	//
 	Vec2 gravity = Vec2(0.0, -850.0);
-	Vec2 gravityStep = gravity *  kUpdateInterval;
+    Vec2 gravityStep = gravity *  kUpdateInterval;
 	//
 	Vec2 forwardMove = Vec2(1600.0, 0.0);
 	Vec2 forwardStep = forwardMove * kUpdateInterval;
@@ -81,7 +81,8 @@ void PlayerInputComponent::update(GameObject& gameObject)
 		
 	if (gameObject.move)
 	{
-		gameObject.velocity.x = gameObject.velocity.x + forwardStep.x * direction.x;		
+		gameObject.velocity.x = gameObject.velocity.x + forwardStep.x * direction.x;
+        gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
 	}
 
 	if (gameObject.move && gameObject.collideLadder && gameObject.disableLadderTopCollision)
@@ -91,7 +92,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 
 	if (gameObject.collideLadder == false)
 	{
-		gameObject.velocity = gameObject.velocity + gravityStep;
+        //gameObject.velocity = gameObject.velocity + gravityStep;
 	}
 
 	Vec2 minMovement = Vec2(-240.0, -850.0);

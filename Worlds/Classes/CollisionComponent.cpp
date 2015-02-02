@@ -36,7 +36,7 @@ void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxT
 
 
 	// get array of tiles surrounding the gameobject
-	TileDataArray& tileDataArray = parallaxTileMap.getTileDataArrayFromCollisionLayerAt(gameObjectCenterPosition);
+	TileDataArray tileDataArray = parallaxTileMap.getTileDataArrayFromCollisionLayerAt(gameObjectCenterPosition);
 		
 	// loop through tiles array	    
 	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
@@ -51,7 +51,7 @@ void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxT
 			parallaxTileMap.drawDebugRect(tileRect, Color4F(1.0f, 0.3f, 0.3f, 0.5f));
 
 			// get the intersecting rect
-			Rect& intersection = Utils::getRectIntersection(gameObjectBoundingBox, tileRect);
+			Rect intersection = Utils::getRectIntersection(gameObjectBoundingBox, tileRect);
 
 			//
 			if (tileIndex == ETileGrid::BOTTOM) // tile is below gameobject
@@ -159,7 +159,7 @@ void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallax
 	//}
 
 	// get array of tiles surrounding the gameobject
-	TileDataArray& tileDataArray = parallaxTileMap.getTileDataArrayFromLadderLayerAt(newPosition);
+	TileDataArray tileDataArray = parallaxTileMap.getTileDataArrayFromLadderLayerAt(newPosition);
 
 	// loop through tiles array	    
 	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
