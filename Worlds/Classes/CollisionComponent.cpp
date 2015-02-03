@@ -158,15 +158,15 @@ void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallax
 	//
 	if (tileDataArray[ETileGrid::LEFT].GID == false && gameObject.canMoveLeft && gameObject.onGround == false)
 	{
-		Rect& tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
-		gameObjectNewPosition.y = tileRect.getMinY();
+		//Rect& tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
+		//gameObjectNewPosition.y = tileRect.getMinY();
 	}
 
 	//
 	if (tileDataArray[ETileGrid::RIGHT].GID == false && gameObject.canMoveRight && gameObject.onGround == false)
 	{
-		Rect& tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
-		gameObjectNewPosition.y = tileRect.getMinY();
+		//Rect& tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
+		//gameObjectNewPosition.y = tileRect.getMinY();
 	}
 
 	// gameObject can climb up ladder

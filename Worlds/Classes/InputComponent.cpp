@@ -43,7 +43,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 		gameObject.canMoveRight = false;
 		gameObject.isClimbingLadder = false;
 		gameObject.move = false;
-		gameObject.velocity = Vec2(gameObject.velocity.x * kStopVelocity, gameObject.velocity.y * kStopVelocity);
+        gameObject.velocity = Vec2::ZERO;
 	}
 
 	if (global->states.JUMP) 
