@@ -107,7 +107,7 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 
 	onGround = false;
 	onLadderTop = false;
-	isClimbing = false;
+	
 		
 	this->addChild(_sprite);
     this->setContentSize(Size(width, height));

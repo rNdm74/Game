@@ -1,26 +1,5 @@
 #include "Utils.h"
 
-
-Vec2 Utils::getTileCoordForPosition(Vec2 position, Size mapSize, Size tileSize)
-{
-	float x = floor(position.x / tileSize.width);
-
-	float levelHeightInPixels = mapSize.height * tileSize.height;
-
-	float y = floor((levelHeightInPixels - position.y) / tileSize.height);
-
-	return Vec2(x, y);
-}
-
-Rect Utils::getTileRectFromTileCoords(Vec2 tileCoords, Size mapSize, Size tileSize)
-{	
-	float levelHeightInPixels = mapSize.height * tileSize.height;
-
-	Vec2 origin = Vec2(tileCoords.x * tileSize.width, levelHeightInPixels - ((tileCoords.y + 1) * tileSize.height));
-
-	return Rect(origin.x, origin.y, tileSize.width, tileSize.height);
-}
-
 Rect Utils::getRectIntersection(Rect r1, Rect r2)
 {
 	Rect intersection;
@@ -53,7 +32,6 @@ int Utils::getTilesetMaxGID(TMXLayer& layer)
 	TMXTilesetInfo* t = layer.getTileSet();		
 	return (t->_imageSize.width / t->_tileSize.width) * (t->_imageSize.height / t->_tileSize.height);
 }
-
 
 bool Utils::isPixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision)
 {

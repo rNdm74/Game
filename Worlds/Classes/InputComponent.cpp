@@ -11,45 +11,39 @@ void PlayerInputComponent::update(GameObject& gameObject)
 
 	if (global->states.LEFT)
 	{
+		gameObject.canMoveLeft = true;
 		gameObject.move = true; 
 		direction.x = -1;
-		//gameObject.setBearing(EAST);
 	}
 		
 	if (global->states.RIGHT)
 	{
+		gameObject.canMoveRight = true;
 		gameObject.move = true; 
 		direction.x = 1;
-		//gameObject.setBearing(WEST);
 	}
 			
-	if (global->states.DOWN)
-	{		
-		gameObject.climbLadder = true;
-		gameObject.disableLadderTopCollision = true;
+	if (global->states.DOWN && gameObject.canClimbDownLadder)
+	{
+		gameObject.isClimbingLadder = true;
 		gameObject.move = true;
-
 		direction.y = -1;
-		//gameObject.setBearing(SOUTH);
 	}
 		
-	if (global->states.UP)
+	if (global->states.UP && gameObject.canClimbUpLadder)
 	{
-		gameObject.climbLadder = true;
-		gameObject.disableLadderTopCollision = true;
+		gameObject.isClimbingLadder = true;
 		gameObject.move = true;
-
 		direction.y = 1;
-		//gameObject.setBearing(NORTH);
 	}
 		
 	if (global->states.STOP)
 	{
-		gameObject.climbLadder = false;
+		gameObject.canMoveLeft = false;
+		gameObject.canMoveRight = false;
+		gameObject.isClimbingLadder = false;
 		gameObject.move = false;
 		gameObject.velocity = Vec2(gameObject.velocity.x * kStopVelocity, gameObject.velocity.y * kStopVelocity);
-		
-		//direction = Vec2::ZERO;
 	}
 
 	if (global->states.JUMP) 
@@ -85,18 +79,13 @@ void PlayerInputComponent::update(GameObject& gameObject)
         gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
 	}
 
-	if (gameObject.move && gameObject.collideLadder && gameObject.disableLadderTopCollision)
-	{
-		gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
-	}
+	//if (gameObject.collideLadder == false)
+	//{
+ //       //gameObject.velocity = gameObject.velocity + gravityStep;
+	//}
 
-	if (gameObject.collideLadder == false)
-	{
-        //gameObject.velocity = gameObject.velocity + gravityStep;
-	}
-
-	Vec2 minMovement = Vec2(-240.0, -850.0);
-	Vec2 maxMovement = Vec2(240.0, 500.0);
+	Vec2 minMovement = Vec2(-240.0, -240.0);
+	Vec2 maxMovement = Vec2(240.0, 240.0);
 
 	gameObject.velocity.clamp(minMovement, maxMovement);
 

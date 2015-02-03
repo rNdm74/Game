@@ -1,7 +1,6 @@
 #ifndef __com_dotdat_World__PARALLAX_TILEMAP_H__
 #define __com_dotdat_World__PARALLAX_TILEMAP_H__
 
-
 #include "cocos2d.h"
 #include <array>
 #include "Constants.h"
@@ -47,17 +46,18 @@ public:
 
 	TileDataArray getTileDataArrayFromCollisionLayerAt(Vec2 position);
 	TileDataArray getTileDataArrayFromLadderLayerAt(Vec2 position);
-
-	TileData getTileDataFromLadderLayerAtPosition(Vec2 position);
-
+		
 	bool isValidTileCoordinates(Vec2 tileCoordinates);
 	bool isTileLadder(Vec2 position);
-	//bool isTile
 
+	// Debug
 	void clearDebugDraw();
 	void drawDebugRect(Rect rect, Color4F color);
 private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);
+	TileData getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates);
+	Vec2 getTileCoordinatesForPosition(Vec2 position);
+	Rect getTileRectFrom(Vec2 tileCoordinates);
 
 	TMXTiledMap* tileMap;
 	TMXLayer* backgroundLayer;
@@ -69,6 +69,9 @@ private:
 	DrawNode* debugDraw;
 	
 	int objectCount;
+
+	Size tileSize;
+	Size mapSize;
 };
 
 #endif /* defined(__com_dotdat_World__PARALLAX_TILEMAP_H__) */
