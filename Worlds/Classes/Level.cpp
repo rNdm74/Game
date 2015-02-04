@@ -8,33 +8,52 @@
 #include "ParallaxTileMap.h"
 #include "Utils.h"
 
-Level::Level(){}
+Level* Level::create(std::string mapName)
+{
+	// Create an instance of InfiniteParallaxNode
+	Level* node = new Level();
 
-Level::~Level(){}
+	if (node) {
+		// Add it to autorelease pool
+		node->autorelease();
+		node->loadMap(mapName);
+		node->loadPlayer();
+	}
+	else {
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
 
-void Level::loadMap(std::string mapname)
+	return node;
+}
+
+Level::Level()
 {
 	global = AppGlobal::getInstance();
 	size = Director::getInstance()->getVisibleSize();
 	origin = Director::getInstance()->getVisibleOrigin();
 	center = Vec2(origin.x + size.width / 2, (origin.y + size.height / 2));
-	
+}
+
+Level::~Level(){}
+
+void Level::loadMap(std::string mapname)
+{	
+	this->removeAllChildrenWithCleanup(true);
 	parallaxTileMap = ParallaxTileMap::create(mapname);
 	parallaxTileMap->addObjects();
-
-	
-	this->setAnchorPoint(Vec2(0.5f, 0.5f));
 	this->addChild(parallaxTileMap);
 }
 
-void Level::followPlayer()
+void Level::loadPlayer()
 {	
 	gameObjectList.clear();
 
 	player = parallaxTileMap->getPlayer();	
 	gameObjectList.push_back(player);
 
-	this->setViewPointCenter(player->getPosition());
+	this->setViewPointCenter(player->getCenterPosition());
 }
 
 void Level::setViewPointCenter(Vec2 position)
@@ -57,49 +76,50 @@ void Level::setViewPointCenter(Vec2 position)
 
 void Level::update(float& delta)
 {	
+	// debug
 	parallaxTileMap->clearDebugDraw();
 
 	// updates scale creates zoom effect
 	this->setScale(global->scale);
-
-	player->update(parallaxTileMap);
-	checkForAndResolveCollisions(player);
-
+		
 	// update gameobjects
-	//for (auto& gameObject : gameObjectList) 
- //   {
- //       gameObject->update(this);
-
- //       //
- //       checkForAndResolveCollisions(gameObject);
- //   }
+	for (auto& gameObject : gameObjectList) 
+		gameObject->update(parallaxTileMap);
     
-	// centre view port on player
-	this->setViewPointCenter(player->getPosition());
+	// player moves to next map
+	this->checkNextMap(player);
+	// centre viewport on player
+	this->setViewPointCenter(player->getCenterPosition());
+	
+
+	Vec2 diff = global->endLocation - global->startLocation;
+
+	log("x: %f, y:%f", diff.x, diff.y);
+
+	diff.x += 250 * delta;
+	diff.y += 250 * delta;
+
+
+	/*float parallaxPosition = this->getPositionX();
+
+	if (global->states.LEFT || global->states.RIGHT)
+		scrollMap = true;
+
+	if (global->states.RIGHT)
+		parallaxPosition -= 250 * delta;
+	if (global->states.LEFT)
+		parallaxPosition += 250 * delta;
+	if (global->states.STOP)
+		parallaxPosition = this->getPositionX();*/
+
+	//this->setPosition(diff);
 }
 
-void Level::checkForAndResolveCollisions(GameObject* gameObject)
+void Level::checkNextMap(GameObject* gameObject)
 {	
-	// Get active mapsize and tilesize
-	Size mapSize = parallaxTileMap->getMapSize();
-	Size tileSize = parallaxTileMap->getTileSize();
-			
-	// get the gameobject bounding box
-	Rect gameObjectBoundingBox = gameObject->getCollisionBoundingBox();
-	
-	// bounds check gameobject
-	if (gameObjectBoundingBox.getMaxX() < 0)
-		gameObject->desiredPosition = Vec2((mapSize.width * tileSize.width) - gameObjectBoundingBox.size.width, gameObject->desiredPosition.y);
-	if (gameObjectBoundingBox.getMinX() > mapSize.width * tileSize.width)
-		gameObject->desiredPosition = Vec2(0, gameObject->desiredPosition.y);
-	if (gameObjectBoundingBox.getMinY() < 0)
+	if (gameObject->getCollisionBoundingBox().getMinY() < 0)
 	{
-		this->removeAllChildrenWithCleanup(true);
-
-		parallaxTileMap = ParallaxTileMap::create("planet1.tmx");
-        parallaxTileMap->addObjects();
-		this->addChild(parallaxTileMap);		
-
-		followPlayer();
+		loadMap("planet1.tmx");
+		loadPlayer();
 	}
 }

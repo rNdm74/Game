@@ -47,7 +47,10 @@ void AppGlobal::initMouseListener()
 	};
 
 	listener->onMouseDown = [=](Event* event)
-	{
+	{	
+		auto eventMouse = static_cast<EventMouse*>(event);
+		startLocation = eventMouse->getLocation();
+
 		auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
 		auto cursor = static_cast<Sprite*>(layer->getChildByTag(kTagCursor));
@@ -60,6 +63,15 @@ void AppGlobal::initMouseListener()
 
 	listener->onMouseUp = [=](Event* event)
 	{
+		auto eventMouse = static_cast<EventMouse*>(event);
+		endLocation = eventMouse->getLocation();
+
+
+		Vec2 diff = endLocation - startLocation;
+
+		log("%f, %f", diff.x, diff.y);
+		//log("%f, %f", endLocation.x, endLocation.y);
+
 		auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
 		auto cursor = static_cast<Sprite*>(layer->getChildByTag(kTagCursor));

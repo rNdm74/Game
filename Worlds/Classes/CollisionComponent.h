@@ -17,6 +17,8 @@ public:
 protected:
 	virtual void solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject) = 0;
 	virtual void ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject) = 0;
+	virtual void wrap(ParallaxTileMap& parallaxTileMap, GameObject &gameObject) = 0;
+	virtual void nextLevel(ParallaxTileMap& parallaxTileMap, GameObject &gameObject) = 0;
 };
 
 class GameObjectCollisionComponent : public CollisionComponent
@@ -27,6 +29,8 @@ public:
 private:
 	void solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
 	void ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
+	void wrap(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
+	void nextLevel(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
 };
 
 #endif /* defined(__FranticAlien__PhysicsComponent__) */

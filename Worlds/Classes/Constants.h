@@ -108,7 +108,7 @@ enum ETileGrid
 	TOP_RIGHT,
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT,
-	CENTER = 4
+	CENTER = 1
 };
 
 struct TileData

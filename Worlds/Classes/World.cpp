@@ -141,6 +141,7 @@ void WorldParallaxBackGround::addClouds()
 
 
 #pragma region World
+
 World* World::create()
 {
 	// Create an instance of InfiniteParallaxNode
@@ -161,13 +162,7 @@ World* World::create()
 
 World::World()
 {
-	//background = WorldParallaxBackGround::create();
-	//this->addChild(background);
-
-	level = new Level();
-	level->loadMap(kLevelTMX);
-	//level->addObjects();
-	level->followPlayer();
+	level = Level::create(kLevelTMX);
 	this->addChild(level);
 }
 
@@ -177,7 +172,6 @@ World::~World()
 
 void World::update(float& delta)
 {
-	//background->update(delta);
 	level->update(delta);
 }
 

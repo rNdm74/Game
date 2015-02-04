@@ -57,8 +57,6 @@ public:
 private:
 	GamePlayer* player;
 	Level* level;
-	WorldParallaxBackGround* background;
-	B2DebugDrawLayer* debugDraw;
 };
 
 

@@ -8,29 +8,32 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	auto global = AppGlobal::getInstance();
 
 	Vec2 direction = Vec2::ZERO;
+	
+	gameObject.canMoveLeft = false;
+	gameObject.canMoveRight = false;
 
-	if (global->states.LEFT)
-	{
+	/*if (global->states.LEFT)
+	{		
 		gameObject.canMoveLeft = true;
 		gameObject.move = true; 
 		direction.x = -1;
 	}
 		
 	if (global->states.RIGHT)
-	{
+	{		
 		gameObject.canMoveRight = true;
 		gameObject.move = true; 
 		direction.x = 1;
-	}
+	}*/
 			
-	if (global->states.DOWN && gameObject.canClimbDownLadder)
+	if (global->states.DOWN && gameObject.canClimb)
 	{
 		gameObject.isClimbingLadder = true;
 		gameObject.move = true;
 		direction.y = -1;
 	}
 		
-	if (global->states.UP && gameObject.canClimbUpLadder)
+	if (global->states.UP && gameObject.canClimb)
 	{
 		gameObject.isClimbingLadder = true;
 		gameObject.move = true;
@@ -38,9 +41,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	}
 		
 	if (global->states.STOP)
-	{
-		gameObject.canMoveLeft = false;
-		gameObject.canMoveRight = false;
+	{	
 		gameObject.isClimbingLadder = false;
 		gameObject.move = false;
         gameObject.velocity = Vec2::ZERO;
@@ -79,13 +80,15 @@ void PlayerInputComponent::update(GameObject& gameObject)
         gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
 	}
 
-	//if (gameObject.collideLadder == false)
-	//{
- //       //gameObject.velocity = gameObject.velocity + gravityStep;
-	//}
+	if (gameObject.canClimb == false)
+	{
+		gameObject.velocity = gameObject.velocity + gravityStep;
+	}
 
-	Vec2 minMovement = Vec2(-240.0, -240.0);
-	Vec2 maxMovement = Vec2(240.0, 240.0);
+	
+
+	Vec2 minMovement = Vec2(-340.0, -340.0);
+	Vec2 maxMovement = Vec2(340.0, 340.0);
 
 	gameObject.velocity.clamp(minMovement, maxMovement);
 

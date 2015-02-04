@@ -31,6 +31,9 @@ public:
 	bool mouseDown;
 	float scale;	
 
+	Vec2 startLocation;
+	Vec2 endLocation;
+
 	//EState state;
 	//EState previousState;
 

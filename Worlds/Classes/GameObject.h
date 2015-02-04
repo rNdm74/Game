@@ -64,6 +64,7 @@ public:
 	bool isClimbingLadder;
 	bool onLadderTop;
 
+	bool canClimb;
 	bool onGround;
 	bool canJump;
 	bool move;

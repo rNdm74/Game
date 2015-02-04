@@ -199,11 +199,8 @@ TileDataArray ParallaxTileMap::getTileDataArrayFromLadderLayerAt(Vec2 position)
 	Vec2 tileCoordinates = getTileCoordinatesForPosition(position);
 
 	tileDataArray[ETileGrid::BOTTOM] = getTileDataFromLayerAt(*ladderLayer, Vec2(tileCoordinates.x, tileCoordinates.y + 1));
-	tileDataArray[ETileGrid::TOP]	 = getTileDataFromLayerAt(*ladderLayer, Vec2(tileCoordinates.x, tileCoordinates.y - 1));
-	tileDataArray[ETileGrid::LEFT]	 = getTileDataFromLayerAt(*ladderLayer, Vec2(tileCoordinates.x - 1, tileCoordinates.y));
-	tileDataArray[ETileGrid::RIGHT]  = getTileDataFromLayerAt(*ladderLayer, Vec2(tileCoordinates.x + 1, tileCoordinates.y));
 	tileDataArray[ETileGrid::CENTER] = getTileDataFromLayerAt(*ladderLayer, tileCoordinates);
-			
+				
 	return tileDataArray;
 }
 
@@ -287,7 +284,7 @@ TileData ParallaxTileMap::getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoord
 /// </summary>
 bool ParallaxTileMap::isValidTileCoordinates(Vec2 v)
 {	
-	return ( v.y <= mapSize.height && v.y >= 0 && v.x <= mapSize.width && v.x >= 0 );
+	return ( v.y < mapSize.height && v.y >= 0 && v.x < mapSize.width && v.x >= 0 );
 }
 
 /// <summary>

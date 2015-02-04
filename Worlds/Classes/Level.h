@@ -17,28 +17,28 @@ typedef std::array<TileData, 8> TileDataArray;
 class Level : public Node
 {	
 public:
-	Level();
-	virtual ~Level(void);
+	// "creator" methods first	
+	static Level* create(std::string mapName);
 
-	void loadMap(std::string mapname);
-		
-	void followPlayer();
+	Level();
+	virtual ~Level();
+
+	void loadMap(std::string mapname);		
+	void loadPlayer();
 	
 	void update(float& delta);
 		    
     void setViewPointCenter(Vec2 position);
 		
-	void checkForAndResolveCollisions(GameObject* gameObject);
+	void checkNextMap(GameObject* gameObject);
 
 private:
+	ParallaxTileMap* parallaxTileMap;
 	AppGlobal* global;
-
 	Player* player;
 
-	ValueMapIntKey tileProperties;
+	bool scrollMap;
 	
-	ParallaxTileMap* parallaxTileMap;
-
 	Vec2 origin;
 	Vec2 center;
 	Size size;
