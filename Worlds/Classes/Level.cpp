@@ -113,19 +113,14 @@ void Level::update(float& delta)
     
 	Vec2 cursor = parallaxTileMap->convertToNodeSpaceAR(global->cursorLocation);
     Vec2 cursorPrevious = parallaxTileMap->convertToNodeSpaceAR(global->cursorDownLocation);
-
+	
 	if (global->leftMouseButton)
-	{
-		Vec2 scroll = cursorPrevious - cursor;
-        Vec2 scrollStep = scroll * kUpdateInterval;
+	{		
+		Vec2 scrollStep = cursor - cursorPrevious;
+		log("scrollStep - x:%f, y:%f", scrollStep.x, scrollStep.y);  
+		this->setPosition(scrollStep);
 
-		Vec2 minMovement = Vec2(-440.0, -440.0);
-		Vec2 maxMovement = Vec2(440.0, 440.0);
-        //
-		//scroll.clamp(minMovement, maxMovement);
-
-        
-		this->setPosition(this->getPosition() - scrollStep);
+		//log("position - x:%f, y:%f", this->getPosition().x, this->getPosition().y);
 
 		parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
 	}
