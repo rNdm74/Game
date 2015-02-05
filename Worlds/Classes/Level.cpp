@@ -112,26 +112,20 @@ void Level::update(float& delta)
 	this->setViewPointCenter(player->getCenterPosition());
     
 	Vec2 cursor = parallaxTileMap->convertToNodeSpaceAR(global->cursorLocation);
+    Vec2 cursorPrevious = parallaxTileMap->convertToNodeSpaceAR(global->cursorDownLocation);
 
-	if (global->rightMouseButton)
+	if (global->leftMouseButton)
 	{
-		Size winSize = Director::getInstance()->getWinSize() / this->getScale();
-		Vec2 centerOfView = Vec2(winSize.width / 2, winSize.height / 2);
+		Vec2 scroll = cursorPrevious - cursor;
+        Vec2 scrollStep = scroll * kUpdateInterval;
 
-		Vec2 viewPoint = centerOfView - global->cursorDownLocation;
+		Vec2 minMovement = Vec2(-440.0, -440.0);
+		Vec2 maxMovement = Vec2(440.0, 440.0);
+        //
+		//scroll.clamp(minMovement, maxMovement);
 
-		Vec2 minMovement = Vec2(-340.0, -340.0);
-		Vec2 maxMovement = Vec2(340.0, 340.0);
-
-		viewPoint.clamp(minMovement, maxMovement);
-		
-		if (cursor < global->cursorDownLocation)
-			log("scroll left:: %f, %f", viewPoint.x, viewPoint.y);
-		else
-			log("scroll right:: %f, %f", viewPoint.x, viewPoint.y);
-
-		Vec2 step = viewPoint * delta;
-		this->setPosition(this->getPosition() + step);
+        
+		this->setPosition(this->getPosition() - scrollStep);
 
 		parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
 	}
