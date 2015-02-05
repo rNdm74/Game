@@ -13,7 +13,9 @@ AppGlobal::AppGlobal()
     ActiveLevel = 1;
 	scale = 1.0f;
 
-    mouseDown = false;
+	leftMouseButton = false;
+	rightMouseButton = false;
+	mouseDown = false;
     mouseUp = false;
     
 	states.JUMP =
@@ -36,8 +38,8 @@ void AppGlobal::initMouseListener()
 	{
 		// Cast Event to EventMouse for position details like above
 		auto eventMouse = static_cast<EventMouse*>(event);
-
-        this->cursorDelta = eventMouse->getLocationInView();
+		this->cursorDelta = eventMouse->getDelta();
+        this->cursorLocation = eventMouse->getLocationInView();
 		this->cursorMove = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
 
 		if (Director::getInstance()->getRunningScene()->isRunning())
@@ -53,7 +55,10 @@ void AppGlobal::initMouseListener()
 	listener->onMouseDown = [=](Event* event)
 	{	
 		auto eventMouse = static_cast<EventMouse*>(event);
-		startLocation = eventMouse->getLocation();
+		cursorDownLocation = eventMouse->getLocationInView();
+		int mouseButton = eventMouse->getMouseButton();		
+		if (mouseButton == 0) leftMouseButton = true;
+		if (mouseButton == 1) rightMouseButton = true;
 
 		auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
@@ -68,14 +73,10 @@ void AppGlobal::initMouseListener()
 	listener->onMouseUp = [=](Event* event)
 	{
 		auto eventMouse = static_cast<EventMouse*>(event);
-		endLocation = eventMouse->getLocation();
-
-
-		Vec2 diff = endLocation - startLocation;
-
-		log("%f, %f", diff.x, diff.y);
-		//log("%f, %f", endLocation.x, endLocation.y);
-
+		int mouseButton = eventMouse->getMouseButton();
+		if (mouseButton == 0) leftMouseButton = false;
+		if (mouseButton == 1) rightMouseButton = false;
+		
 		auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
 		auto cursor = static_cast<Sprite*>(layer->getChildByTag(kTagCursor));
@@ -90,25 +91,13 @@ void AppGlobal::initMouseListener()
 	{
 		auto eventMouse = static_cast<EventMouse*>(event);
 		
-
 		int delta = eventMouse->getScrollY();
 
-		if (delta > 0)
-		{
-			scale += -0.1;
-		}
-		else if (delta < 0)
-		{
-			scale += 0.1;
-		}
-
-		if (scale < 0.81f)
-			scale = 0.81f;
-		if (scale > 2.0f)
-			scale = 2.05f;
-
-		log("%f", scale);
-
+		if (delta > 0) scale += -0.1;
+		else if (delta < 0) scale += 0.1;
+		
+		if (scale < 0.81f) scale = 0.81f;
+		if (scale > 2.0f) scale = 2.05f;
 	};
 
 

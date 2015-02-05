@@ -58,6 +58,8 @@ void Level::loadPlayer()
 
 void Level::setViewPointCenter(Vec2 position)
 {
+	//this->setPosition(Vec2::ZERO);
+
 	Size mapSize = parallaxTileMap->getMapSize();
 	Size tileSize = parallaxTileMap->getTileSize();
 	Size winSize = Director::getInstance()->getWinSize() / this->getScale();
@@ -72,6 +74,24 @@ void Level::setViewPointCenter(Vec2 position)
     Vec2 viewPoint = centerOfView - actualPosition;
     
 	parallaxTileMap->setPosition(viewPoint);
+}
+
+void Level::scrollLevelMap(Vec2 position)
+{
+	Size mapSize = parallaxTileMap->getMapSize();
+	Size tileSize = parallaxTileMap->getTileSize();
+	Size winSize = Director::getInstance()->getWinSize() / this->getScale();
+
+	float x = MAX(position.x, winSize.width / 2);
+	float y = MAX(position.y, winSize.height / 2);
+	x = MIN(x, (mapSize.width * tileSize.width) - winSize.width / 2);
+	y = MIN(y, (mapSize.height * tileSize.height) - winSize.height / 2);
+
+	Vec2 actualPosition = Vec2(x, y);
+	Vec2 centerOfView = Vec2(winSize.width / 2, winSize.height / 2);
+	Vec2 viewPoint = centerOfView - actualPosition;
+
+	this->setPosition(viewPoint);
 }
 
 void Level::update(float& delta)
@@ -91,20 +111,34 @@ void Level::update(float& delta)
 	// centre viewport on player
 	this->setViewPointCenter(player->getCenterPosition());
     
-    //Vec2 cursor = this->convertToWorldSpace();
-    parallaxTileMap->drawDebugRectAt(global->cursorDelta, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+	Vec2 cursor = parallaxTileMap->convertToNodeSpaceAR(global->cursorLocation);
 
-	/*if (global->states.LEFT || global->states.RIGHT)
-		scrollMap = true;
+	if (global->rightMouseButton)
+	{
+		Size winSize = Director::getInstance()->getWinSize() / this->getScale();
+		Vec2 centerOfView = Vec2(winSize.width / 2, winSize.height / 2);
 
-	if (global->states.RIGHT)
-		parallaxPosition -= 250 * delta;
-	if (global->states.LEFT)
-		parallaxPosition += 250 * delta;
-	if (global->states.STOP)
-		parallaxPosition = this->getPositionX();*/
+		Vec2 viewPoint = centerOfView - global->cursorDownLocation;
 
-	//
+		Vec2 minMovement = Vec2(-340.0, -340.0);
+		Vec2 maxMovement = Vec2(340.0, 340.0);
+
+		viewPoint.clamp(minMovement, maxMovement);
+		
+		if (cursor < global->cursorDownLocation)
+			log("scroll left:: %f, %f", viewPoint.x, viewPoint.y);
+		else
+			log("scroll right:: %f, %f", viewPoint.x, viewPoint.y);
+
+		Vec2 step = viewPoint * delta;
+		this->setPosition(this->getPosition() + step);
+
+		parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
+	}
+	else
+	{
+		parallaxTileMap->drawDebugRectAt(cursor, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+	}
 }
 
 void Level::checkNextMap(GameObject* gameObject)

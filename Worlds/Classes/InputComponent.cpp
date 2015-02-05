@@ -12,7 +12,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 	gameObject.canMoveLeft = false;
 	gameObject.canMoveRight = false;
 
-	/*if (global->states.LEFT)
+	if (global->states.LEFT)
 	{		
 		gameObject.canMoveLeft = true;
 		gameObject.move = true; 
@@ -24,7 +24,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 		gameObject.canMoveRight = true;
 		gameObject.move = true; 
 		direction.x = 1;
-	}*/
+	}
 			
 	if (global->states.DOWN && gameObject.canClimb)
 	{

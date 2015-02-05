@@ -26,18 +26,17 @@ public:
     int ActiveLevel;
     Point StartPosition;
 
+	Vec2 cursorDownLocation;
+	Vec2 cursorLocation;
     Vec2 cursorDelta;
 	Vec2 cursorMove;
 	bool mouseUp;
 	bool mouseDown;
 	float scale;	
 
-	Vec2 startLocation;
-	Vec2 endLocation;
-
-	//EState state;
-	//EState previousState;
-
+	bool leftMouseButton;
+	bool rightMouseButton;
+	
 	GameStates states;
     
 public:

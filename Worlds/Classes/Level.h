@@ -29,6 +29,7 @@ public:
 	void update(float& delta);
 		    
     void setViewPointCenter(Vec2 position);
+	void scrollLevelMap(Vec2 position);
 		
 	void checkNextMap(GameObject* gameObject);
 
