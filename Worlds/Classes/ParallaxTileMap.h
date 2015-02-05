@@ -53,6 +53,7 @@ public:
 	// Debug
 	void clearDebugDraw();
 	void drawDebugRect(Rect rect, Color4F color);
+    void drawDebugRectAt(Vec2 position, Color4F color);
 private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);
 	TileData getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates);

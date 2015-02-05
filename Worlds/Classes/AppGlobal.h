@@ -26,6 +26,7 @@ public:
     int ActiveLevel;
     Point StartPosition;
 
+    Vec2 cursorDelta;
 	Vec2 cursorMove;
 	bool mouseUp;
 	bool mouseDown;

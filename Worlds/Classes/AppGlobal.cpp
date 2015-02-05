@@ -13,6 +13,9 @@ AppGlobal::AppGlobal()
     ActiveLevel = 1;
 	scale = 1.0f;
 
+    mouseDown = false;
+    mouseUp = false;
+    
 	states.JUMP =
 	states.LEFT =
 	states.RIGHT =
@@ -34,6 +37,7 @@ void AppGlobal::initMouseListener()
 		// Cast Event to EventMouse for position details like above
 		auto eventMouse = static_cast<EventMouse*>(event);
 
+        this->cursorDelta = eventMouse->getLocationInView();
 		this->cursorMove = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
 
 		if (Director::getInstance()->getRunningScene()->isRunning())

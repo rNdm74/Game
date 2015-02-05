@@ -90,19 +90,11 @@ void Level::update(float& delta)
 	this->checkNextMap(player);
 	// centre viewport on player
 	this->setViewPointCenter(player->getCenterPosition());
-	
+    
+    //Vec2 cursor = this->convertToWorldSpace();
+    parallaxTileMap->drawDebugRectAt(global->cursorDelta, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
 
-	Vec2 diff = global->endLocation - global->startLocation;
-
-	log("x: %f, y:%f", diff.x, diff.y);
-
-	diff.x += 250 * delta;
-	diff.y += 250 * delta;
-
-
-	/*float parallaxPosition = this->getPositionX();
-
-	if (global->states.LEFT || global->states.RIGHT)
+	/*if (global->states.LEFT || global->states.RIGHT)
 		scrollMap = true;
 
 	if (global->states.RIGHT)
@@ -112,7 +104,7 @@ void Level::update(float& delta)
 	if (global->states.STOP)
 		parallaxPosition = this->getPositionX();*/
 
-	//this->setPosition(diff);
+	//
 }
 
 void Level::checkNextMap(GameObject* gameObject)

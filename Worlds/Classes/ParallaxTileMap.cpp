@@ -91,6 +91,13 @@ void ParallaxTileMap::drawDebugRect(Rect rect, Color4F color)
 	debugDraw->drawSolidRect( rect.origin, Vec2(rect.getMaxX(), rect.getMaxY()), color );
 }
 
+void ParallaxTileMap::drawDebugRectAt(Vec2 position, Color4F color)
+{
+    Vec2 coordinates = this->getTileCoordinatesForPosition(position);
+    Rect rect = this->getTileRectFrom(coordinates);
+    this->drawDebugRect(rect, color);
+}
+
 void ParallaxTileMap::addObjects()
 {
 	// loop over the object groups in this tmx file
