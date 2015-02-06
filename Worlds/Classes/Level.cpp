@@ -1,11 +1,8 @@
 #include "AppGlobal.h"
-#include "Box2D.h"
 #include "Constants.h"
-#include "ContactListener.h"
 #include "GameObject.h"
 #include "GameObjectFactory.h"
 #include "Level.h"
-#include "PanZoomLayer.h"
 #include "ParallaxTileMap.h"
 #include "Utils.h"
 
@@ -43,12 +40,9 @@ void Level::loadMap(std::string mapname)
 {	
 	this->removeAllChildrenWithCleanup(true);
 
-	PanZoomLayer* pzLayer = PanZoomLayer::create();
-	this->addChild(pzLayer);
-
 	parallaxTileMap = ParallaxTileMap::create(mapname);
 	parallaxTileMap->addObjects();
-	pzLayer->addChild(parallaxTileMap);
+	this->addChild(parallaxTileMap);
 }
 
 void Level::loadPlayer()
@@ -138,7 +132,7 @@ void Level::update(float& delta)
 		Vec2 distance = diff + scrollStep;
 		log("distance - x:%f, y:%f", distance.x, distance.y);
 				
-		//this->setPosition(scrollStep);
+		this->setPosition(scrollStep);
 
 		parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
 	}

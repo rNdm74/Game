@@ -47,66 +47,44 @@ bool AppResources::mainLoad()
 }
 
 void AppResources::loadBackgroundResources(Texture2D* texture)
-{	
-	//log("Loaded background texture: %s", timestamp());
-
+{
+    CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(BACKGROUND_PLIST, texture);
-
-	//log("Loaded background plist: %s", timestamp());
 }
 
 void AppResources::loadCharacterResources(Texture2D* texture)
 {
-	//log("Loaded character texture: %s", timestamp());
+	CCASSERT(texture == nullptr, "No texture found, check if file exists");
 
 	cache->addSpriteFramesWithFile(CHARACTERS_PLIST, texture);
-
-	//log("Loaded character plist: %s", timestamp());
 }
 
 void AppResources::loadControlResources(Texture2D* texture)
 {
-	//log("Loaded control texture: %s", timestamp());
-
-	cache->addSpriteFramesWithFile(CONTROLS_PLIST, texture);
-
-	//log("Loaded control plist: %s", timestamp());
+	CCASSERT(texture == nullptr, "No texture found, check if file exists");
+    cache->addSpriteFramesWithFile(CONTROLS_PLIST, texture);
 }
 
 void AppResources::loadHudResources(Texture2D* texture)
 {
-	//log("Loaded hud texture: %s", timestamp());
-
+	CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(HUD_PLIST, texture);
-
-	//log("Loaded hud plist: %s", timestamp());
-
-	
 }
 
 void AppResources::loadItemResources(Texture2D* texture)
 {
-	//log("Loaded item texture: %s", timestamp());
-
+	CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(ITEMS_PLIST, texture);
-
-	//log("Loaded item plist: %s", timestamp());
 }
 
 void AppResources::loadParticleResources(Texture2D* texture)
 {
-	//log("Loaded particle texture: %s", timestamp());
-
+	CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(PARTICLES_PLIST, texture);
-
-	//log("Loaded particle plist: %s", timestamp());
 }
 
 void AppResources::loadTileResources(Texture2D* texture)
 {
-	//log("Loaded tile texture: %s", timestamp());
-
+	CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(TILES_PLIST, texture);
-
-	//log("Loaded tile plist: %s", timestamp());
 }
