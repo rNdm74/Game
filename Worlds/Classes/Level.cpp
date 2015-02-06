@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "GameObjectFactory.h"
 #include "Level.h"
+#include "PanZoomLayer.h"
 #include "ParallaxTileMap.h"
 #include "Utils.h"
 
@@ -41,9 +42,13 @@ Level::~Level(){}
 void Level::loadMap(std::string mapname)
 {	
 	this->removeAllChildrenWithCleanup(true);
+
+	PanZoomLayer* pzLayer = PanZoomLayer::create();
+	this->addChild(pzLayer);
+
 	parallaxTileMap = ParallaxTileMap::create(mapname);
 	parallaxTileMap->addObjects();
-	this->addChild(parallaxTileMap);
+	pzLayer->addChild(parallaxTileMap);
 }
 
 void Level::loadPlayer()
@@ -113,14 +118,27 @@ void Level::update(float& delta)
     
 	Vec2 cursor = parallaxTileMap->convertToNodeSpaceAR(global->cursorLocation);
     Vec2 cursorPrevious = parallaxTileMap->convertToNodeSpaceAR(global->cursorDownLocation);
-	
+		
 	if (global->leftMouseButton)
-	{		
-		Vec2 scrollStep = cursor - cursorPrevious;
-		log("scrollStep - x:%f, y:%f", scrollStep.x, scrollStep.y);  
-		this->setPosition(scrollStep);
+	{
+		Vec2 cursorPosition = global->cursorLocation;
+		//log("cursorPosition - x:%f, y:%f", cursorPosition.x, cursorPosition.y);
 
-		//log("position - x:%f, y:%f", this->getPosition().x, this->getPosition().y);
+		Vec2 position = this->getPosition();
+		Vec2 parentPosition = this->getParent()->getPosition();
+		Vec2 diff = position - parentPosition;
+		//log("diff - x:%f, y:%f", diff.x, diff.y);
+		
+		
+
+		//
+		Vec2 scrollStep = cursor - cursorPrevious;
+		//log("scrollStep - x:%f, y:%f", scrollStep.x, scrollStep.y);
+
+		Vec2 distance = diff + scrollStep;
+		log("distance - x:%f, y:%f", distance.x, distance.y);
+				
+		//this->setPosition(scrollStep);
 
 		parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
 	}
