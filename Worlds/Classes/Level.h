@@ -7,12 +7,9 @@
 class AppGlobal;
 class Player;
 class GameObject;
-class GameObjectFactory;
 class ParallaxTileMap;
 
 using namespace cocos2d;
-
-typedef std::array<TileData, 8> TileDataArray;
 
 class Level : public Node
 {	
@@ -29,9 +26,14 @@ public:
 	void update(float& delta);
 		    
     void setViewPointCenter(Vec2 position);
-	void scrollLevelMap(Vec2 position);
 		
 	void checkNextMap(GameObject* gameObject);
+private:
+	void checkCollisions();
+	void solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
+	void ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
+	void wrap(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
+	void nextLevel(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
 
 private:
 	ParallaxTileMap* parallaxTileMap;
@@ -43,6 +45,10 @@ private:
 	Vec2 origin;
 	Vec2 center;
 	Size size;
+
+	Size winSize;
+	Size mapSize;
+	Size tileSize;
 
 	int objectCount;
 

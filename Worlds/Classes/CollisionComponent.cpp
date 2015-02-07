@@ -1,4 +1,3 @@
-#include "Box2D.h"
 #include "Constants.h"
 #include "GameObject.h"
 #include "Level.h"
@@ -22,6 +21,7 @@ void GameObjectCollisionComponent::update(Node& node, GameObject &gameObject)
 
 	gameObject.setPosition(gameObject.desiredPosition);
 }
+
 
 void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject)
 {
@@ -121,6 +121,7 @@ void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxT
 	gameObject.velocity = gameObjectNewVelocity;
 }
 
+
 void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
 {
 	// Flags
@@ -203,6 +204,7 @@ void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallax
 	gameObject.canClimb = canClimb;
 }
 
+
 void GameObjectCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
 {
 	// Get active mapsize and tilesize
@@ -219,6 +221,7 @@ void GameObjectCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, GameOb
 	if (gameObjectBoundingBox.getMinX() > mapSize.width * tileSize.width)
 		gameObject.desiredPosition = Vec2(0, gameObject.desiredPosition.y);	
 }
+
 
 void GameObjectCollisionComponent::nextLevel(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
 {

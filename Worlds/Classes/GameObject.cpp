@@ -116,7 +116,7 @@ void Player::update(Node* node)
 	//_physics->update(*this);
 	_graphics->update(*this);
 	_input->update(*this);	
-	_collision->update(*node, *this);
+	//_collision->update(*node, *this);
 };
 
 Size Player::getSize()

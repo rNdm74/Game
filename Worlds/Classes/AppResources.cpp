@@ -48,43 +48,43 @@ bool AppResources::mainLoad()
 
 void AppResources::loadBackgroundResources(Texture2D* texture)
 {
-    CCASSERT(texture == nullptr, "No texture found, check if file exists");
+    //CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(BACKGROUND_PLIST, texture);
 }
 
 void AppResources::loadCharacterResources(Texture2D* texture)
 {
-	CCASSERT(texture == nullptr, "No texture found, check if file exists");
+	//CCASSERT(texture == nullptr, "No texture found, check if file exists");
 
 	cache->addSpriteFramesWithFile(CHARACTERS_PLIST, texture);
 }
 
 void AppResources::loadControlResources(Texture2D* texture)
 {
-	CCASSERT(texture == nullptr, "No texture found, check if file exists");
+	//CCASSERT(texture == nullptr, "No texture found, check if file exists");
     cache->addSpriteFramesWithFile(CONTROLS_PLIST, texture);
 }
 
 void AppResources::loadHudResources(Texture2D* texture)
 {
-	CCASSERT(texture == nullptr, "No texture found, check if file exists");
+	//CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(HUD_PLIST, texture);
 }
 
 void AppResources::loadItemResources(Texture2D* texture)
 {
-	CCASSERT(texture == nullptr, "No texture found, check if file exists");
+	//CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(ITEMS_PLIST, texture);
 }
 
 void AppResources::loadParticleResources(Texture2D* texture)
 {
-	CCASSERT(texture == nullptr, "No texture found, check if file exists");
+	//CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(PARTICLES_PLIST, texture);
 }
 
 void AppResources::loadTileResources(Texture2D* texture)
 {
-	CCASSERT(texture == nullptr, "No texture found, check if file exists");
+	//CCASSERT(texture == nullptr, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(TILES_PLIST, texture);
 }

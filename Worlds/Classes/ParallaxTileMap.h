@@ -5,10 +5,7 @@
 #include <array>
 #include "Constants.h"
 
-class AppGlobal;
 class Player;
-class GameObject;
-class GameObjectFactory;
 
 using namespace cocos2d;
 
@@ -29,13 +26,13 @@ public:
 	void setAliasTexParameters(TMXLayer& layer);
 
 	void addObjects();
-	GameObject* addObject(std::string className, ValueMap& properties);
+	bool addObject(std::string className, ValueMap& properties);
 
 	Node* getShadowForNode(Node* node);
 
 	Player* getPlayer();
 
-	TMXLayer* getForegroundLayer();
+	TMXLayer* getCollisionLayer();
 	TMXLayer* getLadderLayer();
 	Node* getObjectLayer();
 
@@ -62,7 +59,7 @@ private:
 
 	TMXTiledMap* tileMap;
 	TMXLayer* backgroundLayer;
-	TMXLayer* foregroundLayer;
+	TMXLayer* collisionLayer;
 	TMXLayer* ladderLayer;
 	Node* shadowLayer;
 	Node* objectLayer;
