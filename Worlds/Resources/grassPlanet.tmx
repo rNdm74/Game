@@ -198,6 +198,10 @@
   </tile>
  </tileset>
  <layer name="background" width="100" height="10">
+  <properties>
+   <property name="parallaxRatioX" value="0.4"/>
+   <property name="parallaxRatioY" value="0.4"/>
+  </properties>
   <data>
    <tile gid="225"/>
    <tile gid="225"/>
@@ -1201,7 +1205,7 @@
    <tile gid="225"/>
   </data>
  </layer>
- <layer name="foreground" width="100" height="10">
+ <layer name="collision" width="100" height="10">
   <properties>
    <property name="parallaxRatioX" value="1.0"/>
    <property name="parallaxRatioY" value="1.0"/>
@@ -2210,6 +2214,10 @@
   </data>
  </layer>
  <layer name="ladders" width="100" height="10">
+  <properties>
+   <property name="parallaxRatioX" value="1.0"/>
+   <property name="parallaxRatioY" value="1.0"/>
+  </properties>
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
