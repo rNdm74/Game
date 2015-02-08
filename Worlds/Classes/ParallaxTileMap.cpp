@@ -31,7 +31,7 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	mapSize = tileMap->getMapSize();
 	tileSize = tileMap->getTileSize();
 
-	debugDraw = DrawNode::create();
+	debugLayer = DrawNode::create();
 
 	// get background layer
 	backgroundLayer = tileMap->getLayer("background");
@@ -59,8 +59,7 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 
 	// create object layer
 	objectLayer = Node::create();
-	objectLayer->addChild(debugDraw);
-
+    
 	this->setAnchorPoint(Vec2::ZERO);
 	this->setContentSize(tileMap->getContentSize());
 
@@ -71,7 +70,8 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	this->addChild(shadowLayer,		 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(collisionLayer,	 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(ladderLayer,      1, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(objectLayer,		 2, Vec2(1.0f, 1.0f), Vec2::ZERO);	
+	this->addChild(objectLayer,		 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
+    this->addChild(debugLayer,       3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 }
 
 ParallaxTileMap::~ParallaxTileMap()
@@ -86,17 +86,17 @@ void ParallaxTileMap::setAliasTexParameters(TMXLayer& layer)
 
 void ParallaxTileMap::clearDebugDraw()
 {
-	debugDraw->clear();
+	debugLayer->clear();
 }
 
 void ParallaxTileMap::drawDebugRect(Rect rect, Color4F color)
 {
-	debugDraw->drawSolidRect( rect.origin, Vec2(rect.getMaxX(), rect.getMaxY()), color );
+	debugLayer->drawSolidRect( rect.origin, Vec2(rect.getMaxX(), rect.getMaxY()), color );
 }
 
 void ParallaxTileMap::drawDebugRectAt(Vec2 position, Color4F color)
 {
-    Vec2 coordinates = this->getTileCoordinatesForPosition(position);
+    Vec2 coordinates = this->getTileCoordinatesFor(position);
     Rect rect = this->getTileRectFrom(coordinates);
     this->drawDebugRect(rect, color);
 }
@@ -115,10 +115,12 @@ void ParallaxTileMap::addObjects()
 			auto properties = object.asValueMap();
 			auto type = properties.at("type");
 
-			if (!type.isNull())
+			if (type.isNull() == false)
 			{
-				this->addObject(type.asString().c_str(), properties);
-				this->objectCount++;
+				if(addObject(type.asString().c_str(), properties))
+                {
+                    objectCount++;
+                }
 			}
 		}
 	}
@@ -134,6 +136,7 @@ bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 	{
 		o->setName(className);
 		objectLayer->addChild(o);
+        
 		return true;
 	}
 
@@ -142,6 +145,12 @@ bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 
 void ParallaxTileMap::update(float delta)
 {
+    auto children = objectLayer->getChildren();
+    // Tile map is responsible for updating its children
+    for(auto& child : children)
+    {
+        static_cast<GameObject*>(child)->update(this);
+    }
 
 }
 
@@ -205,7 +214,7 @@ TileDataArray ParallaxTileMap::getTileDataArrayFromLadderLayerAt(Vec2 position)
 	TileDataArray tileDataArray;
 
 	// get gameObjects tileCoordinates from position
-	Vec2 tileCoordinates = getTileCoordinatesForPosition(position);
+	Vec2 tileCoordinates = getTileCoordinatesFor(position);
 
 	tileDataArray[ETileGrid::BOTTOM] = getTileDataFromLayerAt(*ladderLayer, Vec2(tileCoordinates.x, tileCoordinates.y + 1));
 	tileDataArray[ETileGrid::CENTER] = getTileDataFromLayerAt(*ladderLayer, tileCoordinates);
@@ -227,23 +236,23 @@ TileDataArray ParallaxTileMap::getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2
 	TileDataArray tileDataArray;
 		
 	// get gameObjects tileCoordinates from position
-	Vec2 gameObjectTileCoordinates = getTileCoordinatesForPosition(position);
+	Vec2 tileCoordinates = this->getTileCoordinatesFor(position);
 
 	// 3x3 grid
 	for (int i = 0; i < 9; i++)
 	{
 		// get column and row
-		int column = i % 3;
+		int col = i % 3;
 		int row = static_cast<int>(i / 3);
 
 		// disregard col & row (1,1)
-		if (column == 1 && row == 1) continue;
+		if (col == 1 && row == 1) continue;
 
 		//
-		Vec2 tileCoordinates = Vec2( gameObjectTileCoordinates.x + (column - 1), gameObjectTileCoordinates.y + (row - 1) );
+		Vec2 gridCoordinates = Vec2(tileCoordinates.x + (col - 1), tileCoordinates.y + (row - 1));
 		
 		//
-		tileDataArray[count++] = getTileDataFromLayerAt(layer, tileCoordinates);
+		tileDataArray[count++] = this->getTileDataFromLayerAt(layer, gridCoordinates);
 	}
 
 	// sort tileDataArray for faster checking
@@ -255,6 +264,7 @@ TileDataArray ParallaxTileMap::getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2
 
 	return tileDataArray;
 }
+
 
 /// <summary>
 /// Summary for getTileDataFromLayerAt(TMXLayer layer, Vec2 tileCoordinates)
@@ -269,7 +279,7 @@ TileData ParallaxTileMap::getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoord
 	TileData tileData;
 		
 	// Make sure the coordinates are valid
-	if (isValidTileCoordinates(tileCoordinates))
+	if ( isValid(tileCoordinates) )
 		tileGID = layer.getTileGIDAt(tileCoordinates);
 
 	// create tiledata object
@@ -283,6 +293,7 @@ TileData ParallaxTileMap::getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoord
 	return tileData;
 }
 
+
 /// <summary>
 /// Summary for isValidTileCoordinates
 ///	
@@ -291,10 +302,12 @@ TileData ParallaxTileMap::getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoord
 ///
 /// POST-CONDITION: Returns true if tile coordinates are within tilemap coordinate bounds.
 /// </summary>
-bool ParallaxTileMap::isValidTileCoordinates(Vec2 v)
+bool ParallaxTileMap::isValid(Vec2 tileCoordinates)
 {	
-	return ( v.y < mapSize.height && v.y >= 0 && v.x < mapSize.width && v.x >= 0 );
+	return ( tileCoordinates.y < mapSize.height && tileCoordinates.y >= 0 &&
+             tileCoordinates.x < mapSize.width && tileCoordinates.x >= 0 );
 }
+
 
 /// <summary>
 /// Summary for isTileLadder
@@ -309,6 +322,7 @@ bool ParallaxTileMap::isTileLadder(Vec2 position)
 	return true;
 }
 
+
 /// <summary>
 /// Summary for getTileCoordinatesForPosition
 ///	
@@ -317,7 +331,7 @@ bool ParallaxTileMap::isTileLadder(Vec2 position)
 ///
 /// POST-CONDITION: A tile coordinate vec of the gameobject is returned.
 /// </summary>
-Vec2 ParallaxTileMap::getTileCoordinatesForPosition(Vec2 position)
+Vec2 ParallaxTileMap::getTileCoordinatesFor(Vec2 position)
 {
 	float x = floor(position.x / tileSize.width);
 
@@ -327,6 +341,7 @@ Vec2 ParallaxTileMap::getTileCoordinatesForPosition(Vec2 position)
 
 	return Vec2(x, y);
 }
+
 
 /// <summary>
 /// Summary for getTileRectFrom(tileCoordinates)

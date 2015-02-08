@@ -89,8 +89,9 @@ void Level::update(float& delta)
 	this->setScale(global->scale);
 		
 	// update gameobjects
-	for (auto& gameObject : gameObjectList) 
-		gameObject->update(parallaxTileMap);
+	//for (auto& gameObject : gameObjectList)
+	//	gameObject->update(parallaxTileMap);
+    parallaxTileMap->update(delta);
     
 	//
 	this->checkCollisions();

@@ -44,7 +44,7 @@ public:
 	TileDataArray getTileDataArrayFromCollisionLayerAt(Vec2 position);
 	TileDataArray getTileDataArrayFromLadderLayerAt(Vec2 position);
 		
-	bool isValidTileCoordinates(Vec2 tileCoordinates);
+	bool isValid(Vec2 tileCoordinates);
 	bool isTileLadder(Vec2 position);
 
 	// Debug
@@ -54,7 +54,7 @@ public:
 private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);
 	TileData getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates);
-	Vec2 getTileCoordinatesForPosition(Vec2 position);
+	Vec2 getTileCoordinatesFor(Vec2 position);
 	Rect getTileRectFrom(Vec2 tileCoordinates);
 
 	TMXTiledMap* tileMap;
@@ -64,7 +64,7 @@ private:
 	Node* shadowLayer;
 	Node* objectLayer;
 
-	DrawNode* debugDraw;
+	DrawNode* debugLayer;
 	
 	int objectCount;
 
