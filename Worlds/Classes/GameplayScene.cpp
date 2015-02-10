@@ -35,13 +35,13 @@ bool GameplayScene::init()
     }
 
     // create and initialize a menu
-    auto menu_item_1 = MenuItemFont::create("Pause", CC_CALLBACK_1(GameplayScene::Pause, this));
+    /*auto menu_item_1 = MenuItemFont::create("Pause", CC_CALLBACK_1(GameplayScene::Pause, this));
     auto menu_item_2 = MenuItemFont::create("-->", CC_CALLBACK_1(GameplayScene::GameplaySceneFinished, this));
     
     Menu* menu = Menu::create(menu_item_1, menu_item_2,NULL);
     menu->setPositionX(100);
     menu->setPositionY(this->getContentSize().height - 10);
-	this->addChild(menu, 100);
+	this->addChild(menu, 100);*/
 
 	world = World::create();
 	this->addChild(world);   

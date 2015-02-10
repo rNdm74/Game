@@ -28,24 +28,18 @@ public:
     void setViewPointCenter(Vec2 position);
 		
 	void checkNextMap(GameObject* gameObject);
-private:
-	void checkCollisions();
-	void solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
-	void ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
-	void wrap(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
-	void nextLevel(ParallaxTileMap& parallaxTileMap, GameObject &gameObject);
+
+	void renderViewPort();
 
 private:
 	ParallaxTileMap* parallaxTileMap;
 	AppGlobal* global;
 	Player* player;
-
-	bool scrollMap;
-	
+		
 	Vec2 origin;
 	Vec2 center;
-	Size size;
 
+	Size visibleSize;
 	Size winSize;
 	Size mapSize;
 	Size tileSize;
@@ -53,7 +47,6 @@ private:
 	int objectCount;
 
 	std::stack<ParallaxTileMap*> activeMap;
-	std::vector<GameObject*> gameObjectList;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */

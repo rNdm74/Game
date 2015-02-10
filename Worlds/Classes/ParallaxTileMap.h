@@ -6,6 +6,7 @@
 #include "Constants.h"
 
 class Player;
+class ParallaxBackground;
 
 using namespace cocos2d;
 
@@ -57,19 +58,21 @@ private:
 	Vec2 getTileCoordinatesFor(Vec2 position);
 	Rect getTileRectFrom(Vec2 tileCoordinates);
 
-	TMXTiledMap* tileMap;
-	TMXLayer* backgroundLayer;
-	TMXLayer* collisionLayer;
-	TMXLayer* ladderLayer;
-	Node* shadowLayer;
-	Node* objectLayer;
+	TMXTiledMap* _tileMap;
+	ParallaxBackground* _parallaxBackgroundLayer;
+	TMXLayer* _backgroundLayer;
+	TMXLayer* _collisionLayer;
+	TMXLayer* _ladderLayer;
+	TMXLayer* _foregroundLayer;
+	Node* _shadowLayer;
+	Node* _objectLayer;
+	DrawNode* _debugLayer;
 
-	DrawNode* debugLayer;
 	
-	int objectCount;
+	int _objectCount;
 
-	Size tileSize;
-	Size mapSize;
+	Size _tileSize;
+	Size _mapSize;
 };
 
 #endif /* defined(__com_dotdat_World__PARALLAX_TILEMAP_H__) */

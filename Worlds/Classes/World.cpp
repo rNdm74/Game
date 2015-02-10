@@ -147,11 +147,13 @@ World* World::create()
 	// Create an instance of InfiniteParallaxNode
 	World* node = new World();
 
-	if (node) {
+	if (node) 
+	{
 		// Add it to autorelease pool
 		node->autorelease();
 	}
-	else {
+	else 
+	{
 		// Otherwise delete
 		delete node;
 		node = 0;

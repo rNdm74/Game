@@ -11,10 +11,9 @@ AppResources* AppResources::getInstance()
 
 AppResources::AppResources()
 {
-    cache = SpriteFrameCache::getInstance();
-	cache->addSpriteFramesWithFile(HUD_PLIST); 
-	
+    cache = SpriteFrameCache::getInstance();		
 	textureCache = Director::getInstance()->getTextureCache();
+		
 }
 
 AppResources::~AppResources()
@@ -24,11 +23,11 @@ AppResources::~AppResources()
 bool AppResources::initLoad()
 {	
 	//log(" Started loading assets: %s", timestamp());
+	textureCache->addImageAsync(HUD_PNG, CC_CALLBACK_1(AppResources::loadHudResources, this));
+
 	textureCache->addImageAsync(BACKGROUND_PNG, CC_CALLBACK_1(AppResources::loadBackgroundResources, this));
 	
-	textureCache->addImageAsync(CHARACTERS_PNG, CC_CALLBACK_1(AppResources::loadCharacterResources, this));
-			
-	textureCache->addImageAsync(HUD_PNG, CC_CALLBACK_1(AppResources::loadHudResources, this));
+	textureCache->addImageAsync(CHARACTERS_PNG, CC_CALLBACK_1(AppResources::loadCharacterResources, this));				
 			    
     return true;
 }
@@ -48,7 +47,7 @@ bool AppResources::mainLoad()
 
 void AppResources::loadBackgroundResources(Texture2D* texture)
 {
-    //CCASSERT(texture == nullptr, "No texture found, check if file exists");
+   // CCASSERT(texture == NULL, "No texture found, check if file exists");
 	cache->addSpriteFramesWithFile(BACKGROUND_PLIST, texture);
 }
 

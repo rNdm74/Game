@@ -154,7 +154,8 @@ void AppGlobal::initKeyboardListener()
 
 void AppGlobal::addCursor(Layer& layer)
 {
-	auto _cursor = Sprite::createWithSpriteFrameName("tap.png");
+	
+	auto _cursor = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("tap.png"));//Sprite::createWithSpriteFrameName("tap.png");
 	_cursor->setTag(kTagCursor);
 	_cursor->setAnchorPoint(Vec2(0.5, 0.5));
 	_cursor->setPosition(cursorMove);

@@ -16,7 +16,7 @@ Scene* SplashScene::createScene()
 	layer->setTag(KTagSceneLayer);
 
 	// add cursor
-	AppGlobal::getInstance()->addCursor(*layer);
+	//AppGlobal::getInstance()->addCursor(*layer);
 
     // add layer as a child to scene
     scene->addChild(layer);
