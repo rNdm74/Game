@@ -91,7 +91,7 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	this->setAnchorPoint(Vec2::ZERO);
 	this->setContentSize(_tileMap->getContentSize());
 	
-	_parallaxBackgroundLayer = ParallaxBackground::create();
+	_parallaxBackgroundLayer = ParallaxBackground::create(_mapSize.width * _tileSize.width);
 	
 	this->addChild(_parallaxBackgroundLayer, - 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_backgroundLayer,	-2, Vec2(0.7f, 0.7f), Vec2::ZERO);

@@ -50,7 +50,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	director->setProjection(kCCDirectorProjection2D);
 
 	//
-	glview->setDesignResolutionSize(960, 640, ResolutionPolicy::NO_BORDER);
+	glview->setDesignResolutionSize(920, 640, ResolutionPolicy::NO_BORDER);
 
 	// create global resources manager
 	auto appResources = AppResources::getInstance();

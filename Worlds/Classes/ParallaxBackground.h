@@ -12,10 +12,10 @@ class ParallaxBackground : public ParallaxNode
 {
 public:
 	// "creator" methods first	
-	static ParallaxBackground* create();
+	static ParallaxBackground* create(float width);
 
 	// If applicable, then Constructors and the Destructor
-	ParallaxBackground();
+	ParallaxBackground(float width);
 	virtual ~ParallaxBackground();
 
 	//
