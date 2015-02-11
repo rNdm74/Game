@@ -6,7 +6,7 @@
 
 using namespace cocos2d;
 
-typedef std::array<Sprite*, 2> ParallaxBackgroundImages;
+typedef std::array<Sprite*, 3> ParallaxBackgroundImages;
 
 class ParallaxBackground : public ParallaxNode
 {
@@ -22,9 +22,9 @@ public:
 	void update(float delta);
 
 private:
-	ParallaxBackgroundImages _background;
-	ParallaxBackgroundImages _midground;
-	ParallaxBackgroundImages _foreground;
+	ParallaxBackgroundImages _clouds;
+
+
 };
 
 #endif /* defined(__com_dotdat_World__PARALLAX_BACKGROUND_H__) */

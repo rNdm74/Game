@@ -7,7 +7,7 @@
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10
 #define CLOUDS_STARTING_TAG		100
-#define CLOUDS_SPEED			300
+#define CLOUDS_SPEED			150
 
 // PNG assets
 #define BACKGROUND_PNG		"background.png"
