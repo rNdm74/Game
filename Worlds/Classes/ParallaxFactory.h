@@ -17,6 +17,12 @@ public:
 	static Sprite* create(std::string className, Size mapSize);
 };
 
+class ParallaxObject : public Sprite
+{
+public:
+    static Sprite* create(Size size);
+};
+
 class Background : public Sprite
 {
 public:
