@@ -91,6 +91,9 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	_direction[STOP] = Vec2(0, 0);
 
 	_bearing = STOP;
+
+	isClimbing = false;
+	gravity = true;
 	
 	auto shadow = Sprite::create();
 	shadow->setSpriteFrame(_sprite->getSpriteFrame());

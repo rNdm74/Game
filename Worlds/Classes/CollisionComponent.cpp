@@ -123,11 +123,7 @@ void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxT
 
 
 void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
-{
-	// Flags
-	bool isLadderTop = false;
-	bool canClimb = false;
-		
+{			
 	// Variables	
 	Rect gameObjectBoundingBox = gameObject.getCollisionBoundingBox();
 	Vec2 gameObjectCenterPosition = gameObject.getCenterPosition();
@@ -137,63 +133,210 @@ void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallax
 	// get array of tiles surrounding the gameobject
 	TileDataArray tileDataArray = parallaxTileMap.getTileDataArrayFromLadderLayerAt(gameObjectCenterPosition);
 	
-	if (tileDataArray[ETileGrid::BOTTOM].GID && tileDataArray[ETileGrid::CENTER].GID == false)
+
+	// pseudo code ladder collisions
+
+	// bool flags
+	bool isLadderTop = false;
+	bool isLadderMid = false;
+	bool isLadderBottom = false;
+
+	bool canMoveUp = false;
+	bool canMoveDown = false;
+	bool canMoveLeft = false;
+	bool canMoveRight = false;
+
+	bool isClimbing = gameObject.isClimbing;
+	bool isMovingUp = gameObject.isMovingUp;
+	bool isMovingDown = gameObject.isMovingDown;
+	bool isMovingLeft = gameObject.isMovingLeft;
+	bool isMovingRight = gameObject.isMovingRight;	
+
+	bool gravity = gameObject.gravity;
+	
+
+	// states
+
+	//
+	if (tileDataArray[ETileGrid::LEFT].GID == false && isClimbing == false)
 	{
-		isLadderTop = true;
-		gameObject.onGround = true;
+		canMoveLeft = true;
 	}
 
-	// debug loop through tiles array draw ladder rect PURPLE    
-	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < 3; tileIndex++)
+	//
+	if (tileDataArray[ETileGrid::RIGHT].GID == false && isClimbing == false)
 	{
-		// Get the tileData
-		TileData& tileData = tileDataArray[tileIndex];
-		Rect& tileRect = tileData.tileRect;
+		canMoveRight = true;
+	}
 
-		// debug draw tile (PURPLE)
-		parallaxTileMap.drawDebugRect(tileRect, Color4F(0.5f, 0.3f, 1.0f, 0.5f));
+	//
+	if (tileDataArray[ETileGrid::BOTTOM_LEFT].GID && isClimbing)
+	{
+		Rect tileRect = tileDataArray[ETileGrid::BOTTOM_LEFT].tileRect;
+	
+		float maxOffset = gameObjectBoundingBox.getMinY() + 5.0f;
+		float minOffset = gameObjectBoundingBox.getMinY() - 15.0f;
 		
-		// Do not check if tile is empty
-		if (tileData.GID == false) continue;
+		if (tileRect.getMaxY() < maxOffset && tileRect.getMaxY() > minOffset)
+		{
+			canMoveLeft = true;
+		}		
+	}
 
-		// There is a tile so we can climb
+	//
+	if (tileDataArray[ETileGrid::BOTTOM_RIGHT].GID && isClimbing)
+	{
+		Rect tileRect = tileDataArray[ETileGrid::BOTTOM_RIGHT].tileRect;
+
+		float maxOffset = gameObjectBoundingBox.getMinY() + 5.0f;
+		float minOffset = gameObjectBoundingBox.getMinY() - 15.0f;
+
+		if (tileRect.getMaxY() < maxOffset && tileRect.getMaxY() > minOffset)
+		{
+			canMoveRight = true;
+		}
+		
+	}
+			
+	// gameobject moves onto a ladder top section
+	if (tileDataArray[ETileGrid::CENTER].GID == false && tileDataArray[ETileGrid::BOTTOM].GID)
+	{
+		isLadderTop = true;
+	}
+	
+	// gameobject moves onto a ladder mid section
+	if (tileDataArray[ETileGrid::CENTER].GID && tileDataArray[ETileGrid::BOTTOM].GID)
+	{
+		isLadderMid = true;
+	}	
+	
+	// gameobject moves onto a ladder mid section when section is bottom of the complete ladder
+	if (tileDataArray[ETileGrid::CENTER].GID && tileDataArray[ETileGrid::BOTTOM].GID == false)
+	{
+		isLadderBottom = true;
+	}
+
+	// gameobject moves down ladder when on a ladder top section
+	if (isLadderTop)
+	{
+		// get the top ladder rect
+		Rect tileRect = tileDataArray[ETileGrid::BOTTOM].tileRect;
+						
+		// when gameobject is not intersecting
+		if (gameObjectBoundingBox.intersectsRect(tileRect) == false)
+		{
+			// gameObject is not climbing
+			isClimbing = false;
+			gravity = false;
+			
+			// clamp gameObject to top of ladder
+			gameObjectNewPosition.y = tileRect.getMaxY();
+			gameObjectNewVelocity.y = 0.0f;					
+		}
+		else
+		{			
+			// set flags
+			if (gameObjectBoundingBox.getMinX() >= tileRect.getMinX() &&
+				gameObjectBoundingBox.getMaxX() <= tileRect.getMaxX())
+			{
+				canMoveDown = true;
+				canMoveUp = true;
+			}
+		}
+	}
+
+	// gameObject is on ladder top section and climbing down
+	if (isLadderTop && isMovingDown)
+	{
+		isClimbing = true;
+
+		// clamp gameobject to center of ladder
+		float tileMidX = tileDataArray[ETileGrid::BOTTOM].tileRect.getMidX();
+		float gameObjectMidX = gameObjectBoundingBox.size.width / 2;
+
+		gameObjectNewPosition.x = tileMidX - gameObjectMidX;
+		gameObjectNewVelocity.x = 0.0f;
+	}
+
+	// gameObject is on ladder mid section
+	if (isLadderMid)
+	{
+		// get the top ladder rect
+		Rect tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
+
 		if (gameObjectBoundingBox.getMinX() >= tileRect.getMinX() &&
 			gameObjectBoundingBox.getMaxX() <= tileRect.getMaxX())
 		{
-			canClimb = true;
+			canMoveDown = true;
+			canMoveUp = true;
 		}
-
-		//
-		if (tileIndex == ETileGrid::BOTTOM)
-		{
-			// 
-			if (isLadderTop && gameObjectBoundingBox.intersectsRect(tileRect) == false)
-			{
-				gameObjectNewPosition.y = tileRect.getMaxY();
-				gameObjectNewVelocity.y = 0.0f;					
-			}			
-		}
-		else if (tileIndex == ETileGrid::CENTER)
-		{
-			//
-			if (gameObject.onGround) continue;
-
-			// clamp gameobject to center tile bottom when moving left or right
-			if (gameObject.canMoveLeft || gameObject.canMoveRight)
-			{				
-				gameObjectNewPosition.y = tileRect.getMinY();
-			}			
-		}
+	}
 		
-		// clamp gameObject to ladder when gameobject needs to climb
-		if ( gameObject.isClimbingLadder )
-		{			
-			float tileMidX = tileRect.getMidX();
-			float gameObjectMidX = gameObjectBoundingBox.size.width / 2;
+	// gameobject moves up or down when on a ladder mid section
+	if (isLadderMid && (isMovingUp || isMovingDown))
+	{
+		isClimbing = true;		
 
-			gameObjectNewPosition.x = tileMidX - gameObjectMidX;
-			gameObjectNewVelocity.x = 0.0f;
+		// clamp gameobject to center of ladder
+		float tileMidX = tileDataArray[ETileGrid::CENTER].tileRect.getMidX();
+		float gameObjectMidX = gameObjectBoundingBox.size.width / 2;
+
+		gameObjectNewPosition.x = tileMidX - gameObjectMidX;
+		gameObjectNewVelocity.x = 0.0f;
+	}
+
+	// gameobject moves left or right from ladder mid section to stationary platform
+	if (isLadderMid && (isMovingLeft || isMovingRight) && (canMoveLeft || canMoveRight))
+	{
+		isClimbing = false;
+
+		gameObjectNewPosition.y = tileDataArray[ETileGrid::BOTTOM].tileRect.getMaxY();
+		gameObjectNewVelocity.y = 0.0f;
+	}
+
+	// gameObject is on ladder bottom section
+	if (isLadderBottom)
+	{
+		Rect tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
+
+		if (gameObjectBoundingBox.getMinX() >= tileRect.getMinX() &&
+			gameObjectBoundingBox.getMaxX() <= tileRect.getMaxX())
+		{
+			canMoveUp = true;
+			canMoveDown = true;
 		}
+	}
+
+	// gameObject is on ladder bottom section and climbing up
+	if (isLadderBottom && isMovingUp)
+	{
+		isClimbing = true;
+				
+		// clamp gameobject to center of ladder
+		float tileMidX = tileDataArray[ETileGrid::CENTER].tileRect.getMidX();
+		float gameObjectMidX = gameObjectBoundingBox.size.width / 2;
+
+		gameObjectNewPosition.x = tileMidX - gameObjectMidX;
+		gameObjectNewVelocity.x = 0.0f;
+	}
+
+	// gameObject has stopped climbing down
+	if (isLadderBottom && gameObject.onGround)
+	{
+		isClimbing = false;
+		gravity = false;
+	}
+	
+	//debug
+	for (TileData tileData : tileDataArray)
+	{
+		Rect& tileRect = tileData.tileRect;
+
+		// debug draw tile (PURPLE)
+		if (isClimbing)		
+			parallaxTileMap.drawDebugRect(tileRect, Color4F(0.5f, 0.5f, 1.0f, 0.5f));
+		else
+			parallaxTileMap.drawDebugRect(tileRect, Color4F(0.5f, 0.3f, 1.0f, 0.5f));
 	}
 	
 	//
@@ -201,7 +344,13 @@ void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallax
 	gameObject.velocity = gameObjectNewVelocity;
 
 	// gameObject flags
-	gameObject.canClimb = canClimb;
+	gameObject.isClimbing = isClimbing;
+	gameObject.canMoveUp = canMoveUp;
+	gameObject.canMoveDown = canMoveDown;
+	gameObject.canMoveLeft = canMoveLeft;
+	gameObject.canMoveRight = canMoveRight;
+
+	gameObject.gravity = gravity;
 }
 
 

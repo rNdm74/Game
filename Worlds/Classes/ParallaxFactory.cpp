@@ -6,7 +6,7 @@ Sprite* ParallaxFactory::create(std::string className, Size mapSize)
     
 	if (className == "Background")
 	{
-		sprite = Background::create();
+		
 	}
     
     return sprite;

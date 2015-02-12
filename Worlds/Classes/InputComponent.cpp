@@ -9,61 +9,44 @@ void PlayerInputComponent::update(GameObject& gameObject)
 
 	Vec2 direction = Vec2::ZERO;
 	
-	gameObject.canMoveLeft = false;
-	gameObject.canMoveRight = false;
+	if (global->states.LEFT && gameObject.canMoveLeft)
+	{		
+		gameObject.isMovingLeft = true;
+		gameObject.move = true; 
+		direction.x = -1.0f;
+	}
+		
+	if (global->states.RIGHT && gameObject.canMoveRight)
+	{		
+		gameObject.isMovingRight = true;
+		gameObject.move = true; 
+		direction.x = 1.0f;
+	}
+		
+	if (global->states.UP && gameObject.canMoveUp)
+	{
+		gameObject.isMovingUp = true;
+		gameObject.move = true;
+		direction.y = 1.0f;
+	}
 
-	if (global->states.LEFT)
-	{		
-		gameObject.canMoveLeft = true;
-		gameObject.move = true; 
-		direction.x = -1;
-	}
-		
-	if (global->states.RIGHT)
-	{		
-		gameObject.canMoveRight = true;
-		gameObject.move = true; 
-		direction.x = 1;
-	}
-			
-	if (global->states.DOWN && gameObject.canClimb)
+	if (global->states.DOWN && gameObject.canMoveDown)
 	{
-		gameObject.isClimbingLadder = true;
+		gameObject.isMovingDown = true;
 		gameObject.move = true;
-		direction.y = -1;
+		direction.y = -1.0f;
 	}
-		
-	if (global->states.UP && gameObject.canClimb)
-	{
-		gameObject.isClimbingLadder = true;
-		gameObject.move = true;
-		direction.y = 1;
-	}
-		
+				
 	if (global->states.STOP)
 	{	
-		gameObject.isClimbingLadder = false;
+		gameObject.isMovingUp = false;
+		gameObject.isMovingDown = false;
+		gameObject.isMovingLeft = false;
+		gameObject.isMovingRight = false;
 		gameObject.move = false;
         gameObject.velocity = Vec2::ZERO;
 	}
-
-	if (global->states.JUMP) 
-		gameObject.canJump = true;
-
 	
-
-	Vec2 jumpForce = Vec2(0.0, 610.0);
-	float jumpCutoff = 300.0;
-
-	if (gameObject.canJump && gameObject.onGround) 
-	{
-		gameObject.velocity = gameObject.velocity + jumpForce;
-	}
-	else if (!gameObject.canJump && gameObject.velocity.y > jumpCutoff) 
-	{
-		gameObject.velocity = Vec2(gameObject.velocity.x, jumpCutoff);
-	}
-
 	//
 	Vec2 gravity = Vec2(0.0, -850.0);
     Vec2 gravityStep = gravity *  kUpdateInterval;
@@ -80,7 +63,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
         gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
 	}
 
-	if (gameObject.canClimb == false)
+	if (gameObject.gravity)
 	{
 		gameObject.velocity = gameObject.velocity + gravityStep;
 	}

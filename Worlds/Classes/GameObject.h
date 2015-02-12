@@ -56,14 +56,22 @@ public:
 	virtual Vec2 getCenterPosition();
 	
 	// public variables
+	bool canMoveUp;
+	bool canMoveDown;
 	bool canMoveLeft;
-	bool canMoveRight;
-	bool canClimbUpLadder;
-	bool canClimbDownLadder;
+	bool canMoveRight;	
 
-	bool isClimbingLadder;
+	bool isMovingUp;
+	bool isMovingDown;
+	bool isMovingLeft;
+	bool isMovingRight;
+
+	bool isClimbing;
+
+	bool gravity;
+
+
 	bool onLadderTop;
-
 	bool canClimb;
 	bool onGround;
 	bool canJump;

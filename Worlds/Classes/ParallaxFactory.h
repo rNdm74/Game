@@ -23,19 +23,19 @@ public:
     static Sprite* create(Size size);
 };
 
-class Background : public Sprite
+class Background : public ParallaxObject
 {
 public:
 	Background(Size mapSize);
 };
 
-class Mountains : public Sprite
+class Mountains : public ParallaxObject
 {
 public:
 	Mountains(Size mapSize);
 };
 
-class Hills : public Sprite
+class Hills : public ParallaxObject
 {
 public:
 	Hills(Size mapSize);
