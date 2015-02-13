@@ -375,3 +375,91 @@ void GameObjectCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, GameOb
 void GameObjectCollisionComponent::nextLevel(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
 {
 }
+
+
+void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
+{
+
+}
+
+
+AStarPathFinder::AStarPathFinder(Node& node, int maxSearchDistance, bool allowDiagMovement, ClosestHeuristic heuristic)
+{
+	this->heuristic = heuristic;
+	this->node = node;
+	this->maxSearchDistance = maxSearchDistance;
+	this->allowDiagMovement = allowDiagMovement;
+
+	nodes = new Node[map.getWidthInTiles()][map.getHeightInTiles()];
+	for (int x = 0; x<map.getWidthInTiles(); x++) {
+		for (int y = 0; y<map.getHeightInTiles(); y++) {
+			nodes[x][y] = new Node(x, y);
+		}
+	}
+}
+
+///
+///
+///
+
+float ClosestHeuristic::getCost(Node& map, GameObject& mover, Vec2 evaluatedTile, Vec2 targetLocation)
+{
+	Vec2 delta = targetLocation - evaluatedTile;
+
+	float result = static_cast<float>(std::sqrt((delta.x * delta.x) + (delta.y * delta.y)));
+
+	return result;
+}
+
+///
+/// Class Path 
+///
+
+int Path::getLength()
+{
+	return steps.size();
+}
+
+Vec2 Path::getStep(int index)
+{
+	return steps[index];
+}
+
+float Path::getX(int index)
+{
+	return steps[index].x;
+}
+
+float Path::getY(int index)
+{
+	return steps[index].y;
+}
+
+void Path::appendStep(Vec2 step)
+{
+	steps.push_back(step);
+}
+
+void Path::prependStep(Vec2 step)
+{
+	std::vector<Vec2> temp = steps;
+	steps.clear();
+	steps.push_back(step);
+	steps.insert(steps.begin() + 1, temp.begin(), temp.end());
+}
+
+bool Path::contains(Vec2 step)
+{
+	bool contains = false;
+	
+	for (Vec2 step : steps)
+	{
+		if (step.equals(step))
+		{
+			contains = true;
+			continue;
+		}
+	}
+
+	return contains;
+}
