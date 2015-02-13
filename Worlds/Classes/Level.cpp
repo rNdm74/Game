@@ -126,7 +126,14 @@ void Level::update(float& delta)
 	this->setViewPointCenter(player->getCenterPosition());
 
 	//	
-	//Vec2 cursor = parallaxTileMap->convertToNodeSpaceAR(global->cursorLocation);
+	Vec2 cursor = parallaxTileMap->convertToNodeSpaceAR(AppGlobal::getInstance()->cursorLocation);
+    parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
+    
+    if(AppGlobal::getInstance()->mouseDown)
+    {
+        
+    }
+    
 	//Vec2 cursorPrevious = parallaxTileMap->convertToNodeSpaceAR(global->cursorDownLocation);
 	//	
 	//if (global->leftMouseButton)
@@ -148,7 +155,7 @@ void Level::update(float& delta)
 	//			
 	//	this->setPosition(scrollStep);
 
-	//	parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
+    
 	//}
 	//else
 	//{
