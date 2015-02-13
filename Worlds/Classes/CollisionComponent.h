@@ -35,10 +35,44 @@ private:
 	void pathfinding(ParallaxTileMap& parallaxTileMap, GameObject& gameObject);
 };
 
+
+class AStarHeuristic
+{
+public:
+    virtual float getCost(Node& map, GameObject& mover, Vec2 evaluatedTile, Vec2 targetLocation) = 0;
+};
+
+
+class ClosestHeuristic : public AStarHeuristic
+{
+public:
+    float getCost(Node& map, GameObject& mover, Vec2 evaluatedTile, Vec2 targetLocation);
+};
+
+
+class SearchGraphNode
+{
+public:
+    SearchGraphNode(Vec2 coordinate);
+    virtual ~SearchGraphNode();
+    
+    int setParent(SearchGraphNode& parent);
+    int compareTo(SearchGraphNode& node);
+    
+private:
+    Vec2 coordinate;
+    float cost;
+    SearchGraphNode* parent;
+    float heuristic;
+    int depth;
+};
+
+
 class PathFinder
 {
 	virtual void findPath(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation) = 0;
 };
+
 
 class AStarPathFinder : public PathFinder
 {
@@ -51,24 +85,12 @@ private:
 	std::vector<Vec2> closed;
 	std::vector<Vec2> open;
 
-	Node& node;
+	Node node;
 
 	ClosestHeuristic heuristic;
 
 	int maxSearchDistance;
 	bool allowDiagMovement;
-};
-
-class AStarHeuristic
-{
-public:
-	virtual float getCost(Node& map, GameObject& mover, Vec2 evaluatedTile, Vec2 targetLocation) = 0;
-};
-
-class ClosestHeuristic : public AStarHeuristic
-{
-public:
-	float getCost(Node& map, GameObject& mover, Vec2 evaluatedTile, Vec2 targetLocation);
 };
 
 class Path

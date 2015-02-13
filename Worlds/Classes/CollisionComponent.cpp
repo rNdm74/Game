@@ -382,6 +382,39 @@ void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap,
 
 }
 
+SearchGraphNode::SearchGraphNode(Vec2 coordinate)
+{
+    this->coordinate = coordinate;
+}
+
+int SearchGraphNode::setParent(SearchGraphNode& parent)
+{
+    this->depth = parent.depth + 1;
+    this->parent = &parent;
+    
+    return depth;
+}
+
+int SearchGraphNode::compareTo(SearchGraphNode& node)
+{
+    SearchGraphNode o = node;
+    
+    float f = this->heuristic + cost;
+    float of = o.heuristic + o.cost;
+    
+    if (f < of)
+    {
+        return -1;
+    }
+    else if (f > of)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 AStarPathFinder::AStarPathFinder(Node& node, int maxSearchDistance, bool allowDiagMovement, ClosestHeuristic heuristic)
 {
@@ -391,8 +424,11 @@ AStarPathFinder::AStarPathFinder(Node& node, int maxSearchDistance, bool allowDi
 	this->allowDiagMovement = allowDiagMovement;
 
 	nodes = new Node[map.getWidthInTiles()][map.getHeightInTiles()];
-	for (int x = 0; x<map.getWidthInTiles(); x++) {
-		for (int y = 0; y<map.getHeightInTiles(); y++) {
+	
+    for (int x = 0; x<map.getWidthInTiles(); x++)
+    {
+		for (int y = 0; y<map.getHeightInTiles(); y++)
+        {
 			nodes[x][y] = new Node(x, y);
 		}
 	}
