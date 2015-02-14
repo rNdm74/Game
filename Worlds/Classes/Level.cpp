@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Level.h"
 #include "ParallaxTileMap.h"
+#include "PathFinder.h"
+#include "Path.h"
 #include "Utils.h"
 
 Level* Level::create(std::string mapName)
@@ -129,38 +131,56 @@ void Level::update(float& delta)
 	Vec2 cursor = parallaxTileMap->convertToNodeSpaceAR(AppGlobal::getInstance()->cursorLocation);
     parallaxTileMap->drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
     
-    if(AppGlobal::getInstance()->mouseDown)
+    if( AppGlobal::getInstance()->mouseDown )
     {
+		AStarPathFinder* pathFinder = new AStarPathFinder(parallaxTileMap, 500, false);
+		
+		Vec2 convertedCursorLocation = parallaxTileMap->convertToNodeSpaceAR(AppGlobal::getInstance()->cursorLocation);
+		Vec2 startLocation = parallaxTileMap->getTileCoordinatesFor(player->getCenterPosition());
+		Vec2 targetLocation = parallaxTileMap->getTileCoordinatesFor(convertedCursorLocation);
+
+		Path* path = pathFinder->findPath(*player, startLocation, targetLocation);
         
+		if (path)
+		{			
+			Rect front = parallaxTileMap->getTileRectFrom(path->steps[1]);
+
+			if (player->getCenterPosition().x < front.getMidX())
+			{
+				AppGlobal::getInstance()->states.RIGHT = true;
+				AppGlobal::getInstance()->states.STOP = false;
+			}
+			else if (player->getCenterPosition().x > front.getMidX())
+			{
+				AppGlobal::getInstance()->states.LEFT = true;
+				AppGlobal::getInstance()->states.STOP = false;
+			}
+			else if (player->getCenterPosition().y < front.getMidY())
+			{
+				AppGlobal::getInstance()->states.UP = true;
+				AppGlobal::getInstance()->states.STOP = false;
+			}
+			else if (player->getCenterPosition().y > front.getMidY())
+			{
+				AppGlobal::getInstance()->states.DOWN = true;
+				AppGlobal::getInstance()->states.STOP = false;
+			}
+			else
+			{
+				AppGlobal::getInstance()->states.UP = false;
+				AppGlobal::getInstance()->states.DOWN = false;
+				AppGlobal::getInstance()->states.LEFT = false;
+				AppGlobal::getInstance()->states.RIGHT = false;
+				AppGlobal::getInstance()->states.STOP = true;
+			}
+				
+
+			for (Vec2 step : path->steps)
+			{
+				parallaxTileMap->drawDebugRectAtTile(step, Color4F(0.3f, 1.0f, 0.3f, 0.5f));
+			}
+		}		
     }
-    
-	//Vec2 cursorPrevious = parallaxTileMap->convertToNodeSpaceAR(global->cursorDownLocation);
-	//	
-	//if (global->leftMouseButton)
-	//{
-	//	Vec2 cursorPosition = global->cursorLocation;
-	//	//log("cursorPosition - x:%f, y:%f", cursorPosition.x, cursorPosition.y);
-
-	//	Vec2 position = this->getPosition();
-	//	Vec2 parentPosition = this->getParent()->getPosition();
-	//	Vec2 diff = position - parentPosition;
-	//	//log("diff - x:%f, y:%f", diff.x, diff.y);
-
-	//	
-	//	Vec2 scrollStep = cursor - cursorPrevious;
-	//	//log("scrollStep - x:%f, y:%f", scrollStep.x, scrollStep.y);
-
-	//	Vec2 distance = diff + scrollStep;
-	//	//log("distance - x:%f, y:%f", distance.x, distance.y);
-	//			
-	//	this->setPosition(scrollStep);
-
-    
-	//}
-	//else
-	//{
-	//	parallaxTileMap->drawDebugRectAt(cursor, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-	//}
 }
 
 

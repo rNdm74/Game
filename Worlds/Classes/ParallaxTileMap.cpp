@@ -171,6 +171,12 @@ void ParallaxTileMap::drawDebugRectAt(Vec2 position, Color4F color)
     this->drawDebugRect(rect, color);
 }
 
+void ParallaxTileMap::drawDebugRectAtTile(Vec2 coordinates, Color4F color)
+{
+	Rect rect = this->getTileRectFrom(coordinates);
+	this->drawDebugRect(rect, color);
+}
+
 
 /// <summary>
 /// Summary for addObjects()
@@ -341,6 +347,55 @@ Size ParallaxTileMap::getMapSize()
 Size ParallaxTileMap::getTileSize()
 {
 	return _tileMap->getTileSize();
+}
+
+
+/**
+* Notification that the path finder visited a given tile. This is
+* used for debugging new heuristics.
+*
+* @param x The x coordinate of the tile that was visited
+* @param y The y coordinate of the tile that was visited
+*/
+void ParallaxTileMap::pathFinderVisited(Vec2 coordinate)
+{
+
+}
+
+
+/**
+* Check if the given location is blocked, i.e. blocks movement of
+* the supplied mover.
+*
+* @param mover The mover that is potentially moving through the specified
+* tile.
+* @param x The x coordinate of the tile to check
+* @param y The y coordinate of the tile to check
+* @return True if the location is blocked
+*/
+bool ParallaxTileMap::blocked(GameObject& gameObject, Vec2 coordinate)
+{
+	TileData tileData = getTileDataFromLayerAt(*_collisionLayer, coordinate);
+
+	return (tileData.GID);		
+}
+
+
+/**
+* Get the cost of moving through the given tile. This can be used to
+* make certain areas more desirable. A simple and valid implementation
+* of this method would be to return 1 in all cases.
+*
+* @param mover The mover that is trying to move across the tile
+* @param sx The x coordinate of the tile we're moving from
+* @param sy The y coordinate of the tile we're moving from
+* @param tx The x coordinate of the tile we're moving to
+* @param ty The y coordinate of the tile we're moving to
+* @return The relative cost of moving across the given tile
+*/
+float ParallaxTileMap::getCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation)
+{
+	return 1;
 }
 
 

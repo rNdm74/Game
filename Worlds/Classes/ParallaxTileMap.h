@@ -5,6 +5,7 @@
 #include <array>
 #include "Constants.h"
 
+class GameObject;
 class Player;
 class ParallaxBackground;
 
@@ -39,6 +40,9 @@ public:
 
 	Size getMapSize();
 	Size getTileSize();
+	void pathFinderVisited(Vec2 coordinate);
+	bool blocked(GameObject& gameObject, Vec2 coordinate);
+	float getCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation);
 
 	Value getPropertiesForGID(int GID);
 
@@ -48,15 +52,19 @@ public:
 	bool isValid(Vec2 tileCoordinates);
 	bool isTileLadder(Vec2 position);
 
+	Vec2 getTileCoordinatesFor(Vec2 position);
+	Rect getTileRectFrom(Vec2 tileCoordinates);
+
 	// Debug
 	void clearDebugDraw();
 	void drawDebugRect(Rect rect, Color4F color);
     void drawDebugRectAt(Vec2 position, Color4F color);
+	void drawDebugRectAtTile(Vec2 coordinates, Color4F color);
 private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);
 	TileData getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates);
-	Vec2 getTileCoordinatesFor(Vec2 position);
-	Rect getTileRectFrom(Vec2 tileCoordinates);
+	
+	
 
 	TMXTiledMap* _tileMap;
 	ParallaxBackground* _parallaxBackgroundLayer;
