@@ -70,6 +70,7 @@ public:
 
 	bool gravity;
 
+    //std::queue<Rect> path;
 
 	bool onLadderTop;
 	bool canClimb;

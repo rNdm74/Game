@@ -8,6 +8,8 @@ class AppGlobal;
 class Player;
 class GameObject;
 class ParallaxTileMap;
+class AStarPathFinder;
+class Path;
 
 using namespace cocos2d;
 
@@ -33,8 +35,13 @@ public:
 
 private:
 	ParallaxTileMap* parallaxTileMap;
+    AStarPathFinder* pathFinder;
 	AppGlobal* global;
 	Player* player;
+    Path* path;
+    
+    std::queue<Vec2> pathQueue;
+    std::list<Vec2> list;
 		
 	Vec2 origin;
 	Vec2 center;

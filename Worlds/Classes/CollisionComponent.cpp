@@ -1,7 +1,8 @@
+#include "AppGlobal.h"
+#include "CollisionComponent.h"
 #include "Constants.h"
 #include "GameObject.h"
 #include "Level.h"
-#include "CollisionComponent.h"
 #include "ParallaxTileMap.h"
 #include "Utils.h"
 
@@ -380,4 +381,93 @@ void GameObjectCollisionComponent::nextLevel(ParallaxTileMap& parallaxTileMap, G
 void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
 {
 
+    //
+    Vec2 cursor = parallaxTileMap.convertToNodeSpaceAR(AppGlobal::getInstance()->cursorLocation);
+    parallaxTileMap.drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
+    
+    if( AppGlobal::getInstance()->mouseDown )
+    {
+        Vec2 startLocation = parallaxTileMap.getTileCoordinatesFor(gameObject.getCenterPosition());
+        Vec2 targetLocation = parallaxTileMap.getTileCoordinatesFor(cursor);
+        
+        path = pathFinder->findPath(gameObject, startLocation, targetLocation);
+        
+        if ( path )
+        {
+            while(list.empty() == false)
+            {
+                list.pop_front();
+            }
+            
+            for ( Vec2 step : path->steps )
+            {
+                Rect rect = parallaxTileMap->getTileRectFrom(step);
+                
+                list.push_back(Vec2(rect.getMidX(), rect.getMidY()));
+                
+                path = nullptr;
+            }
+        }
+    }
+    
+    if ( list.empty() == false )
+    {
+        Vec2 tileCenter = list.front();
+        Vec2 playerCenter = player->getCenterPosition();
+        
+        Vec2 direction = Vec2(tileCenter - playerCenter).getNormalized();
+        
+        int dx = std::round(direction.x);
+        int dy = std::round(direction.y);
+        
+        float distance = playerCenter.distance(tileCenter);
+        
+        if( distance <= 17.0f )
+        {
+            list.pop_front();
+            
+            if(list.size() < 1)
+            {
+                dx = 0;
+                dy = 0;
+            }
+        }
+        
+        //AppGlobal::getInstance()->states.UP = (dy > 0);
+        //AppGlobal::getInstance()->states.DOWN = (dy < 0);
+        AppGlobal::getInstance()->states.LEFT = (dx < 0);
+        AppGlobal::getInstance()->states.RIGHT = (dx > 0);
+        
+        if(dx == 0)
+        {
+            AppGlobal::getInstance()->states.STOP = true;
+        }
+        else
+        {
+            AppGlobal::getInstance()->states.STOP = false;
+        }
+        
+        
+        
+        //        if(dx < 0)
+        //        {
+        //            log("left: %i", dx);
+        //        }
+        //        else if(dx > 0)
+        //        {
+        //            log("right: %i", dx);
+        //        }
+        //        else
+        //        {
+        //            log("stop: %i", dx);
+        //        }
+        
+        //player->desiredPosition.x += 150 * delta * d ;
+        //player->setPosition(player->desiredPosition);
+        
+        for(Vec2 step : list)
+        {
+            parallaxTileMap->drawDebugRectAt(step, Color4F(0.3f, 1.0f, 0.3f, 0.5f));
+        }
+    }
 }

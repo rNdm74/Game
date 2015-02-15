@@ -4,6 +4,7 @@
 #include "ParallaxTileMap.h"
 #include "SearchGraphNode.h"
 
+
 /**
 * Create a path finder
 *
@@ -28,6 +29,7 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 		}
 	}
 }
+
 
 /**
 * Create a path finder
@@ -148,7 +150,8 @@ Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2
 				/*float xp = x + current->coordinate.x;
 				float yp = y + current->coordinate.y;*/
 
-				if (this->isValidLocation(gameObject, startLocation, neighbourLocation)) {
+				if (this->isValidLocation(gameObject, startLocation, neighbourLocation))
+                {
 					// the cost to get to this node is cost the current plus the movement
 
 					// cost to reach this node. Note that the heursitic value is only used

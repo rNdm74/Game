@@ -111,42 +111,42 @@ void AppGlobal::initKeyboardListener()
 
 	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{		
-		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
-		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
-		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
-		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
-		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
-		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
-		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
-		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
-		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
-		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
-		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
-		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
-		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
-		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
-		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
-		states.STOP		= false;
+//		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
+//		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
+//		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
+//		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
+//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
+//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
+//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
+//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
+//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
+//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
+//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
+//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
+//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
+//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
+//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
+//		states.STOP		= false;
 	};
 
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{
-		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
-		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
-		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
-		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
-		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
-		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
-		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
-		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
-		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
-		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
-		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
-		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
-		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
-		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
-		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
-		states.STOP		= true;
+//		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
+//		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
+//		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
+//		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
+//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
+//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
+//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
+//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
+//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
+//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
+//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
+//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
+//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
+//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
+//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
+//		states.STOP		= true;
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);

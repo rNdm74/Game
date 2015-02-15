@@ -47,6 +47,12 @@ void PlayerInputComponent::update(GameObject& gameObject)
         gameObject.velocity = Vec2::ZERO;
 	}
 	
+//    if(gameObject.path.size() > -1)
+//    {
+//        Rect dest = gameObject.path.front();
+//        gameObject.path.pop();
+//    }
+    
 	//
 	Vec2 gravity = Vec2(0.0, -850.0);
     Vec2 gravityStep = gravity *  kUpdateInterval;
@@ -65,7 +71,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 
 	if (gameObject.gravity)
 	{
-		gameObject.velocity = gameObject.velocity + gravityStep;
+		//gameObject.velocity = gameObject.velocity + gravityStep;
 	}
 
 	
