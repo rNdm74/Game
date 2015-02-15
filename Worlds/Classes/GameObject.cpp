@@ -117,7 +117,7 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 
 void Player::update(Node* node)
 {		
-	_graphics->update(*this);
+	//_graphics->update(*this);
 	_input->update(*this);	
 	_collision->update(*node, *this);
 };

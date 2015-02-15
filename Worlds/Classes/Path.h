@@ -12,10 +12,10 @@ using namespace cocos2d;
 *
 * @author Adam Charlton
 */
-class Path : public Ref
+class Path
 {
 public:
-	static Path* create();
+    
 	/**
 	* Create an empty path
 	*/

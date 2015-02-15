@@ -9,11 +9,10 @@ using namespace cocos2d;
 /**
 * A single node in the search graph
 */
-class SearchGraphNode : public Ref
+class SearchGraphNode
 {
 public:
-	static SearchGraphNode* create(Vec2 coordinate);
-
+    
 	SearchGraphNode(Vec2 coordinate);
 	virtual ~SearchGraphNode(){}
 

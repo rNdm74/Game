@@ -103,8 +103,8 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
     this->addChild(_debugLayer,			 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_foregroundLayer,	 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
-	_pathFinder = AStarPathFinder::create(this, 500, false);
-	_pathFinder->retain();
+    //
+	_pathFinder = new AStarPathFinder(this, 500, false);
 }
 
 
@@ -118,7 +118,6 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 ParallaxTileMap::~ParallaxTileMap()
 {
 	_tileMap->release();
-	_pathFinder->release();
 }
 
 

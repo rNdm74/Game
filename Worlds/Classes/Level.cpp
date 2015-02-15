@@ -50,9 +50,6 @@ void Level::loadMap(std::string mapname)
 
 	mapSize = parallaxTileMap->getMapSize();
 	tileSize = parallaxTileMap->getTileSize();
-    
-    
-    path = nullptr;
 }
 
 

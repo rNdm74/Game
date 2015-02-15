@@ -1,32 +1,8 @@
 #include "Path.h"
 
 
-/**
-* Create a path and it is added to the autorelease pool
-*
-* @return created Path
-*/
-Path* Path::create()
-{
-	// Create an instance of Level
-	Path* node = new Path();
-
-	if (node)
-	{
-		// Add it to autorelease pool
-		node->autorelease();
-	}
-	else
-	{
-		// Otherwise delete
-		delete node;
-		node = 0;
-	}
-
-	return node;
-}
-
 Path::Path(){}
+
 
 /**
 * Get the length of the path, i.e. the number of steps

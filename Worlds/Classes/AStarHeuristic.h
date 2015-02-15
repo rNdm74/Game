@@ -8,6 +8,7 @@ using namespace cocos2d;
 class ParallaxTileMap;
 class GameObject;
 
+
 /**
 * Interface
 *
@@ -19,6 +20,7 @@ public:
 	virtual float getCost(Vec2 evaluatedTile, Vec2 targetLocation) = 0;
 };
 
+
 /**
 * The description of a class providing a cost for a given tile based
 * on a target location and entity being moved. This heuristic controls
@@ -26,13 +28,12 @@ public:
 *
 * @author Adam Charlton
 */
-class AStarHeuristic : public IAStarHeuristic, public Ref
+class AStarHeuristic : public IAStarHeuristic
 {
 public:
-	static AStarHeuristic* create();
-
 	virtual float getCost(Vec2 evaluatedTile, Vec2 targetLocation);
 };
+
 
 /**
 * A heuristic that uses the tile that is closest to the target
