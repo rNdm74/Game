@@ -19,7 +19,7 @@ class Path;
 */
 class IPathFinder
 {
-	virtual Path* findPath(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation) = 0;
+	virtual Path* findPath(Vec2 startLocation, Vec2 targetLocation) = 0;
 };
 
 /**
@@ -32,7 +32,7 @@ class IPathFinder
 */
 class PathFinder : public IPathFinder
 {
-	virtual Path* findPath(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation);
+	virtual Path* findPath(Vec2 startLocation, Vec2 targetLocation);
 };
 
 /**
@@ -41,16 +41,20 @@ class PathFinder : public IPathFinder
 *
 * @author Adam Charlton
 */
-class AStarPathFinder : public IPathFinder
+class AStarPathFinder : public IPathFinder, public Ref
 {
 public:
+	// 
+	static AStarPathFinder* create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement);
+	static AStarPathFinder* create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement, AStarHeuristic* heuristic);
+
 	AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement);
 	AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement, AStarHeuristic* heuristic);
 	virtual ~AStarPathFinder(){}
 
-	Path* findPath(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation);
-	float getMovementCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation);
-	float getHeuristicCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation);
+	Path* findPath(Vec2 startLocation, Vec2 targetLocation);
+	float getMovementCost(Vec2 startLocation, Vec2 targetLocation);
+	float getHeuristicCost(Vec2 startLocation, Vec2 targetLocation);
 		
 protected:
 	SearchGraphNode* getFirstInOpen();
@@ -61,7 +65,7 @@ protected:
 	bool inClosedList(SearchGraphNode* searchGraphNode);
 	void removeFromClosed(SearchGraphNode* searchGraphNode);
 
-	bool isValidLocation(GameObject& gameObject, Vec2 startingLocation, Vec2 checkLocation);
+	bool isValidLocation(Vec2 startingLocation, Vec2 checkLocation);
 	
 private:
 	/** The set of nodes that have been searched through */

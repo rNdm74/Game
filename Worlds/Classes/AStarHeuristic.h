@@ -26,10 +26,12 @@ public:
 *
 * @author Adam Charlton
 */
-class AStarHeuristic : public IAStarHeuristic
+class AStarHeuristic : public IAStarHeuristic, public Ref
 {
 public:
-	virtual float getCost(Vec2 evaluatedTile, Vec2 targetLocation){ return 0.0f; };
+	static AStarHeuristic* create();
+
+	virtual float getCost(Vec2 evaluatedTile, Vec2 targetLocation);
 };
 
 /**
@@ -41,7 +43,7 @@ public:
 class ClosestHeuristic : public AStarHeuristic
 {
 public:
-	float getCost(Vec2 evaluatedTile, Vec2 targetLocation);
+	virtual float getCost(Vec2 evaluatedTile, Vec2 targetLocation) override;
 };
 
 #endif /* defined(__com_dotdat_World__ASTAR_HEURISTIC_H__) */

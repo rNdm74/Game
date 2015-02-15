@@ -3,8 +3,7 @@
 #include "GameObject.h"
 #include "Level.h"
 #include "ParallaxTileMap.h"
-#include "PathFinder.h"
-#include "Path.h"
+
 #include "Utils.h"
 
 Level* Level::create(std::string mapName)
@@ -52,7 +51,7 @@ void Level::loadMap(std::string mapname)
 	mapSize = parallaxTileMap->getMapSize();
 	tileSize = parallaxTileMap->getTileSize();
     
-    pathFinder = new AStarPathFinder(parallaxTileMap, 500, false);
+    
     path = nullptr;
 }
 

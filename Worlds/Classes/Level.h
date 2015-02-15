@@ -35,7 +35,7 @@ public:
 
 private:
 	ParallaxTileMap* parallaxTileMap;
-    AStarPathFinder* pathFinder;
+    
 	AppGlobal* global;
 	Player* player;
     Path* path;

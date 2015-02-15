@@ -1,5 +1,31 @@
 #include "Path.h"
 
+
+/**
+* Create a path and it is added to the autorelease pool
+*
+* @return created Path
+*/
+Path* Path::create()
+{
+	// Create an instance of Level
+	Path* node = new Path();
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
 Path::Path(){}
 
 /**
@@ -19,9 +45,17 @@ int Path::getLength()
 * be >= 0 and < getLength();
 * @return The step information, the position on the map.
 */
-Vec2 Path::getStep(int index)
+Vec2 Path::getStep(unsigned int index)
 {
-	return steps[index];
+	Vec2 step = Vec2::ZERO;
+
+	if (steps.size() > index)
+	{
+		std::list<Vec2>::iterator it = std::next(steps.begin(), index);		
+		step = *it;
+	}
+
+	return step;
 }
 
 /**
@@ -30,9 +64,17 @@ Vec2 Path::getStep(int index)
 * @param index The index of the step whose x coordinate should be retrieved
 * @return The x coordinate at the step
 */
-float Path::getX(int index)
+float Path::getX(unsigned int index)
 {
-	return steps[index].x;
+	Vec2 step = Vec2::ZERO;
+
+	if (steps.size() > index)
+	{
+		std::list<Vec2>::iterator it = std::next(steps.begin(), index);
+		step = *it;
+	}
+
+	return step.x;
 }
 
 /**
@@ -41,9 +83,17 @@ float Path::getX(int index)
 * @param index The index of the step whose y coordinate should be retrieved
 * @return The y coordinate at the step
 */
-float Path::getY(int index)
+float Path::getY(unsigned int index)
 {
-	return steps[index].y;
+	Vec2 step = Vec2::ZERO;
+
+	if (steps.size() > index)
+	{
+		std::list<Vec2>::iterator it = std::next(steps.begin(), index);
+		step = *it;
+	}
+
+	return step.y;
 }
 
 /**
@@ -52,7 +102,7 @@ float Path::getY(int index)
 * @param x The x coordinate of the new step
 * @param y The y coordinate of the new step
 */
-void Path::appendStep(Vec2 step)
+void Path::push_back(Vec2 step)
 {
 	steps.push_back(step);
 }
@@ -63,13 +113,57 @@ void Path::appendStep(Vec2 step)
 * @param x The x coordinate of the new step
 * @param y The y coordinate of the new step
 */
-void Path::prependStep(Vec2 step)
+void Path::push_front(Vec2 step)
 {
-	std::vector<Vec2> temp = steps;
-	steps.clear();
-	steps.push_back(step);
-	steps.insert(steps.begin() + 1, temp.begin(), temp.end());
+	steps.push_front(step);
 }
+
+/**
+* Peek a step from front.
+*
+* @return the given step at the front of the list
+*/
+Vec2 Path::peek_front()
+{
+	return steps.front();
+}
+
+
+/**
+* Peek a step from front.
+*
+* @return the given step at the front of the list
+*/
+Vec2 Path::peek_back()
+{
+	return steps.back();
+}
+
+
+/**
+* Pop a step from front.
+*
+* @return the given step at the front of the list then removes from list
+*/
+Vec2 Path::pop_front()
+{
+	Vec2 front = steps.front();
+	steps.pop_front();
+	return front;
+}
+
+/**
+* Pop a step from front.
+*
+* @return the given step at the front of the list then removes from list
+*/
+Vec2 Path::pop_back()
+{
+	Vec2 back = steps.back();
+	steps.pop_back();
+	return back;
+}
+
 
 /**
 * Check if this path contains the given step
@@ -81,4 +175,23 @@ void Path::prependStep(Vec2 step)
 bool Path::contains(Vec2 step)
 {
 	return (std::find(steps.begin(), steps.end(), step) != steps.end());
+}
+
+
+/**
+* Check if this path contains the given step
+*
+* @param x The x coordinate of the step to check for
+* @param y The y coordinate of the step to check for
+* @return True if the path contains the given step
+*/
+void Path::addPath(Path* path)
+{
+	if (path != nullptr)
+	{
+		for (int i = 0; i < path->getLength(); ++i)
+		{
+			this->steps.push_back(path->getStep(i));
+		}
+	}	
 }

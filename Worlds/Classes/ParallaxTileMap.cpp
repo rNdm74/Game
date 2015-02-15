@@ -3,7 +3,8 @@
 #include "GameObject.h"
 #include "GameObjectFactory.h"
 #include "Utils.h"
-
+#include "PathFinder.h"
+#include "Path.h"
 
 /// <summary>
 /// Summary for create(std::string mapName)
@@ -102,6 +103,8 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
     this->addChild(_debugLayer,			 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_foregroundLayer,	 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
+	_pathFinder = AStarPathFinder::create(this, 500, false);
+	_pathFinder->retain();
 }
 
 
@@ -115,6 +118,7 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 ParallaxTileMap::~ParallaxTileMap()
 {
 	_tileMap->release();
+	_pathFinder->release();
 }
 
 
@@ -359,7 +363,6 @@ Size ParallaxTileMap::getTileSize()
 */
 void ParallaxTileMap::pathFinderVisited(Vec2 coordinate)
 {
-
 }
 
 
@@ -373,11 +376,11 @@ void ParallaxTileMap::pathFinderVisited(Vec2 coordinate)
 * @param y The y coordinate of the tile to check
 * @return True if the location is blocked
 */
-bool ParallaxTileMap::blocked(GameObject& gameObject, Vec2 coordinate)
+bool ParallaxTileMap::blocked(Vec2 coordinate)
 {
 	TileData tileData = getTileDataFromLayerAt(*_collisionLayer, coordinate);
 
-	return (tileData.GID);		
+	return (tileData.GID != 0);		
 }
 
 
@@ -393,7 +396,7 @@ bool ParallaxTileMap::blocked(GameObject& gameObject, Vec2 coordinate)
 * @param ty The y coordinate of the tile we're moving to
 * @return The relative cost of moving across the given tile
 */
-float ParallaxTileMap::getCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation)
+float ParallaxTileMap::getCost(Vec2 startLocation, Vec2 targetLocation)
 {
 	return 1;
 }
@@ -587,4 +590,9 @@ Rect ParallaxTileMap::getTileRectFrom(Vec2 tileCoords)
 	Vec2 origin = Vec2(tileCoords.x * _tileSize.width, levelHeightInPixels - ((tileCoords.y + 1) * _tileSize.height));
 
 	return Rect(origin.x, origin.y, _tileSize.width, _tileSize.height);
+}
+
+Path* ParallaxTileMap::getPath(Vec2 startLocation, Vec2 targetLocation)
+{
+	return _pathFinder->findPath(startLocation, targetLocation);
 }

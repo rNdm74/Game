@@ -8,6 +8,7 @@ class MenuComponent;
 class InputComponent;
 class CollisionComponent;
 class GraphicsComponent;
+class Path;
 
 using namespace cocos2d;
 
@@ -70,7 +71,7 @@ public:
 
 	bool gravity;
 
-    //std::queue<Rect> path;
+    Path* path;
 
 	bool onLadderTop;
 	bool canClimb;

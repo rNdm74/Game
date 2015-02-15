@@ -1,5 +1,32 @@
 #include "SearchGraphNode.h"
 
+
+/**
+* Create a new SearchGraphNode
+*
+* @param coordinate The Vec2 coordinate of the SearchGraphNode
+*/
+SearchGraphNode* SearchGraphNode::create(Vec2 coordinate)
+{
+	// Create an instance of Level
+	SearchGraphNode* node = new SearchGraphNode(coordinate);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
+
 /**
 * Create a new SearchGraphNode
 *
@@ -9,6 +36,7 @@ SearchGraphNode::SearchGraphNode(Vec2 coordinate)
 {
 	this->coordinate = coordinate;
 }
+
 
 /**
 * Set the parent of this SearchGraphNode
@@ -23,6 +51,7 @@ int SearchGraphNode::setParent(SearchGraphNode* parent)
 
 	return depth;
 }
+
 
 /**
 * Compare the heuristic cost between two SearchGraphNodes

@@ -8,6 +8,8 @@
 class GameObject;
 class Player;
 class ParallaxBackground;
+class AStarPathFinder;
+class Path;
 
 using namespace cocos2d;
 
@@ -41,8 +43,8 @@ public:
 	Size getMapSize();
 	Size getTileSize();
 	void pathFinderVisited(Vec2 coordinate);
-	bool blocked(GameObject& gameObject, Vec2 coordinate);
-	float getCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation);
+	bool blocked(Vec2 coordinate);
+	float getCost(Vec2 startLocation, Vec2 targetLocation);
 
 	Value getPropertiesForGID(int GID);
 
@@ -55,6 +57,8 @@ public:
 	Vec2 getTileCoordinatesFor(Vec2 position);
 	Rect getTileRectFrom(Vec2 tileCoordinates);
 
+	Path* getPath(Vec2 startLocation, Vec2 targetLocation);
+
 	// Debug
 	void clearDebugDraw();
 	void drawDebugRect(Rect rect, Color4F color);
@@ -64,7 +68,8 @@ private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);
 	TileData getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates);
 	
-	
+	AStarPathFinder* _pathFinder;
+	Path* _path;
 
 	TMXTiledMap* _tileMap;
 	ParallaxBackground* _parallaxBackgroundLayer;

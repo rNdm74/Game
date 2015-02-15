@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "ParallaxTileMap.h"
 #include "Utils.h"
+#include "Path.h"
 
 void GameObjectCollisionComponent::update(Node& node, GameObject &gameObject)
 {
@@ -14,6 +15,8 @@ void GameObjectCollisionComponent::update(Node& node, GameObject &gameObject)
 	
 	//
 	ParallaxTileMap& parallaxTileMap = static_cast<ParallaxTileMap&>(node);
+
+	this->pathfinding(parallaxTileMap, gameObject);
 
 	// run checks	
 	this->solidTileCollision(parallaxTileMap, gameObject);
@@ -40,7 +43,7 @@ void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxT
 	TileDataArray tileDataArray = parallaxTileMap.getTileDataArrayFromCollisionLayerAt(gameObjectCenterPosition);
 		
 	// loop through tiles array	    
-	for (int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
+	for (unsigned int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
 	{
 		TileData& tileData = tileDataArray[tileIndex];
 		Rect& tileRect = tileData.tileRect;
@@ -380,94 +383,129 @@ void GameObjectCollisionComponent::nextLevel(ParallaxTileMap& parallaxTileMap, G
 
 void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
 {
+	Vec2 direction = Vec2::ZERO;
 
     //
     Vec2 cursor = parallaxTileMap.convertToNodeSpaceAR(AppGlobal::getInstance()->cursorLocation);
     parallaxTileMap.drawDebugRectAt(cursor, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
     
-    if( AppGlobal::getInstance()->mouseDown )
+    if( AppGlobal::getInstance()->leftMouseButton )
     {
         Vec2 startLocation = parallaxTileMap.getTileCoordinatesFor(gameObject.getCenterPosition());
         Vec2 targetLocation = parallaxTileMap.getTileCoordinatesFor(cursor);
-        
-        path = pathFinder->findPath(gameObject, startLocation, targetLocation);
-        
-        if ( path )
-        {
-            while(list.empty() == false)
-            {
-                list.pop_front();
-            }
-            
-            for ( Vec2 step : path->steps )
-            {
-                Rect rect = parallaxTileMap->getTileRectFrom(step);
-                
-                list.push_back(Vec2(rect.getMidX(), rect.getMidY()));
-                
-                path = nullptr;
-            }
-        }
+
+		if (gameObject.path == nullptr)
+		{
+			gameObject.path = parallaxTileMap.getPath(startLocation, targetLocation);
+		}			
+		else
+		{
+			Path* newPath = parallaxTileMap.getPath(gameObject.path->peek_back(), targetLocation);
+			gameObject.path->addPath(newPath);
+		}
     }
-    
-    if ( list.empty() == false )
-    {
-        Vec2 tileCenter = list.front();
-        Vec2 playerCenter = player->getCenterPosition();
+	else if ( AppGlobal::getInstance()->rightMouseButton )
+	{
+		gameObject.path = nullptr;
+		gameObject.velocity = Vec2::ZERO;
+		direction = Vec2::ZERO;
+	}
+    	
+	
+
+	if ( gameObject.path != nullptr && gameObject.path->getLength() > 0 )
+    {	
+		for (int i = 0; i < gameObject.path->getLength(); ++i)
+		{
+			parallaxTileMap.drawDebugRectAtTile(gameObject.path->getStep(i), Color4F(0.3f, 1.0f, 0.3f, 0.5f));
+		}
+
+		Rect rect = parallaxTileMap.getTileRectFrom(gameObject.path->peek_front());
+		
+		Vec2 tileCenter = Vec2
+		(
+			rect.getMidX(), 
+			rect.getMinY()
+		);
         
-        Vec2 direction = Vec2(tileCenter - playerCenter).getNormalized();
+		Vec2 gameObjectCenter = Vec2
+		(
+			gameObject.getCenterPosition().x,
+			gameObject.getPositionY()
+		);
         
-        int dx = std::round(direction.x);
-        int dy = std::round(direction.y);
-        
-        float distance = playerCenter.distance(tileCenter);
-        
+		Vec2 normalized = Vec2(tileCenter - gameObjectCenter).getNormalized();  
+
+		direction = Vec2(std::round(normalized.x), std::round(normalized.y));
+		
+		float distance = gameObjectCenter.distance(tileCenter);
+
         if( distance <= 17.0f )
         {
-            list.pop_front();
+			gameObject.path->pop_front();
             
-            if(list.size() < 1)
+			if (gameObject.path->getLength() < 1)
             {
-                dx = 0;
-                dy = 0;
+				gameObject.path = nullptr;
+
+				gameObject.velocity = Vec2::ZERO;
+				direction = Vec2::ZERO;				
             }
         }
         
-        //AppGlobal::getInstance()->states.UP = (dy > 0);
-        //AppGlobal::getInstance()->states.DOWN = (dy < 0);
-        AppGlobal::getInstance()->states.LEFT = (dx < 0);
-        AppGlobal::getInstance()->states.RIGHT = (dx > 0);
-        
-        if(dx == 0)
-        {
-            AppGlobal::getInstance()->states.STOP = true;
-        }
-        else
-        {
-            AppGlobal::getInstance()->states.STOP = false;
-        }
-        
-        
-        
-        //        if(dx < 0)
-        //        {
-        //            log("left: %i", dx);
-        //        }
-        //        else if(dx > 0)
-        //        {
-        //            log("right: %i", dx);
-        //        }
-        //        else
-        //        {
-        //            log("stop: %i", dx);
-        //        }
-        
-        //player->desiredPosition.x += 150 * delta * d ;
-        //player->setPosition(player->desiredPosition);
-        
-        for(Vec2 step : list)
-        {
-            parallaxTileMap->drawDebugRectAt(step, Color4F(0.3f, 1.0f, 0.3f, 0.5f));
-        }
-    }
+		//gameObject.desiredPosition.x += 150 * kUpdateInterval * dx;
+		//gameObject.desiredPosition.y += 150 * kUpdateInterval * dy;
+
+		if (direction.y > 0 && gameObject.canMoveUp)
+		{
+			gameObject.isMovingUp = true;
+			gameObject.move = true;
+		}
+
+		if (direction.y < 0 && gameObject.canMoveDown)
+		{
+			gameObject.isMovingDown = true;
+			gameObject.move = true;
+		}
+
+		if (direction.x < 0 && gameObject.canMoveLeft)
+		{
+			gameObject.isMovingLeft = true;
+			gameObject.move = true;
+		}
+
+		if (direction.x > 0 && gameObject.canMoveRight)
+		{
+			gameObject.isMovingRight = true;
+			gameObject.move = true;
+		}
+
+		if (direction == Vec2::ZERO)
+		{
+			gameObject.isMovingUp = false;
+			gameObject.isMovingDown = false;
+			gameObject.isMovingLeft = false;
+			gameObject.isMovingRight = false;
+			gameObject.move = false;
+			gameObject.velocity = Vec2::ZERO;
+		}
+	}
+
+	Vec2 move = Vec2(1600.0, 1600.0);
+	Vec2 step = move * kUpdateInterval;
+
+	if (gameObject.move)
+	{
+		gameObject.velocity.x = gameObject.velocity.x + step.x * direction.x;
+		gameObject.velocity.y = gameObject.velocity.y + step.y * direction.y;
+	}
+
+	Vec2 minMovement = Vec2(-340.0, -340.0);
+	Vec2 maxMovement = Vec2(340.0, 340.0);
+
+	gameObject.velocity.clamp(minMovement, maxMovement);
+		
+	Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
+	// 
+	gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;
 }

@@ -5,6 +5,47 @@
 #include "SearchGraphNode.h"
 
 
+AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement)
+{
+	// Create an instance of Level
+	AStarPathFinder* node = new AStarPathFinder(parallaxTileMap, maxSearchDistance, allowDiagMovement);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
+AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement, AStarHeuristic* heuristic)
+{
+	// Create an instance of Level
+	AStarPathFinder* node = new AStarPathFinder(parallaxTileMap, maxSearchDistance, allowDiagMovement, heuristic);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
+
 /**
 * Create a path finder
 *
@@ -25,6 +66,8 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 	{
 		for (int col = 0; col < tileMapSize.width; ++col)
 		{
+			//SearchGraphNode* searchGraphNode = SearchGraphNode::create(Vec2(col, row));
+			//nodes.push_back(searchGraphNode);
 			nodes.push_back(new SearchGraphNode(Vec2(col, row)));
 		}
 	}
@@ -52,6 +95,7 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 	{
 		for (int col = 0; col < tileMapSize.width; ++col)
 		{
+			//SearchGraphNode* searchGraphNode = SearchGraphNode::create(Vec2(col, row));
 			nodes.push_back(new SearchGraphNode(Vec2(col, row)));
 		}
 	}
@@ -71,7 +115,7 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 * @param targetLocation The Vec2 coordinate of the target location
 * @return The path found from start to end, or null if no path can be found.
 */
-Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation)
+Path* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 {
 	//
 	Size mapSize = parallaxTileMap->getMapSize();
@@ -79,7 +123,7 @@ Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2
 	int targetIndex = targetLocation.y * mapSize.width + targetLocation.x;
 
 	// easy first check, if the destination is blocked, we can't get there
-	if (parallaxTileMap->blocked(gameObject, targetLocation)) 
+	if (parallaxTileMap->blocked(targetLocation)) 
 	{
 		return nullptr;
 	}
@@ -150,7 +194,7 @@ Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2
 				/*float xp = x + current->coordinate.x;
 				float yp = y + current->coordinate.y;*/
 
-				if (this->isValidLocation(gameObject, startLocation, neighbourLocation))
+				if (this->isValidLocation(startLocation, neighbourLocation))
                 {
 					// the cost to get to this node is cost the current plus the movement
 
@@ -158,7 +202,7 @@ Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2
 
 					// in the sorted open list
 
-					float nextStepCost = current->cost + this->getMovementCost(gameObject, current->coordinate, neighbourLocation);
+					float nextStepCost = current->cost + this->getMovementCost(current->coordinate, neighbourLocation);
 					int neighbourIndex = neighbourLocation.y * mapSize.width + neighbourLocation.x;
 					SearchGraphNode* neighbour = nodes[neighbourIndex];
 					parallaxTileMap->pathFinderVisited(neighbourLocation);
@@ -192,7 +236,7 @@ Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2
 					if (inOpenList(neighbour) == false && inClosedList(neighbour) == false)
 					{
 						neighbour->cost = nextStepCost;
-						neighbour->heuristic = this->getHeuristicCost(gameObject, neighbourLocation, targetLocation);
+						neighbour->heuristic = this->getHeuristicCost(neighbourLocation, targetLocation);
 						maxDepth = std::max(maxDepth, neighbour->setParent(current));
 						addToOpen(neighbour);
 					}
@@ -219,11 +263,11 @@ Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2
 	SearchGraphNode* target = nodes[targetIndex];
 	while (target != nodes[startIndex])
 	{
-		path->prependStep(target->coordinate);
+		path->push_front(target->coordinate);
 		target = target->parent;
 	}
 
-	path->prependStep(startLocation);
+	path->push_front(startLocation);
 
 	// thats it, we have our path 
 
@@ -239,9 +283,9 @@ Path* AStarPathFinder::findPath(GameObject& gameObject, Vec2 startLocation, Vec2
 * @param targetLocation The Vec2 coordinate of the target location
 * @return The cost of movement through the given tile
 */
-float AStarPathFinder::getMovementCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation)
+float AStarPathFinder::getMovementCost(Vec2 startLocation, Vec2 targetLocation)
 {
-	return parallaxTileMap->getCost(gameObject, startLocation, targetLocation);
+	return parallaxTileMap->getCost(startLocation, targetLocation);
 }
 
 
@@ -254,7 +298,7 @@ float AStarPathFinder::getMovementCost(GameObject& gameObject, Vec2 startLocatio
 * @param targetLocation The Vec2 coordinate of the target location
 * @return The heuristic cost assigned to the tile
 */
-float AStarPathFinder::getHeuristicCost(GameObject& gameObject, Vec2 startLocation, Vec2 targetLocation)
+float AStarPathFinder::getHeuristicCost(Vec2 startLocation, Vec2 targetLocation)
 {
 	return heuristic->getCost(startLocation, targetLocation);
 }
@@ -350,7 +394,7 @@ void AStarPathFinder::removeFromClosed(SearchGraphNode* searchGraphNode)
 * @param checkLocation The Vec2 coordinate of the location to check
 * @return True if the location is valid for the given gameObject
 */
-bool AStarPathFinder::isValidLocation(GameObject& gameObject, Vec2 startingLocation, Vec2 checkLocation)
+bool AStarPathFinder::isValidLocation(Vec2 startingLocation, Vec2 checkLocation)
 {
 	Size tileMapSize = this->parallaxTileMap->getMapSize();
 
@@ -358,7 +402,7 @@ bool AStarPathFinder::isValidLocation(GameObject& gameObject, Vec2 startingLocat
 
 	if ((invalid == false) && ((startingLocation.x != checkLocation.x) || (startingLocation.y != checkLocation.y)))
 	{
-		invalid = parallaxTileMap->blocked(gameObject, checkLocation);
+		invalid = parallaxTileMap->blocked(checkLocation);
 	}
 
 	return !invalid;

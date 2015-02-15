@@ -5,11 +5,11 @@
 
 void PlayerInputComponent::update(GameObject& gameObject)
 {
-	auto global = AppGlobal::getInstance();
+	//auto global = AppGlobal::getInstance();
 
-	Vec2 direction = Vec2::ZERO;
+	//Vec2 direction = Vec2::ZERO;
 	
-	if (global->states.LEFT && gameObject.canMoveLeft)
+	/*if (global->states.LEFT && gameObject.canMoveLeft)
 	{		
 		gameObject.isMovingLeft = true;
 		gameObject.move = true; 
@@ -45,7 +45,7 @@ void PlayerInputComponent::update(GameObject& gameObject)
 		gameObject.isMovingRight = false;
 		gameObject.move = false;
         gameObject.velocity = Vec2::ZERO;
-	}
+	}*/
 	
 //    if(gameObject.path.size() > -1)
 //    {
@@ -55,34 +55,36 @@ void PlayerInputComponent::update(GameObject& gameObject)
     
 	//
 	Vec2 gravity = Vec2(0.0, -850.0);
-    Vec2 gravityStep = gravity *  kUpdateInterval;
+	Vec2 gravityStep = gravity *  kUpdateInterval;
+	//gameObject.velocity = gameObject.velocity + gravityStep;
+
+	////
+	//Vec2 forwardMove = Vec2(1600.0, 0.0);
+	//Vec2 forwardStep = forwardMove * kUpdateInterval;
+
+	//Vec2 climb = Vec2(0.0, 1600.0);
+	//Vec2 climbStep = climb * kUpdateInterval;
+	//	
+	//if (gameObject.move)
+	//{
+	//	gameObject.velocity.x = gameObject.velocity.x + forwardStep.x * direction.x;
+ //       gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
+	//}
+
+	//if (gameObject.gravity)
+	//{
+	//	//
+	//}
+
 	//
-	Vec2 forwardMove = Vec2(1600.0, 0.0);
-	Vec2 forwardStep = forwardMove * kUpdateInterval;
 
-	Vec2 climb = Vec2(0.0, 1600.0);
-	Vec2 climbStep = climb * kUpdateInterval;
-		
-	if (gameObject.move)
-	{
-		gameObject.velocity.x = gameObject.velocity.x + forwardStep.x * direction.x;
-        gameObject.velocity.y = gameObject.velocity.y + climbStep.y * direction.y;
-	}
+	//Vec2 minMovement = Vec2(-340.0, -340.0);
+	//Vec2 maxMovement = Vec2(340.0, 340.0);
 
-	if (gameObject.gravity)
-	{
-		//gameObject.velocity = gameObject.velocity + gravityStep;
-	}
+	//gameObject.velocity.clamp(minMovement, maxMovement);
 
-	
-
-	Vec2 minMovement = Vec2(-340.0, -340.0);
-	Vec2 maxMovement = Vec2(340.0, 340.0);
-
-	gameObject.velocity.clamp(minMovement, maxMovement);
-
-	Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
+	//Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
 	
 	// 
-	gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;
+	//gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;
 }

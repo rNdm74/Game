@@ -10,6 +10,7 @@
 GameObject::GameObject(ValueMap& properties)
 {
 	this->setProperties(properties);
+	this->path = nullptr;
 };
 
 void GameObject::update(Node* node)

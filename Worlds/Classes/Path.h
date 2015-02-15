@@ -12,9 +12,10 @@ using namespace cocos2d;
 *
 * @author Adam Charlton
 */
-class Path
+class Path : public Ref
 {
 public:
+	static Path* create();
 	/**
 	* Create an empty path
 	*/
@@ -23,21 +24,24 @@ public:
 
 	int getLength();
 
-	Vec2 getStep(int index);
-
-	float getX(int index);
-	float getY(int index);
-
-	void appendStep(Vec2 step);
-	void prependStep(Vec2 step);
-
+	Vec2 getStep(unsigned int index);
+	float getX(unsigned int index);
+	float getY(unsigned int index);
+		
 	bool contains(Vec2 step);
 
-	std::vector<Vec2> steps;
+	Vec2 peek_front();
+	Vec2 peek_back();
+	Vec2 pop_front();
+	Vec2 pop_back();
+	void push_back(Vec2 step);
+	void push_front(Vec2 step);
+
+	void addPath(Path* path);
 
 private:
 	/** The list of steps building up this path */
-	//std::vector<Vec2> steps;
+	std::list<Vec2> steps;
 };
 
 #endif /* defined(__com_dotdat_World__PATH_H__) */
