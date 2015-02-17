@@ -2919,7 +2919,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="150"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -3223,7 +3223,9 @@
  </layer>
  <objectgroup name="object">
   <object name="Player" type="Player" x="280" y="490" width="70" height="70"/>
-  <object name="Cave" type="Cave" x="770" y="630" width="70" height="70"/>
+  <object name="Enter" type="Enter" x="770" y="630" width="70" height="70"/>
+  <object name="Left" type="Left" x="0" y="490" width="70" height="70"/>
+  <object name="Right" type="Right" x="6930" y="490" width="70" height="70"/>
  </objectgroup>
  <layer name="foreground" width="100" height="10">
   <data>
