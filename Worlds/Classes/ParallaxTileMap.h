@@ -62,12 +62,14 @@ public:
     
     Vec2 getMapTransition(Vec2 direction);
 
-	// Debug
+	
+#if DEBUG_ENABLE
 	void clearDebugDraw();
 	void drawDebugRect(Rect rect, Color4F color);
     void drawDebugRectAt(Vec2 position, Color4F color);
 	void drawDebugRectAtTile(Vec2 coordinates, Color4F color);
-
+#endif // DEBUG_ENABLE
+    
 	bool isLoaded;
     
 private:
