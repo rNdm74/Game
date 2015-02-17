@@ -4,9 +4,7 @@
 #include <string>
 #include "cocos2d.h"
 
-#ifdef DEBUG_ENABLE
-#define DEBUG_ENABLE 0
-#endif
+#define DEBUG_ENABLE 1
 
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10

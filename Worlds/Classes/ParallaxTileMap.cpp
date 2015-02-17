@@ -95,7 +95,7 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	_parallaxBackgroundLayer = ParallaxBackground::create(_mapSize.width * _tileSize.width);
 	
 	this->addChild(_parallaxBackgroundLayer, - 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_backgroundLayer,	-2, Vec2(0.7f, 0.7f), Vec2::ZERO);
+	this->addChild(_backgroundLayer,	-2, Vec2(0.9f, 1.0f), Vec2::ZERO);
 	this->addChild(_shadowLayer,		-1, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_collisionLayer,		 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_ladderLayer,		 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
@@ -136,6 +136,7 @@ void ParallaxTileMap::setAliasTexParameters(TMXLayer& layer)
 }
 
 
+#if DEBUG_ENABLE
 /// <summary>
 /// Summary for clearDebugDraw()
 ///	
@@ -181,6 +182,7 @@ void ParallaxTileMap::drawDebugRectAtTile(Vec2 coordinates, Color4F color)
 	Rect rect = this->getTileRectFrom(coordinates);
 	this->drawDebugRect(rect, color);
 }
+#endif // DEBUG_ENABLE
 
 
 /// <summary>
@@ -237,17 +239,18 @@ bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 }
 
 
-/// <summary>
-/// Summary for update(float delta)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Update all the game objects in the parallax tile map.
+*
+* @param delta The float fixed time step
+*/
 void ParallaxTileMap::update(float& delta)
 {
+
+#if DEBUG_ENABLE
 	// debug
 	this->clearDebugDraw();
+#endif // DEBUG_ENABLE
 
 	_parallaxBackgroundLayer->update(delta);
 
@@ -257,8 +260,11 @@ void ParallaxTileMap::update(float& delta)
         GameObject* gameObject = static_cast<GameObject*>(child);
         gameObject->update(this);
 
+#if DEBUG_ENABLE
 		this->drawDebugRect(gameObject->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-    }
+#endif // DEBUG_ENABLE
+    
+	}
 }
 
 

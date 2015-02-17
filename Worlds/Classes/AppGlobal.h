@@ -34,6 +34,8 @@ public:
 	bool mouseDown;
 	float scale;	
 
+	bool mouseToggle;
+
 	bool leftMouseButton;
 	bool rightMouseButton;
 	

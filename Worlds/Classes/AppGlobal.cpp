@@ -13,6 +13,7 @@ AppGlobal::AppGlobal()
     ActiveLevel = 1;
 	scale = 1.0f;
 
+	mouseToggle = false;
 	leftMouseButton = false;
 	rightMouseButton = false;
 	mouseDown = false;
@@ -68,6 +69,8 @@ void AppGlobal::initMouseListener()
 
 		this->mouseUp = false;
 		this->mouseDown = true;
+
+		this->mouseToggle = !mouseToggle;
 	};
 
 	listener->onMouseUp = [=](Event* event)

@@ -65,6 +65,8 @@ public:
 	/** **/
 	bool gravity;
 	/** **/
+	Vec2 direction;
+	/** **/
 	Vec2 velocity;
 	/** **/
 	Vec2 desiredPosition;

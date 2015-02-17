@@ -5,6 +5,13 @@
 #include "SearchGraphNode.h"
 
 
+/**
+* Create a path finder
+*
+* @param parallaxTileMap The ParallaxTileMap to be searched
+* @param maxSearchDistance The maximum depth we'll search before giving up
+* @param allowDiagMovement True if the search should try diaganol movement
+*/
 AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement)
 {
 	// Create an instance of Level
@@ -25,6 +32,14 @@ AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int m
 	return node;
 }
 
+
+/**
+* Create a path finder
+*
+* @param parallaxTileMap The ParallaxTileMap to be searched
+* @param maxSearchDistance The maximum depth we'll search before giving up
+* @param allowDiagMovement True if the search should try diaganol movement
+*/
 AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement, AStarHeuristic* heuristic)
 {
 	// Create an instance of Level
@@ -55,7 +70,7 @@ AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int m
 */
 AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement)
 {
-	this->heuristic = new ClosestHeuristic();
+	this->heuristic = new AStarHeuristic();
 	this->parallaxTileMap = parallaxTileMap;
 	this->maxSearchDistance = maxSearchDistance;
 	this->allowDiagMovement = allowDiagMovement;
@@ -102,10 +117,6 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 * Find a path from the starting location provided (Vec2 startLocation) to the target
 * location (Vec2 targetLocation) avoiding blockages and attempting to honour costs
 * provided by the tile map.
-*
-* @param gameObject The GameObject that will be moving along the path. This provides
-* a place to pass context information about the game entity doing the moving, e.g.
-* can it fly? can it swim etc.
 *
 * @param startLocation The Vec2 coordinate of the start location
 * @param targetLocation The Vec2 coordinate of the target location
