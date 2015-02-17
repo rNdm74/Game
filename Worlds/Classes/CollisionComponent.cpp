@@ -15,7 +15,7 @@ void CollisionComponent::update(Node& node, GameObject& gameObject)
 	
 	Rect r1 = player.boundingBox();
 	Rect r2 = gameObject.boundingBox();
-
+		
 	if (r1.intersectsRect(r2) == false)	return;
 	
 	//
@@ -36,12 +36,12 @@ void CollisionComponent::update(Node& node, GameObject& gameObject)
 		v1 = r1.origin;
 		v2 = Vec2(r2.getMaxX(), r2.origin.y);
 	}
-	else if (type == "Enter")
+	else if (type == "Enter" && player.isMovingDown)
 	{
 		v1 = Vec2(r1.getMidX(), r1.getMaxY());
 		v2 = Vec2(r2.getMidX(), r2.origin.y); 
 	}
-	else if (type == "Exit")
+	else if (type == "Exit" && player.isMovingUp)
 	{
 		v1 = Vec2(r1.getMidX(), r1.getMinY());
 		v2 = Vec2(r2.getMidX(), r2.getMaxY());

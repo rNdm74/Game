@@ -45,7 +45,8 @@ void Level::loadMap(std::string mapname)
 {	
 	this->removeAllChildrenWithCleanup(true);
 
-	parallaxTileMap = ParallaxTileMap::create(mapname);	
+	parallaxTileMap = ParallaxTileMap::create(mapname);
+	parallaxTileMap->isLoaded = false;
 	this->addChild(parallaxTileMap);
 
 	mapSize = parallaxTileMap->getMapSize();
@@ -55,7 +56,18 @@ void Level::loadMap(std::string mapname)
 
 void Level::loadPlayer()
 {	
-	player = parallaxTileMap->getPlayer();
+	if (parallaxTileMap->isLoaded == false)
+	{		
+		player = parallaxTileMap->getPlayer();		
+	}
+	else
+	{
+		parallaxTileMap->getObjectLayer()->addChild(player);
+		player->setPosition(parallaxTileMap->getMapTransition(player->mapTransition));
+		player->mapTransition = Vec2::ZERO;
+		player->path = nullptr;
+	}
+		
 	this->setViewPointCenter(player->getCenterPosition());
 }
 
@@ -96,16 +108,33 @@ void Level::update(float& delta)
 void Level::checkNextMap(GameObject* gameObject)
 {
     
-    if ( player->mapTransition.y < 0 )
+    if ( player->mapTransition.y < 0 && player->isMovingDown)
 	{
+		player->retain();
         player->removeFromParent();
-        
-        
+		player->release();
+		                
 		loadMap("planet1.tmx");
-        
-        parallaxTileMap->getObjectLayer()->addChild(player);
-        player->setPosition(parallaxTileMap->getMapTransition(player->mapTransition));
-        loadPlayer();
-        
+
+		parallaxTileMap->isLoaded = true;
+
+		loadPlayer();  
+
+
 	}
+	else if (player->mapTransition.y > 0 && player->isMovingUp)
+	{
+		player->retain();
+		player->removeFromParent();
+		player->release();
+		
+		loadMap(kLevelTMX);
+
+		parallaxTileMap->getObjectLayer()->removeChildByName("Player", true);
+		parallaxTileMap->isLoaded = true;
+
+		loadPlayer();
+	}
+
+
 }

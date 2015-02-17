@@ -105,6 +105,8 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 
     //
 	_pathFinder = new AStarPathFinder(this, 500, false);
+
+
 }
 
 
@@ -609,7 +611,7 @@ Vec2 ParallaxTileMap::getMapTransition(Vec2 direction)
     if(direction.y < 0)
         transition = _objectLayer->getChildByName("Exit")->getPosition();
     else if(direction.y > 0)
-        transition = _objectLayer->getChildByName("Entry")->getPosition();
+        transition = _objectLayer->getChildByName("Enter")->getPosition();
     
     return transition;
     

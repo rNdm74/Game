@@ -46,6 +46,7 @@ public:
     
 	/** **/
 	Path* path;
+	
 	/** **/
 	bool onGround;
 	/** **/

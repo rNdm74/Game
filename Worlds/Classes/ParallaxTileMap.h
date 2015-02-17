@@ -67,6 +67,8 @@ public:
 	void drawDebugRect(Rect rect, Color4F color);
     void drawDebugRectAt(Vec2 position, Color4F color);
 	void drawDebugRectAtTile(Vec2 coordinates, Color4F color);
+
+	bool isLoaded;
     
 private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);
@@ -90,6 +92,8 @@ private:
 
 	Size _tileSize;
 	Size _mapSize;
+
+	
 };
 
 #endif /* defined(__com_dotdat_World__PARALLAX_TILEMAP_H__) */

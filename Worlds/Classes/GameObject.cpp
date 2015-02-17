@@ -23,7 +23,7 @@
 Moveable::Moveable()
 {
 	path = nullptr;
-
+		
 	onGround = false;
 
 	canMove = false;
