@@ -408,21 +408,26 @@ void PlayerCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTile
 		isClimbing = false;
 		gravity = false;
 	}
-	
+
+    
+#if DEBUG_ENABLE
 	//debug
 	for (TileData tileData : tileDataArray)
 	{
 		Rect& tileRect = tileData.tileRect;
 
-#if DEBUG_ENABLE
 		// debug draw tile (PURPLE)
-		if (isClimbing)		
+        if (isClimbing)
+        {
 			parallaxTileMap.drawDebugRect(tileRect, Color4F(0.5f, 0.5f, 1.0f, 0.5f));
-		else
+        }
+        else
+        {
 			parallaxTileMap.drawDebugRect(tileRect, Color4F(0.5f, 0.3f, 1.0f, 0.5f));
-#endif // DEBUG_ENABLE
+        }
 
 	}
+#endif // DEBUG_ENABLE
 	
 	//
 	gameObject.desiredPosition = gameObjectNewPosition;
@@ -550,7 +555,7 @@ void PlayerCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, Pla
 		float distance = v1.distance(v2);
 		log("distance: %f", distance);
 		//
-        if( distance <= 17.0f )
+        if( distance < 13.0f )
         {
 			gameObject.path->pop_front();
             
@@ -561,6 +566,9 @@ void PlayerCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, Pla
 				gameObject.path = nullptr;
 				gameObject.velocity = Vec2::ZERO;
 				gameObject.direction = Vec2::ZERO;
+                
+                gameObject.setPositionX(v2.x - gameObject.getContentSize().width / 2);
+                gameObject.setPositionY(v2.y);
             }
         }
         

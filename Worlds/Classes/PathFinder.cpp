@@ -130,7 +130,7 @@ Path* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 	int targetIndex = targetLocation.y * mapSize.width + targetLocation.x;
 
 	// easy first check, if the destination is blocked, we can't get there
-	if (parallaxTileMap->blocked(targetLocation)) 
+	if (parallaxTileMap->blocked(targetLocation) || startIndex > nodes.size() || targetIndex > nodes.size())
 	{
 		return nullptr;
 	}

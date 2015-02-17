@@ -110,9 +110,9 @@ void Level::checkNextMap(GameObject* gameObject)
     
     if ( player->mapTransition.y < 0 && player->isMovingDown)
 	{
-		player->retain();
+		//player->retain();
         player->removeFromParent();
-		player->release();
+		//player->release();
 		                
 		loadMap("planet1.tmx");
 
@@ -124,9 +124,9 @@ void Level::checkNextMap(GameObject* gameObject)
 	}
 	else if (player->mapTransition.y > 0 && player->isMovingUp)
 	{
-		player->retain();
+		//player->retain();
 		player->removeFromParent();
-		player->release();
+		//player->release();
 		
 		loadMap(kLevelTMX);
 
