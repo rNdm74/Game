@@ -251,10 +251,11 @@ void ParallaxTileMap::update(float& delta)
 
     // Tile map is responsible for updating its children
 	for (auto& child : _objectLayer->getChildren())
-    {		
-        static_cast<GameObject*>(child)->update(this);
+    {
+        GameObject* gameObject = static_cast<GameObject*>(child);
+        gameObject->update(this);
 
-		this->drawDebugRect(static_cast<GameObject*>(child)->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+		this->drawDebugRect(gameObject->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
     }
 }
 
@@ -583,7 +584,7 @@ Vec2 ParallaxTileMap::getTileCoordinatesFor(Vec2 position)
 /// Summary for getTileRectFrom(tileCoordinates)
 ///	
 /// PRE-CONDITION:	A vec of TMX tilemap coordinates must be passed in as an argument.
-///					Functions accesses the tilemap mapSize & tileSize local variables to return coordinates.
+///				-_	Functions accesses the tilemap mapSize & tileSize local variables to return coordinates.
 ///
 /// POST-CONDITION: A rect is returned from the passed in tile coordinates.
 /// </summary>
@@ -599,4 +600,17 @@ Rect ParallaxTileMap::getTileRectFrom(Vec2 tileCoords)
 Path* ParallaxTileMap::getPath(Vec2 startLocation, Vec2 targetLocation)
 {
 	return _pathFinder->findPath(startLocation, targetLocation);
+}
+
+Vec2 ParallaxTileMap::getMapTransition(Vec2 direction)
+{
+    Vec2 transition = Vec2::ZERO;
+    
+    if(direction.y < 0)
+        transition = _objectLayer->getChildByName("Exit")->getPosition();
+    else if(direction.y > 0)
+        transition = _objectLayer->getChildByName("Entry")->getPosition();
+    
+    return transition;
+    
 }

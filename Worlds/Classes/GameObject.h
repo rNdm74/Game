@@ -42,6 +42,8 @@ public:
 	Moveable();
 	virtual ~Moveable(){};
 
+    Vec2 mapTransition;
+    
 	/** **/
 	Path* path;
 	/** **/

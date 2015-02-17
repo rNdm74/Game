@@ -50,9 +50,11 @@ void CollisionComponent::update(Node& node, GameObject& gameObject)
 	Vec2 n = Vec2(v2 - v1).getNormalized();
 	Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
 	
-	Vec2 position = player.getPosition();
-	position.x += 150 * kUpdateInterval * direction.x;
-	player.setPosition(position);
+    player.mapTransition = direction;
+    
+	//Vec2 position = player.getPosition();
+	//position.x += 150 * kUpdateInterval * direction.x;
+	//player.setPosition(position);
 };
 
 void PlayerCollisionComponent::update(Node& node, GameObject &gameObject)
@@ -467,7 +469,7 @@ void PlayerCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, Pla
 		}
 
 		Rect rect = parallaxTileMap.getTileRectFrom(gameObject.path->peek_front());
-		Rect r2 =   
+		//Rect r2 =
 
 		Vec2 tileCenter = Vec2
 		(

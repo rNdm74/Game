@@ -94,10 +94,18 @@ void Level::update(float& delta)
 
 
 void Level::checkNextMap(GameObject* gameObject)
-{	
-	if ( gameObject->getCollisionBoundingBox().getMinY() < 0 )
+{
+    
+    if ( player->mapTransition.y < 0 )
 	{
+        player->removeFromParent();
+        
+        
 		loadMap("planet1.tmx");
-		loadPlayer();
+        
+        parallaxTileMap->getObjectLayer()->addChild(player);
+        player->setPosition(parallaxTileMap->getMapTransition(player->mapTransition));
+        loadPlayer();
+        
 	}
 }

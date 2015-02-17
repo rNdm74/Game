@@ -59,6 +59,8 @@ public:
 	Rect getTileRectFrom(Vec2 tileCoordinates);
 
 	Path* getPath(Vec2 startLocation, Vec2 targetLocation);
+    
+    Vec2 getMapTransition(Vec2 direction);
 
 	// Debug
 	void clearDebugDraw();
