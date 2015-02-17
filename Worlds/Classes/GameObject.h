@@ -12,6 +12,14 @@ class Path;
 
 using namespace cocos2d;
 
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
 class IGameObject
 {
 public:
@@ -20,82 +28,108 @@ public:
 	virtual Rect getCollisionBoundingBox() = 0;
 };
 
-/// <summary>
-/// Summary for Constructor
-///	
-/// PRE-CONDITION:	Must provide the type of the stack
-/// POST-CONDITION: The head and tail are assigned nullptr's 
-/// </summary>
-class GameObject : public IGameObject, public Node
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class Moveable
 {
-	typedef Node super;
-	typedef GameObject self;
-    
 public:
-    // If applicable, then Constructors and the Destructor
-	GameObject(ValueMap& properties);
-	virtual ~GameObject(){};
-    
-    // Then the init methods
-	
-    // Then methods of the instance
-	virtual void update(Node* node);
-	virtual Rect getBoundingBox();
-	virtual Rect getCollisionBoundingBox();
+	Moveable();
+	virtual ~Moveable(){};
 
-    // Then the overrides
-
-	// The gets and sets
-	virtual void setProperties(ValueMap& properties);
-	virtual ValueMap getProperties();
-			
-	virtual void setBearing(EBearing bearing);
-	virtual EBearing getBearing();
-	
-	virtual Vec2* getDirection();
-	virtual Size getSize();
-	virtual Vec2 getCenterPosition();
-	
-	// public variables
+	/** **/
+	Path* path;
+	/** **/
+	bool onGround;
+	/** **/
+	bool canMove;
 	bool canMoveUp;
 	bool canMoveDown;
 	bool canMoveLeft;
-	bool canMoveRight;	
-
+	bool canMoveRight;
+	/** **/
 	bool isMovingUp;
 	bool isMovingDown;
 	bool isMovingLeft;
 	bool isMovingRight;
-
+	/** **/
 	bool isClimbing;
-
+	/** **/
 	bool gravity;
-
-    Path* path;
-
-	bool onLadderTop;
-	bool canClimb;
-	bool onGround;
-	bool canJump;
-	bool move;
+	/** **/
 	Vec2 velocity;
+	/** **/
 	Vec2 desiredPosition;
+};
 
-protected: 
-	Vec2* _direction;
-	EBearing _bearing;
 
-private:
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class GameObjectNode : public Node
+{
+public:
+	// If applicable, then Constructors and the Destructor
+	GameObjectNode(ValueMap& properties);
+	virtual ~GameObjectNode(){};
+
+	// The gets and sets
+	virtual void setProperties(ValueMap& properties);
+	virtual ValueMap getProperties();
+
+protected:
+	/** **/
 	ValueMap _properties;
 };
 
-/// <summary>
-/// Summary for Player
-///	
-/// PRE-CONDITION:	Must provide the type of the stack
-/// POST-CONDITION: The head and tail are assigned nullptr's 
-/// </summary>
-class Player : public GameObject
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class GameObject : public GameObjectNode, public IGameObject
+{
+	typedef GameObjectNode super;
+	typedef GameObject self;
+    
+public:
+	/** If applicable, then Constructors and the Destructor **/
+	GameObject(ValueMap& properties);
+	virtual ~GameObject(){};
+    
+	/** Then the init methods **/
+	
+	/** Then methods of the instance **/
+	virtual void update(Node* node);
+	virtual Rect getBoundingBox();
+	virtual Rect getCollisionBoundingBox();
+
+	/** Then the overrides **/
+	virtual Size getSize();
+	virtual Vec2 getCenterPosition();
+};
+
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class Player : public GameObject, public Moveable
 {
 	typedef GameObject super;
 	typedef Player self;
@@ -105,19 +139,120 @@ public:
 	~Player(){};
 
 	virtual void update(Node* node) override;
+
 	virtual Size getSize() override;
-	//virtual Vec2 getCenterPosition() override;
-	virtual Sprite* getSprite();
-	virtual Rect getBoundingBox() override;	
 	virtual Rect getCollisionBoundingBox() override;
 	
+	virtual Sprite* getSprite();
+	
 private:
+	/** **/
 	Sprite* _sprite;
-
+	/** **/
 	MenuComponent* _menu;
+	/** **/
 	InputComponent* _input;
+	/** **/
 	CollisionComponent* _collision;
+	/** **/
 	GraphicsComponent* _graphics;		
 };
+
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class Left : public GameObject
+{
+	typedef GameObject super;
+	typedef Left self;
+
+public:
+	Left(ValueMap& properties, CollisionComponent* collision);
+	virtual ~Left(){};
+
+	virtual void update(Node* node) override;
+
+private:
+	/** **/
+	CollisionComponent* _collision;
+};
+
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class Right : public GameObject
+{
+	typedef GameObject super;
+	typedef Right self;
+
+public:
+	Right(ValueMap& properties, CollisionComponent* collision);
+	virtual ~Right(){};
+
+	virtual void update(Node* node) override;
+
+private:
+	/** **/
+	CollisionComponent* _collision;
+};
+
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class Enter : public GameObject
+{
+	typedef GameObject super;
+	typedef Enter self;
+
+public:
+	Enter(ValueMap& properties, CollisionComponent* collision);
+	virtual ~Enter(){};
+
+	virtual void update(Node* node) override;
+
+private:
+	/** **/
+	CollisionComponent* _collision;
+};
+
+
+/**
+* A path determined by some path finding algorithm. A series of steps from
+* the starting location to the target location. This includes a step for the
+* initial location.
+*
+* @author Adam Charlton
+*/
+class Exit : public GameObject
+{
+	typedef GameObject super;
+	typedef Exit self;
+
+public:
+	Exit(ValueMap& properties, CollisionComponent* collision);
+	virtual ~Exit(){};
+
+	virtual void update(Node* node) override;
+
+private:
+	/** **/
+	CollisionComponent* _collision;
+};
+
 
 #endif /* defined(__Worlds__GAME_OBJECT_H__) */

@@ -16,10 +16,26 @@ GameObject* GameObjectFactory::create(std::string className, ValueMap& propertie
 			properties,
 			new PlayerMenuComponent(),
 			new PlayerInputComponent(),
-			new GameObjectCollisionComponent(),
+			new PlayerCollisionComponent(),
 			new PlayerGraphicsComponent()
 		);
-	}		
+	}
+	else if (className == "Left")
+	{
+		gameObject = new Left(properties, new CollisionComponent());
+	}
+	else if (className == "Right")
+	{
+		gameObject = new Right(properties, new CollisionComponent());
+	}
+	else if (className == "Enter")
+	{
+		gameObject = new Enter(properties, new CollisionComponent());
+	}
+	else if (className == "Exit")
+	{
+		gameObject = new Exit(properties, new CollisionComponent());
+	}
 
 	return gameObject;
 }

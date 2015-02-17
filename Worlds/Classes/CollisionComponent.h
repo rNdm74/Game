@@ -7,13 +7,14 @@
 using namespace cocos2d;
 
 class GameObject;
+class Player;
 class ParallaxTileMap;
 
-class CollisionComponent
+
+class ICollisionComponent
 {
 public:
-	virtual ~CollisionComponent(){};
-	virtual void update(Node& node, GameObject &gameObject) = 0;
+	virtual void update(Node& node, GameObject& gameObject) = 0;
 
 protected:
 	virtual void solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject) = 0;
@@ -23,36 +24,32 @@ protected:
 	virtual void pathfinding(ParallaxTileMap& parallaxTileMap, GameObject& gameObject) = 0;
 };
 
-class GameObjectCollisionComponent : public CollisionComponent
+
+class CollisionComponent : public ICollisionComponent
 {
 public:
-	void update(Node& node, GameObject &gameObject);
+	virtual void update(Node& node, GameObject& gameObject);
 
-private:
-	void solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject);
-	void ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject);
-	void wrap(ParallaxTileMap& parallaxTileMap, GameObject& gameObject);
-	void nextLevel(ParallaxTileMap& parallaxTileMap, GameObject& gameObject);
-	void pathfinding(ParallaxTileMap& parallaxTileMap, GameObject& gameObject);
+protected:
+	virtual void solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject){};
+	virtual void ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject){};
+	virtual void wrap(ParallaxTileMap& parallaxTileMap, GameObject& gameObject){};
+	virtual void nextLevel(ParallaxTileMap& parallaxTileMap, GameObject& gameObject){};
+	virtual void pathfinding(ParallaxTileMap& parallaxTileMap, GameObject& gameObject){};
 };
 
 
+class PlayerCollisionComponent : public CollisionComponent
+{
+public:
+	void update(Node& node, GameObject& gameObject);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+private:
+	void solidTileCollision(ParallaxTileMap& parallaxTileMap, Player& player);
+	void ladderTileCollision(ParallaxTileMap& parallaxTileMap, Player& player);
+	void wrap(ParallaxTileMap& parallaxTileMap, Player& player);
+	void nextLevel(ParallaxTileMap& parallaxTileMap, Player& player);
+	void pathfinding(ParallaxTileMap& parallaxTileMap, Player& player);
+};
 
 #endif /* defined(__FranticAlien__PhysicsComponent__) */

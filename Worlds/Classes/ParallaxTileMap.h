@@ -25,7 +25,7 @@ public:
 	ParallaxTileMap(std::string mapName);
 	virtual ~ParallaxTileMap();
 
-	void update(float delta);
+	void update(float& delta);
 
 	void setAliasTexParameters(TMXLayer& layer);
 
@@ -42,6 +42,7 @@ public:
 
 	Size getMapSize();
 	Size getTileSize();
+
 	void pathFinderVisited(Vec2 coordinate);
 	bool blocked(Vec2 coordinate);
 	float getCost(Vec2 startLocation, Vec2 targetLocation);

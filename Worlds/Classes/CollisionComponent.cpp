@@ -7,27 +7,73 @@
 #include "Utils.h"
 #include "Path.h"
 
-void GameObjectCollisionComponent::update(Node& node, GameObject &gameObject)
+
+void CollisionComponent::update(Node& node, GameObject& gameObject)
 {
-	// Set flags
-	gameObject.onGround = false;
-	gameObject.canJump = false;
+	ParallaxTileMap& parallaxTileMap = static_cast<ParallaxTileMap&>(node);
+	Player& player = *parallaxTileMap.getPlayer();
+	
+	Rect r1 = player.boundingBox();
+	Rect r2 = gameObject.boundingBox();
+
+	if (r1.intersectsRect(r2) == false)	return;
 	
 	//
+	ValueMap properties = gameObject.getProperties();
+	std::string type = properties["name"].asString().c_str();
+	
+	Vec2 v1 = Vec2::ZERO;
+	Vec2 v2 = Vec2::ZERO;
+
+	//
+	if (type == "Left" && player.isMovingLeft)
+	{
+		v1 = Vec2(r1.getMaxX(), r1.origin.y);
+		v2 = r2.origin;
+	}
+	else if (type == "Right" && player.isMovingRight)
+	{
+		v1 = r1.origin;
+		v2 = Vec2(r2.getMaxX(), r2.origin.y);
+	}
+	else if (type == "Enter")
+	{
+		v1 = Vec2(r1.getMidX(), r1.getMaxY());
+		v2 = Vec2(r2.getMidX(), r2.origin.y); 
+	}
+	else if (type == "Exit")
+	{
+		v1 = Vec2(r1.getMidX(), r1.getMinY());
+		v2 = Vec2(r2.getMidX(), r2.getMaxY());
+	}
+
+	Vec2 n = Vec2(v2 - v1).getNormalized();
+	Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
+	
+	Vec2 position = player.getPosition();
+	position.x += 150 * kUpdateInterval * direction.x;
+	player.setPosition(position);
+};
+
+void PlayerCollisionComponent::update(Node& node, GameObject &gameObject)
+{
+	//
 	ParallaxTileMap& parallaxTileMap = static_cast<ParallaxTileMap&>(node);
-
-	this->pathfinding(parallaxTileMap, gameObject);
-
+	//
+	Player& player = static_cast<Player&>(gameObject);
+		
 	// run checks	
-	this->solidTileCollision(parallaxTileMap, gameObject);
-	this->ladderTileCollision(parallaxTileMap, gameObject);
-	this->wrap(parallaxTileMap, gameObject);
+	this->pathfinding(parallaxTileMap, player);
+	this->solidTileCollision(parallaxTileMap, player);
+	this->ladderTileCollision(parallaxTileMap, player);
+	this->wrap(parallaxTileMap, player);
 
-	gameObject.setPosition(gameObject.desiredPosition);
+	//
+	player.setPosition(player.desiredPosition);
 }
 
 
-void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject)
+void PlayerCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxTileMap, Player& gameObject)
 {
 	// get gameobjects center
 	Vec2 gameObjectCenterPosition = gameObject.getCenterPosition();
@@ -126,7 +172,7 @@ void GameObjectCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxT
 }
 
 
-void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
+void PlayerCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTileMap, Player &gameObject)
 {			
 	// Variables	
 	Rect gameObjectBoundingBox = gameObject.getCollisionBoundingBox();
@@ -358,7 +404,7 @@ void GameObjectCollisionComponent::ladderTileCollision(ParallaxTileMap& parallax
 }
 
 
-void GameObjectCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
+void PlayerCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, Player& gameObject)
 {
 	// Get active mapsize and tilesize
 	Size mapSize = parallaxTileMap.getMapSize();
@@ -376,12 +422,12 @@ void GameObjectCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, GameOb
 }
 
 
-void GameObjectCollisionComponent::nextLevel(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
+void PlayerCollisionComponent::nextLevel(ParallaxTileMap& parallaxTileMap, Player& gameObject)
 {
 }
 
 
-void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
+void PlayerCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, Player& gameObject)
 {
 	Vec2 direction = Vec2::ZERO;
 
@@ -421,7 +467,8 @@ void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap,
 		}
 
 		Rect rect = parallaxTileMap.getTileRectFrom(gameObject.path->peek_front());
-		
+		Rect r2 =   
+
 		Vec2 tileCenter = Vec2
 		(
 			rect.getMidX(), 
@@ -453,40 +500,38 @@ void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap,
             }
         }
         
-		//gameObject.desiredPosition.x += 150 * kUpdateInterval * dx;
-		//gameObject.desiredPosition.y += 150 * kUpdateInterval * dy;
+		gameObject.isMovingUp = false;
+		gameObject.isMovingDown = false;
+		gameObject.isMovingLeft = false;
+		gameObject.isMovingRight = false;
 
 		if (direction.y > 0 && gameObject.canMoveUp)
 		{
 			gameObject.isMovingUp = true;
-			gameObject.move = true;
+			gameObject.canMove = true;
 		}
-
-		if (direction.y < 0 && gameObject.canMoveDown)
+		else if (direction.y < 0 && gameObject.canMoveDown)
 		{
 			gameObject.isMovingDown = true;
-			gameObject.move = true;
+			gameObject.canMove = true;
 		}
-
-		if (direction.x < 0 && gameObject.canMoveLeft)
+		else if (direction.x < 0 && gameObject.canMoveLeft)
 		{
 			gameObject.isMovingLeft = true;
-			gameObject.move = true;
+			gameObject.canMove = true;
 		}
-
-		if (direction.x > 0 && gameObject.canMoveRight)
+		else if (direction.x > 0 && gameObject.canMoveRight)
 		{
 			gameObject.isMovingRight = true;
-			gameObject.move = true;
+			gameObject.canMove = true;
 		}
-
-		if (direction == Vec2::ZERO)
+		else if (direction == Vec2::ZERO)
 		{
 			gameObject.isMovingUp = false;
 			gameObject.isMovingDown = false;
 			gameObject.isMovingLeft = false;
 			gameObject.isMovingRight = false;
-			gameObject.move = false;
+			gameObject.canMove = false;
 			gameObject.velocity = Vec2::ZERO;
 		}
 	}
@@ -494,7 +539,7 @@ void GameObjectCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap,
 	Vec2 move = Vec2(1600.0, 1600.0);
 	Vec2 step = move * kUpdateInterval;
 
-	if (gameObject.move)
+	if (gameObject.canMove)
 	{
 		gameObject.velocity.x = gameObject.velocity.x + step.x * direction.x;
 		gameObject.velocity.y = gameObject.velocity.y + step.y * direction.y;

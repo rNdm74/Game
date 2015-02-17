@@ -242,14 +242,19 @@ bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 ///
 /// POST-CONDITION: 
 /// </summary>
-void ParallaxTileMap::update(float delta)
-{	
+void ParallaxTileMap::update(float& delta)
+{
+	// debug
+	this->clearDebugDraw();
+
 	_parallaxBackgroundLayer->update(delta);
 
     // Tile map is responsible for updating its children
 	for (auto& child : _objectLayer->getChildren())
-    {
+    {		
         static_cast<GameObject*>(child)->update(this);
+
+		this->drawDebugRect(static_cast<GameObject*>(child)->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
     }
 }
 

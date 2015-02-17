@@ -60,16 +60,14 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 	this->maxSearchDistance = maxSearchDistance;
 	this->allowDiagMovement = allowDiagMovement;
 
-	Size tileMapSize = this->parallaxTileMap->getMapSize();
+	Size mapSize = this->parallaxTileMap->getMapSize();
 
-	for (int row = 0; row < tileMapSize.height; ++row)
+	for (int i = 0; i < mapSize.width * mapSize.height; ++i)
 	{
-		for (int col = 0; col < tileMapSize.width; ++col)
-		{
-			//SearchGraphNode* searchGraphNode = SearchGraphNode::create(Vec2(col, row));
-			//nodes.push_back(searchGraphNode);
-			nodes.push_back(new SearchGraphNode(Vec2(col, row)));
-		}
+		int col = i % static_cast<int>(mapSize.width);
+		int row = static_cast<int>(i / mapSize.width);
+		
+		nodes.push_back(new SearchGraphNode(Vec2(col, row)));
 	}
 }
 
@@ -89,15 +87,13 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 	this->maxSearchDistance = maxSearchDistance;
 	this->allowDiagMovement = allowDiagMovement;
 
-	Size tileMapSize = this->parallaxTileMap->getMapSize();
+	Size mapSize = this->parallaxTileMap->getMapSize();
 
-	for (int row = 0; row < tileMapSize.height; ++row)
+	for (int i = 0; i < mapSize.width * mapSize.height; ++i)
 	{
-		for (int col = 0; col < tileMapSize.width; ++col)
-		{
-			//SearchGraphNode* searchGraphNode = SearchGraphNode::create(Vec2(col, row));
-			nodes.push_back(new SearchGraphNode(Vec2(col, row)));
-		}
+		int col = i % static_cast<int>(mapSize.width);
+		int row = static_cast<int>(i / mapSize.width);
+		nodes.push_back(new SearchGraphNode(Vec2(col, row)));
 	}
 }
 
@@ -191,9 +187,7 @@ Path* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 					y + current->coordinate.y
 				);
 
-				/*float xp = x + current->coordinate.x;
-				float yp = y + current->coordinate.y;*/
-
+				//
 				if (this->isValidLocation(startLocation, neighbourLocation))
                 {
 					// the cost to get to this node is cost the current plus the movement

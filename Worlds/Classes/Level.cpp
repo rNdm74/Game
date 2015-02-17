@@ -62,7 +62,7 @@ void Level::loadPlayer()
 
 void Level::setViewPointCenter(Vec2 position)
 {	
-	winSize = winSize / this->getScale();
+	winSize = winSize / AppGlobal::getInstance()->scale;
 	
     float x = MAX(position.x, winSize.width / 2);
 	float y = MAX(position.y, winSize.height / 2);
@@ -76,47 +76,12 @@ void Level::setViewPointCenter(Vec2 position)
 	this->parallaxTileMap->setPosition(viewPoint);
 }
 
-void Level::renderViewPort()
-{
-	for (auto& child : this->parallaxTileMap->getChildren())
-	{
-		TMXLayer* layer = static_cast<TMXLayer*>(child);
-
-		Size s = layer->getLayerSize();
-
-		for (int col = 0; col < s.width; ++col)
-		{
-			for (int row = 0; row < s.height; ++row)
-			{
-				Sprite* tile = layer->getTileAt(Vec2(col, row));
-
-				if (tile)
-				{
-					Vec2 tileOrigin = parallaxTileMap->convertToWorldSpaceAR(tile->getPosition());
-
-					if (tileOrigin.x < origin.x + visibleSize.width && tileOrigin.x > -tileSize.width &&
-						tileOrigin.y < origin.y + visibleSize.height && tileOrigin.y > -tileSize.height)
-					{
-						tile->setVisible(true);
-					}
-					else
-					{
-						tile->setVisible(false);
-					}
-				}
-			}
-		}
-	}
-}
 
 void Level::update(float& delta)
 {
 	// updates scale creates zoom effect
 	this->setScale( AppGlobal::getInstance()->scale );
-		
-	// debug
-	this->parallaxTileMap->clearDebugDraw();
-    
+		    
 	//
     this->parallaxTileMap->update(delta);
     	

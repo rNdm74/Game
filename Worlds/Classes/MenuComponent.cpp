@@ -37,8 +37,8 @@ void MenuComponentItem::initListeners()
 		{
 			log(node->getName().c_str());
 
-			auto scaleUpAction = ScaleTo::create(0.1, 1.0);
-			auto scaleDownAction = ScaleTo::create(0.1, 0.8);
+			auto scaleUpAction = ScaleTo::create(0.1f, 1.0f);
+			auto scaleDownAction = ScaleTo::create(0.1f, 0.8f);
 
 			// Button effect
 			node->runAction(Sequence::createWithTwoActions(scaleUpAction, scaleDownAction));
@@ -104,7 +104,7 @@ void PlayerMenuComponent::hideMenu(GameObject &gameObject)
     
 	for (auto child : gameObject.getChildren())
     {
-        child->runAction(MoveTo::create(0.1, center));
+        child->runAction(MoveTo::create(0.1f, center));
         child->runAction(ScaleTo::create(0.1f, 0));
     }
     

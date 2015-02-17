@@ -35,14 +35,9 @@ public:
 
 private:
 	ParallaxTileMap* parallaxTileMap;
-    
-	AppGlobal* global;
+    	
 	Player* player;
-    Path* path;
-    
-    std::queue<Vec2> pathQueue;
-    std::list<Vec2> list;
-		
+   
 	Vec2 origin;
 	Vec2 center;
 
@@ -52,8 +47,6 @@ private:
 	Size tileSize;
 
 	int objectCount;
-
-	std::stack<ParallaxTileMap*> activeMap;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */
