@@ -29,9 +29,7 @@ public:
 		    
     void setViewPointCenter(Vec2 position);
 		
-	void checkNextMap(GameObject* gameObject);
-
-	void renderViewPort();
+	void checkNextMap(GameObject* gameObject);	
 
 private:
 	ParallaxTileMap* parallaxTileMap;
@@ -42,7 +40,7 @@ private:
 	Vec2 center;
 
 	Size visibleSize;
-	Size winSize;
+	//Size winSize;
 	Size mapSize;
 	Size tileSize;
 

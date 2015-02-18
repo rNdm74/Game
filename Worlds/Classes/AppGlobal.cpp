@@ -99,7 +99,7 @@ void AppGlobal::initMouseListener()
 		if (delta > 0) scale += -0.1;
 		else if (delta < 0) scale += 0.1;
 		
-		if (scale < 0.81f) scale = 0.81f;
+		//if (scale < 0.81f) scale = 0.81f;
 		if (scale > 2.0f) scale = 2.05f;
 	};
 

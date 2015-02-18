@@ -12,7 +12,7 @@
 * 
 *
 */
-#pragma region Moveable
+#pragma region MoveableNode
 
 
 /**
@@ -20,10 +20,21 @@
 * Initializes the varaiables to their default state
 *
 */
-Moveable::Moveable()
+MoveableNode::MoveableNode()
+{
+	this->initMoveableNode();
+};
+
+
+/**
+* Moveable gameObject Variables,
+* Initializes the varaiables to their default state
+*
+*/
+void MoveableNode::initMoveableNode()
 {
 	path = nullptr;
-		
+
 	onGround = false;
 
 	canMove = false;
@@ -45,7 +56,7 @@ Moveable::Moveable()
 };
 
 
-#pragma endregion Moveable
+#pragma endregion MoveableNode
 
 
 /**
@@ -61,9 +72,21 @@ Moveable::Moveable()
 *
 * @param properties The ValueMap that contains information about the gameObject
 */
-GameObjectNode::GameObjectNode(ValueMap& properties)
+GameObjectNode::GameObjectNode(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics)
 {
+	_collision = collision;
+	_graphics = graphics;
+				
+	float x = properties["x"].asFloat();
+	float y = properties["y"].asFloat();
+	float width = properties["width"].asFloat();
+	float height = properties["height"].asFloat();
+
 	this->setProperties(properties);
+	this->setName(properties["name"].asString());
+	this->setContentSize(Size(width, height));
+	this->setAnchorPoint(Vec2::ZERO);
+	this->setPosition(Vec2(x, y));	
 };
 
 
@@ -89,6 +112,17 @@ ValueMap GameObjectNode::getProperties()
 };
 
 
+/**
+* Updates a GameObject
+*
+* @param node The Node that contains the gameObject
+*/
+void GameObjectNode::update(Node* node)
+{
+	_collision->update(*node, *this);
+};
+
+
 #pragma endregion GameObjectNode
 
 
@@ -105,16 +139,9 @@ ValueMap GameObjectNode::getProperties()
 *
 * @param properties The ValueMap that contains information about the gameObject
 */
-GameObject::GameObject(ValueMap& properties) : super(properties)
+GameObject::GameObject(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
 {
-	float x = properties["x"].asFloat();
-	float y = properties["y"].asFloat();
-	float width = properties["width"].asFloat();
-	float height = properties["height"].asFloat();
-
-	this->setContentSize(Size(width, height));
-	this->setAnchorPoint(Vec2::ZERO);
-	this->setPosition(Vec2(x, y));
+	
 };
 
 
@@ -124,8 +151,8 @@ GameObject::GameObject(ValueMap& properties) : super(properties)
 * @param node The Node that contains the gameObject
 */
 void GameObject::update(Node* node)
-{	
-	
+{
+	_collision->update(*node, *this);
 };
 
 
@@ -166,7 +193,7 @@ Rect GameObject::getBoundingBox()
 		this->getPosition().x,
 		this->getPosition().y,
 		this->getSize().width,
-		this->getSize().height
+		this->getSize().width
 	);
 };
 
@@ -204,12 +231,10 @@ Rect GameObject::getCollisionBoundingBox()
 * @param collision The CollisionComponent that contains information about the gameObject
 * @param graphics The GraphicsComponent that contains information about the gameObject
 */
-Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties)
+Player::Player(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics, MenuComponent* menu, InputComponent* input) : super(properties, collision, graphics)
 {
 	_menu = menu;
 	_input = input;
-	_collision = collision;
-	_graphics = graphics;
 
 	_sprite = Sprite::createWithSpriteFrameName(kPlayerFileName);
 	_sprite->getTexture()->setAliasTexParameters();
@@ -227,16 +252,16 @@ Player::Player(ValueMap& properties, MenuComponent* menu, InputComponent* input,
 	float width = _sprite->getContentSize().width;
 	float height = _sprite->getContentSize().height;
 	
-	this->setContentSize(Size(width, height));
+	this->setContentSize(Size(width, width));
 	this->addChild(_sprite);
 };
 
 
 void Player::update(Node* node)
 {		
-	_graphics->update(*this);
-	_input->update(*this);	
-	_collision->update(*node, *this);
+	_graphics->update(*this);	
+	_input->update(*node, *this);
+	_collision->update(*node, *this);	
 };
 
 
@@ -280,20 +305,8 @@ Rect Player::getCollisionBoundingBox()
 * Initializes the varaiables to their default state
 *
 */
-Left::Left(ValueMap& properties, CollisionComponent* collision) : super(properties)
+Left::Left(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
 {
-	_collision = collision;
-};
-
-
-/**
-* Updates a Left
-*
-* @param node The Node that contains the gameObject
-*/
-void Left::update(Node* node)
-{
-	_collision->update(*node, *this);
 };
 
 
@@ -313,20 +326,8 @@ void Left::update(Node* node)
 * Initializes the varaiables to their default state
 *
 */
-Right::Right(ValueMap& properties, CollisionComponent* collision) : super(properties)
-{
-	_collision = collision;
-};
-
-
-/**
-* Updates a Right
-*
-* @param node The Node that contains the gameObject
-*/
-void Right::update(Node* node)
-{
-	_collision->update(*node, *this);
+Right::Right(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
+{	
 };
 
 
@@ -346,20 +347,38 @@ void Right::update(Node* node)
 * Initializes the varaiables to their default state
 *
 */
-Enter::Enter(ValueMap& properties, CollisionComponent* collision) : super(properties)
-{
-	_collision = collision;
-};
+Enter::Enter(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
+{			
+	auto _particle = ParticleGalaxy::createWithTotalParticles(900);
+	_particle->setAutoRemoveOnFinish(true);
+	_particle->setAnchorPoint(Vec2::ZERO);
 
+	SpriteFrame* _particleFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("fire07.png");
+	_particle->setTextureWithRect(_particleFrame->getTexture(), _particleFrame->getRect());	
+	_particle->setEmitterMode(kCCParticleModeGravity);
 
-/**
-* Updates a Enter
-*
-* @param node The Node that contains the gameObject
-*/
-void Enter::update(Node* node)
-{
-	_collision->update(*node, *this);
+	//The code below we can use both in 2.x and 3.x
+	_particle->setDuration(-1);
+	_particle->setGravity(Point(0, 240));
+	_particle->setAngle(90);
+	_particle->setAngleVar(180);
+	_particle->setRadialAccel(50);
+	_particle->setRadialAccelVar(0);
+	_particle->setTangentialAccel(30);
+	_particle->setTangentialAccelVar(0);
+	_particle->setPosition(Vec2(35.0f, 35.0f));
+	_particle->setLife(0.6);
+	_particle->setLifeVar(0.6);
+	_particle->setStartSpin(30);
+	_particle->setStartSpinVar(60);
+	_particle->setEndSpin(60);
+	_particle->setEndSpinVar(60);
+	_particle->setStartSize(15.0f);
+	_particle->setStartSizeVar(0);
+	_particle->setEndSize(50.0f);
+	_particle->setEndSizeVar(0);
+	_particle->setEmissionRate(100);
+	this->addChild(_particle, 10);
 };
 
 
@@ -379,20 +398,8 @@ void Enter::update(Node* node)
 * Initializes the varaiables to their default state
 *
 */
-Exit::Exit(ValueMap& properties, CollisionComponent* collision) : super(properties)
+Exit::Exit(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
 {
-	_collision = collision;
-};
-
-
-/**
-* Updates a Exit
-*
-* @param node The Node that contains the gameObject
-*/
-void Exit::update(Node* node)
-{
-	_collision->update(*node, *this);
 };
 
 

@@ -4,7 +4,7 @@
 #include <string>
 #include "cocos2d.h"
 
-#define DEBUG_ENABLE 1
+#define DEBUG_ENABLE 0
 
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10
@@ -13,7 +13,7 @@
 
 // PNG assets
 #define BACKGROUND_PNG		"background.png"
-#define CHARACTERS_PNG		"characters-sd.png"
+#define CHARACTERS_PNG		"characters.png"
 #define CONTROLS_PNG		"controls.png"
 #define HUD_PNG				"hud.png"
 #define ITEMS_PNG			"items.png"
@@ -22,7 +22,7 @@
 
 // PLIST assets
 #define BACKGROUND_PLIST	"background.plist"
-#define CHARACTERS_PLIST	"characters-sd.plist"
+#define CHARACTERS_PLIST	"characters.plist"
 #define CONTROLS_PLIST		"controls.plist"
 #define HUD_PLIST			"hud.plist"
 #define ITEMS_PLIST			"items.plist"

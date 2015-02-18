@@ -9,55 +9,15 @@
 
 
 /**
-* Create a path finder
+* Update the collision component
 *
-* @param parallaxTileMap The ParallaxTileMap to be searched
-* @param maxSearchDistance The maximum depth we'll search before giving up
-* @param allowDiagMovement True if the search should try diaganol movement
+* @param node The Node that contains the gameObjects
+* @param gameObject The GameObject associated with being updated
 */
-void CollisionComponent::update(Node& node, GameObject& gameObject)
+void CollisionComponent::update(Node& node, GameObjectNode& gameObjectNode)
 {
 	ParallaxTileMap& parallaxTileMap = static_cast<ParallaxTileMap&>(node);
-	Player& player = *parallaxTileMap.getPlayer();
-	
-	Rect r1 = player.getBoundingBox();
-	Rect r2 = gameObject.getBoundingBox();
-		
-	if (r1.intersectsRect(r2) == false)	return;
-	
-	//
-	ValueMap properties = gameObject.getProperties();
-	std::string type = properties["name"].asString().c_str();
-	
-	Vec2 v1 = Vec2::ZERO;
-	Vec2 v2 = Vec2::ZERO;
-
-	//
-	if (type == "Left" && player.isMovingLeft)
-	{
-		v1 = Vec2(r1.getMaxX(), r1.origin.y);
-		v2 = r2.origin;
-	}
-	else if (type == "Right" && player.isMovingRight)
-	{
-		v1 = r1.origin;
-		v2 = Vec2(r2.getMaxX(), r2.origin.y);
-	}
-	else if (type == "Enter" && player.isMovingDown)
-	{
-		v1 = Vec2(r1.getMidX(), r1.getMaxY());
-		v2 = Vec2(r2.getMidX(), r2.origin.y); 
-	}
-	else if (type == "Exit" && player.isMovingUp)
-	{
-		v1 = Vec2(r1.getMidX(), r1.getMinY());
-		v2 = Vec2(r2.getMidX(), r2.getMaxY());
-	}
-
-	Vec2 n = Vec2(v2 - v1).getNormalized();
-	Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
-	
-    player.mapTransition = direction;
+	this->checkCollision(parallaxTileMap, gameObjectNode);
 };
 
 
@@ -68,19 +28,15 @@ void CollisionComponent::update(Node& node, GameObject& gameObject)
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-void PlayerCollisionComponent::update(Node& node, GameObject &gameObject)
-{
-	//
+void PlayerCollisionComponent::update(Node& node, GameObjectNode& gameObjectNode)
+{		
 	ParallaxTileMap& parallaxTileMap = static_cast<ParallaxTileMap&>(node);
-	//
-	Player& player = static_cast<Player&>(gameObject);
+	Player& player = static_cast<Player&>(gameObjectNode);
 		
-	// run checks	
-	this->pathfinding(parallaxTileMap, player);
 	this->solidTileCollision(parallaxTileMap, player);
 	this->ladderTileCollision(parallaxTileMap, player);
-	this->wrap(parallaxTileMap, player);
-
+	//this->wrap(parallaxTileMap, player);
+		
 	//
 	player.setPosition(player.desiredPosition);
 }
@@ -93,7 +49,7 @@ void PlayerCollisionComponent::update(Node& node, GameObject &gameObject)
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-void PlayerCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxTileMap, Player& gameObject)
+void CollisionComponent::solidTileCollision(ParallaxTileMap& parallaxTileMap, GameObject& gameObject)
 {
 	// get gameobjects center
 	Vec2 gameObjectCenterPosition = gameObject.getCenterPosition();
@@ -204,7 +160,7 @@ void PlayerCollisionComponent::solidTileCollision(ParallaxTileMap& parallaxTileM
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-void PlayerCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTileMap, Player &gameObject)
+void CollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTileMap, GameObject &gameObject)
 {			
 	// Variables	
 	Rect gameObjectBoundingBox = gameObject.getCollisionBoundingBox();
@@ -214,10 +170,7 @@ void PlayerCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTile
 					
 	// get array of tiles surrounding the gameobject
 	TileDataArray tileDataArray = parallaxTileMap.getTileDataArrayFromLadderLayerAt(gameObjectCenterPosition);
-	
-
-	// pseudo code ladder collisions
-
+		
 	// bool flags
 	bool isLadderTop = false;
 	bool isLadderMid = false;
@@ -235,10 +188,7 @@ void PlayerCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTile
 	bool isMovingRight = gameObject.isMovingRight;	
 
 	bool gravity = gameObject.gravity;
-	
-
-	// states
-
+		
 	//
 	if (tileDataArray[ETileGrid::LEFT].GID == false && isClimbing == false)
 	{
@@ -429,6 +379,7 @@ void PlayerCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTile
 	}
 #endif // DEBUG_ENABLE
 	
+
 	//
 	gameObject.desiredPosition = gameObjectNewPosition;
 	gameObject.velocity = gameObjectNewVelocity;
@@ -451,179 +402,63 @@ void PlayerCollisionComponent::ladderTileCollision(ParallaxTileMap& parallaxTile
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-void PlayerCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, Player& gameObject)
-{
-	// Get active mapsize and tilesize
-	Size mapSize = parallaxTileMap.getMapSize();
-	Size tileSize = parallaxTileMap.getTileSize();
-
-	// get the gameobject bounding box
-	Rect gameObjectBoundingBox = gameObject.getCollisionBoundingBox();
-
-	// bounds check gameobject
-	if (gameObjectBoundingBox.getMaxX() < 0)
-		gameObject.desiredPosition = Vec2((mapSize.width * tileSize.width) - gameObjectBoundingBox.size.width, gameObject.desiredPosition.y);
-
-	if (gameObjectBoundingBox.getMinX() > mapSize.width * tileSize.width)
-		gameObject.desiredPosition = Vec2(0, gameObject.desiredPosition.y);	
-}
-
-
-/**
-* Create a path finder
-*
-* @param parallaxTileMap The ParallaxTileMap to be searched
-* @param maxSearchDistance The maximum depth we'll search before giving up
-* @param allowDiagMovement True if the search should try diaganol movement
-*/
-void PlayerCollisionComponent::nextLevel(ParallaxTileMap& parallaxTileMap, Player& gameObject)
-{
-}
+//void PlayerCollisionComponent::wrap(ParallaxTileMap& parallaxTileMap, Player& gameObject)
+//{
+//	// Get active mapsize and tilesize
+//	Size mapSize = parallaxTileMap.getMapSize();
+//	Size tileSize = parallaxTileMap.getTileSize();
+//
+//	// get the gameobject bounding box
+//	Rect gameObjectBoundingBox = gameObject.getCollisionBoundingBox();
+//
+//	// bounds check gameobject
+//	if (gameObjectBoundingBox.getMaxX() < 0)
+//		gameObject.desiredPosition = Vec2((mapSize.width * tileSize.width) - gameObjectBoundingBox.size.width, gameObject.desiredPosition.y);
+//
+//	if (gameObjectBoundingBox.getMinX() > mapSize.width * tileSize.width)
+//		gameObject.desiredPosition = Vec2(0, gameObject.desiredPosition.y);	
+//}
 
 
-/**
-* Create a path finder
-*
-* @param parallaxTileMap The ParallaxTileMap to be searched
-* @param maxSearchDistance The maximum depth we'll search before giving up
-* @param allowDiagMovement True if the search should try diaganol movement
-*/
-void PlayerCollisionComponent::pathfinding(ParallaxTileMap& parallaxTileMap, Player& gameObject)
-{
-	Vec2 cursorLocation = parallaxTileMap.convertToNodeSpaceAR(AppGlobal::getInstance()->cursorLocation);
-	
-#if DEBUG_ENABLE
-	parallaxTileMap.drawDebugRectAt(cursorLocation, Color4F(0.3f, 0.3f, 1.0f, 0.5f));
-#endif // DEBUG_ENABLE
 
-	gameObject.direction = Vec2::ZERO;
+void CollisionComponent::checkCollision(ParallaxTileMap& parallaxTileMap, GameObjectNode& gameObjectNode)
+{	
+	Player& player = *parallaxTileMap.getPlayer();
+
+	Rect r1 = player.getBoundingBox();
+	Rect r2 = gameObjectNode.getBoundingBox();
+
+	if (r1.intersectsRect(r2) == false)	return;
+
+	std::string type = gameObjectNode.getName();
+
+	Vec2 v1 = Vec2::ZERO;
+	Vec2 v2 = Vec2::ZERO;
+
 	//
-	if (AppGlobal::getInstance()->leftMouseButton)
+	if (type == "Left" && player.isMovingLeft)
 	{
-		//
-		Vec2 v1 = parallaxTileMap.getTileCoordinatesFor(gameObject.getCenterPosition());
-		Vec2 v2 = parallaxTileMap.getTileCoordinatesFor(cursorLocation);
-		//
-		if (gameObject.path == nullptr)
-		{
-			gameObject.path = parallaxTileMap.getPath(v1, v2);
-		}
-		else
-		{
-			Path* newPath = parallaxTileMap.getPath(gameObject.path->peek_back(), v2);
-			gameObject.path->addPath(newPath);
-		}
+		v1 = Vec2(r1.getMaxX(), r1.origin.y);
+		v2 = r2.origin;
 	}
-	else if (AppGlobal::getInstance()->mouseToggle)
+	else if (type == "Right" && player.isMovingRight)
 	{
-		//
-		Vec2 v1 = parallaxTileMap.getTileCoordinatesFor(gameObject.getCenterPosition());
-		Vec2 v2 = parallaxTileMap.getTileCoordinatesFor(cursorLocation);
-		//
-		if ( gameObject.path == nullptr && AppGlobal::getInstance()->leftMouseButton )
-		{
-			gameObject.path = parallaxTileMap.getPath(v1, v2);
-		}
+		v1 = r1.origin;
+		v2 = Vec2(r2.getMaxX(), r2.origin.y);
 	}
-	else
+	else if (type == "Enter" && player.isMovingDown)
 	{
-		gameObject.path = nullptr;
-		gameObject.velocity = Vec2::ZERO;
-		gameObject.direction = Vec2::ZERO;
-	}    
-	//
-	if ( gameObject.path != nullptr && gameObject.path->getLength() > 0 )
-    {	
-
-#if DEBUG_ENABLE
-		for (int i = 0; i < gameObject.path->getLength(); ++i)
-		{
-			parallaxTileMap.drawDebugRectAtTile(gameObject.path->getStep(i), Color4F(0.3f, 1.0f, 0.3f, 0.5f));
-		}
-#endif // DEBUG_ENABLE
-
-		//
-		Rect r1 = gameObject.getCollisionBoundingBox();
-		Rect r2 = parallaxTileMap.getTileRectFrom(gameObject.path->peek_front());
-		//
-		Vec2 v1 = Vec2(r1.getMidX(), r1.getMinY());
-		Vec2 v2 = Vec2(r2.getMidX(), r2.getMinY());
-        //		        
-		Vec2 n = Vec2(v2 - v1).getNormalized();
-		gameObject.direction = Vec2(std::round(n.x), std::round(n.y));
-		//
-		float distance = v1.distance(v2);
-		log("distance: %f", distance);
-		//
-        if( distance < 13.0f )
-        {
-			gameObject.path->pop_front();
-            
-			if (gameObject.path->getLength() < 1)
-            {
-				AppGlobal::getInstance()->mouseToggle = false;
-
-				gameObject.path = nullptr;
-				gameObject.velocity = Vec2::ZERO;
-				gameObject.direction = Vec2::ZERO;
-                
-                gameObject.setPositionX(v2.x - gameObject.getContentSize().width / 2);
-                gameObject.setPositionY(v2.y);
-            }
-        }
-        
-		//
-		gameObject.isMovingUp = false;
-		gameObject.isMovingDown = false;
-		gameObject.isMovingLeft = false;
-		gameObject.isMovingRight = false;
-
-		if (gameObject.direction.y > 0 && gameObject.canMoveUp)
-		{
-			gameObject.isMovingUp = true;
-			gameObject.canMove = true;
-		}
-		else if (gameObject.direction.y < 0 && gameObject.canMoveDown)
-		{
-			gameObject.isMovingDown = true;
-			gameObject.canMove = true;
-		}
-		else if (gameObject.direction.x < 0 && gameObject.canMoveLeft)
-		{
-			gameObject.isMovingLeft = true;
-			gameObject.canMove = true;
-		}
-		else if (gameObject.direction.x > 0 && gameObject.canMoveRight)
-		{
-			gameObject.isMovingRight = true;
-			gameObject.canMove = true;
-		}
-		else if (gameObject.direction == Vec2::ZERO)
-		{
-			gameObject.isMovingUp = false;
-			gameObject.isMovingDown = false;
-			gameObject.isMovingLeft = false;
-			gameObject.isMovingRight = false;
-			gameObject.canMove = false;
-			gameObject.velocity = Vec2::ZERO;
-		}
+		v1 = Vec2(r1.getMidX(), r1.getMaxY());
+		v2 = Vec2(r2.getMidX(), r2.origin.y);
+	}
+	else if (type == "Exit" && player.isMovingUp)
+	{
+		v1 = Vec2(r1.getMidX(), r1.getMinY());
+		v2 = Vec2(r2.getMidX(), r2.getMaxY());
 	}
 
-	Vec2 move = Vec2(1600.0, 1600.0);
-	Vec2 step = move * kUpdateInterval;
+	Vec2 n = Vec2(v2 - v1).getNormalized();
+	Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
 
-	if (gameObject.canMove)
-	{
-		gameObject.velocity.x = gameObject.velocity.x + step.x * gameObject.direction.x;
-		gameObject.velocity.y = gameObject.velocity.y + step.y * gameObject.direction.y;
-	}
-
-	Vec2 minMovement = Vec2(-340.0, -340.0);
-	Vec2 maxMovement = Vec2(340.0, 340.0);
-
-	gameObject.velocity.clamp(minMovement, maxMovement);
-		
-	Vec2 stepVelocity = gameObject.velocity * kUpdateInterval;
-	// 
-	gameObject.desiredPosition = gameObject.getPosition() + stepVelocity;
+	player.mapTransition = direction;
 }

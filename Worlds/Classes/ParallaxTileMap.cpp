@@ -106,7 +106,11 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
     //
 	_pathFinder = new AStarPathFinder(this, 500, false);
 
+	isPlayerLoaded = false;
 
+	this->addShadows(_collisionLayer);
+	this->addShadows(_ladderLayer);
+	this->addShadows(_foregroundLayer);
 }
 
 
@@ -177,11 +181,17 @@ void ParallaxTileMap::drawDebugRectAt(Vec2 position, Color4F color)
     this->drawDebugRect(rect, color);
 }
 
+
+///
+///
+///
 void ParallaxTileMap::drawDebugRectAtTile(Vec2 coordinates, Color4F color)
 {
 	Rect rect = this->getTileRectFrom(coordinates);
 	this->drawDebugRect(rect, color);
 }
+
+
 #endif // DEBUG_ENABLE
 
 
@@ -224,7 +234,7 @@ void ParallaxTileMap::addObjects()
 bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 {
 	// create the object
-	GameObject* o = GameObjectFactory::create(className, properties);
+	GameObjectNode* o = GameObjectFactory::create(className, properties);
 
 	// process the new object
 	if (o != nullptr)
@@ -257,7 +267,7 @@ void ParallaxTileMap::update(float& delta)
     // Tile map is responsible for updating its children
 	for (auto& child : _objectLayer->getChildren())
     {
-        GameObject* gameObject = static_cast<GameObject*>(child);
+		GameObjectNode* gameObject = static_cast<GameObjectNode*>(child);
         gameObject->update(this);
 
 #if DEBUG_ENABLE
@@ -266,6 +276,27 @@ void ParallaxTileMap::update(float& delta)
     
 	}
 }
+
+
+///
+void ParallaxTileMap::addShadows(TMXLayer* layer)
+{
+	Size s = layer->getLayerSize();
+	for (int col = 0; col < s.width; ++col)
+	{
+		for (int row = 0; row < s.height; ++row)
+		{
+			Sprite* tile = layer->getTileAt(Vec2(col, row));
+
+			if (tile)
+			{
+				Node* shadow = getShadowForNode(tile);
+				shadow->setPosition(tile->getPosition());
+				_shadowLayer->addChild(shadow);
+			}			
+		}
+	}
+};
 
 
 /// <summary>
@@ -612,13 +643,19 @@ Path* ParallaxTileMap::getPath(Vec2 startLocation, Vec2 targetLocation)
 
 Vec2 ParallaxTileMap::getMapTransition(Vec2 direction)
 {
+	//
     Vec2 transition = Vec2::ZERO;
-    
-    if(direction.y < 0)
-        transition = _objectLayer->getChildByName("Exit")->getPosition();
-    else if(direction.y > 0)
-        transition = _objectLayer->getChildByName("Enter")->getPosition();
-    
-    return transition;
-    
+    //
+	if (direction.y < 0)
+	{
+		Rect r = _objectLayer->getChildByName("Exit")->getBoundingBox();
+		transition = Vec2(r.getMidX(), r.getMinY());
+	}        
+	else if (direction.y > 0)
+	{
+		Rect r = _objectLayer->getChildByName("Enter")->getBoundingBox();
+		transition = Vec2(r.getMidX(), r.getMaxY());
+	}        
+    //
+    return transition;    
 }

@@ -21,6 +21,8 @@ public:
 	//
 	void update(float delta);
 
+	Node* getShadowForNode(Node* node);
+
 private:
 	ParallaxBackgroundImages _clouds;
 

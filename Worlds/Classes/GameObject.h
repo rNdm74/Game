@@ -24,8 +24,6 @@ class IGameObject
 {
 public:
 	virtual void update(Node* node) = 0;
-	virtual Rect getBoundingBox() = 0;
-	virtual Rect getCollisionBoundingBox() = 0;
 };
 
 
@@ -36,11 +34,13 @@ public:
 *
 * @author Adam Charlton
 */
-class Moveable
+class MoveableNode
 {
 public:
-	Moveable();
-	virtual ~Moveable(){};
+	MoveableNode();
+	virtual ~MoveableNode(){};
+
+	void initMoveableNode();
 
     Vec2 mapTransition;
     
@@ -80,20 +80,28 @@ public:
 *
 * @author Adam Charlton
 */
-class GameObjectNode : public Node
+class GameObjectNode : public Node, public IGameObject
 {
 public:
 	// If applicable, then Constructors and the Destructor
-	GameObjectNode(ValueMap& properties);
+	GameObjectNode(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
 	virtual ~GameObjectNode(){};
-
+	
 	// The gets and sets
 	virtual void setProperties(ValueMap& properties);
 	virtual ValueMap getProperties();
 
+	virtual void update(Node* node);
+
 protected:
 	/** **/
 	ValueMap _properties;
+	/** **/
+	CollisionComponent* _collision;
+	/** **/
+	GraphicsComponent* _graphics;
+	/** **/
+	Sprite* _sprite;
 };
 
 
@@ -104,14 +112,14 @@ protected:
 *
 * @author Adam Charlton
 */
-class GameObject : public GameObjectNode, public IGameObject
+class GameObject : public GameObjectNode, public MoveableNode
 {
 	typedef GameObjectNode super;
 	typedef GameObject self;
     
 public:
 	/** If applicable, then Constructors and the Destructor **/
-	GameObject(ValueMap& properties);
+	GameObject(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
 	virtual ~GameObject(){};
     
 	/** Then the init methods **/
@@ -134,13 +142,13 @@ public:
 *
 * @author Adam Charlton
 */
-class Player : public GameObject, public Moveable
+class Player : public GameObject
 {
 	typedef GameObject super;
 	typedef Player self;
 
 public:
-	Player(ValueMap& properties, MenuComponent* menu, InputComponent* input, CollisionComponent* collision, GraphicsComponent* graphics);
+	Player(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics, MenuComponent* menu, InputComponent* input);
 	~Player(){};
 
 	virtual void update(Node* node) override;
@@ -150,17 +158,11 @@ public:
 	
 	virtual Sprite* getSprite();
 	
-private:
-	/** **/
-	Sprite* _sprite;
+private:	
 	/** **/
 	MenuComponent* _menu;
 	/** **/
-	InputComponent* _input;
-	/** **/
-	CollisionComponent* _collision;
-	/** **/
-	GraphicsComponent* _graphics;		
+	InputComponent* _input;				
 };
 
 
@@ -171,20 +173,18 @@ private:
 *
 * @author Adam Charlton
 */
-class Left : public GameObject
+class Left : public GameObjectNode
 {
-	typedef GameObject super;
+	typedef GameObjectNode super;
 	typedef Left self;
 
 public:
-	Left(ValueMap& properties, CollisionComponent* collision);
+	Left(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
 	virtual ~Left(){};
-
-	virtual void update(Node* node) override;
 
 private:
 	/** **/
-	CollisionComponent* _collision;
+	
 };
 
 
@@ -195,20 +195,17 @@ private:
 *
 * @author Adam Charlton
 */
-class Right : public GameObject
+class Right : public GameObjectNode
 {
-	typedef GameObject super;
+	typedef GameObjectNode super;
 	typedef Right self;
 
 public:
-	Right(ValueMap& properties, CollisionComponent* collision);
+	Right(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
 	virtual ~Right(){};
-
-	virtual void update(Node* node) override;
 
 private:
 	/** **/
-	CollisionComponent* _collision;
 };
 
 
@@ -219,20 +216,17 @@ private:
 *
 * @author Adam Charlton
 */
-class Enter : public GameObject
+class Enter : public GameObjectNode
 {
-	typedef GameObject super;
+	typedef GameObjectNode super;
 	typedef Enter self;
 
 public:
-	Enter(ValueMap& properties, CollisionComponent* collision);
+	Enter(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
 	virtual ~Enter(){};
-
-	virtual void update(Node* node) override;
 
 private:
 	/** **/
-	CollisionComponent* _collision;
 };
 
 
@@ -243,20 +237,17 @@ private:
 *
 * @author Adam Charlton
 */
-class Exit : public GameObject
+class Exit : public GameObjectNode
 {
-	typedef GameObject super;
+	typedef GameObjectNode super;
 	typedef Exit self;
 
 public:
-	Exit(ValueMap& properties, CollisionComponent* collision);
+	Exit(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
 	virtual ~Exit(){};
-
-	virtual void update(Node* node) override;
 
 private:
 	/** **/
-	CollisionComponent* _collision;
 };
 
 

@@ -32,6 +32,7 @@ public:
 	void addObjects();
 	bool addObject(std::string className, ValueMap& properties);
 
+	void addShadows(TMXLayer* layer);
 	Node* getShadowForNode(Node* node);
 
 	Player* getPlayer();
@@ -70,7 +71,7 @@ public:
 	void drawDebugRectAtTile(Vec2 coordinates, Color4F color);
 #endif // DEBUG_ENABLE
     
-	bool isLoaded;
+	bool isPlayerLoaded;
     
 private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);

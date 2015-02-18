@@ -5,36 +5,37 @@
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
 
-GameObject* GameObjectFactory::create(std::string className, ValueMap& properties)
+GameObjectNode* GameObjectFactory::create(std::string className, ValueMap& properties)
 {
-	GameObject* gameObject = nullptr;
+	GameObjectNode* gameObject = nullptr;
 
 	if (className == "Player")
 	{
 		gameObject = new Player
 		(
 			properties,
-			new PlayerMenuComponent(),
-			new PlayerInputComponent(),
 			new PlayerCollisionComponent(),
-			new PlayerGraphicsComponent()
+			new PlayerGraphicsComponent(),
+			new PlayerMenuComponent(),
+			new PlayerInputComponent()
+			
 		);
 	}
 	else if (className == "Left")
 	{
-		gameObject = new Left(properties, new CollisionComponent());
+		gameObject = new Left(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 	else if (className == "Right")
 	{
-		gameObject = new Right(properties, new CollisionComponent());
+		gameObject = new Right(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 	else if (className == "Enter")
 	{
-		gameObject = new Enter(properties, new CollisionComponent());
+		gameObject = new Enter(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 	else if (className == "Exit")
 	{
-		gameObject = new Exit(properties, new CollisionComponent());
+		gameObject = new Exit(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 
 	return gameObject;

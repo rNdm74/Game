@@ -61,10 +61,12 @@ ParallaxBackground::ParallaxBackground(float width)
 		sprite->setAnchorPoint(Vec2::ZERO);
 		sprite->setScale(rand_0_1() + 0.5f);
 		sprite->getTexture()->setAntiAliasTexParameters();
+		sprite->addChild(getShadowForNode(sprite), -99);
 
 		float offset = (sprite->getContentSize().width + rand) * i;
 
 		int zindex = random(3, 6);
+
 		this->addChild(sprite, -zindex, Vec2(0.6f, 0.6f), Vec2(offset, 105.0f));
 	}
 
@@ -75,6 +77,7 @@ ParallaxBackground::ParallaxBackground(float width)
     {
         sprite = Sprite::createWithSpriteFrameName("groundGrass.png");
         sprite->setAnchorPoint(Vec2::ZERO);
+		sprite->addChild(getShadowForNode(sprite), -99);
         this->addChild(sprite, -2, Vec2(0.7f, 0.7f), Vec2(sprite->getContentSize().width * i, 105.0f));
     }
     
@@ -88,7 +91,7 @@ ParallaxBackground::ParallaxBackground(float width)
 		_clouds[i]->setAnchorPoint(Vec2::ZERO);
 		_clouds[i]->setScale(rand_0_1() + 1.0f);
 		_clouds[i]->setTag(CLOUDS_STARTING_TAG + i);
-
+		_clouds[i]->addChild(getShadowForNode(_clouds[i]), -99);
 		int zindex = random(3, 6);
 		float height = random(200, 400);
 		this->addChild(_clouds[i], -zindex, Vec2(rand_0_1(), 0.0f), Vec2(origin.x + visibleSize.width, height));
@@ -133,4 +136,17 @@ void ParallaxBackground::update(float delta)
 
 		_clouds[i]->setPosition(newPosition);
 	}*/
+}
+
+Node* ParallaxBackground::getShadowForNode(Node* node)
+{
+	auto object = static_cast<Sprite*>(node);
+
+	auto shadow = Sprite::create();
+	shadow->setSpriteFrame(object->getSpriteFrame());
+	shadow->setAnchorPoint(Vec2(-0.05f, 0.02f));
+	shadow->setColor(Color3B(0, 0, 0));
+	shadow->setOpacity(50);
+
+	return shadow;
 }

@@ -7,17 +7,22 @@ class GameObject;
 
 using namespace cocos2d;
 
-class GraphicsComponent
+class IGraphicsComponent
+{
+public:    
+	virtual void update(GameObjectNode& gameObjectNode) = 0;
+};
+
+class GraphicsComponent : IGraphicsComponent
 {
 public:
-    virtual ~GraphicsComponent() {}
-    virtual void update(GameObject &gameObject) = 0;
+	virtual void update(GameObjectNode& gameObjectNode){};
 };
 
 class PlayerGraphicsComponent : public GraphicsComponent
 {
 public:
-    void update(GameObject &gameObject);
+	void update(GameObjectNode& gameObjectNode) override;
 };
 
 #endif /* defined(__FranticAlien__GraphicsComponent__) */

@@ -31,7 +31,7 @@ Level* Level::create(std::string mapName)
 
 Level::Level()
 {
-	winSize = Director::getInstance()->getWinSize();	
+	//winSize = Director::getInstance()->getWinSize();	
 	origin = Director::getInstance()->getVisibleOrigin();
 	visibleSize = Director::getInstance()->getVisibleSize();
 	center = Vec2(origin.x + visibleSize.width / 2, (origin.y + visibleSize.height / 2));
@@ -46,7 +46,6 @@ void Level::loadMap(std::string mapname)
 	this->removeAllChildrenWithCleanup(true);
 
 	parallaxTileMap = ParallaxTileMap::create(mapname);
-	parallaxTileMap->isLoaded = false;
 	this->addChild(parallaxTileMap);
 
 	mapSize = parallaxTileMap->getMapSize();
@@ -56,16 +55,18 @@ void Level::loadMap(std::string mapname)
 
 void Level::loadPlayer()
 {	
-	if (parallaxTileMap->isLoaded == false)
+	if (parallaxTileMap->isPlayerLoaded == false)
 	{		
 		player = parallaxTileMap->getPlayer();		
 	}
 	else
 	{
 		parallaxTileMap->getObjectLayer()->addChild(player);
-		player->setPosition(parallaxTileMap->getMapTransition(player->mapTransition));
-		player->mapTransition = Vec2::ZERO;
-		player->path = nullptr;
+		Vec2 transition = parallaxTileMap->getMapTransition(player->mapTransition);
+
+		player->setPositionX(transition.x - player->getContentSize().width / 2);
+		player->setPositionY(transition.y);
+		player->initMoveableNode();		
 	}
 		
 	this->setViewPointCenter(player->getCenterPosition());
@@ -74,7 +75,7 @@ void Level::loadPlayer()
 
 void Level::setViewPointCenter(Vec2 position)
 {	
-	winSize = winSize / AppGlobal::getInstance()->scale;
+	Size winSize = Director::getInstance()->getWinSize() / this->getScale();
 	
     float x = MAX(position.x, winSize.width / 2);
 	float y = MAX(position.y, winSize.height / 2);
@@ -92,49 +93,37 @@ void Level::setViewPointCenter(Vec2 position)
 void Level::update(float& delta)
 {
 	// updates scale creates zoom effect
-	this->setScale( AppGlobal::getInstance()->scale );
-		    
+	this->setScale(AppGlobal::getInstance()->scale);
 	//
-    this->parallaxTileMap->update(delta);
-    	
+    this->parallaxTileMap->update(delta);    	
 	// player moves to next map
 	this->checkNextMap(player);
-
 	// centre viewport on player
 	this->setViewPointCenter(player->getCenterPosition());
 }
 
 
 void Level::checkNextMap(GameObject* gameObject)
-{
-    
+{    
     if ( player->mapTransition.y < 0 && player->isMovingDown)
-	{
-		//player->retain();
+	{		
         player->removeFromParent();
-		//player->release();
 		                
 		loadMap("planet1.tmx");
 
-		parallaxTileMap->isLoaded = true;
+		parallaxTileMap->isPlayerLoaded = true;
 
 		loadPlayer();  
-
-
 	}
 	else if (player->mapTransition.y > 0 && player->isMovingUp)
 	{
-		//player->retain();
 		player->removeFromParent();
-		//player->release();
 		
 		loadMap(kLevelTMX);
 
 		parallaxTileMap->getObjectLayer()->removeChildByName("Player", true);
-		parallaxTileMap->isLoaded = true;
+		parallaxTileMap->isPlayerLoaded = true;
 
 		loadPlayer();
 	}
-
-
 }
