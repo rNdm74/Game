@@ -104,7 +104,7 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	this->addChild(_foregroundLayer,	 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
     //
-	_pathFinder = new AStarPathFinder(this, 500, false);
+	
 
 	isPlayerLoaded = false;
 
@@ -234,7 +234,7 @@ void ParallaxTileMap::addObjects()
 bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 {
 	// create the object
-	GameObjectNode* o = GameObjectFactory::create(className, properties);
+	IGameObject* o = GameObjectFactory::create(className, properties);
 
 	// process the new object
 	if (o != nullptr)
@@ -267,7 +267,7 @@ void ParallaxTileMap::update(float& delta)
     // Tile map is responsible for updating its children
 	for (auto& child : _objectLayer->getChildren())
     {
-		GameObjectNode* gameObject = static_cast<GameObjectNode*>(child);
+		IGameObject* gameObject = static_cast<IGameObject*>(child);
         gameObject->update(this);
 
 #if DEBUG_ENABLE
@@ -327,9 +327,9 @@ Node* ParallaxTileMap::getShadowForNode(Node* node)
 ///
 /// POST-CONDITION: 
 /// </summary>
-Player* ParallaxTileMap::getPlayer()
+IGameObject& ParallaxTileMap::getPlayer()
 {
-	return static_cast<Player*>(_objectLayer->getChildByName("Player"));
+	return static_cast<Player&>(*_objectLayer->getChildByName("Player"));
 }
 
 
@@ -420,7 +420,7 @@ void ParallaxTileMap::pathFinderVisited(Vec2 coordinate)
 * @param y The y coordinate of the tile to check
 * @return True if the location is blocked
 */
-bool ParallaxTileMap::blocked(Vec2 coordinate)
+bool ParallaxTileMap::isBlocked(Vec2 coordinate)
 {
 	TileData tileData = getTileDataFromLayerAt(*_collisionLayer, coordinate);
 
@@ -636,7 +636,7 @@ Rect ParallaxTileMap::getTileRectFrom(Vec2 tileCoords)
 	return Rect(origin.x, origin.y, _tileSize.width, _tileSize.height);
 }
 
-Path* ParallaxTileMap::getPath(Vec2 startLocation, Vec2 targetLocation)
+IPath* ParallaxTileMap::getPath(Vec2 startLocation, Vec2 targetLocation)
 {
 	return _pathFinder->findPath(startLocation, targetLocation);
 }

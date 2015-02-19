@@ -18,13 +18,6 @@ AppGlobal::AppGlobal()
 	rightMouseButton = false;
 	mouseDown = false;
     mouseUp = false;
-    
-	states.JUMP =
-	states.LEFT =
-	states.RIGHT =
-	states.UP =
-	states.DOWN =
-	states.ESCAPE = false;
 }
 
 AppGlobal::~AppGlobal()
@@ -102,8 +95,7 @@ void AppGlobal::initMouseListener()
 		//if (scale < 0.81f) scale = 0.81f;
 		if (scale > 2.0f) scale = 2.05f;
 	};
-
-
+	
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
 
@@ -150,6 +142,31 @@ void AppGlobal::initKeyboardListener()
 //		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
 //		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
 //		states.STOP		= true;
+	};
+
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
+}
+
+void AppGlobal::initTouchListener()
+{
+	auto listener = EventListenerTouchOneByOne::create();
+
+	listener->onTouchBegan = [=](Touch* touch, Event* e) -> bool
+	{
+		log("Touch began");
+
+		return true;
+	};
+
+	listener->onTouchMoved = [=](Touch* touch, Event* e)
+	{
+		Vec2 location = touch->getLocationInView();
+		log("x: %f, y: %f", location.x, location.y);
+	};
+
+	listener->onTouchEnded = [=](Touch* touch, Event* e)
+	{
+		log("Touch ended");
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);

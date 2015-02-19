@@ -2,18 +2,15 @@
 #define __com_dotdat_World__PARALLAX_TILEMAP_H__
 
 #include "cocos2d.h"
-#include <array>
 #include "Constants.h"
 
-class GameObject;
-class Player;
+class IGameObject;
 class ParallaxBackground;
-class AStarPathFinder;
-class Path;
+class IPathFinder;
+class IPath;
 
 using namespace cocos2d;
 
-typedef std::array<TileData, 8> TileDataArray;
 
 class ParallaxTileMap : public ParallaxNode
 {
@@ -35,7 +32,7 @@ public:
 	void addShadows(TMXLayer* layer);
 	Node* getShadowForNode(Node* node);
 
-	Player* getPlayer();
+	
 
 	TMXLayer* getCollisionLayer();
 	TMXLayer* getLadderLayer();
@@ -45,7 +42,7 @@ public:
 	Size getTileSize();
 
 	void pathFinderVisited(Vec2 coordinate);
-	bool blocked(Vec2 coordinate);
+	bool isBlocked(Vec2 coordinate);
 	float getCost(Vec2 startLocation, Vec2 targetLocation);
 
 	Value getPropertiesForGID(int GID);
@@ -57,11 +54,11 @@ public:
 	bool isTileLadder(Vec2 position);
 
 	Vec2 getTileCoordinatesFor(Vec2 position);
-	Rect getTileRectFrom(Vec2 tileCoordinates);
-
-	Path* getPath(Vec2 startLocation, Vec2 targetLocation);
-    
+	Rect getTileRectFrom(Vec2 tileCoordinates);    
     Vec2 getMapTransition(Vec2 direction);
+
+	IGameObject& getPlayer();
+	IPath* getPath(Vec2 startLocation, Vec2 targetLocation);
 
 	
 #if DEBUG_ENABLE
@@ -77,8 +74,8 @@ private:
 	TileDataArray getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position);
 	TileData getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates);
 	
-	AStarPathFinder* _pathFinder;
-	Path* _path;
+	IPathFinder* _pathFinder;
+	IPath* _path;
 
 	TMXTiledMap* _tileMap;
 	ParallaxBackground* _parallaxBackgroundLayer;

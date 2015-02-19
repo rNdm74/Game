@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Level.h"
 #include "ParallaxTileMap.h"
+#include "PathFinder.h"
 
 #include "Utils.h"
 
@@ -31,10 +32,9 @@ Level* Level::create(std::string mapName)
 
 Level::Level()
 {
-	//winSize = Director::getInstance()->getWinSize();	
-	origin = Director::getInstance()->getVisibleOrigin();
-	visibleSize = Director::getInstance()->getVisibleSize();
-	center = Vec2(origin.x + visibleSize.width / 2, (origin.y + visibleSize.height / 2));
+	_origin = Director::getInstance()->getVisibleOrigin();
+	_visibleSize = Director::getInstance()->getVisibleSize();
+	_center = Vec2(_origin.x + _visibleSize.width / 2, (_origin.y + _visibleSize.height / 2));	
 }
 
 
@@ -45,36 +45,39 @@ void Level::loadMap(std::string mapname)
 {	
 	this->removeAllChildrenWithCleanup(true);
 
-	parallaxTileMap = ParallaxTileMap::create(mapname);
-	this->addChild(parallaxTileMap);
+	_parallaxTileMap = ParallaxTileMap::create(mapname);
+	this->addChild(_parallaxTileMap);
 
-	mapSize = parallaxTileMap->getMapSize();
-	tileSize = parallaxTileMap->getTileSize();
+	_mapSize = _parallaxTileMap->getMapSize();
+	_tileSize = _parallaxTileMap->getTileSize();
+
+	_pathFinder = new AStarPathFinder(_parallaxTileMap, 500, false);
 }
 
 
 void Level::loadPlayer()
 {	
-	if (parallaxTileMap->isPlayerLoaded == false)
+	if (_parallaxTileMap->isPlayerLoaded == false)
 	{		
-		player = parallaxTileMap->getPlayer();		
+		player = _parallaxTileMap->getPlayer();
 	}
 	else
 	{
-		parallaxTileMap->getObjectLayer()->addChild(player);
-		Vec2 transition = parallaxTileMap->getMapTransition(player->mapTransition);
+		_parallaxTileMap->getObjectLayer()->addChild(&player);
+		Vec2 transition = _parallaxTileMap->getMapTransition(player.getMapTransition());
 
-		player->setPositionX(transition.x - player->getContentSize().width / 2);
-		player->setPositionY(transition.y);
-		player->initMoveableNode();		
+		player.setPositionX(transition.x - player.getContentSize().width / 2);
+		player.setPositionY(transition.y);
 	}
 		
-	this->setViewPointCenter(player->getCenterPosition());
+	this->setViewPointCenter();
 }
 
 
-void Level::setViewPointCenter(Vec2 position)
+void Level::setViewPointCenter()
 {	
+	Vec2 position = parallaxTileMap->getPlayer().getCenterPosition();
+
 	Size winSize = Director::getInstance()->getWinSize() / this->getScale();
 	
     float x = MAX(position.x, winSize.width / 2);
@@ -95,34 +98,39 @@ void Level::update(float& delta)
 	// updates scale creates zoom effect
 	this->setScale(AppGlobal::getInstance()->scale);
 	//
-    this->parallaxTileMap->update(delta);    	
+	_parallaxTileMap->update(delta);
 	// player moves to next map
-	this->checkNextMap(player);
+	this->checkNextMap();
 	// centre viewport on player
-	this->setViewPointCenter(player->getCenterPosition());
+	this->setViewPointCenter();
 }
 
 
-void Level::checkNextMap(GameObject* gameObject)
-{    
-    if ( player->mapTransition.y < 0 && player->isMovingDown)
+void Level::checkNextMap()
+{
+	IGameObject& player = _parallaxTileMap->getPlayer();
+
+	Vec2 transition = player.getMapTransition();
+	IsMoving isMoving = player.getIsMoving();
+
+	if (transition.y < 0 && isMoving[STATE_DOWN])
 	{		
-        player->removeFromParent();
+		player.removeFromParent();
 		                
 		loadMap("planet1.tmx");
 
-		parallaxTileMap->isPlayerLoaded = true;
+		_parallaxTileMap->isPlayerLoaded = true;
 
 		loadPlayer();  
 	}
-	else if (player->mapTransition.y > 0 && player->isMovingUp)
+	else if (transition.y > 0 && isMoving[STATE_UP])
 	{
-		player->removeFromParent();
+		player.removeFromParent();
 		
 		loadMap(kLevelTMX);
 
-		parallaxTileMap->getObjectLayer()->removeChildByName("Player", true);
-		parallaxTileMap->isPlayerLoaded = true;
+		_parallaxTileMap->getObjectLayer()->removeChildByName("Player", true);
+		_parallaxTileMap->isPlayerLoaded = true;
 
 		loadPlayer();
 	}

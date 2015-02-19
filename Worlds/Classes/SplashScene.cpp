@@ -67,7 +67,7 @@ bool SplashScene::init()
 void SplashScene::loadMenuScene()
 {
     //CCLog("%s", "next scene");
-	AppGlobal::getInstance()->initMouseListener();
+	//AppGlobal::getInstance()->initMouseListener();
     
 	auto loadingScene = LoadingScene::createScene();
 	Director::getInstance()->replaceScene(loadingScene);

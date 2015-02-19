@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "GraphicsComponent.h"
 
-void PlayerGraphicsComponent::update(GameObjectNode &gameObjectNode)
+void PlayerGraphicsComponent::update(IGameObject& gameObject)
 {
 	
 }

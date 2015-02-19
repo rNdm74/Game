@@ -8,125 +8,6 @@
 #include "CollisionComponent.h"
 
 /**
-* Moveable
-* 
-*
-*/
-#pragma region MoveableNode
-
-
-/**
-* Moveable gameObject Variables,
-* Initializes the varaiables to their default state
-*
-*/
-MoveableNode::MoveableNode()
-{
-	this->initMoveableNode();
-};
-
-
-/**
-* Moveable gameObject Variables,
-* Initializes the varaiables to their default state
-*
-*/
-void MoveableNode::initMoveableNode()
-{
-	path = nullptr;
-
-	onGround = false;
-
-	canMove = false;
-	canMoveUp = false;
-	canMoveDown = false;
-	canMoveLeft = false;
-	canMoveRight = false;
-
-	isMovingUp = false;
-	isMovingDown = false;
-	isMovingLeft = false;
-	isMovingRight = false;
-
-	isClimbing = false;
-	gravity = true;
-
-	velocity = Vec2::ZERO;
-	desiredPosition = Vec2::ZERO;
-};
-
-
-#pragma endregion MoveableNode
-
-
-/**
-* GameObjectNode
-* 
-*
-*/
-#pragma region GameObjectNode
-
-
-/**
-* Create a new GameObjectNode
-*
-* @param properties The ValueMap that contains information about the gameObject
-*/
-GameObjectNode::GameObjectNode(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics)
-{
-	_collision = collision;
-	_graphics = graphics;
-				
-	float x = properties["x"].asFloat();
-	float y = properties["y"].asFloat();
-	float width = properties["width"].asFloat();
-	float height = properties["height"].asFloat();
-
-	this->setProperties(properties);
-	this->setName(properties["name"].asString());
-	this->setContentSize(Size(width, height));
-	this->setAnchorPoint(Vec2::ZERO);
-	this->setPosition(Vec2(x, y));	
-};
-
-
-/**
-* Sets the properties of a GameObject
-*
-* @param properties The ValueMap that contains information about the gameObject
-*/
-void GameObjectNode::setProperties(ValueMap& properties)
-{
-	_properties = properties;
-};
-
-
-/**
-* Get the GameObject property ValueMap information
-*
-* @return The ValueMap reference of the GameObjects properties
-*/
-ValueMap GameObjectNode::getProperties()
-{
-	return _properties;
-};
-
-
-/**
-* Updates a GameObject
-*
-* @param node The Node that contains the gameObject
-*/
-void GameObjectNode::update(Node* node)
-{
-	_collision->update(*node, *this);
-};
-
-
-#pragma endregion GameObjectNode
-
-
-/**
 * GameObject
 *
 *
@@ -139,9 +20,32 @@ void GameObjectNode::update(Node* node)
 *
 * @param properties The ValueMap that contains information about the gameObject
 */
-GameObject::GameObject(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
+GameObject::GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics)
 {
-	
+	_collision = collision;
+	_graphics = graphics;
+
+	_path = nullptr;
+
+	for (int i = 0; i < 4; ++i)
+	{
+		_canMove[i] = false;
+		_isMoving[i] = false;		
+	}
+
+	_onGround = false;
+	_isClimbing = false;
+		
+	float x = properties["x"].asFloat();
+	float y = properties["y"].asFloat();
+	float width = properties["width"].asFloat();
+	float height = properties["height"].asFloat();
+
+	this->setProperties(properties);
+	this->setName(properties["name"].asString());
+	this->setContentSize(Size(width, height));
+	this->setAnchorPoint(Vec2::ZERO);
+	this->setPosition(Vec2(x, y));
 };
 
 
@@ -156,29 +60,8 @@ void GameObject::update(Node* node)
 };
 
 
-/**
-* Get the GameObject content size
-*
-* @return The Size of the GameObject
-*/
-Size GameObject::getSize()
-{ 
-	return this->getContentSize(); 
-};
-
-
-/**
-* Get the GameObject center Vec2
-*
-* @return The Vec2 of the GameObject center position
-*/
-Vec2 GameObject::getCenterPosition()
-{
-	float x = this->getPosition().x + this->getSize().width / 2;
-	float y = this->getPosition().y + this->getSize().height / 2;
-	
-	return Vec2(x, y);
-};
+/** Getters **/
+#pragma region Getters
 
 
 /**
@@ -187,7 +70,7 @@ Vec2 GameObject::getCenterPosition()
 * @return The Rect of the GameObject bounding box
 */
 Rect GameObject::getBoundingBox()
-{ 
+{
 	return Rect
 	(
 		this->getPosition().x,
@@ -203,10 +86,191 @@ Rect GameObject::getBoundingBox()
 *
 * @return The Rect of the GameObject collision || bounding box
 */
-Rect GameObject::getCollisionBoundingBox()
-{ 
+Rect GameObject::getCollisionBox()
+{
 	return this->getBoundingBox();
 };
+
+
+/**
+* Get the GameObject center Vec2
+*
+* @return The Vec2 of the GameObject center position
+*/
+Vec2 GameObject::getCenterPosition()
+{
+	float x = this->getPosition().x + this->getSize().width / 2;
+	float y = this->getPosition().y + this->getSize().height / 2;
+
+	return Vec2(x, y);
+};
+
+
+bool GameObject::getClimbing()
+{
+	return _isClimbing;
+};
+
+
+Vec2 GameObject::getDesiredPosition()
+{
+	return _desiredPosition;
+};
+
+
+Vec2 GameObject::getDirection()
+{
+	return _direction;
+};
+
+
+Vec2 GameObject::getMapTransition()
+{
+	return _mapTransition;
+};
+
+
+bool GameObject::getOnGround()
+{
+	return _onGround;
+};
+
+
+IPath* GameObject::getPath()
+{
+	return _path;
+};
+
+/**
+* Get the GameObject property ValueMap information
+*
+* @return The ValueMap reference of the GameObjects properties
+*/
+ValueMap GameObject::getProperties()
+{
+	return _properties; 
+};
+
+
+/**
+* Get the GameObject content size
+*
+* @return The Size of the GameObject
+*/
+Size GameObject::getSize()
+{
+	return this->getContentSize();
+};
+
+
+Vec2 GameObject::getVelocity()
+{
+	return _velocity;
+};
+
+
+CanMove GameObject::getCanMove()
+{
+	return _canMove;
+};
+
+
+IsMoving GameObject::getIsMoving()
+{
+	return _isMoving;
+};
+
+
+#pragma endregion Getters
+
+
+/** Setters **/
+#pragma region Setters
+
+
+void GameObject::setBoundingBox(Rect boundingBox)
+{
+
+};
+
+
+void GameObject::setCollisionBox(Rect collisionBox)
+{
+
+};
+
+
+void GameObject::setClimbing(bool climbing)
+{
+	_isClimbing = climbing;
+};
+
+
+void GameObject::setDesiredPosition(Vec2 desiredPosition)
+{
+	_desiredPosition = desiredPosition;
+};
+
+
+void GameObject::setDirection(Vec2 direction)
+{
+	_direction = direction;
+};
+
+
+void GameObject::setMapTransition(Vec2 mapTransition)
+{
+	_mapTransition = mapTransition;
+};
+
+
+void GameObject::setOnGround(bool onGround)
+{
+	_onGround = onGround;
+};
+
+
+void GameObject::setPath(IPath* path)
+{
+	_path = path;
+};
+
+
+/**
+* Sets the properties of a GameObject
+*
+* @param properties The ValueMap that contains information about the gameObject
+*/
+void GameObject::setProperties(ValueMap& properties)
+{
+	_properties = properties;
+};
+
+
+void GameObject::setSize(Vec2 size)
+{
+};
+
+
+void GameObject::setVelocity(Vec2 velocity)
+{
+	_velocity = velocity;
+};
+
+
+void GameObject::setCanMove(CanMove canMove)
+{
+	_canMove = canMove;
+};
+
+
+void GameObject::setIsMoving(IsMoving isMoving)
+{
+	_isMoving = isMoving;
+};
+
+
+#pragma endregion Setters
 
 
 #pragma endregion GameObject
@@ -231,7 +295,7 @@ Rect GameObject::getCollisionBoundingBox()
 * @param collision The CollisionComponent that contains information about the gameObject
 * @param graphics The GraphicsComponent that contains information about the gameObject
 */
-Player::Player(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics, MenuComponent* menu, InputComponent* input) : super(properties, collision, graphics)
+Player::Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input) : super(properties, collision, graphics)
 {
 	_menu = menu;
 	_input = input;
@@ -254,6 +318,8 @@ Player::Player(ValueMap& properties, CollisionComponent* collision, GraphicsComp
 	
 	this->setContentSize(Size(width, width));
 	this->addChild(_sprite);
+
+	_isLoaded = true;
 };
 
 
@@ -277,15 +343,21 @@ Sprite* Player::getSprite()
 };
 
 
-Rect Player::getCollisionBoundingBox()
+Rect Player::getCollisionBox()
 {
 	Rect collisionBox = this->getBoundingBox();
 
-	Vec2 diff = desiredPosition - collisionBox.origin;
+	Vec2 diff = _desiredPosition - collisionBox.origin;
 
 	collisionBox.origin = collisionBox.origin + diff;
 			
 	return collisionBox;
+};
+
+
+bool Player::IsLoaded()
+{
+	return _isLoaded;
 };
 
 
@@ -305,7 +377,7 @@ Rect Player::getCollisionBoundingBox()
 * Initializes the varaiables to their default state
 *
 */
-Left::Left(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
+Left::Left(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics) : super(properties, collision, graphics)
 {
 };
 
@@ -326,7 +398,7 @@ Left::Left(ValueMap& properties, CollisionComponent* collision, GraphicsComponen
 * Initializes the varaiables to their default state
 *
 */
-Right::Right(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
+Right::Right(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics) : super(properties, collision, graphics)
 {	
 };
 
@@ -347,7 +419,7 @@ Right::Right(ValueMap& properties, CollisionComponent* collision, GraphicsCompon
 * Initializes the varaiables to their default state
 *
 */
-Enter::Enter(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
+Enter::Enter(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics) : super(properties, collision, graphics)
 {			
 	auto _particle = ParticleGalaxy::createWithTotalParticles(900);
 	_particle->setAutoRemoveOnFinish(true);
@@ -398,7 +470,7 @@ Enter::Enter(ValueMap& properties, CollisionComponent* collision, GraphicsCompon
 * Initializes the varaiables to their default state
 *
 */
-Exit::Exit(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics) : super(properties, collision, graphics)
+Exit::Exit(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics) : super(properties, collision, graphics)
 {
 };
 

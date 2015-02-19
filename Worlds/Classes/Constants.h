@@ -1,10 +1,11 @@
 #ifndef __FranticAlien__CONSTANTS_H__
 #define __FranticAlien__CONSTANTS_H__
 
+#include <array>
 #include <string>
 #include "cocos2d.h"
 
-#define DEBUG_ENABLE 0
+#define DEBUG_ENABLE 1
 
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10
@@ -72,17 +73,17 @@ const std::string kPlayerFileName				= "alienBeige.png";
 
 //enumeration of possible input states
 enum EState 
-{
-	STATE_STOP,
-	STATE_LEFT,
-	STATE_RIGHT,
+{		
 	STATE_UP,
 	STATE_DOWN,
+	STATE_LEFT,
+	STATE_RIGHT,
 	STATE_JUMP,
 	STATE_ENTER,
 	STATE_ESCAPE,
 	STATE_HUD,
 	STATE_SPRINT,
+	STATE_STOP,
 };
 
 enum kFilterCatagory 
@@ -118,12 +119,19 @@ enum ETileGrid
 	CENTER = 1
 };
 
+
 struct TileData
 {
 	cocos2d::Rect tileRect;
     cocos2d::Vec2 tileCoordinates;
 	int GID = 0;
 };
+
+typedef std::array<TileData, 8> TileDataArray;
+
+typedef std::array<bool, 4> CanMove;
+
+typedef std::array<bool, 4> IsMoving;
 
 
 

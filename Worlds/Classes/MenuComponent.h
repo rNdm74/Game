@@ -5,7 +5,7 @@
 
 using namespace cocos2d;
 
-class GameObject;
+class IGameObject;
 
 class MenuComponentItem : public Sprite
 {
@@ -15,31 +15,32 @@ public:
 	void initListeners();
 };
 
-class MenuComponent
+class IMenuComponent
 {
 public:
 	//
-    virtual ~MenuComponent() {};
+	IMenuComponent(){};
+	virtual ~IMenuComponent() {};
 
 	//
-	virtual bool addMenu(GameObject &gameObject) = 0;
-    virtual void showMenu(GameObject &gameObject) = 0;
-	virtual void hideMenu(GameObject &gameObject) = 0;
+	virtual bool addMenu(IGameObject& gameObject) = 0;
+    virtual void showMenu(IGameObject& gameObject) = 0;
+	virtual void hideMenu(IGameObject& gameObject) = 0;
 
-	virtual void update(GameObject &gameObject) = 0;
+	virtual void update(IGameObject& gameObject) = 0;
 	
 	virtual bool isActive() = 0;
 };
 
-class PlayerMenuComponent : public MenuComponent
+class PlayerMenuComponent : public IMenuComponent
 {
 public:    
     // init methods
-	bool addMenu(GameObject &gameObject);
-	void showMenu(GameObject &gameObject);
-	void hideMenu(GameObject &gameObject);
+	bool addMenu(IGameObject& gameObject);
+	void showMenu(IGameObject& gameObject);
+	void hideMenu(IGameObject& gameObject);
     
-	void update(GameObject &gameObject){}
+	void update(IGameObject& gameObject){}
 
 	inline bool isActive() { return _isActive; }
 

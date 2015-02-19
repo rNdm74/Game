@@ -161,7 +161,7 @@ bool Path::contains(Vec2 step)
 * @param y The y coordinate of the step to check for
 * @return True if the path contains the given step
 */
-void Path::addPath(Path* path)
+void Path::add(IPath* path)
 {
 	if (path != nullptr)
 	{

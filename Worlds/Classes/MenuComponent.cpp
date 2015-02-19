@@ -51,7 +51,7 @@ void MenuComponentItem::initListeners()
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
-bool PlayerMenuComponent::addMenu(GameObject &gameObject)
+bool PlayerMenuComponent::addMenu(IGameObject& gameObject)
 {
     int _ptr = 0;
     
@@ -72,7 +72,7 @@ bool PlayerMenuComponent::addMenu(GameObject &gameObject)
 	return true;
 }
 
-void PlayerMenuComponent::showMenu(GameObject &gameObject)
+void PlayerMenuComponent::showMenu(IGameObject& gameObject)
 {
     // Show menu
 	auto center = Vec2(gameObject.getContentSize().width / 2, 20 + gameObject.getContentSize().height / 2);
@@ -97,7 +97,7 @@ void PlayerMenuComponent::showMenu(GameObject &gameObject)
 	this->_isActive = true;
 }
 
-void PlayerMenuComponent::hideMenu(GameObject &gameObject)
+void PlayerMenuComponent::hideMenu(IGameObject& gameObject)
 {
     // Hides menu
 	auto center = Vec2(gameObject.getContentSize().width / 2, gameObject.getContentSize().height / 2);

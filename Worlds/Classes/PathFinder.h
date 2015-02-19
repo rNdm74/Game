@@ -9,7 +9,7 @@ class GameObject;
 class ParallaxTileMap;
 class SearchGraphNode;
 class AStarHeuristic;
-class Path;
+class IPath;
 
 /**
 * Interface
@@ -19,21 +19,12 @@ class Path;
 */
 class IPathFinder
 {
-	virtual Path* findPath(Vec2 startLocation, Vec2 targetLocation) = 0;
+public:
+	IPathFinder(){};
+	virtual ~IPathFinder(){};
+	virtual IPath* findPath(Vec2 startLocation, Vec2 targetLocation) = 0;
 };
 
-/**
-* A description of an implementation that can find a path from one
-* location on a tile map to another based on information provided
-* by that tile map.
-*
-* @see TileBasedMap
-* @author Adam Charlton
-*/
-class PathFinder : public IPathFinder
-{
-	virtual Path* findPath(Vec2 startLocation, Vec2 targetLocation);
-};
 
 /**
 * A path finder implementation that uses the AStar heuristic based algorithm
@@ -50,11 +41,13 @@ public:
 
 	AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement);
 	AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement, AStarHeuristic* heuristic);
-	virtual ~AStarPathFinder(){}
+	virtual ~AStarPathFinder(){};
 
-	Path* findPath(Vec2 startLocation, Vec2 targetLocation);
+	IPath* findPath(Vec2 startLocation, Vec2 targetLocation);
 	float getMovementCost(Vec2 startLocation, Vec2 targetLocation);
 	float getHeuristicCost(Vec2 startLocation, Vec2 targetLocation);
+
+	void setParallaxTileMap(ParallaxTileMap* parallaxTileMap);
 		
 protected:
 	SearchGraphNode* getFirstInOpen();
@@ -69,21 +62,21 @@ protected:
 	
 private:
 	/** The set of nodes that have been searched through */
-	std::vector<SearchGraphNode*> closed;
+	std::vector<SearchGraphNode*> _closed;
 	/** The set of nodes that we do not yet consider fully searched */
-	std::vector<SearchGraphNode*> open;
+	std::vector<SearchGraphNode*> _open;
 	/** The complete set of nodes across the map */
-	std::vector<SearchGraphNode*> nodes;
+	std::vector<SearchGraphNode*> _nodes;
 
 	/** The ParallaxTileMap being searched */
-	ParallaxTileMap* parallaxTileMap;
+	ParallaxTileMap* _parallaxTileMap;
 		
 	/** The maximum depth of search we're willing to accept before giving up */
-	int maxSearchDistance;
+	int _maxSearchDistance;
 	/** True if we allow diaganol movement */
-	bool allowDiagMovement;
+	bool _allowDiagMovement;
 	/** The heuristic we're applying to determine which nodes to search first */
-	AStarHeuristic* heuristic;
+	AStarHeuristic* _heuristic;
 };
 
 #endif /* defined(__com_dotdat_World__PATHFINDER_H__) */

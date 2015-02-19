@@ -2,17 +2,17 @@
 #define __Worlds__GAME_OBJECT_H__
 
 #include "cocos2d.h"
+#include <array>
 #include "Constants.h"
 
-class MenuComponent;
-class InputComponent;
-class CollisionComponent;
-class GraphicsComponent;
-class Path;
+class IMenuComponent;
+class IInputComponent;
+class ICollisionComponent;
+class IGraphicsComponent;
+class IPath;
 
 using namespace cocos2d;
 
-
 /**
 * A path determined by some path finding algorithm. A series of steps from
 * the starting location to the target location. This includes a step for the
@@ -20,10 +20,44 @@ using namespace cocos2d;
 *
 * @author Adam Charlton
 */
-class IGameObject
+class IGameObject : public Node
 {
 public:
+	/** **/
+	IGameObject(){};
+	virtual ~IGameObject(){};			
+	/** **/
 	virtual void update(Node* node) = 0;
+	/** **/
+	virtual Rect getBoundingBox() = 0;
+	virtual Rect getCollisionBox() = 0;	
+	virtual Vec2 getCenterPosition() = 0;
+	virtual bool getClimbing() = 0;
+	virtual Vec2 getDesiredPosition() = 0;
+	virtual Vec2 getDirection() = 0;
+	virtual Vec2 getMapTransition() = 0;
+	virtual bool getOnGround() = 0;
+	virtual IPath* getPath() = 0;
+	virtual ValueMap getProperties() = 0;
+	virtual Size getSize() = 0;
+	virtual Vec2 getVelocity() = 0;
+	virtual CanMove getCanMove() = 0;
+	virtual IsMoving getIsMoving() = 0;
+
+	/** **/
+	virtual void setBoundingBox(Rect boundingBox) = 0;
+	virtual void setCollisionBox(Rect collisionBox) = 0;
+	virtual void setClimbing(bool climbing) = 0;
+	virtual void setDesiredPosition(Vec2 desiredPosition) = 0;
+	virtual void setDirection(Vec2 direction) = 0;
+	virtual void setMapTransition(Vec2 mapTransition) = 0;
+	virtual void setOnGround(bool onGround) = 0;
+	virtual void setPath(IPath* path) = 0;
+	virtual void setProperties(ValueMap& properties) = 0;
+	virtual void setSize(Vec2 size) = 0;
+	virtual void setVelocity(Vec2 velocity) = 0;
+	virtual void setCanMove(CanMove canMove) = 0;
+	virtual void setIsMoving(IsMoving isMoving) = 0;
 };
 
 
@@ -34,104 +68,80 @@ public:
 *
 * @author Adam Charlton
 */
-class MoveableNode
+class GameObject : public IGameObject
 {
-public:
-	MoveableNode();
-	virtual ~MoveableNode(){};
-
-	void initMoveableNode();
-
-    Vec2 mapTransition;
-    
-	/** **/
-	Path* path;
-	
-	/** **/
-	bool onGround;
-	/** **/
-	bool canMove;
-	bool canMoveUp;
-	bool canMoveDown;
-	bool canMoveLeft;
-	bool canMoveRight;
-	/** **/
-	bool isMovingUp;
-	bool isMovingDown;
-	bool isMovingLeft;
-	bool isMovingRight;
-	/** **/
-	bool isClimbing;
-	/** **/
-	bool gravity;
-	/** **/
-	Vec2 direction;
-	/** **/
-	Vec2 velocity;
-	/** **/
-	Vec2 desiredPosition;
-};
-
-
-/**
-* A path determined by some path finding algorithm. A series of steps from
-* the starting location to the target location. This includes a step for the
-* initial location.
-*
-* @author Adam Charlton
-*/
-class GameObjectNode : public Node, public IGameObject
-{
-public:
-	// If applicable, then Constructors and the Destructor
-	GameObjectNode(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
-	virtual ~GameObjectNode(){};
-	
-	// The gets and sets
-	virtual void setProperties(ValueMap& properties);
-	virtual ValueMap getProperties();
-
-	virtual void update(Node* node);
-
-protected:
-	/** **/
-	ValueMap _properties;
-	/** **/
-	CollisionComponent* _collision;
-	/** **/
-	GraphicsComponent* _graphics;
-	/** **/
-	Sprite* _sprite;
-};
-
-
-/**
-* A path determined by some path finding algorithm. A series of steps from
-* the starting location to the target location. This includes a step for the
-* initial location.
-*
-* @author Adam Charlton
-*/
-class GameObject : public GameObjectNode, public MoveableNode
-{
-	typedef GameObjectNode super;
+	typedef IGameObject super;
 	typedef GameObject self;
     
 public:
 	/** If applicable, then Constructors and the Destructor **/
-	GameObject(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
+	GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~GameObject(){};
     
 	/** Then the init methods **/
 	
 	/** Then methods of the instance **/
 	virtual void update(Node* node);
+		
+	/** Getters **/
 	virtual Rect getBoundingBox();
-	virtual Rect getCollisionBoundingBox();
-
-	/** Then the overrides **/
-	virtual Size getSize();
+	virtual Rect getCollisionBox();
+	virtual bool getClimbing();
 	virtual Vec2 getCenterPosition();
+	virtual Vec2 getDesiredPosition();
+	virtual Vec2 getDirection();
+	virtual Vec2 getMapTransition();
+	virtual bool getOnGround();
+	virtual IPath* getPath();
+	virtual ValueMap getProperties();
+	virtual Size getSize();
+	virtual Vec2 getVelocity();
+	virtual CanMove getCanMove();
+	virtual IsMoving getIsMoving();
+
+	/** Setters **/
+	virtual void setBoundingBox(Rect boundingBox);
+	virtual void setCollisionBox(Rect collisionBox);
+	virtual void setClimbing(bool climbing);
+	virtual void setDesiredPosition(Vec2 desiredPosition);
+	virtual void setDirection(Vec2 direction);
+	virtual void setMapTransition(Vec2 mapTransition);
+	virtual void setOnGround(bool onGround);
+	virtual void setPath(IPath* path);
+	virtual void setProperties(ValueMap& properties);
+	virtual void setSize(Vec2 size);
+	virtual void setVelocity(Vec2 velocity);
+	virtual void setCanMove(CanMove canMove);
+	virtual void setIsMoving(IsMoving isMoving);
+
+protected:	
+	/** **/
+	ICollisionComponent* _collision;
+	/** **/
+	IGraphicsComponent* _graphics;
+	/** **/
+	IPath* _path;
+	/** **/
+	Sprite* _sprite;
+
+	/** **/
+	Vec2 _desiredPosition;
+	/** **/
+	Vec2 _direction;
+	/** **/
+	Vec2 _mapTransition;	
+	/** **/
+	ValueMap _properties;
+	/** **/
+	Vec2 _velocity;	
+	/** **/
+	CanMove _canMove;
+	/** **/
+	IsMoving _isMoving;
+	/** **/
+	bool _onGround;
+	/** **/
+	bool _isClimbing;	
 };
 
 
@@ -148,21 +158,24 @@ class Player : public GameObject
 	typedef Player self;
 
 public:
-	Player(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics, MenuComponent* menu, InputComponent* input);
+	Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input);
 	~Player(){};
 
 	virtual void update(Node* node) override;
 
 	virtual Size getSize() override;
-	virtual Rect getCollisionBoundingBox() override;
-	
+	virtual Rect getCollisionBox() override;	
 	virtual Sprite* getSprite();
 	
+	bool IsLoaded();
+
 private:	
 	/** **/
-	MenuComponent* _menu;
+	IMenuComponent* _menu;
 	/** **/
-	InputComponent* _input;				
+	IInputComponent* _input;	
+	/****/
+	bool _isLoaded;
 };
 
 
@@ -173,13 +186,13 @@ private:
 *
 * @author Adam Charlton
 */
-class Left : public GameObjectNode
+class Left : public GameObject
 {
-	typedef GameObjectNode super;
+	typedef GameObject super;
 	typedef Left self;
 
 public:
-	Left(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
+	Left(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~Left(){};
 
 private:
@@ -195,13 +208,13 @@ private:
 *
 * @author Adam Charlton
 */
-class Right : public GameObjectNode
+class Right : public GameObject
 {
-	typedef GameObjectNode super;
+	typedef GameObject super;
 	typedef Right self;
 
 public:
-	Right(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
+	Right(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~Right(){};
 
 private:
@@ -216,13 +229,13 @@ private:
 *
 * @author Adam Charlton
 */
-class Enter : public GameObjectNode
+class Enter : public GameObject
 {
-	typedef GameObjectNode super;
+	typedef GameObject super;
 	typedef Enter self;
 
 public:
-	Enter(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
+	Enter(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~Enter(){};
 
 private:
@@ -237,13 +250,13 @@ private:
 *
 * @author Adam Charlton
 */
-class Exit : public GameObjectNode
+class Exit : public GameObject
 {
-	typedef GameObjectNode super;
+	typedef GameObject super;
 	typedef Exit self;
 
 public:
-	Exit(ValueMap& properties, CollisionComponent* collision, GraphicsComponent* graphics);
+	Exit(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~Exit(){};
 
 private:

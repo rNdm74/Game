@@ -3,32 +3,32 @@
 
 #include "cocos2d.h"
 
-//class Moveable;
-class GameObject;
-class ParallaxTileMap;
+class IGameObject;
 
 using namespace cocos2d;
 
 class IInputComponent
 {
 public:
-	virtual void update(Node& node, GameObject& gameObject) = 0;
+	IInputComponent(){};
+	virtual ~IInputComponent() {};
+	virtual void update(Node& node, IGameObject& gameObject) = 0;
+	virtual void findpath(Node& node, IGameObject& gameObject) = 0;
+	virtual void desiredPosition(IGameObject& gameObject) = 0;
 };
 
 class InputComponent : public IInputComponent
 {
 public:
-	virtual void update(Node& node, GameObject& gameObject){};
-
-protected:
-	void findpath(ParallaxTileMap& parallaxTileMap, GameObject& gameObject);
-	void desiredPosition(GameObject& gameObject);
+	virtual void update(Node& node, IGameObject& gameObject){};
+	void findpath(Node& node, IGameObject& gameObject);
+	void desiredPosition(IGameObject& gameObject);
 };
 
 class PlayerInputComponent : public InputComponent
 {
 public:
-	void update(Node& node, GameObject& gameObject) override;
+	void update(Node& node, IGameObject& gameObject) override;
 };
 
 #endif /* defined(__FranticAlien__InputComponent__) */

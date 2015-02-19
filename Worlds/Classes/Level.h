@@ -2,14 +2,12 @@
 #define __FranticAlien__LEVEL_H__
 
 #include "cocos2d.h"
-#include <array>
 
 class AppGlobal;
-class Player;
-class GameObject;
+class IGameObject;
 class ParallaxTileMap;
-class AStarPathFinder;
-class Path;
+class IPathFinder;
+class IPath;
 
 using namespace cocos2d;
 
@@ -27,24 +25,22 @@ public:
 	
 	void update(float& delta);
 		    
-    void setViewPointCenter(Vec2 position);
+    void setViewPointCenter();
 		
-	void checkNextMap(GameObject* gameObject);	
+	void checkNextMap();	
 
 private:
-	ParallaxTileMap* parallaxTileMap;
-    	
-	Player* player;
-   
-	Vec2 origin;
-	Vec2 center;
+	ParallaxTileMap* _parallaxTileMap;
+	IPathFinder* _pathFinder;
 
-	Size visibleSize;
-	//Size winSize;
-	Size mapSize;
-	Size tileSize;
+	Vec2 _origin;
+	Vec2 _center;
 
-	int objectCount;
+	Size _visibleSize;
+	Size _mapSize;
+	Size _tileSize;
+
+	int _objectCount;
 };
 
 #endif /* defined(__FranticAlien__LEVEL_H__) */

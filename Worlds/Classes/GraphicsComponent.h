@@ -9,20 +9,23 @@ using namespace cocos2d;
 
 class IGraphicsComponent
 {
-public:    
-	virtual void update(GameObjectNode& gameObjectNode) = 0;
+public:  
+	//
+	IGraphicsComponent(){};
+	virtual ~IGraphicsComponent() {};
+	virtual void update(IGameObject& gameObject) = 0;
 };
 
-class GraphicsComponent : IGraphicsComponent
+class GraphicsComponent : public IGraphicsComponent
 {
 public:
-	virtual void update(GameObjectNode& gameObjectNode){};
+	virtual void update(IGameObject& gameObject){};
 };
 
-class PlayerGraphicsComponent : public GraphicsComponent
+class PlayerGraphicsComponent : public IGraphicsComponent
 {
 public:
-	void update(GameObjectNode& gameObjectNode) override;
+	void update(IGameObject& gameObject) override;
 };
 
 #endif /* defined(__FranticAlien__GraphicsComponent__) */

@@ -5,9 +5,9 @@
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
 
-GameObjectNode* GameObjectFactory::create(std::string className, ValueMap& properties)
+IGameObject* GameObjectFactory::create(std::string className, ValueMap& properties)
 {
-	GameObjectNode* gameObject = nullptr;
+	IGameObject* gameObject = nullptr;
 
 	if (className == "Player")
 	{
