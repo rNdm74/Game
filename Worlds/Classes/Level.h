@@ -24,6 +24,8 @@ public:
 	void loadPlayer();
 	
 	void update(float& delta);
+
+	void updateState();
 		    
     void setViewPointCenter();
 		
@@ -32,6 +34,8 @@ public:
 private:
 	ParallaxTileMap* _parallaxTileMap;
 	IPathFinder* _pathFinder;
+
+	GameObjectFsm* _fsm;
 
 	Vec2 _origin;
 	Vec2 _center;

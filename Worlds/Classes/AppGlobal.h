@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Constants.h"
+#include "Fsm.h"
 
 using namespace cocos2d;
 
@@ -17,6 +18,22 @@ struct GameStates {
 	bool LEFT;
 	bool RIGHT;
 	bool STOP;
+};
+
+enum EGameObjectStates
+{
+	CheckCanWalkLeft,
+	CheckCanWalkRight,
+	WalkLeft,
+	WalkRight,
+	CheckCanClimbUp,
+	CheckCanClimbDown,
+	ClimbUp,
+	ClimbDown,
+	Stop,
+	BecomeIdle,
+	LoadNextMap,
+	LoadPreviousMap
 };
 
 class  AppGlobal
@@ -40,6 +57,8 @@ public:
 	bool rightMouseButton;
 	
 	GameStates states;
+
+	EGameObjectStates gameObjectStates;
     
 public:
     static AppGlobal* getInstance();
@@ -52,13 +71,15 @@ public:
 	void addCursor(Layer& layer);
 
     std::string GetActiveLevel() { return std::to_string(ActiveLevel); };
-    
+		    
 private:
+	
+	KeyMatrix keyMatrix;
+
     AppGlobal();
     virtual ~AppGlobal();
 	
-    static AppGlobal* m_pInstance;
-    
+    static AppGlobal* m_pInstance;    
 };
 
 #define RAND(begin, end)  ( AppGlobal::getInstance()->getRandom( (begin), (end) ) )

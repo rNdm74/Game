@@ -18,6 +18,8 @@ AppGlobal::AppGlobal()
 	rightMouseButton = false;
 	mouseDown = false;
     mouseUp = false;
+
+	gameObjectStates = EGameObjectStates::BecomeIdle;
 }
 
 AppGlobal::~AppGlobal()
@@ -99,13 +101,49 @@ void AppGlobal::initMouseListener()
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
 
+
 void AppGlobal::initKeyboardListener()
-{
+{	
 	// Keyboard input
 	auto listener = EventListenerKeyboard::create();
 
 	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event *event)
-	{		
+	{
+		if ((keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW))
+		{
+			gameObjectStates = EGameObjectStates::CheckCanClimbUp;
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW))
+		{
+			gameObjectStates = EGameObjectStates::CheckCanClimbDown;
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW))
+		{
+			gameObjectStates = EGameObjectStates::CheckCanWalkLeft;
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
+		{
+			gameObjectStates = EGameObjectStates::CheckCanWalkRight;
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_PG_UP))
+		{			
+			
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN))
+		{
+			
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_SPACE))
+		{
+			
+		}		
+
 //		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
 //		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
 //		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
@@ -126,6 +164,28 @@ void AppGlobal::initKeyboardListener()
 
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{
+		if ((keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW))
+		{
+			
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW))
+		{
+			
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW))
+		{
+			
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
+		{
+			
+		}
+				
+		gameObjectStates = EGameObjectStates::Stop;
+				
 //		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
 //		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
 //		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);

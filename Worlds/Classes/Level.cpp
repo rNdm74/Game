@@ -35,6 +35,8 @@ Level::Level()
 	_origin = Director::getInstance()->getVisibleOrigin();
 	_visibleSize = Director::getInstance()->getVisibleSize();
 	_center = Vec2(_origin.x + _visibleSize.width / 2, (_origin.y + _visibleSize.height / 2));	
+	
+	_fsm = new GameObjectFsm();
 }
 
 
@@ -59,15 +61,15 @@ void Level::loadPlayer()
 {	
 	if (_parallaxTileMap->isPlayerLoaded == false)
 	{		
-		player = _parallaxTileMap->getPlayer();
+		//player = _parallaxTileMap->getPlayer();
 	}
 	else
 	{
-		_parallaxTileMap->getObjectLayer()->addChild(&player);
-		Vec2 transition = _parallaxTileMap->getMapTransition(player.getMapTransition());
+		//_parallaxTileMap->getObjectLayer()->addChild(&player);
+		//Vec2 transition = _parallaxTileMap->getMapTransition(player.getMapTransition());
 
-		player.setPositionX(transition.x - player.getContentSize().width / 2);
-		player.setPositionY(transition.y);
+		//player.setPositionX(transition.x - player.getContentSize().width / 2);
+		//player.setPositionY(transition.y);
 	}
 		
 	this->setViewPointCenter();
@@ -76,20 +78,20 @@ void Level::loadPlayer()
 
 void Level::setViewPointCenter()
 {	
-	Vec2 position = parallaxTileMap->getPlayer().getCenterPosition();
+	Vec2 position = _parallaxTileMap->getPlayer().getCenterPosition();
 
-	Size winSize = Director::getInstance()->getWinSize() / this->getScale();
+	Size _winSize = Director::getInstance()->getWinSize() / this->getScale();
 	
-    float x = MAX(position.x, winSize.width / 2);
-	float y = MAX(position.y, winSize.height / 2);
-	x = MIN(x, (mapSize.width * tileSize.width) - winSize.width / 2);
-	y = MIN(y, (mapSize.height * tileSize.height) - winSize.height / 2);
+	float x = MAX(position.x, _winSize.width / 2);
+	float y = MAX(position.y, _winSize.height / 2);
+	x = MIN(x, (_mapSize.width * _tileSize.width) - _winSize.width / 2);
+	y = MIN(y, (_mapSize.height * _tileSize.height) - _winSize.height / 2);
     
 	Vec2 actualPosition = Vec2(x, y);    
-	Vec2 centerOfView = Vec2(winSize.width / 2, winSize.height / 2);
+	Vec2 centerOfView = Vec2(_winSize.width / 2, _winSize.height / 2);
     Vec2 viewPoint = centerOfView - actualPosition;
     
-	this->parallaxTileMap->setPosition(viewPoint);
+	this->_parallaxTileMap->setPosition(viewPoint);
 }
 
 
@@ -98,12 +100,36 @@ void Level::update(float& delta)
 	// updates scale creates zoom effect
 	this->setScale(AppGlobal::getInstance()->scale);
 	//
+	this->updateState();
+	//
 	_parallaxTileMap->update(delta);
 	// player moves to next map
 	this->checkNextMap();
 	// centre viewport on player
 	this->setViewPointCenter();
 }
+
+
+void Level::updateState()
+{
+	void(GameObjectFsm:: *ptrs[])() =
+	{
+		&GameObjectFsm::CheckCanWalkLeft,
+		&GameObjectFsm::CheckCanWalkRight,
+		&GameObjectFsm::WalkLeft,
+		&GameObjectFsm::WalkRight,
+		&GameObjectFsm::CheckCanClimbUp,
+		&GameObjectFsm::CheckCanClimbDown,
+		&GameObjectFsm::ClimbUp,
+		&GameObjectFsm::ClimbDown,
+		&GameObjectFsm::Stop,
+		&GameObjectFsm::BecomeIdle,
+		&GameObjectFsm::LoadNextMap,
+		&GameObjectFsm::LoadPreviousMap
+	};
+
+	(_fsm->*ptrs[AppGlobal::getInstance()->gameObjectStates])();
+};
 
 
 void Level::checkNextMap()
