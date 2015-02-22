@@ -114,16 +114,11 @@ void Level::updateState()
 {
 	void(GameObjectFsm:: *ptrs[])() =
 	{
-		&GameObjectFsm::CheckCanWalkLeft,
-		&GameObjectFsm::CheckCanWalkRight,
-		&GameObjectFsm::WalkLeft,
-		&GameObjectFsm::WalkRight,
 		&GameObjectFsm::CheckCanClimbUp,
 		&GameObjectFsm::CheckCanClimbDown,
-		&GameObjectFsm::ClimbUp,
-		&GameObjectFsm::ClimbDown,
+		&GameObjectFsm::CheckCanWalkLeft,
+		&GameObjectFsm::CheckCanWalkRight,
 		&GameObjectFsm::Stop,
-		&GameObjectFsm::BecomeIdle,
 		&GameObjectFsm::LoadNextMap,
 		&GameObjectFsm::LoadPreviousMap
 	};

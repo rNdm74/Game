@@ -133,6 +133,6 @@ typedef std::array<bool, 4> CanMove;
 
 typedef std::array<bool, 4> IsMoving;
 
-typedef std::array<bool, 5> KeyMatrix;
+typedef std::array<bool, 7> KeyMatrix;
 
 #endif /* defined(__CONSTANTS__) */

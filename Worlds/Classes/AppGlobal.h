@@ -22,16 +22,11 @@ struct GameStates {
 
 enum EGameObjectStates
 {
-	CheckCanWalkLeft,
-	CheckCanWalkRight,
-	WalkLeft,
-	WalkRight,
 	CheckCanClimbUp,
 	CheckCanClimbDown,
-	ClimbUp,
-	ClimbDown,
+	CheckCanWalkLeft,
+	CheckCanWalkRight,	
 	Stop,
-	BecomeIdle,
 	LoadNextMap,
 	LoadPreviousMap
 };

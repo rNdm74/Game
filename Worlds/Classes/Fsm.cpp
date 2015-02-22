@@ -1,411 +1,516 @@
 #include "Fsm.h"
-#include <typeinfo>
 
+/** Event Overrides**/
+#pragma region Event Overrides
+
+/**
+*
+*/
+#pragma region GameObjectState
+
+void GameObjectState::Up(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(CheckCanClimb::getInstance());
+};
+
+void GameObjectState::Down(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(CheckCanClimb::getInstance());
+};
+
+void GameObjectState::Left(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(CheckCanWalk::getInstance());
+};
+
+void GameObjectState::Right(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(CheckCanWalk::getInstance());
+};
+
+void GameObjectState::NextMap(IGameObjectFsm& fsm)
+{
+	log("LoadingNextMap State");
+	fsm.setCurrentState(LoadingNextMap::getInstance());
+};
+
+void GameObjectState::PreviousMap(IGameObjectFsm& fsm)
+{
+	log("LoadingPreviousMap State");
+	fsm.setCurrentState(LoadingPreviousMap::getInstance());
+};
+
+#pragma endregion GameObjectState
+
+/**
+*
+*/
 #pragma region CheckCanClimb
 
-void CheckCanClimb::CanClimbUp(IGameObjectFsm& fsm)
+CheckCanClimb* CheckCanClimb::m_pInstance = NULL;
+
+CheckCanClimb* CheckCanClimb::getInstance()
+{
+	return m_pInstance ? m_pInstance : m_pInstance = new CheckCanClimb();
+}
+
+void CheckCanClimb::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void CheckCanClimb::Up(IGameObjectFsm& fsm)
+{
+	log("We are checking if we can climb up");
+
+	if (false /** if check returns true state is now climbing up **/)
+	{
+		/** we can climb up **/
+		this->canClimbUp(fsm);
+	}
+};
+
+void CheckCanClimb::Down(IGameObjectFsm& fsm)
+{
+	log("We are checking if we can climb down");
+
+	if (false /** if check returns true state is now climbing down **/)
+	{
+		/** we can climb down **/
+		this->canClimbDown(fsm);
+	}
+};
+
+void CheckCanClimb::Left(IGameObjectFsm& fsm)
 {	
-	//log("Setting currentstate to the ClimbingUp state");
-	fsm.setCurrentState(new ClimbingUp());	
-	delete this;
+	fsm.setCurrentState(CheckCanWalk::getInstance());
 };
 
-void CheckCanClimb::CanClimbDown(IGameObjectFsm& fsm)
+void CheckCanClimb::Right(IGameObjectFsm& fsm)
 {
-	//log("Setting currentstate to the ClimbingDown state");
-	fsm.setCurrentState(new ClimbingDown());
-	delete this;
+	fsm.setCurrentState(CheckCanWalk::getInstance());
 };
 
-void CheckCanClimb::CheckFailed(IGameObjectFsm& fsm)
+void CheckCanClimb::Stop(IGameObjectFsm& fsm)
 {
-	//log("Setting currentstate to the IsIdle state");
-	fsm.setCurrentState(new IsIdle());
-	delete this;
+	fsm.setCurrentState(Stopped::getInstance());
+};
+
+/**
+* Private functions
+*/
+void CheckCanClimb::canClimbUp(IGameObjectFsm& fsm)
+{	
+	fsm.setCurrentState(ClimbingUp::getInstance());
+};
+
+void CheckCanClimb::canClimbDown(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(ClimbingDown::getInstance());
 };
 
 #pragma endregion CheckCanClimb
 
-#pragma region ClimbingUp
-
-void ClimbingUp::Up(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
-
-void ClimbingUp::Down(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
-
-void ClimbingUp::Left(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void ClimbingUp::Right(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void ClimbingUp::StopClimbing(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the Stopped state");
-	fsm.setCurrentState(new Stopped());
-	delete this;
-};
-
-void ClimbingUp::PreviousMap(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the LoadingPreviousMap state");
-	fsm.setCurrentState(new LoadingPreviousMap());
-	delete this;
-};
-
-#pragma endregion ClimbingUp
-
-#pragma region ClimbingDown
-
-void ClimbingDown::Up(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
-
-void ClimbingDown::Down(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
-
-void ClimbingDown::Left(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void ClimbingDown::Right(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the Stopped state");
-	fsm.setCurrentState(new Stopped());
-	delete this;
-};
-
-void ClimbingDown::NextMap(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the LoadingPreviousMap state");
-	fsm.setCurrentState(new LoadingNextMap());
-	delete this;
-};
-
-#pragma endregion ClimbingDown
-
+/**
+*
+*/
 #pragma region CheckCanWalk
 
-void CheckCanWalk::CanWalkLeft(IGameObjectFsm& fsm)
+CheckCanWalk* CheckCanWalk::m_pInstance = NULL;
+
+CheckCanWalk* CheckCanWalk::getInstance()
 {
-	//log("Setting currentstate to the WalkingLeft state");
-	fsm.setCurrentState(new WalkingLeft());
-	delete this;
+	return m_pInstance ? m_pInstance : m_pInstance = new CheckCanWalk();
+}
+
+void CheckCanWalk::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
 };
 
-void CheckCanWalk::CanWalkRight(IGameObjectFsm& fsm)
+void CheckCanWalk::Up(IGameObjectFsm& fsm)
 {
-	//log("Setting currentstate to the WalkingRight state");
-	fsm.setCurrentState(new WalkingRight());
-	delete this;
+	fsm.setCurrentState(CheckCanClimb::getInstance());
 };
 
-void CheckCanWalk::CheckFailed(IGameObjectFsm& fsm)
+void CheckCanWalk::Down(IGameObjectFsm& fsm)
 {
-	//log("Setting currentstate to the IsIdle state");
-	fsm.setCurrentState(new IsIdle());
-	delete this;
+	fsm.setCurrentState(CheckCanClimb::getInstance());
+};
+
+void CheckCanWalk::Left(IGameObjectFsm& fsm)
+{
+	log("We are checking if we can walk left");
+
+	if (false /** if check returns true state can walk left **/)
+	{
+		/** we can walk left **/
+		this->canWalkLeft(fsm);
+	}
+};
+
+void CheckCanWalk::Right(IGameObjectFsm& fsm)
+{
+	log("We are checking if we can walk right");
+
+	if (false /** if check returns true state can walk right **/)
+	{
+		/** we can walk right **/
+		this->canWalkRight(fsm);
+	}
+};
+
+void CheckCanWalk::Stop(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(Stopped::getInstance());
+};
+
+/**
+* Private functions
+*/
+void CheckCanWalk::canWalkLeft(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(WalkingLeft::getInstance());
+};
+
+void CheckCanWalk::canWalkRight(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(WalkingRight::getInstance());
 };
 
 #pragma endregion CheckCanWalk
 
+/**
+*
+*/
+#pragma region ClimbingUp
+
+ClimbingUp* ClimbingUp::m_pInstance = NULL;
+
+ClimbingUp* ClimbingUp::getInstance()
+{
+	return m_pInstance ? m_pInstance : m_pInstance = new ClimbingUp();
+}
+
+void ClimbingUp::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void ClimbingUp::StopClimbing(IGameObjectFsm& fsm)
+{	
+	fsm.setCurrentState(Stopped::getInstance());
+};
+
+#pragma endregion ClimbingUp
+
+/**
+*
+*/
+#pragma region ClimbingDown
+
+ClimbingDown* ClimbingDown::m_pInstance = NULL;
+
+ClimbingDown* ClimbingDown::getInstance()
+{
+	return m_pInstance ? m_pInstance : m_pInstance = new ClimbingDown();
+}
+
+void ClimbingDown::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)
+{	
+	fsm.setCurrentState(Stopped::getInstance());
+};
+
+#pragma endregion ClimbingDown
+
+/**
+*
+*/
 #pragma region WalkingLeft
 
-void WalkingLeft::Up(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
+WalkingLeft* WalkingLeft::m_pInstance = NULL;
 
-void WalkingLeft::Down(IGameObjectFsm& fsm)
+WalkingLeft* WalkingLeft::getInstance()
 {
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
+	return m_pInstance ? m_pInstance : m_pInstance = new WalkingLeft();
+}
 
-void WalkingLeft::Left(IGameObjectFsm& fsm)
+void WalkingLeft::destroyInstance()
 {
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void WalkingLeft::Right(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
+	delete m_pInstance;
+	m_pInstance = 0;
 };
 
 void WalkingLeft::StopWalking(IGameObjectFsm& fsm)
 {
-	//log("Setting currentstate to the Stopped state");
-	fsm.setCurrentState(new Stopped());
-	delete this;
+	fsm.setCurrentState(Stopped::getInstance());
 };
 
 #pragma endregion WalkingLeft
 
+/**
+*
+*/
 #pragma region WalkingRight
 
-void WalkingRight::Up(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
+WalkingRight* WalkingRight::m_pInstance = NULL;
 
-void WalkingRight::Down(IGameObjectFsm& fsm)
+WalkingRight* WalkingRight::getInstance()
 {
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
+	return m_pInstance ? m_pInstance : m_pInstance = new WalkingRight();
+}
 
-void WalkingRight::Left(IGameObjectFsm& fsm)
+void WalkingRight::destroyInstance()
 {
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void WalkingRight::Right(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
+	delete m_pInstance;
+	m_pInstance = 0;
 };
 
 void WalkingRight::StopWalking(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the Stopped state");
-	fsm.setCurrentState(new Stopped());
-	delete this;
+{	
+	fsm.setCurrentState(Stopped::getInstance());
 };
 
 #pragma endregion WalkingRight
 
+/**
+*
+*/
 #pragma region IsIdle
 
-void IsIdle::Up(IGameObjectFsm& fsm)
+IsIdle* IsIdle::m_pInstance = NULL;
+
+IsIdle* IsIdle::getInstance()
 {
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
+	return m_pInstance ? m_pInstance : m_pInstance = new IsIdle();
+}
+
+void IsIdle::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
 };
 
-void IsIdle::Down(IGameObjectFsm& fsm)
+void IsIdle::Stop(IGameObjectFsm& fsm)
 {
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
-};
-
-void IsIdle::Left(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void IsIdle::Right(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
+	/**   **/
 };
 
 #pragma endregion IsIdle
 
+/**
+*
+*/
 #pragma region Stopped
 
-void Stopped::Up(IGameObjectFsm& fsm)
+Stopped* Stopped::m_pInstance = NULL;
+
+Stopped* Stopped::getInstance()
 {
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
+	return m_pInstance ? m_pInstance : m_pInstance = new Stopped();
+}
+
+void Stopped::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
 };
 
-void Stopped::Down(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanClimb state");
-	fsm.setCurrentState(new CheckCanClimb());
-	delete this;
+void Stopped::Stop(IGameObjectFsm& fsm)
+{	
+	// Wait so many seconds then change state to idle
+	if (true /** Reached timeout period  **/)
+	{
+		this->becomeIdle(fsm);
+	}
 };
 
-void Stopped::Left(IGameObjectFsm& fsm)
+/** Private functions **/
+void Stopped::becomeIdle(IGameObjectFsm& fsm)
 {
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void Stopped::Right(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the CheckCanWalk state");
-	fsm.setCurrentState(new CheckCanWalk());
-	delete this;
-};
-
-void Stopped::StoppedTimeout(IGameObjectFsm& fsm)
-{
-	//log("Setting currentstate to the Stopped state");
-	fsm.setCurrentState(new IsIdle());
-	delete this;
+	log("Moving to Idle state");
+	fsm.setCurrentState(IsIdle::getInstance());
 };
 
 #pragma endregion Stopped
 
+/**
+*
+*/
+#pragma region LoadingNextMap
+
+LoadingNextMap* LoadingNextMap::m_pInstance = NULL;
+
+LoadingNextMap* LoadingNextMap::getInstance()
+{
+	return m_pInstance ? m_pInstance : m_pInstance = new LoadingNextMap();
+}
+
+void LoadingNextMap::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void LoadingNextMap::Up(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading next map");
+};
+
+void LoadingNextMap::Down(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading next map");
+};
+
+void LoadingNextMap::Left(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading next map");
+};
+
+void LoadingNextMap::Right(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading next map");
+};
+
+void LoadingNextMap::Loaded(IGameObjectFsm& fsm)
+{
+	log("Finished loading new map");
+};
+
+#pragma endregion LoadingNextMap
+
+/**
+*
+*/
 #pragma region LoadingPreviousMap
+
+LoadingPreviousMap* LoadingPreviousMap::m_pInstance = NULL;
+
+LoadingPreviousMap* LoadingPreviousMap::getInstance()
+{
+	return m_pInstance ? m_pInstance : m_pInstance = new LoadingPreviousMap();
+}
+
+void LoadingPreviousMap::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void LoadingPreviousMap::Up(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading previous map");
+};
+
+void LoadingPreviousMap::Down(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading previous map");
+};
+
+void LoadingPreviousMap::Left(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading previous map");
+};
+
+void LoadingPreviousMap::Right(IGameObjectFsm& fsm)
+{
+	log("Cannot move when loading previous map");
+};
 
 void LoadingPreviousMap::Loaded(IGameObjectFsm& fsm)
 {
-	//log("Finished loading new map");	
-	delete this;
+	log("Finished loading new map");
 };
 
 #pragma endregion LoadingPreviousMap
 
-#pragma region LoadingNextMap
+#pragma endregion Event Overrides
 
-void LoadingNextMap::Loaded(IGameObjectFsm& fsm)
+
+/** GameObjectFSM Actions **/
+#pragma region GameObjectFSM Actions
+
+/**
+*
+*/
+void GameObjectFsm::CheckCanClimbUp()
 {
-	//log("Finished loading new map");
-	delete this;
+	currentState->Up(*this);
 };
 
-#pragma endregion LoadingNextMap
+/**
+*
+*/
+void GameObjectFsm::CheckCanClimbDown()
+{
+	currentState->Down(*this);
+};
+
+/**
+* 
+*/
+void GameObjectFsm::CheckCanWalkLeft()
+{	
+	currentState->Left(*this);
+};
+
+/**
+*
+*/
+void GameObjectFsm::CheckCanWalkRight()
+{
+	currentState->Right(*this);
+};
+
+/**
+*
+*/
+void GameObjectFsm::Stop()
+{
+	currentState->Stop(*this);
+};
+
+/**
+*
+*/
+void GameObjectFsm::LoadNextMap()
+{
+	currentState->NextMap(*this);
+};
+
+/**
+*
+*/
+void GameObjectFsm::LoadPreviousMap()
+{
+	currentState->PreviousMap(*this);
+};
+
+#pragma endregion GameObjectFSM Actions
+
 
 /**
 * Ctor
 * The initial state is set to IsIdle
 */
 GameObjectFsm::GameObjectFsm()
-{
-	currentState = new IsIdle();
-	log("Current state == IsIdle");
-};
-
-void GameObjectFsm::CheckCanWalkLeft()
 {	
-	currentState->Left(*this);
+	log("Current state == IsIdle");
+	currentState = IsIdle::getInstance();
 };
 
-void GameObjectFsm::CheckCanWalkRight()
-{
-	currentState->Right(*this);
-};
-
-void GameObjectFsm::WalkLeft()
-{
-	static_cast<CheckCanWalk*>(currentState)->CanWalkLeft(*this);
-};
-
-void GameObjectFsm::WalkRight()
-{
-	static_cast<CheckCanWalk*>(currentState)->CanWalkRight(*this);
-};
-
-void GameObjectFsm::CheckCanClimbUp()
-{
-	static_cast<CheckCanClimb*>(currentState)->CanClimbUp(*this);
-};
-
-void GameObjectFsm::CheckCanClimbDown()
-{
-	static_cast<CheckCanClimb*>(currentState)->CanClimbDown(*this);
-};
-
-void GameObjectFsm::ClimbUp()
-{
-	currentState->Up(*this);
-};
-
-void GameObjectFsm::ClimbDown()
-{
-	currentState->Down(*this);
-};
-
-void GameObjectFsm::Stop()
-{
-	if (instanceof<WalkingLeft>(currentState))
-	{
-		static_cast<WalkingLeft*>(currentState)->StopWalking(*this);
-	}
-	else if (instanceof<WalkingRight>(currentState))
-	{
-		static_cast<WalkingRight*>(currentState)->StopWalking(*this);
-	}
-	else if (instanceof<ClimbingUp>(currentState))
-	{
-		static_cast<ClimbingUp*>(currentState)->StopClimbing(*this);
-	}
-	else if (instanceof<ClimbingDown>(currentState))
-	{
-		static_cast<ClimbingDown*>(currentState)->StopClimbing(*this);
-	}
-};
-
-void GameObjectFsm::BecomeIdle()
-{
-	if (instanceof<CheckCanWalk>(currentState))
-	{
-		static_cast<CheckCanWalk*>(currentState)->CheckFailed(*this);
-	}
-	else if (instanceof<CheckCanClimb>(currentState))
-	{
-		static_cast<CheckCanClimb*>(currentState)->CheckFailed(*this);
-	}
-	else if (instanceof<Stopped>(currentState))
-	{
-		static_cast<Stopped*>(currentState)->StoppedTimeout(*this);
-	}	
-};
-
-void GameObjectFsm::LoadNextMap()
-{
-};
-
-void GameObjectFsm::LoadPreviousMap()
-{
-};
-
+/**
+*
+*/
 void GameObjectFsm::update()
 {
 	//currentState->update();
@@ -418,6 +523,4 @@ void GameObjectFsm::update()
 void GameObjectFsm::setCurrentState(IGameObjectState* currentState)
 {
 	this->currentState = currentState;
-	
-	log(currentState->type.c_str());
 };

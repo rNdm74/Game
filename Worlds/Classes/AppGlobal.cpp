@@ -19,7 +19,12 @@ AppGlobal::AppGlobal()
 	mouseDown = false;
     mouseUp = false;
 
-	gameObjectStates = EGameObjectStates::BecomeIdle;
+	gameObjectStates = EGameObjectStates::Stop;
+
+	for (bool& key : keyMatrix)
+	{
+		key = false;
+	}
 }
 
 AppGlobal::~AppGlobal()
@@ -111,32 +116,38 @@ void AppGlobal::initKeyboardListener()
 	{
 		if ((keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW))
 		{
+			keyMatrix[EGameObjectStates::CheckCanClimbUp] = true;
 			gameObjectStates = EGameObjectStates::CheckCanClimbUp;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW))
 		{
+			keyMatrix[EGameObjectStates::CheckCanClimbDown] = true;
 			gameObjectStates = EGameObjectStates::CheckCanClimbDown;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW))
 		{
+			keyMatrix[EGameObjectStates::CheckCanWalkLeft] = true;
 			gameObjectStates = EGameObjectStates::CheckCanWalkLeft;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
 		{
+			keyMatrix[EGameObjectStates::CheckCanWalkRight] = true;
 			gameObjectStates = EGameObjectStates::CheckCanWalkRight;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_PG_UP))
 		{			
-			
+			keyMatrix[EGameObjectStates::LoadNextMap] = true;
+			gameObjectStates = EGameObjectStates::LoadNextMap;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN))
 		{
-			
+			keyMatrix[EGameObjectStates::LoadPreviousMap] = true;
+			gameObjectStates = EGameObjectStates::LoadPreviousMap;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_SPACE))
@@ -166,25 +177,50 @@ void AppGlobal::initKeyboardListener()
 	{
 		if ((keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW))
 		{
-			
+			keyMatrix[EGameObjectStates::CheckCanClimbUp] = false;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW))
 		{
-			
+			keyMatrix[EGameObjectStates::CheckCanClimbDown] = false;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW))
 		{
-			
+			keyMatrix[EGameObjectStates::CheckCanWalkLeft] = false;
 		}
 
 		if ((keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
 		{
-			
+			keyMatrix[EGameObjectStates::CheckCanWalkRight] = false;
 		}
-				
-		gameObjectStates = EGameObjectStates::Stop;
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_PG_UP))
+		{
+			keyMatrix[EGameObjectStates::LoadNextMap] = false;
+		}
+
+		if ((keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN))
+		{
+			keyMatrix[EGameObjectStates::LoadPreviousMap] = false;
+		}
+		
+		bool isAllStatesFalse = false;
+
+		int index = 0;
+
+		while (index < keyMatrix.size() && isAllStatesFalse == false)
+		{
+			//log("index: %i", index);
+			isAllStatesFalse = keyMatrix[index];
+			index++;
+		}
+		
+		if (isAllStatesFalse == false)
+		{
+			gameObjectStates = EGameObjectStates::Stop;
+		}
+		
 				
 //		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
 //		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
