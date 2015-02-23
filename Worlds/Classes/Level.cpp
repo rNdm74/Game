@@ -35,8 +35,6 @@ Level::Level()
 	_origin = Director::getInstance()->getVisibleOrigin();
 	_visibleSize = Director::getInstance()->getVisibleSize();
 	_center = Vec2(_origin.x + _visibleSize.width / 2, (_origin.y + _visibleSize.height / 2));	
-	
-	_fsm = new GameObjectFsm();
 }
 
 
@@ -53,7 +51,10 @@ void Level::loadMap(std::string mapname)
 	_mapSize = _parallaxTileMap->getMapSize();
 	_tileSize = _parallaxTileMap->getTileSize();
 
-	_pathFinder = new AStarPathFinder(_parallaxTileMap, 500, false);
+	//_pathFinder = new AStarPathFinder(_parallaxTileMap, 500, false);
+	
+	AppGlobal::getInstance()->activeMap = _parallaxTileMap;
+	AppGlobal::getInstance()->player = _parallaxTileMap->getPlayer();
 }
 
 
@@ -78,7 +79,7 @@ void Level::loadPlayer()
 
 void Level::setViewPointCenter()
 {	
-	Vec2 position = _parallaxTileMap->getPlayer().getCenterPosition();
+	Vec2 position = _parallaxTileMap->getPlayer()->getCenterPosition();
 
 	Size _winSize = Director::getInstance()->getWinSize() / this->getScale();
 	
@@ -97,46 +98,27 @@ void Level::setViewPointCenter()
 
 void Level::update(float& delta)
 {
-	// updates scale creates zoom effect
+	/** updates scale creates zoom effect **/
 	this->setScale(AppGlobal::getInstance()->scale);
-	//
-	this->updateState();
-	//
+	
+	/**  **/
 	_parallaxTileMap->update(delta);
-	// player moves to next map
-	this->checkNextMap();
-	// centre viewport on player
+		
+	/** centre viewport on player **/
 	this->setViewPointCenter();
 }
 
 
-void Level::updateState()
-{
-	void(GameObjectFsm:: *ptrs[])() =
-	{
-		&GameObjectFsm::CheckCanClimbUp,
-		&GameObjectFsm::CheckCanClimbDown,
-		&GameObjectFsm::CheckCanWalkLeft,
-		&GameObjectFsm::CheckCanWalkRight,
-		&GameObjectFsm::Stop,
-		&GameObjectFsm::LoadNextMap,
-		&GameObjectFsm::LoadPreviousMap
-	};
-
-	(_fsm->*ptrs[AppGlobal::getInstance()->gameObjectStates])();
-};
-
-
 void Level::checkNextMap()
 {
-	IGameObject& player = _parallaxTileMap->getPlayer();
+	IGameObject* player = _parallaxTileMap->getPlayer();
 
-	Vec2 transition = player.getMapTransition();
-	IsMoving isMoving = player.getIsMoving();
+	Vec2 transition = player->getMapTransition();
+	IsMoving isMoving = player->getIsMoving();
 
 	if (transition.y < 0 && isMoving[STATE_DOWN])
 	{		
-		player.removeFromParent();
+		player->removeFromParent();
 		                
 		loadMap("planet1.tmx");
 
@@ -146,7 +128,7 @@ void Level::checkNextMap()
 	}
 	else if (transition.y > 0 && isMoving[STATE_UP])
 	{
-		player.removeFromParent();
+		player->removeFromParent();
 		
 		loadMap(kLevelTMX);
 

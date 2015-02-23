@@ -374,9 +374,9 @@ void CollisionComponent::ladderTileCollision(Node& node, IGameObject& gameObject
 //
 void CollisionComponent::checkCollision(Node& node, IGameObject& gameObject)
 {	
-	IGameObject& player = static_cast<ParallaxTileMap&>(node).getPlayer();
+	IGameObject* player = static_cast<ParallaxTileMap&>(node).getPlayer();
 
-	Rect r1 = player.getBoundingBox();
+	Rect r1 = player->getBoundingBox();
 	Rect r2 = gameObject.getBoundingBox();
 
 	if (r1.intersectsRect(r2) == false)	return;
@@ -386,7 +386,7 @@ void CollisionComponent::checkCollision(Node& node, IGameObject& gameObject)
 	Vec2 v1 = Vec2::ZERO;
 	Vec2 v2 = Vec2::ZERO;
 
-	IsMoving isMoving = player.getIsMoving();
+	IsMoving isMoving = player->getIsMoving();
 
 	//
 	if (type == "Left" && isMoving[STATE_LEFT])
@@ -414,5 +414,5 @@ void CollisionComponent::checkCollision(Node& node, IGameObject& gameObject)
 	Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
 
 
-	player.setMapTransition(direction);
+	player->setMapTransition(direction);
 }

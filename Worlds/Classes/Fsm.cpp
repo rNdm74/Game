@@ -1,4 +1,5 @@
 #include "Fsm.h"
+#include "GameObject.h"
 
 /** Event Overrides**/
 #pragma region Event Overrides
@@ -26,6 +27,11 @@ void GameObjectState::Left(IGameObjectFsm& fsm)
 void GameObjectState::Right(IGameObjectFsm& fsm)
 {
 	fsm.setCurrentState(CheckCanWalk::getInstance());
+};
+
+void GameObjectState::Stop(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(Stopped::getInstance());
 };
 
 void GameObjectState::NextMap(IGameObjectFsm& fsm)
@@ -63,8 +69,7 @@ void CheckCanClimb::destroyInstance()
 void CheckCanClimb::Up(IGameObjectFsm& fsm)
 {
 	log("We are checking if we can climb up");
-
-	if (false /** if check returns true state is now climbing up **/)
+	if (true /** if check returns true state is now climbing up **/)
 	{
 		/** we can climb up **/
 		this->canClimbUp(fsm);
@@ -74,27 +79,11 @@ void CheckCanClimb::Up(IGameObjectFsm& fsm)
 void CheckCanClimb::Down(IGameObjectFsm& fsm)
 {
 	log("We are checking if we can climb down");
-
-	if (false /** if check returns true state is now climbing down **/)
+	if (true /** if check returns true state is now climbing down **/)
 	{
 		/** we can climb down **/
 		this->canClimbDown(fsm);
 	}
-};
-
-void CheckCanClimb::Left(IGameObjectFsm& fsm)
-{	
-	fsm.setCurrentState(CheckCanWalk::getInstance());
-};
-
-void CheckCanClimb::Right(IGameObjectFsm& fsm)
-{
-	fsm.setCurrentState(CheckCanWalk::getInstance());
-};
-
-void CheckCanClimb::Stop(IGameObjectFsm& fsm)
-{
-	fsm.setCurrentState(Stopped::getInstance());
 };
 
 /**
@@ -130,21 +119,10 @@ void CheckCanWalk::destroyInstance()
 	m_pInstance = 0;
 };
 
-void CheckCanWalk::Up(IGameObjectFsm& fsm)
-{
-	fsm.setCurrentState(CheckCanClimb::getInstance());
-};
-
-void CheckCanWalk::Down(IGameObjectFsm& fsm)
-{
-	fsm.setCurrentState(CheckCanClimb::getInstance());
-};
-
 void CheckCanWalk::Left(IGameObjectFsm& fsm)
 {
 	log("We are checking if we can walk left");
-
-	if (false /** if check returns true state can walk left **/)
+	if (true /** if check returns true state can walk left **/)
 	{
 		/** we can walk left **/
 		this->canWalkLeft(fsm);
@@ -154,17 +132,11 @@ void CheckCanWalk::Left(IGameObjectFsm& fsm)
 void CheckCanWalk::Right(IGameObjectFsm& fsm)
 {
 	log("We are checking if we can walk right");
-
-	if (false /** if check returns true state can walk right **/)
+	if (true /** if check returns true state can walk right **/)
 	{
 		/** we can walk right **/
 		this->canWalkRight(fsm);
 	}
-};
-
-void CheckCanWalk::Stop(IGameObjectFsm& fsm)
-{
-	fsm.setCurrentState(Stopped::getInstance());
 };
 
 /**
@@ -191,6 +163,7 @@ ClimbingUp* ClimbingUp::m_pInstance = NULL;
 
 ClimbingUp* ClimbingUp::getInstance()
 {
+	log("Climbing up state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new ClimbingUp();
 }
 
@@ -198,6 +171,12 @@ void ClimbingUp::destroyInstance()
 {
 	delete m_pInstance;
 	m_pInstance = 0;
+};
+
+void ClimbingUp::Up(IGameObjectFsm& fsm)
+{
+	/** Tell the game object to climb up **/
+	fsm.gameObject->ClimbUp();
 };
 
 void ClimbingUp::StopClimbing(IGameObjectFsm& fsm)
@@ -216,6 +195,7 @@ ClimbingDown* ClimbingDown::m_pInstance = NULL;
 
 ClimbingDown* ClimbingDown::getInstance()
 {
+	log("Climbing down state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new ClimbingDown();
 }
 
@@ -223,6 +203,12 @@ void ClimbingDown::destroyInstance()
 {
 	delete m_pInstance;
 	m_pInstance = 0;
+};
+
+void ClimbingDown::Down(IGameObjectFsm& fsm)
+{
+	/** Tell the game object to climb down **/
+	fsm.gameObject->ClimbDown();	
 };
 
 void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)
@@ -241,6 +227,7 @@ WalkingLeft* WalkingLeft::m_pInstance = NULL;
 
 WalkingLeft* WalkingLeft::getInstance()
 {
+	log("Walking left state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new WalkingLeft();
 }
 
@@ -249,6 +236,13 @@ void WalkingLeft::destroyInstance()
 	delete m_pInstance;
 	m_pInstance = 0;
 };
+
+void WalkingLeft::Left(IGameObjectFsm& fsm)
+{	
+	/** Tell the game object to walk left **/
+	fsm.gameObject->WalkLeft();
+};
+
 
 void WalkingLeft::StopWalking(IGameObjectFsm& fsm)
 {
@@ -266,6 +260,7 @@ WalkingRight* WalkingRight::m_pInstance = NULL;
 
 WalkingRight* WalkingRight::getInstance()
 {
+	log("Walking right state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new WalkingRight();
 }
 
@@ -273,6 +268,12 @@ void WalkingRight::destroyInstance()
 {
 	delete m_pInstance;
 	m_pInstance = 0;
+};
+
+void WalkingRight::Right(IGameObjectFsm& fsm)
+{	
+	/** Tell the game object to walk right **/
+	fsm.gameObject->WalkRight();
 };
 
 void WalkingRight::StopWalking(IGameObjectFsm& fsm)
@@ -291,6 +292,7 @@ IsIdle* IsIdle::m_pInstance = NULL;
 
 IsIdle* IsIdle::getInstance()
 {
+	log("Is idle state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new IsIdle();
 }
 
@@ -302,7 +304,8 @@ void IsIdle::destroyInstance()
 
 void IsIdle::Stop(IGameObjectFsm& fsm)
 {
-	/**   **/
+	/** Run idle animation  **/
+
 };
 
 #pragma endregion IsIdle
@@ -316,6 +319,7 @@ Stopped* Stopped::m_pInstance = NULL;
 
 Stopped* Stopped::getInstance()
 {
+	log("Stopped state instance is accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new Stopped();
 }
 
@@ -326,12 +330,26 @@ void Stopped::destroyInstance()
 };
 
 void Stopped::Stop(IGameObjectFsm& fsm)
-{	
-	// Wait so many seconds then change state to idle
-	if (true /** Reached timeout period  **/)
+{
+	/** Tell the game object to stop **/
+	fsm.gameObject->Stop();
+			
+	/**  Wait so many seconds then change state to idle **/
+	if (fsm.timeout > 10.0f /** Reached timeout period  **/)
 	{
+		/** Reset timeout period **/
+		fsm.timeout = 0.0f;
+		/** Change to idle state **/
 		this->becomeIdle(fsm);
 	}
+
+	/** Increment the timeout period  **/
+	fsm.timeout += 0.1f;
+	//log("%f", fsm.timeout);
+};
+
+void Stopped::update(IGameObjectFsm& fsm)
+{	
 };
 
 /** Private functions **/
@@ -363,22 +381,27 @@ void LoadingNextMap::destroyInstance()
 
 void LoadingNextMap::Up(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading next map");
+	log("Up requested, loading previous map in progress");
 };
 
 void LoadingNextMap::Down(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading next map");
+	log("Down requested, loading previous map in progress");
 };
 
 void LoadingNextMap::Left(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading next map");
+	log("Left requested, loading previous map in progress");
 };
 
 void LoadingNextMap::Right(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading next map");
+	log("Right requested, loading previous map in progress");
+};
+
+void LoadingNextMap::Stop(IGameObjectFsm& fsm)
+{
+	log("Finished loading new map");
 };
 
 void LoadingNextMap::Loaded(IGameObjectFsm& fsm)
@@ -408,22 +431,27 @@ void LoadingPreviousMap::destroyInstance()
 
 void LoadingPreviousMap::Up(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading previous map");
+	log("Up requested, loading previous map in progress");
 };
 
 void LoadingPreviousMap::Down(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading previous map");
+	log("Down requested, loading previous map in progress");
 };
 
 void LoadingPreviousMap::Left(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading previous map");
+	log("Left requested, loading previous map in progress");
 };
 
 void LoadingPreviousMap::Right(IGameObjectFsm& fsm)
 {
-	log("Cannot move when loading previous map");
+	log("Right requested, loading previous map in progress");
+};
+
+void LoadingPreviousMap::Stop(IGameObjectFsm& fsm)
+{
+	log("Stop requested, loading previous map in progress");
 };
 
 void LoadingPreviousMap::Loaded(IGameObjectFsm& fsm)
@@ -502,9 +530,15 @@ void GameObjectFsm::LoadPreviousMap()
 * Ctor
 * The initial state is set to IsIdle
 */
-GameObjectFsm::GameObjectFsm()
+GameObjectFsm::GameObjectFsm(IGameObject* gameObject)
 {	
+	this->gameObject = gameObject;
+
 	log("Current state == IsIdle");
+	
+	timeout = 0.0f;
+	timeoutBegin = false;
+
 	currentState = IsIdle::getInstance();
 };
 
@@ -513,7 +547,7 @@ GameObjectFsm::GameObjectFsm()
 */
 void GameObjectFsm::update()
 {
-	//currentState->update();
+	currentState->update(*this);
 };
 
 /**

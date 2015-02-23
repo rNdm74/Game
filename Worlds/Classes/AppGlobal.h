@@ -52,8 +52,12 @@ public:
 	bool rightMouseButton;
 	
 	GameStates states;
-
+		
 	EGameObjectStates gameObjectStates;
+
+	class ParallaxTileMap* activeMap;
+
+	class IGameObject* player;
     
 public:
     static AppGlobal* getInstance();
@@ -61,6 +65,7 @@ public:
 	void initMouseListener();
 	void initKeyboardListener();
 	void initTouchListener();
+	void initPathFinderListener();
 			    
 	float getRandom(float begin, float end);
 	void addCursor(Layer& layer);

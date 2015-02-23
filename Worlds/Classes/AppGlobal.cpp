@@ -1,5 +1,7 @@
 #include "AppGlobal.h"
 #include "Constants.h"
+#include "GameObject.h"
+#include "PathFinder.h"
 
 AppGlobal* AppGlobal::m_pInstance = NULL;
 
@@ -106,7 +108,6 @@ void AppGlobal::initMouseListener()
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
 
-
 void AppGlobal::initKeyboardListener()
 {	
 	// Keyboard input
@@ -138,7 +139,7 @@ void AppGlobal::initKeyboardListener()
 			gameObjectStates = EGameObjectStates::CheckCanWalkRight;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_PG_UP))
+		if ((keyCode == EventKeyboard::KeyCode::KEY_KP_PG_UP))
 		{			
 			keyMatrix[EGameObjectStates::LoadNextMap] = true;
 			gameObjectStates = EGameObjectStates::LoadNextMap;
@@ -153,24 +154,7 @@ void AppGlobal::initKeyboardListener()
 		if ((keyCode == EventKeyboard::KeyCode::KEY_SPACE))
 		{
 			
-		}		
-
-//		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
-//		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
-//		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
-//		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
-//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
-//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
-//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
-//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
-//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
-//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
-//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
-//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
-//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
-//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
-//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
-//		states.STOP		= false;
+		}
 	};
 
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event *event)
@@ -220,36 +204,51 @@ void AppGlobal::initKeyboardListener()
 		{
 			gameObjectStates = EGameObjectStates::Stop;
 		}
-		
-				
-//		states.SPRINT	= (keyCode == EventKeyboard::KeyCode::KEY_SHIFT);
-//		states.JUMP		= (keyCode == EventKeyboard::KeyCode::KEY_SPACE);
-//		states.ESCAPE	= (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE);
-//		states.HUD		= (keyCode == EventKeyboard::KeyCode::KEY_TAB);
-//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_ENTER);
-//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_KP_ENTER);
-//		states.ENTER	= (keyCode == EventKeyboard::KeyCode::KEY_RETURN);
-//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_W);
-//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_S);
-//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_A);
-//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_D);
-//		states.UP		= (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW);
-//		states.DOWN		= (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW);
-//		states.LEFT		= (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW);
-//		states.RIGHT	= (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW);
-//		states.STOP		= true;
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
+
+void AppGlobal::initPathFinderListener()
+{
+	if (activeMap /** When there is an instance of a ParallaxTileMap **/)
+	{
+		/** Create the pathfinder **/
+		auto _pathFinder = new AStarPathFinder(activeMap, 500, false);
+	}
+};
 
 void AppGlobal::initTouchListener()
 {
 	auto listener = EventListenerTouchOneByOne::create();
 
 	listener->onTouchBegan = [=](Touch* touch, Event* e) -> bool
-	{
-		log("Touch began");
+	{		
+		if (player)
+		{
+			Vec2 v1 = player->getCenterPosition();
+			Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
+
+			Vec2 n = Vec2(v2 - v1).getNormalized();
+			Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
+
+			if (direction.y > 0)
+			{
+				gameObjectStates = EGameObjectStates::CheckCanClimbUp;
+			}
+			else if (direction.y < 0)
+			{
+				gameObjectStates = EGameObjectStates::CheckCanClimbDown;
+			}
+			else if (direction.x < 0)
+			{
+				gameObjectStates = EGameObjectStates::CheckCanWalkLeft;
+			}
+			else if (direction.x > 0)
+			{
+				gameObjectStates = EGameObjectStates::CheckCanWalkRight;
+			}
+		}
 
 		return true;
 	};
@@ -257,12 +256,11 @@ void AppGlobal::initTouchListener()
 	listener->onTouchMoved = [=](Touch* touch, Event* e)
 	{
 		Vec2 location = touch->getLocationInView();
-		log("x: %f, y: %f", location.x, location.y);
 	};
 
 	listener->onTouchEnded = [=](Touch* touch, Event* e)
-	{
-		log("Touch ended");
+	{		
+		gameObjectStates = EGameObjectStates::Stop;
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);

@@ -1,6 +1,7 @@
 #include "AppGlobal.h"
 #include "Constants.h"
 #include "GameObject.h"
+#include "Fsm.h"
 #include "GameObjectFactory.h"
 #include "GraphicsComponent.h"
 #include "InputComponent.h"
@@ -211,6 +212,16 @@ void GameObject::setDesiredPosition(Vec2 desiredPosition)
 	_desiredPosition = desiredPosition;
 };
 
+void GameObject::setDesiredPositionX(float x)
+{
+	_desiredPosition.x = x;
+};
+
+void GameObject::setDesiredPositionY(float y)
+{
+	_desiredPosition.y = y;
+};
+
 
 void GameObject::setDirection(Vec2 direction)
 {
@@ -300,6 +311,8 @@ Player::Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsCo
 	_menu = menu;
 	_input = input;
 
+	_fsm = new GameObjectFsm(this);
+
 	_sprite = Sprite::createWithSpriteFrameName(kPlayerFileName);
 	_sprite->getTexture()->setAliasTexParameters();
 	_sprite->getTexture()->setAntiAliasTexParameters();
@@ -320,16 +333,54 @@ Player::Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsCo
 	this->addChild(_sprite);
 
 	_isLoaded = true;
+
+	_desiredPosition = this->getPosition();	
 };
 
 
 void Player::update(Node* node)
-{		
-	_graphics->update(*this);	
-	_input->update(*node, *this);
-	_collision->update(*node, *this);	
+{	
+	void(GameObjectFsm:: *ptrs[])() =
+	{
+		&GameObjectFsm::CheckCanClimbUp,
+		&GameObjectFsm::CheckCanClimbDown,
+		&GameObjectFsm::CheckCanWalkLeft,
+		&GameObjectFsm::CheckCanWalkRight,
+		&GameObjectFsm::Stop,
+		&GameObjectFsm::LoadNextMap,
+		&GameObjectFsm::LoadPreviousMap
+	};
+
+	(_fsm->*ptrs[AppGlobal::getInstance()->gameObjectStates])();
+
+	_collision->update(*node, *this);
 };
 
+
+void Player::ClimbUp()
+{
+	_input->ClimbUp(*this);
+};
+
+void Player::ClimbDown()
+{
+	_input->ClimbDown(*this);
+};
+
+void Player::WalkLeft()
+{
+	_input->WalkLeft(*this);
+};
+
+void Player::WalkRight()
+{
+	_input->WalkRight(*this);
+};
+
+void Player::Stop()
+{
+	_input->Stop(*this);
+};
 
 Size Player::getSize()
 {

@@ -6,6 +6,75 @@
 #include "Path.h"
 
 
+void InputComponent::ClimbUp(IGameObject& gameObject)
+{
+	Vec2 velocity = gameObject.getVelocity();
+	//
+	Vec2 step = _movement * kUpdateInterval;
+	velocity.y = velocity.y + step.y * 1;
+	//
+	velocity.clamp(_minMovement, _maxMovement);	
+	Vec2 stepVelocity = velocity * kUpdateInterval;
+	// 
+	gameObject.setVelocity(velocity);
+	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
+};
+
+
+void InputComponent::ClimbDown(IGameObject& gameObject)
+{
+	Vec2 velocity = gameObject.getVelocity();
+	//
+	Vec2 step = _movement * kUpdateInterval;
+	velocity.y = velocity.y + step.y * -1;
+	//
+	velocity.clamp(_minMovement, _maxMovement);
+	Vec2 stepVelocity = velocity * kUpdateInterval;
+	// 
+	gameObject.setVelocity(velocity);
+	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
+};
+
+
+void InputComponent::WalkLeft(IGameObject& gameObject)
+{
+	Vec2 velocity = gameObject.getVelocity();
+	//
+	Vec2 step = _movement * kUpdateInterval;
+	velocity.x = velocity.x + step.x * -1;
+	//
+	velocity.clamp(_minMovement, _maxMovement);
+	Vec2 stepVelocity = velocity * kUpdateInterval;
+	// 
+	gameObject.setVelocity(velocity);
+	//
+	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
+};
+
+
+void InputComponent::WalkRight(IGameObject& gameObject)
+{
+	Vec2 velocity = gameObject.getVelocity();
+	//
+	Vec2 step = _movement * kUpdateInterval;
+	velocity.x = velocity.x + step.x * 1;
+	//
+	velocity.clamp(_minMovement, _maxMovement);
+	Vec2 stepVelocity = velocity * kUpdateInterval;
+	// 
+	gameObject.setVelocity(velocity);
+	//
+	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
+};
+
+
+void InputComponent::Stop(IGameObject& gameObject)
+{
+	//
+	gameObject.setVelocity(Vec2::ZERO);
+};
+
+
 void PlayerInputComponent::update(Node& node, IGameObject& gameObject)
 {	
 	this->findpath(node, gameObject);

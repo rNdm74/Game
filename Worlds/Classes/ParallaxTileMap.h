@@ -57,7 +57,7 @@ public:
 	Rect getTileRectFrom(Vec2 tileCoordinates);    
     Vec2 getMapTransition(Vec2 direction);
 
-	IGameObject& getPlayer();
+	IGameObject* getPlayer();
 	IPath* getPath(Vec2 startLocation, Vec2 targetLocation);
 
 	

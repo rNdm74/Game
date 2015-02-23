@@ -23,12 +23,21 @@ using namespace cocos2d;
 class IGameObject : public Node
 {
 public:
-	/** **/
+	/** Constructor and the Destructor **/
 	IGameObject(){};
 	virtual ~IGameObject(){};			
-	/** **/
+	
+	/** Update the gameObject **/
 	virtual void update(Node* node) = 0;
-	/** **/
+
+	/** Action methods **/
+	virtual void ClimbUp() = 0;
+	virtual void ClimbDown() = 0;
+	virtual void WalkLeft() = 0;
+	virtual void WalkRight() = 0;
+	virtual void Stop() = 0;
+
+	/** Getters **/
 	virtual Rect getBoundingBox() = 0;
 	virtual Rect getCollisionBox() = 0;	
 	virtual Vec2 getCenterPosition() = 0;
@@ -44,11 +53,13 @@ public:
 	virtual CanMove getCanMove() = 0;
 	virtual IsMoving getIsMoving() = 0;
 
-	/** **/
+	/** Setters **/
 	virtual void setBoundingBox(Rect boundingBox) = 0;
 	virtual void setCollisionBox(Rect collisionBox) = 0;
 	virtual void setClimbing(bool climbing) = 0;
 	virtual void setDesiredPosition(Vec2 desiredPosition) = 0;
+	virtual void setDesiredPositionX(float x) = 0;
+	virtual void setDesiredPositionY(float y) = 0;
 	virtual void setDirection(Vec2 direction) = 0;
 	virtual void setMapTransition(Vec2 mapTransition) = 0;
 	virtual void setOnGround(bool onGround) = 0;
@@ -74,15 +85,20 @@ class GameObject : public IGameObject
 	typedef GameObject self;
     
 public:
-	/** If applicable, then Constructors and the Destructor **/
+	/** Constructor and the Destructor **/
 	GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~GameObject(){};
-    
-	/** Then the init methods **/
-	
-	/** Then methods of the instance **/
+    		
+	/** Update the gameObject **/
 	virtual void update(Node* node);
-		
+
+	/** Action methods **/
+	virtual void ClimbUp(){};
+	virtual void ClimbDown(){};
+	virtual void WalkLeft(){};
+	virtual void WalkRight(){};
+	virtual void Stop(){};
+	
 	/** Getters **/
 	virtual Rect getBoundingBox();
 	virtual Rect getCollisionBox();
@@ -104,6 +120,8 @@ public:
 	virtual void setCollisionBox(Rect collisionBox);
 	virtual void setClimbing(bool climbing);
 	virtual void setDesiredPosition(Vec2 desiredPosition);
+	virtual void setDesiredPositionX(float x);
+	virtual void setDesiredPositionY(float y);
 	virtual void setDirection(Vec2 direction);
 	virtual void setMapTransition(Vec2 mapTransition);
 	virtual void setOnGround(bool onGround);
@@ -123,7 +141,6 @@ protected:
 	IPath* _path;
 	/** **/
 	Sprite* _sprite;
-
 	/** **/
 	Vec2 _desiredPosition;
 	/** **/
@@ -161,12 +178,21 @@ public:
 	Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input);
 	~Player(){};
 
+	/** Update the gameObject overridden **/
 	virtual void update(Node* node) override;
 
+	/** Action methods overridden **/
+	virtual void ClimbUp() override;
+	virtual void ClimbDown() override;
+	virtual void WalkLeft() override;
+	virtual void WalkRight() override;
+	virtual void Stop() override;
+
+	/** Getters Overridden **/
 	virtual Size getSize() override;
 	virtual Rect getCollisionBox() override;	
 	virtual Sprite* getSprite();
-	
+		
 	bool IsLoaded();
 
 private:	
@@ -176,6 +202,8 @@ private:
 	IInputComponent* _input;	
 	/****/
 	bool _isLoaded;
+
+	class GameObjectFsm* _fsm;
 };
 
 

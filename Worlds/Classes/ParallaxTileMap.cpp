@@ -327,9 +327,9 @@ Node* ParallaxTileMap::getShadowForNode(Node* node)
 ///
 /// POST-CONDITION: 
 /// </summary>
-IGameObject& ParallaxTileMap::getPlayer()
+IGameObject* ParallaxTileMap::getPlayer()
 {
-	return static_cast<Player&>(*_objectLayer->getChildByName("Player"));
+	return static_cast<Player*>(_objectLayer->getChildByName("Player"));
 }
 
 

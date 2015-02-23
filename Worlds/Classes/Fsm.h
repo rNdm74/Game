@@ -22,6 +22,8 @@ public:
 	virtual void NextMap(IGameObjectFsm& fsm) = 0;
 	virtual void Loaded(IGameObjectFsm& fsm) = 0;
 
+	virtual void update(IGameObjectFsm& fsm) = 0;
+
 	virtual void destroyInstance() = 0;
 
 protected:
@@ -38,14 +40,14 @@ public:
 	virtual void Down(IGameObjectFsm& fsm);
 	virtual void Left(IGameObjectFsm& fsm);
 	virtual void Right(IGameObjectFsm& fsm);
-	virtual void Stop(IGameObjectFsm& fsm){ log("You requested the Stop event, not available from your current state!"); };	
+	virtual void Stop(IGameObjectFsm& fsm);	
 	virtual void StopWalking(IGameObjectFsm& fsm){ log("You requested the StopWalking event, not available from your current state!"); };
 	virtual void StopClimbing(IGameObjectFsm& fsm){ log("You requested the StopClimbing event, not available from your current state!"); };		
-	
 	virtual void NextMap(IGameObjectFsm& fsm);
 	virtual void PreviousMap(IGameObjectFsm& fsm);
-
 	virtual void Loaded(IGameObjectFsm& fsm){ log("You requested the Loaded event, not available from your current state!"); };
+
+	virtual void update(IGameObjectFsm& fsm){ /** log("Default update state"); **/ };
 
 	virtual void destroyInstance(){};
 
@@ -67,9 +69,6 @@ public:
 	/** Overrides **/
 	virtual void Up(IGameObjectFsm& fsm) override;
 	virtual void Down(IGameObjectFsm& fsm) override;
-	virtual void Left(IGameObjectFsm& fsm) override;
-	virtual void Right(IGameObjectFsm& fsm) override;
-	virtual void Stop(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
 private:
@@ -88,11 +87,8 @@ public:
 	static CheckCanWalk* getInstance();
 
 	/** Overrides **/
-	virtual void Up(IGameObjectFsm& fsm) override;
-	virtual void Down(IGameObjectFsm& fsm) override;
 	virtual void Left(IGameObjectFsm& fsm) override;
-	virtual void Right(IGameObjectFsm& fsm) override;		
-	virtual void Stop(IGameObjectFsm& fsm) override;
+	virtual void Right(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
 private:
@@ -111,6 +107,7 @@ public:
 	static ClimbingUp* getInstance();
 
 	/** Overrides **/
+	virtual void Up(IGameObjectFsm& fsm) override;
 	virtual void StopClimbing(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
@@ -127,6 +124,7 @@ public:
 	static ClimbingDown* getInstance();
 
 	/** Overrides **/
+	virtual void Down(IGameObjectFsm& fsm) override;
 	virtual void StopClimbing(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
@@ -143,6 +141,8 @@ public:
 	static WalkingLeft* getInstance();
 
 	/** Overrides **/
+	virtual void Left(IGameObjectFsm& fsm) override;
+	
 	virtual void StopWalking(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
@@ -159,6 +159,7 @@ public:
 	static WalkingRight* getInstance();
 
 	/** Overrides **/
+	virtual void Right(IGameObjectFsm& fsm) override;
 	virtual void StopWalking(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
@@ -192,6 +193,7 @@ public:
 
 	/** Overrides **/
 	virtual void Stop(IGameObjectFsm& fsm) override;
+	virtual void update(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
 private:
@@ -213,6 +215,7 @@ public:
 	virtual void Down(IGameObjectFsm& fsm) override;
 	virtual void Left(IGameObjectFsm& fsm) override;
 	virtual void Right(IGameObjectFsm& fsm) override;
+	virtual void Stop(IGameObjectFsm& fsm) override;
 	virtual void Loaded(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
@@ -233,6 +236,7 @@ public:
 	virtual void Down(IGameObjectFsm& fsm) override;
 	virtual void Left(IGameObjectFsm& fsm) override;
 	virtual void Right(IGameObjectFsm& fsm) override;
+	virtual void Stop(IGameObjectFsm& fsm) override;
 	virtual void Loaded(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
@@ -249,6 +253,8 @@ private:
 class IGameObjectFsm
 {
 public:
+	class IGameObject* gameObject;
+
 	IGameObjectFsm(){};
 	virtual ~IGameObjectFsm(){};
 
@@ -263,6 +269,9 @@ public:
 
 	/**  **/
 	virtual void setCurrentState(IGameObjectState* state) = 0;
+		
+	bool timeoutBegin;
+	float timeout;
 };
 
 class GameObjectFsm : public IGameObjectFsm
@@ -270,8 +279,20 @@ class GameObjectFsm : public IGameObjectFsm
 	class IGameObjectState* currentState;
 
 public:
-	GameObjectFsm();
-	virtual ~GameObjectFsm(){};
+	GameObjectFsm(IGameObject* gameObject);
+	virtual ~GameObjectFsm()
+	{	
+		CheckCanClimb::getInstance()->destroyInstance();
+		CheckCanWalk::getInstance()->destroyInstance();
+		ClimbingUp::getInstance()->destroyInstance();
+		ClimbingDown::getInstance()->destroyInstance();
+		WalkingLeft::getInstance()->destroyInstance();
+		WalkingRight::getInstance()->destroyInstance();
+		IsIdle::getInstance()->destroyInstance();
+		Stopped::getInstance()->destroyInstance();
+		LoadingNextMap::getInstance()->destroyInstance();
+		LoadingPreviousMap::getInstance()->destroyInstance();
+	};
 		
 	/** Actions **/	
 	virtual void CheckCanClimbUp();
@@ -286,6 +307,8 @@ public:
 
 	/** Setters **/
 	virtual void setCurrentState(IGameObjectState* currentState);
+
+	
 };
 
 #endif /* defined(__com_dotdat_World__FSM_H__) */
