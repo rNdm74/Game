@@ -468,7 +468,7 @@ void LoadingPreviousMap::Loaded(IGameObjectFsm& fsm)
 #pragma region GameObjectFSM Actions
 
 /**
-*
+* Public access function to the finite state machine to check if the game object can climb up
 */
 void GameObjectFsm::CheckCanClimbUp()
 {
@@ -476,7 +476,7 @@ void GameObjectFsm::CheckCanClimbUp()
 };
 
 /**
-*
+* Public access function to the finite state machine to check if the game object can climb down
 */
 void GameObjectFsm::CheckCanClimbDown()
 {
@@ -484,7 +484,7 @@ void GameObjectFsm::CheckCanClimbDown()
 };
 
 /**
-* 
+* Public access function to the finite state machine to check if the game object can walk left
 */
 void GameObjectFsm::CheckCanWalkLeft()
 {	
@@ -492,7 +492,7 @@ void GameObjectFsm::CheckCanWalkLeft()
 };
 
 /**
-*
+* Public access function to the finite state machine to check if the game object can walk right
 */
 void GameObjectFsm::CheckCanWalkRight()
 {
@@ -500,7 +500,7 @@ void GameObjectFsm::CheckCanWalkRight()
 };
 
 /**
-*
+* Public access function to the finite state machine to stop the game object
 */
 void GameObjectFsm::Stop()
 {
@@ -508,7 +508,7 @@ void GameObjectFsm::Stop()
 };
 
 /**
-*
+* Public access function to the finite state machine to load next map
 */
 void GameObjectFsm::LoadNextMap()
 {
@@ -516,7 +516,7 @@ void GameObjectFsm::LoadNextMap()
 };
 
 /**
-*
+* Public access function to the finite state machine to load previous map
 */
 void GameObjectFsm::LoadPreviousMap()
 {

@@ -351,7 +351,7 @@ void Player::update(Node* node)
 		&GameObjectFsm::LoadPreviousMap
 	};
 
-	(_fsm->*ptrs[AppGlobal::getInstance()->gameObjectStates])();
+	(_fsm->*ptrs[AppGlobal::getInstance()->gameObjectState])();
 
 	_collision->update(*node, *this);
 };

@@ -20,7 +20,7 @@ struct GameStates {
 	bool STOP;
 };
 
-enum EGameObjectStates
+enum EGameObjectState
 {
 	CheckCanClimbUp,
 	CheckCanClimbDown,
@@ -51,9 +51,11 @@ public:
 	bool leftMouseButton;
 	bool rightMouseButton;
 	
+    bool touchEvent;
+    
 	GameStates states;
 		
-	EGameObjectStates gameObjectStates;
+	EGameObjectState gameObjectState;
 
 	class ParallaxTileMap* activeMap;
 
@@ -74,6 +76,8 @@ public:
 		    
 private:
 	
+    void setGameObjectState(Vec2 direction);
+    
 	KeyMatrix keyMatrix;
 
     AppGlobal();

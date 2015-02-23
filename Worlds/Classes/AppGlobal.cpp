@@ -21,7 +21,7 @@ AppGlobal::AppGlobal()
 	mouseDown = false;
     mouseUp = false;
 
-	gameObjectStates = EGameObjectStates::Stop;
+	gameObjectState = EGameObjectState::Stop;
 
 	for (bool& key : keyMatrix)
 	{
@@ -115,43 +115,43 @@ void AppGlobal::initKeyboardListener()
 
 	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{
-		if ((keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanClimbUp] = true;
-			gameObjectStates = EGameObjectStates::CheckCanClimbUp;
+			keyMatrix[EGameObjectState::CheckCanClimbUp] = true;
+			gameObjectState = EGameObjectState::CheckCanClimbUp;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanClimbDown] = true;
-			gameObjectStates = EGameObjectStates::CheckCanClimbDown;
+			keyMatrix[EGameObjectState::CheckCanClimbDown] = true;
+			gameObjectState = EGameObjectState::CheckCanClimbDown;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanWalkLeft] = true;
-			gameObjectStates = EGameObjectStates::CheckCanWalkLeft;
+			keyMatrix[EGameObjectState::CheckCanWalkLeft] = true;
+			gameObjectState = EGameObjectState::CheckCanWalkLeft;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanWalkRight] = true;
-			gameObjectStates = EGameObjectStates::CheckCanWalkRight;
+			keyMatrix[EGameObjectState::CheckCanWalkRight] = true;
+			gameObjectState = EGameObjectState::CheckCanWalkRight;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_KP_PG_UP))
+		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_UP)
 		{			
-			keyMatrix[EGameObjectStates::LoadNextMap] = true;
-			gameObjectStates = EGameObjectStates::LoadNextMap;
+			keyMatrix[EGameObjectState::LoadNextMap] = true;
+			gameObjectState = EGameObjectState::LoadNextMap;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN))
+		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN)
 		{
-			keyMatrix[EGameObjectStates::LoadPreviousMap] = true;
-			gameObjectStates = EGameObjectStates::LoadPreviousMap;
+			keyMatrix[EGameObjectState::LoadPreviousMap] = true;
+			gameObjectState = EGameObjectState::LoadPreviousMap;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_SPACE))
+		if (keyCode == EventKeyboard::KeyCode::KEY_SPACE)
 		{
 			
 		}
@@ -159,34 +159,34 @@ void AppGlobal::initKeyboardListener()
 
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{
-		if ((keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanClimbUp] = false;
+			keyMatrix[EGameObjectState::CheckCanClimbUp] = false;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanClimbDown] = false;
+			keyMatrix[EGameObjectState::CheckCanClimbDown] = false;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanWalkLeft] = false;
+			keyMatrix[EGameObjectState::CheckCanWalkLeft] = false;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
+		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 		{
-			keyMatrix[EGameObjectStates::CheckCanWalkRight] = false;
+			keyMatrix[EGameObjectState::CheckCanWalkRight] = false;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_PG_UP))
+		if (keyCode == EventKeyboard::KeyCode::KEY_PG_UP)
 		{
-			keyMatrix[EGameObjectStates::LoadNextMap] = false;
+			keyMatrix[EGameObjectState::LoadNextMap] = false;
 		}
 
-		if ((keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN))
+		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN)
 		{
-			keyMatrix[EGameObjectStates::LoadPreviousMap] = false;
+			keyMatrix[EGameObjectState::LoadPreviousMap] = false;
 		}
 		
 		bool isAllStatesFalse = false;
@@ -202,7 +202,7 @@ void AppGlobal::initKeyboardListener()
 		
 		if (isAllStatesFalse == false)
 		{
-			gameObjectStates = EGameObjectStates::Stop;
+			gameObjectState = EGameObjectState::Stop;
 		}
 	};
 
@@ -215,6 +215,7 @@ void AppGlobal::initPathFinderListener()
 	{
 		/** Create the pathfinder **/
 		auto _pathFinder = new AStarPathFinder(activeMap, 500, false);
+        //_pathFinder->findPath(<#cocos2d::Vec2 startLocation#>, <#cocos2d::Vec2 targetLocation#>)
 	}
 };
 
@@ -223,48 +224,68 @@ void AppGlobal::initTouchListener()
 	auto listener = EventListenerTouchOneByOne::create();
 
 	listener->onTouchBegan = [=](Touch* touch, Event* e) -> bool
-	{		
+	{
+        touchEvent = true;
+        
 		if (player)
 		{
-			Vec2 v1 = player->getCenterPosition();
-			Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
-
-			Vec2 n = Vec2(v2 - v1).getNormalized();
-			Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
-
-			if (direction.y > 0)
-			{
-				gameObjectStates = EGameObjectStates::CheckCanClimbUp;
-			}
-			else if (direction.y < 0)
-			{
-				gameObjectStates = EGameObjectStates::CheckCanClimbDown;
-			}
-			else if (direction.x < 0)
-			{
-				gameObjectStates = EGameObjectStates::CheckCanWalkLeft;
-			}
-			else if (direction.x > 0)
-			{
-				gameObjectStates = EGameObjectStates::CheckCanWalkRight;
-			}
-		}
+            Vec2 v1 = player->getCenterPosition();
+            Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
+            
+            Vec2 n = Vec2(v2 - v1).getNormalized();
+            Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
+            
+            this->setGameObjectState(direction);
+        }
 
 		return true;
 	};
 
 	listener->onTouchMoved = [=](Touch* touch, Event* e)
 	{
+        if(touchEvent /** When we have depressed the pad **/)
+        {
+            Vec2 v1 = player->getCenterPosition();
+            Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
+            
+            Vec2 n = Vec2(v2 - v1).getNormalized();
+            Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
+            
+            this->setGameObjectState(direction);
+        }
+        
 		Vec2 location = touch->getLocationInView();
 	};
 
 	listener->onTouchEnded = [=](Touch* touch, Event* e)
-	{		
-		gameObjectStates = EGameObjectStates::Stop;
+	{
+        touchEvent = false;
+        
+		gameObjectState = EGameObjectState::Stop;
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
+
+void AppGlobal::setGameObjectState(Vec2 direction)
+{
+    if (direction.y > 0)
+    {
+        gameObjectState = EGameObjectState::CheckCanClimbUp;
+    }
+    else if (direction.y < 0)
+    {
+        gameObjectState = EGameObjectState::CheckCanClimbDown;
+    }
+    else if (direction.x < 0)
+    {
+        gameObjectState = EGameObjectState::CheckCanWalkLeft;
+    }
+    else if (direction.x > 0)
+    {
+        gameObjectState = EGameObjectState::CheckCanWalkRight;
+    }
+};
 
 void AppGlobal::addCursor(Layer& layer)
 {
