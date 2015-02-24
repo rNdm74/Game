@@ -35,21 +35,8 @@ class  AppGlobal
 {
 public:
     bool IsGameSceneRunning;
-    int ActiveLevel;
-    Point StartPosition;
-
-	Vec2 cursorDownLocation;
-	Vec2 cursorLocation;
-    Vec2 cursorDelta;
-	Vec2 cursorMove;
-	bool mouseUp;
-	bool mouseDown;
-	float scale;	
-
-	bool mouseToggle;
-
-	bool leftMouseButton;
-	bool rightMouseButton;
+    
+	float scale;
 	
     bool touchEvent;
     
@@ -69,10 +56,12 @@ public:
 	void initTouchListener();
 	void initPathFinderListener();
 			    
-	float getRandom(float begin, float end);
+	
+
 	void addCursor(Layer& layer);
 
-    std::string GetActiveLevel() { return std::to_string(ActiveLevel); };
+	void zoomIn();
+	void zoomOut();	
 		    
 private:
 	
@@ -81,12 +70,12 @@ private:
 	KeyMatrix keyMatrix;
 
     AppGlobal();
-    virtual ~AppGlobal();
+	AppGlobal(const AppGlobal&); // Prevent construction by copying
+	AppGlobal& operator=(const AppGlobal&); // Prevent assignment
+	virtual ~AppGlobal(){};
 	
     static AppGlobal* m_pInstance;    
 };
-
-#define RAND(begin, end)  ( AppGlobal::getInstance()->getRandom( (begin), (end) ) )
 
 //#define GETSCALEX ( AppGlobal::getInstance()->GetScaleX() )
 //#define GETSCALEY ( AppGlobal::getInstance()->GetScaleY() )

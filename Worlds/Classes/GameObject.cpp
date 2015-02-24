@@ -61,9 +61,15 @@ void GameObject::update(Node* node)
 };
 
 
+bool GameObject::containsPoint(Vec2 point)
+{
+	Rect rect = this->getBoundingBox();
+
+	return rect.containsPoint(point);
+};
+
 /** Getters **/
 #pragma region Getters
-
 
 /**
 * Get the GameObject bounding box
@@ -81,7 +87,6 @@ Rect GameObject::getBoundingBox()
 	);
 };
 
-
 /**
 * Get the GameObject collision bounding box, overridden by child classes
 *
@@ -91,7 +96,6 @@ Rect GameObject::getCollisionBox()
 {
 	return this->getBoundingBox();
 };
-
 
 /**
 * Get the GameObject center Vec2
@@ -106,36 +110,30 @@ Vec2 GameObject::getCenterPosition()
 	return Vec2(x, y);
 };
 
-
 bool GameObject::getClimbing()
 {
 	return _isClimbing;
 };
-
 
 Vec2 GameObject::getDesiredPosition()
 {
 	return _desiredPosition;
 };
 
-
 Vec2 GameObject::getDirection()
 {
 	return _direction;
 };
-
 
 Vec2 GameObject::getMapTransition()
 {
 	return _mapTransition;
 };
 
-
 bool GameObject::getOnGround()
 {
 	return _onGround;
 };
-
 
 IPath* GameObject::getPath()
 {
@@ -152,7 +150,6 @@ ValueMap GameObject::getProperties()
 	return _properties; 
 };
 
-
 /**
 * Get the GameObject content size
 *
@@ -163,18 +160,15 @@ Size GameObject::getSize()
 	return this->getContentSize();
 };
 
-
 Vec2 GameObject::getVelocity()
 {
 	return _velocity;
 };
 
-
 CanMove GameObject::getCanMove()
 {
 	return _canMove;
 };
-
 
 IsMoving GameObject::getIsMoving()
 {
@@ -184,28 +178,23 @@ IsMoving GameObject::getIsMoving()
 
 #pragma endregion Getters
 
-
 /** Setters **/
 #pragma region Setters
-
 
 void GameObject::setBoundingBox(Rect boundingBox)
 {
 
 };
 
-
 void GameObject::setCollisionBox(Rect collisionBox)
 {
 
 };
 
-
 void GameObject::setClimbing(bool climbing)
 {
 	_isClimbing = climbing;
 };
-
 
 void GameObject::setDesiredPosition(Vec2 desiredPosition)
 {
@@ -222,30 +211,25 @@ void GameObject::setDesiredPositionY(float y)
 	_desiredPosition.y = y;
 };
 
-
 void GameObject::setDirection(Vec2 direction)
 {
 	_direction = direction;
 };
-
 
 void GameObject::setMapTransition(Vec2 mapTransition)
 {
 	_mapTransition = mapTransition;
 };
 
-
 void GameObject::setOnGround(bool onGround)
 {
 	_onGround = onGround;
 };
 
-
 void GameObject::setPath(IPath* path)
 {
 	_path = path;
 };
-
 
 /**
 * Sets the properties of a GameObject
@@ -257,32 +241,26 @@ void GameObject::setProperties(ValueMap& properties)
 	_properties = properties;
 };
 
-
 void GameObject::setSize(Vec2 size)
 {
 };
-
 
 void GameObject::setVelocity(Vec2 velocity)
 {
 	_velocity = velocity;
 };
 
-
 void GameObject::setCanMove(CanMove canMove)
 {
 	_canMove = canMove;
 };
-
 
 void GameObject::setIsMoving(IsMoving isMoving)
 {
 	_isMoving = isMoving;
 };
 
-
 #pragma endregion Setters
-
 
 #pragma endregion GameObject
 
@@ -354,6 +332,8 @@ void Player::update(Node* node)
 	(_fsm->*ptrs[AppGlobal::getInstance()->gameObjectState])();
 
 	_collision->update(*node, *this);
+
+	this->setPosition(this->getDesiredPosition());
 };
 
 

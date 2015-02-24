@@ -306,9 +306,7 @@ public:
 	virtual void update();
 
 	/** Setters **/
-	virtual void setCurrentState(IGameObjectState* currentState);
-
-	
+	virtual void setCurrentState(IGameObjectState* currentState);	
 };
 
 #endif /* defined(__com_dotdat_World__FSM_H__) */

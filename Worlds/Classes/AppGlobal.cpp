@@ -7,31 +7,16 @@ AppGlobal* AppGlobal::m_pInstance = NULL;
 
 AppGlobal* AppGlobal::getInstance()
 {
+	//log("AppGlobal instance is being accessed");
     return m_pInstance ? m_pInstance : m_pInstance = new AppGlobal();
 }
 
 AppGlobal::AppGlobal() 
-{
-    ActiveLevel = 1;
-	scale = 1.0f;
-
-	mouseToggle = false;
-	leftMouseButton = false;
-	rightMouseButton = false;
-	mouseDown = false;
-    mouseUp = false;
-
+{	
 	gameObjectState = EGameObjectState::Stop;
-
-	for (bool& key : keyMatrix)
-	{
-		key = false;
-	}
+	for (bool& key : keyMatrix)	key = false;
 }
 
-AppGlobal::~AppGlobal()
-{
-}
 
 void AppGlobal::initMouseListener()
 {
@@ -40,10 +25,9 @@ void AppGlobal::initMouseListener()
 	listener->onMouseMove = [=](Event* event)
 	{
 		// Cast Event to EventMouse for position details like above
-		auto eventMouse = static_cast<EventMouse*>(event);
-		this->cursorDelta = eventMouse->getDelta();
-        this->cursorLocation = eventMouse->getLocationInView();
-		this->cursorMove = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
+		auto eventMouse = static_cast<EventMouse*>(event);		
+
+		auto cursorMove = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
 
 		if (Director::getInstance()->getRunningScene()->isRunning())
 		{
@@ -56,53 +40,21 @@ void AppGlobal::initMouseListener()
 	};
 
 	listener->onMouseDown = [=](Event* event)
-	{	
-		auto eventMouse = static_cast<EventMouse*>(event);
-		cursorDownLocation = eventMouse->getLocationInView();
-		int mouseButton = eventMouse->getMouseButton();		
-		if (mouseButton == 0) leftMouseButton = true;
-		if (mouseButton == 1) rightMouseButton = true;
-
+	{
 		auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
 		auto cursor = static_cast<Sprite*>(layer->getChildByTag(kTagCursor));
 
 		cursor->setSpriteFrame("tapTick.png");
-
-		this->mouseUp = false;
-		this->mouseDown = true;
-
-		this->mouseToggle = !mouseToggle;
 	};
 
 	listener->onMouseUp = [=](Event* event)
-	{
-		auto eventMouse = static_cast<EventMouse*>(event);
-		int mouseButton = eventMouse->getMouseButton();
-		if (mouseButton == 0) leftMouseButton = false;
-		if (mouseButton == 1) rightMouseButton = false;
-		
+	{		
 		auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
 		auto cursor = static_cast<Sprite*>(layer->getChildByTag(kTagCursor));
 
 		cursor->setSpriteFrame("tap.png");
-
-		this->mouseUp = true;
-		this->mouseDown = false;
-	};
-
-	listener->onMouseScroll = [=](Event* event)
-	{
-		auto eventMouse = static_cast<EventMouse*>(event);
-		
-		int delta = eventMouse->getScrollY();
-
-		if (delta > 0) scale += -0.1;
-		else if (delta < 0) scale += 0.1;
-		
-		//if (scale < 0.81f) scale = 0.81f;
-		if (scale > 2.0f) scale = 2.05f;
 	};
 	
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
@@ -233,9 +185,16 @@ void AppGlobal::initTouchListener()
             Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
             
             Vec2 n = Vec2(v2 - v1).getNormalized();
-            Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
+            Vec2 d = Vec2(std::round(n.x), std::round(n.y));
             
-            this->setGameObjectState(direction);
+			if (player->containsPoint(v2))
+			{
+				gameObjectState = EGameObjectState::Stop;
+			}
+			else
+			{
+				this->setGameObjectState(d);
+			}
         }
 
 		return true;
@@ -249,9 +208,16 @@ void AppGlobal::initTouchListener()
             Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
             
             Vec2 n = Vec2(v2 - v1).getNormalized();
-            Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
+            Vec2 d = Vec2(std::round(n.x), std::round(n.y));
             
-            this->setGameObjectState(direction);
+			if (player->containsPoint(v2))
+			{
+				gameObjectState = EGameObjectState::Stop;
+			}
+			else
+			{
+				this->setGameObjectState(d);
+			}
         }
         
 		Vec2 location = touch->getLocationInView();
@@ -285,6 +251,10 @@ void AppGlobal::setGameObjectState(Vec2 direction)
     {
         gameObjectState = EGameObjectState::CheckCanWalkRight;
     }
+	else
+	{
+		gameObjectState = EGameObjectState::Stop;
+	}
 };
 
 void AppGlobal::addCursor(Layer& layer)
@@ -293,17 +263,25 @@ void AppGlobal::addCursor(Layer& layer)
 	auto _cursor = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("tap.png"));//Sprite::createWithSpriteFrameName("tap.png");
 	_cursor->setTag(kTagCursor);
 	_cursor->setAnchorPoint(Vec2(0.5, 0.5));
-	_cursor->setPosition(cursorMove);
+	//_cursor->setPosition(cursorMove);
 
 	layer.addChild(_cursor, kTagCursor);
 }
 
-float AppGlobal::getRandom(float begin, float end)
+void AppGlobal::zoomIn()
 {
-    double value;
-    
-    value = static_cast<double>(rand()) / RAND_MAX;
-    value = value * (end - begin) + begin;
-    
-    return value;
-}
+	/** Increment to scale factor **/
+	scale += kZoomFactor;
+
+	/** Clamp scale factor **/
+	if (scale > 1.5f) scale = 1.5f;
+};
+
+void AppGlobal::zoomOut()
+{	
+	/** Increment to scale factor **/
+	scale -= 0.01f;
+
+	/** Clamp scale factor **/
+	if (scale < 1.3f) scale = 1.3f;
+};

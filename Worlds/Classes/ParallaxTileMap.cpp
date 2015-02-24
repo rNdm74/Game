@@ -489,10 +489,10 @@ TileDataArray ParallaxTileMap::getTileDataArrayFromLadderLayerAt(Vec2 position)
 	
 	tileDataArray[ETileGrid::BOTTOM] = getTileDataFromLayerAt(*_ladderLayer, Vec2(tileCoordinates.x, tileCoordinates.y + 1));
 	tileDataArray[ETileGrid::CENTER] = getTileDataFromLayerAt(*_ladderLayer, tileCoordinates);
-	tileDataArray[ETileGrid::LEFT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x - 1, tileCoordinates.y));
-	tileDataArray[ETileGrid::RIGHT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x + 1, tileCoordinates.y));
-	tileDataArray[ETileGrid::BOTTOM_LEFT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x - 1, tileCoordinates.y + 1));
-	tileDataArray[ETileGrid::BOTTOM_RIGHT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x + 1, tileCoordinates.y + 1));
+	//tileDataArray[ETileGrid::LEFT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x - 1, tileCoordinates.y));
+	//tileDataArray[ETileGrid::RIGHT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x + 1, tileCoordinates.y));
+	//tileDataArray[ETileGrid::BOTTOM_LEFT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x - 1, tileCoordinates.y + 1));
+	//tileDataArray[ETileGrid::BOTTOM_RIGHT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x + 1, tileCoordinates.y + 1));
 				
 	return tileDataArray;
 }

@@ -17,8 +17,10 @@ public:
 	virtual void update(Node& node, IGameObject& gameObject) = 0;
 
 protected:
-	virtual void checkCollision(Node& node, IGameObject& gameObject) = 0;
-	virtual void solidTileCollision(Node& node, IGameObject& gameObject) = 0;
+	virtual void checkCollision(Node& node, IGameObject& gameObject) = 0;	
+	virtual void checkTileCollision(Node& node, IGameObject& gameObject) = 0;
+	virtual void checkLadderCollision(Node& node, IGameObject& gameObject) = 0;
+
 	virtual void ladderTileCollision(Node& node, IGameObject& gameObject) = 0;
 };
 
@@ -29,8 +31,10 @@ public:
 	virtual void update(Node& node, IGameObject& gameObjectNode);
 
 protected:
-	virtual void checkCollision(Node& node, IGameObject& gameObject);
-	virtual void solidTileCollision(Node& node, IGameObject& gameObject);
+	virtual void checkCollision(Node& node, IGameObject& gameObject);	
+	virtual void checkTileCollision(Node& node, IGameObject& gameObject);
+	virtual void checkLadderCollision(Node& node, IGameObject& gameObject);
+
 	virtual void ladderTileCollision(Node& node, IGameObject& gameObject);
 };
 

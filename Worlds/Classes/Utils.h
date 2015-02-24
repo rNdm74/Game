@@ -14,6 +14,7 @@ class IUtils
 	static bool isRectContainsRect(Rect r1, Rect r2);	
 	static int getTilesetMaxGID(TMXLayer& layer);
 	static bool isPixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);
+	static float getRandom(float begin, float end);
 };
 
 class Utils : public IUtils
@@ -26,6 +27,9 @@ public:
 	static bool isRectContainsRect(Rect r1, Rect r2);	
 	static int getTilesetMaxGID(TMXLayer& layer);
 	static bool isPixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pixelCollision);
+	static float getRandom(float begin, float end);
 };
+
+#define RAND(begin, end)  ( this->getRandom( (begin), (end) ) )
 
 #endif /* defined(__FranticAlien__UTILS_H__) */

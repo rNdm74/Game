@@ -37,6 +37,9 @@ public:
 	virtual void WalkRight() = 0;
 	virtual void Stop() = 0;
 
+	/** **/
+	virtual bool containsPoint(Vec2 point) = 0;
+
 	/** Getters **/
 	virtual Rect getBoundingBox() = 0;
 	virtual Rect getCollisionBox() = 0;	
@@ -99,6 +102,9 @@ public:
 	virtual void WalkRight(){};
 	virtual void Stop(){};
 	
+	/** **/
+	virtual bool containsPoint(Vec2 point);
+
 	/** Getters **/
 	virtual Rect getBoundingBox();
 	virtual Rect getCollisionBox();

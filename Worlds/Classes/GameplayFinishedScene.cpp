@@ -33,13 +33,11 @@ bool GameplayFinishedScene::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // create and initialize a label
-    auto label = LabelTTF::create(AppGlobal::getInstance()->GetActiveLevel(), "Arial", 80);
-    
+    // auto label = LabelTTF::create(AppGlobal::getInstance()->GetActiveLevel(), "Arial", 80);    
     // position the label on the center of the screen
-    label->setPosition(Vec2(origin.x + visibleSize.width / 2, (origin.y + visibleSize.height / 2) + (label->getContentSize().height) / 2));
-    
+    // label->setPosition(Vec2(origin.x + visibleSize.width / 2, (origin.y + visibleSize.height / 2) + (label->getContentSize().height) / 2));    
     // add the label as a child to this layer
-    this->addChild(label, 1);
+    // this->addChild(label, 1);
     
     FiniteTimeAction* waitAction = DelayTime::create(2);
     FiniteTimeAction* waitFinished = CallFunc::create(CC_CALLBACK_0(GameplayFinishedScene::Finished, this));    
@@ -57,10 +55,7 @@ void GameplayFinishedScene::Pause(Ref* sender)
 
 void GameplayFinishedScene::Finished()
 {
-    // Increase level
-    AppGlobal::getInstance()->ActiveLevel++;
-    
-    auto gameplayScene = GameplayScene::createScene();
+	auto gameplayScene = GameplayScene::createScene();
     Director::getInstance()->replaceScene(gameplayScene);
 }
 

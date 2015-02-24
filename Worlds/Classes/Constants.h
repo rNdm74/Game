@@ -49,6 +49,7 @@
 #define PI 3.14159265
 
 
+const float kZoomFactor = 0.025f;
 const float kPixelsPerMeter = 32.0f;
 const float kGravity = -100.0f; // adjust this to taste
 const float kUpdateInterval = 1.0f / 60.0f;

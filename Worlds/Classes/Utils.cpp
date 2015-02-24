@@ -94,3 +94,13 @@ bool Utils::isPixelCollision(Sprite* s1, Sprite* s2, Rect intersection, bool pix
 
 	return isColliding;
 }
+
+float Utils::getRandom(float begin, float end)
+{
+	double value;
+
+	value = static_cast<double>(rand()) / RAND_MAX;
+	value = value * (end - begin) + begin;
+
+	return value;
+}

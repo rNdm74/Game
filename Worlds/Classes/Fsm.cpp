@@ -1,4 +1,5 @@
 #include "Fsm.h"
+#include "AppGlobal.h"
 #include "GameObject.h"
 
 /** Event Overrides**/
@@ -36,13 +37,11 @@ void GameObjectState::Stop(IGameObjectFsm& fsm)
 
 void GameObjectState::NextMap(IGameObjectFsm& fsm)
 {
-	log("LoadingNextMap State");
 	fsm.setCurrentState(LoadingNextMap::getInstance());
 };
 
 void GameObjectState::PreviousMap(IGameObjectFsm& fsm)
 {
-	log("LoadingPreviousMap State");
 	fsm.setCurrentState(LoadingPreviousMap::getInstance());
 };
 
@@ -57,6 +56,7 @@ CheckCanClimb* CheckCanClimb::m_pInstance = NULL;
 
 CheckCanClimb* CheckCanClimb::getInstance()
 {
+	log("Check can climb state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new CheckCanClimb();
 }
 
@@ -110,6 +110,7 @@ CheckCanWalk* CheckCanWalk::m_pInstance = NULL;
 
 CheckCanWalk* CheckCanWalk::getInstance()
 {
+	log("Check can walk state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new CheckCanWalk();
 }
 
@@ -239,6 +240,8 @@ void WalkingLeft::destroyInstance()
 
 void WalkingLeft::Left(IGameObjectFsm& fsm)
 {	
+	AppGlobal::getInstance()->zoomOut();
+
 	/** Tell the game object to walk left **/
 	fsm.gameObject->WalkLeft();
 };
@@ -272,6 +275,8 @@ void WalkingRight::destroyInstance()
 
 void WalkingRight::Right(IGameObjectFsm& fsm)
 {	
+	AppGlobal::getInstance()->zoomOut();
+
 	/** Tell the game object to walk right **/
 	fsm.gameObject->WalkRight();
 };
@@ -331,6 +336,9 @@ void Stopped::destroyInstance()
 
 void Stopped::Stop(IGameObjectFsm& fsm)
 {
+	/** Zoom in effect **/
+	AppGlobal::getInstance()->zoomIn();
+
 	/** Tell the game object to stop **/
 	fsm.gameObject->Stop();
 			
@@ -370,6 +378,7 @@ LoadingNextMap* LoadingNextMap::m_pInstance = NULL;
 
 LoadingNextMap* LoadingNextMap::getInstance()
 {
+	log("Loading next map state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new LoadingNextMap();
 }
 
@@ -379,6 +388,13 @@ void LoadingNextMap::destroyInstance()
 	m_pInstance = 0;
 };
 
+/**  **/
+void LoadingNextMap::Loaded(IGameObjectFsm& fsm)
+{
+	log("Finished loading new map");
+};
+
+/** Overrides **/
 void LoadingNextMap::Up(IGameObjectFsm& fsm)
 {
 	log("Up requested, loading previous map in progress");
@@ -404,11 +420,6 @@ void LoadingNextMap::Stop(IGameObjectFsm& fsm)
 	log("Finished loading new map");
 };
 
-void LoadingNextMap::Loaded(IGameObjectFsm& fsm)
-{
-	log("Finished loading new map");
-};
-
 #pragma endregion LoadingNextMap
 
 /**
@@ -420,6 +431,7 @@ LoadingPreviousMap* LoadingPreviousMap::m_pInstance = NULL;
 
 LoadingPreviousMap* LoadingPreviousMap::getInstance()
 {
+	log("Loading previous map state is being accessed");
 	return m_pInstance ? m_pInstance : m_pInstance = new LoadingPreviousMap();
 }
 
@@ -429,6 +441,13 @@ void LoadingPreviousMap::destroyInstance()
 	m_pInstance = 0;
 };
 
+/**  **/
+void LoadingPreviousMap::Loaded(IGameObjectFsm& fsm)
+{
+	log("Finished loading new map");
+};
+
+/** Overrides **/
 void LoadingPreviousMap::Up(IGameObjectFsm& fsm)
 {
 	log("Up requested, loading previous map in progress");
@@ -452,11 +471,6 @@ void LoadingPreviousMap::Right(IGameObjectFsm& fsm)
 void LoadingPreviousMap::Stop(IGameObjectFsm& fsm)
 {
 	log("Stop requested, loading previous map in progress");
-};
-
-void LoadingPreviousMap::Loaded(IGameObjectFsm& fsm)
-{
-	log("Finished loading new map");
 };
 
 #pragma endregion LoadingPreviousMap
