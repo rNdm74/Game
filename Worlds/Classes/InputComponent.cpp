@@ -4,7 +4,7 @@
 #include "InputComponent.h"
 #include "ParallaxTileMap.h"
 #include "Path.h"
-
+#include "Utils.h"
 
 void InputComponent::ClimbUp(IGameObject& gameObject)
 {

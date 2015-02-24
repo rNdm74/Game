@@ -12,11 +12,14 @@ AppGlobal* AppGlobal::getInstance()
 }
 
 AppGlobal::AppGlobal() 
-{	
+{
+    zoomVelocity = 0.0f;
+
+    scale = 1.5f;
+    
 	gameObjectState = EGameObjectState::Stop;
 	for (bool& key : keyMatrix)	key = false;
 }
-
 
 void AppGlobal::initMouseListener()
 {
@@ -233,6 +236,11 @@ void AppGlobal::initTouchListener()
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
 
+float AppGlobal::getScale()
+{
+    return scale;
+};
+
 void AppGlobal::setGameObjectState(Vec2 direction)
 {
     if (direction.y > 0)
@@ -278,10 +286,15 @@ void AppGlobal::zoomIn()
 };
 
 void AppGlobal::zoomOut()
-{	
+{
+    zoomVelocity += 0.00015f;
 	/** Increment to scale factor **/
-	scale -= 0.01f;
+    scale -= zoomVelocity;
 
 	/** Clamp scale factor **/
-	if (scale < 1.3f) scale = 1.3f;
+	if (scale < 1.3f)
+    {
+        scale = 1.3f;
+        zoomVelocity = 0.0f;
+    }
 };

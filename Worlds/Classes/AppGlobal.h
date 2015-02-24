@@ -56,7 +56,7 @@ public:
 	void initTouchListener();
 	void initPathFinderListener();
 			    
-	
+    float getScale();
 
 	void addCursor(Layer& layer);
 
@@ -64,7 +64,8 @@ public:
 	void zoomOut();	
 		    
 private:
-	
+    float zoomVelocity;
+    
     void setGameObjectState(Vec2 direction);
     
 	KeyMatrix keyMatrix;

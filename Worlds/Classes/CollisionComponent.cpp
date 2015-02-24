@@ -153,7 +153,6 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 */
 void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObject)
 {
-
 	/** Game objects desired position **/
 	Vec2 desiredPosition = gameObject.getDesiredPosition();
 	/** Game objects center position **/
@@ -186,14 +185,6 @@ void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObjec
 					velocity.y += 0.1f;
 					velocity.x = 0.0f;
 				}
-			}
-
-			if (tileDataArray[tileIndex].GID == false && tileIndex == ETileGrid::CENTER /** Tile is gameObject **/)
-			{
-				// clamp gameObject to top of ladder
-				desiredPosition.y = tileRect.getMaxY();
-				velocity.y = 0.0f;
-				velocity.x += 0.1f;
 			}
 			
 			static_cast<ParallaxTileMap&>(node).drawDebugRect(tileRect, Color4F(0.0f, 0.5f, 0.5f, 0.5f));

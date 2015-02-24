@@ -81,7 +81,10 @@ void Level::setViewPointCenter()
 {	
 	Vec2 position = _parallaxTileMap->getPlayer()->getCenterPosition();
 
-	Size _winSize = Director::getInstance()->getWinSize() / this->getScale();
+    float scale = AppGlobal::getInstance()->getScale();
+    Size _winSize = Director::getInstance()->getWinSize();
+    
+	_winSize =  _winSize / scale;
 	
 	float x = MAX(position.x, _winSize.width / 2);
 	float y = MAX(position.y, _winSize.height / 2);
