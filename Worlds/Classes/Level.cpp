@@ -75,6 +75,7 @@ void Level::update(float& delta)
 
 void Level::checkNextMap()
 {
+    
 	/*IGameObject* player = _tileMap->getPlayer();
 
 	Vec2 transition = player->getMapTransition();

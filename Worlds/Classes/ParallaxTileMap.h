@@ -24,7 +24,7 @@ public:
 
 	virtual TileDataArray getCollisionDataAt(Vec2 position) = 0;
 	virtual TileDataArray getLadderDataAt(Vec2 position) = 0;
-
+    
 	virtual void addPlayer(IGameObject* player) = 0;
 	virtual IGameObject* removePlayer() = 0;
 	virtual void setPositionOnPlayer() = 0;

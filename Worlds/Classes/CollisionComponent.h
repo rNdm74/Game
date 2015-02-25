@@ -6,6 +6,7 @@
 
 using namespace cocos2d;
 
+#define TileMap(n) ( static_cast<IParallaxTileMap&>(n) )
 
 class IGameObject;
 
@@ -21,6 +22,7 @@ protected:
 	virtual void checkTileCollision(Node& node, IGameObject& gameObject) = 0;
 	virtual void checkLadderCollision(Node& node, IGameObject& gameObject) = 0;
 
+    virtual void checkObjectCollision(Node& node, IGameObject& gameObject) = 0;
 	virtual void ladderTileCollision(Node& node, IGameObject& gameObject) = 0;
 };
 
@@ -35,6 +37,8 @@ protected:
 	virtual void checkTileCollision(Node& node, IGameObject& gameObject);
 	virtual void checkLadderCollision(Node& node, IGameObject& gameObject);
 
+    virtual void checkObjectCollision(Node& node, IGameObject& gameObject);
+    
 	virtual void ladderTileCollision(Node& node, IGameObject& gameObject);
 };
 
