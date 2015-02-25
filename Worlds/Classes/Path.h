@@ -19,11 +19,14 @@ class IPath
 public:
 	IPath(){};
 	virtual ~IPath(){};
+
 	virtual int getLength() = 0;
 	virtual Vec2 getStep(unsigned int index) = 0;
 	virtual float getX(unsigned int index) = 0;
 	virtual float getY(unsigned int index) = 0;
+
 	virtual bool contains(Vec2 step) = 0;
+
 	virtual Vec2 peek_front() = 0;
 	virtual Vec2 peek_back() = 0;
 	virtual Vec2 pop_front() = 0;

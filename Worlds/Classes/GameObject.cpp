@@ -1,7 +1,7 @@
 #include "AppGlobal.h"
 #include "Constants.h"
 #include "GameObject.h"
-#include "Fsm.h"
+#include "GameObjectFsm.h"
 #include "GameObjectFactory.h"
 #include "GraphicsComponent.h"
 #include "InputComponent.h"
@@ -308,6 +308,7 @@ Player::Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsCo
 	float height = _sprite->getContentSize().height;
 	
 	this->setContentSize(Size(width, width));
+	this->setTag(kTagPlayer);
 	this->addChild(_sprite);
 
 	_isLoaded = true;

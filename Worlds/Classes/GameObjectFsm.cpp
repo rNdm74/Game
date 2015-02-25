@@ -1,6 +1,6 @@
-#include "Fsm.h"
 #include "AppGlobal.h"
 #include "GameObject.h"
+#include "GameObjectFsm.h"
 
 /** Event Overrides**/
 #pragma region Event Overrides

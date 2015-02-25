@@ -12,10 +12,10 @@
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement)
+AStarPathFinder* AStarPathFinder::create(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement)
 {
 	// Create an instance of Level
-	AStarPathFinder* node = new AStarPathFinder(parallaxTileMap, maxSearchDistance, allowDiagMovement);
+	AStarPathFinder* node = new AStarPathFinder(map, maxSearchDistance, allowDiagMovement);
 
 	if (node)
 	{
@@ -40,10 +40,10 @@ AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int m
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement, AStarHeuristic* heuristic)
+AStarPathFinder* AStarPathFinder::create(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic)
 {
 	// Create an instance of Level
-	AStarPathFinder* node = new AStarPathFinder(parallaxTileMap, maxSearchDistance, allowDiagMovement, heuristic);
+	AStarPathFinder* node = new AStarPathFinder(map, maxSearchDistance, allowDiagMovement, heuristic);
 
 	if (node)
 	{
@@ -68,14 +68,14 @@ AStarPathFinder* AStarPathFinder::create(ParallaxTileMap* parallaxTileMap, int m
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement)
+AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement)
 {
+	_map = map;
 	_heuristic = new AStarHeuristic();
-	_parallaxTileMap = parallaxTileMap;
 	_maxSearchDistance = maxSearchDistance;
 	_allowDiagMovement = allowDiagMovement;
 
-	Size mapSize = _parallaxTileMap->getMapSize();
+	Size mapSize = _map->getMapSize();
 
 	for (int i = 0; i < mapSize.width * mapSize.height; ++i)
 	{
@@ -95,14 +95,14 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 * @param allowDiagMovement True if the search should try diaganol movement
 * @param heuristic The heuristic used to determine the search order of the ParallaxTileMap
 */
-AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearchDistance, bool allowDiagMovement, AStarHeuristic* heuristic)
+AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic)
 {
-	_heuristic = heuristic;
-	_parallaxTileMap = parallaxTileMap;
+	
+	_heuristic = heuristic;	
 	_maxSearchDistance = maxSearchDistance;
 	_allowDiagMovement = allowDiagMovement;
 
-	Size mapSize = _parallaxTileMap->getMapSize();
+	Size mapSize = _map->getMapSize();
 
 	for (int i = 0; i < mapSize.width * mapSize.height; ++i)
 	{
@@ -125,12 +125,12 @@ AStarPathFinder::AStarPathFinder(ParallaxTileMap* parallaxTileMap, int maxSearch
 IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 {
 	//
-	Size mapSize = _parallaxTileMap->getMapSize();
+	Size mapSize = _map->getMapSize();
 	int startIndex = startLocation.y * mapSize.width + startLocation.x;
 	int targetIndex = targetLocation.y * mapSize.width + targetLocation.x;
 
 	// easy first check, if the destination is blocked, we can't get there
-	if (_parallaxTileMap->isBlocked(targetLocation) || startIndex > _nodes.size() || targetIndex > _nodes.size())
+	if (_map->isBlocked(targetLocation) || startIndex > _nodes.size() || targetIndex > _nodes.size())
 	{
 		return nullptr;
 	}
@@ -156,7 +156,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 
 		// be the most likely to be the next step based on our heuristic
 
-		SearchGraphNode* current = this->getFirstInOpen();
+		ISearchGraphNode* current = this->getFirstInOpen();
 		if (current == _nodes[targetIndex])
 		{
 			break;
@@ -209,8 +209,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 
 					float nextStepCost = current->cost + this->getMovementCost(current->coordinate, neighbourLocation);
 					int neighbourIndex = neighbourLocation.y * mapSize.width + neighbourLocation.x;
-					SearchGraphNode* neighbour = _nodes[neighbourIndex];
-					_parallaxTileMap->pathFinderVisited(neighbourLocation);
+					ISearchGraphNode* neighbour = _nodes[neighbourIndex];
 
 					// if the new cost we've determined for this node is lower than 
 
@@ -265,7 +264,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 	// to the start recording the nodes on the way.
 
 	IPath* path = new Path();
-	SearchGraphNode* target = _nodes[targetIndex];
+	ISearchGraphNode* target = _nodes[targetIndex];
 	while (target != _nodes[startIndex])
 	{
 		path->push_front(target->coordinate);
@@ -290,7 +289,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 */
 float AStarPathFinder::getMovementCost(Vec2 startLocation, Vec2 targetLocation)
 {
-	return _parallaxTileMap->getCost(startLocation, targetLocation);
+	return _map->getCost(startLocation, targetLocation);
 }
 
 
@@ -315,7 +314,7 @@ float AStarPathFinder::getHeuristicCost(Vec2 startLocation, Vec2 targetLocation)
 *
 * @return The first element in the open list
 */
-SearchGraphNode* AStarPathFinder::getFirstInOpen()
+ISearchGraphNode* AStarPathFinder::getFirstInOpen()
 {
 	return _open.front();
 }
@@ -326,7 +325,7 @@ SearchGraphNode* AStarPathFinder::getFirstInOpen()
 *
 * @param searchGraphNode The SearchGraphNode to be added to the open list
 */
-void AStarPathFinder::addToOpen(SearchGraphNode* searchGraphNode)
+void AStarPathFinder::addToOpen(ISearchGraphNode* searchGraphNode)
 {
 	_open.push_back(searchGraphNode);
 }
@@ -338,7 +337,7 @@ void AStarPathFinder::addToOpen(SearchGraphNode* searchGraphNode)
 * @param searchGraphNode The SearchGraphNode to check for
 * @return True if the SearchGraphNode given is in the open list
 */
-bool AStarPathFinder::inOpenList(SearchGraphNode* searchGraphNode)
+bool AStarPathFinder::inOpenList(ISearchGraphNode* searchGraphNode)
 {
 	return (std::find(_open.begin(), _open.end(), searchGraphNode) != _open.end());
 }
@@ -349,7 +348,7 @@ bool AStarPathFinder::inOpenList(SearchGraphNode* searchGraphNode)
 *
 * @param searchGraphNode The SearchGraphNode to remove from the open list
 */
-void AStarPathFinder::removeFromOpen(SearchGraphNode* searchGraphNode)
+void AStarPathFinder::removeFromOpen(ISearchGraphNode* searchGraphNode)
 {
 	int index = std::find(_open.begin(), _open.end(), searchGraphNode) - _open.begin();
 	_open.erase(_open.begin() + index);
@@ -361,7 +360,7 @@ void AStarPathFinder::removeFromOpen(SearchGraphNode* searchGraphNode)
 *
 * @param searchGraphNode The SearchGraphNode to add to the closed list
 */
-void AStarPathFinder::addToClosed(SearchGraphNode* searchGraphNode)
+void AStarPathFinder::addToClosed(ISearchGraphNode* searchGraphNode)
 {
 	_closed.push_back(searchGraphNode);
 }
@@ -373,7 +372,7 @@ void AStarPathFinder::addToClosed(SearchGraphNode* searchGraphNode)
 * @param searchGraphNode The SearchGraphNode to search for
 * @return True if the SearchGraphNode specified is in the closed list
 */
-bool AStarPathFinder::inClosedList(SearchGraphNode* searchGraphNode)
+bool AStarPathFinder::inClosedList(ISearchGraphNode* searchGraphNode)
 {
 	return (std::find(_closed.begin(), _closed.end(), searchGraphNode) != _closed.end());
 }
@@ -384,7 +383,7 @@ bool AStarPathFinder::inClosedList(SearchGraphNode* searchGraphNode)
 *
 * @param searchGraphNode The SearchGraphNode to remove from the closed list
 */
-void AStarPathFinder::removeFromClosed(SearchGraphNode* searchGraphNode)
+void AStarPathFinder::removeFromClosed(ISearchGraphNode* searchGraphNode)
 {
 	int index = std::find(_closed.begin(), _closed.end(), searchGraphNode) - _closed.begin();
 	_closed.erase(_closed.begin() + index);
@@ -401,13 +400,13 @@ void AStarPathFinder::removeFromClosed(SearchGraphNode* searchGraphNode)
 */
 bool AStarPathFinder::isValidLocation(Vec2 startingLocation, Vec2 checkLocation)
 {
-	Size tileMapSize = _parallaxTileMap->getMapSize();
+	Size tileMapSize = _map->getMapSize();
 
 	bool invalid = (checkLocation.x < 0) || (checkLocation.y < 0) || (checkLocation.x >= tileMapSize.width) || (checkLocation.y >= tileMapSize.height);
 
 	if ((invalid == false) && ((startingLocation.x != checkLocation.x) || (startingLocation.y != checkLocation.y)))
 	{
-		invalid = _parallaxTileMap->isBlocked(checkLocation);
+		invalid = _map->isBlocked(checkLocation);
 	}
 
 	return !invalid;

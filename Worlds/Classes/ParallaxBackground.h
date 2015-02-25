@@ -25,8 +25,6 @@ public:
 
 private:
 	ParallaxBackgroundImages _clouds;
-
-
 };
 
 #endif /* defined(__com_dotdat_World__PARALLAX_BACKGROUND_H__) */

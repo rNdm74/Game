@@ -1,13 +1,7 @@
 #include "Constants.h"
 #include "ParallaxBackground.h"
 
-/// <summary>
-/// Summary for create()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+
 ParallaxBackground* ParallaxBackground::create(float width)
 {
 	// Create an instance of ParallaxBackground
@@ -29,13 +23,6 @@ ParallaxBackground* ParallaxBackground::create(float width)
 }
 
 
-/// <summary>
-/// Summary for ParallaxBackground()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
 ParallaxBackground::ParallaxBackground(float width)
 {
     Sprite* sprite = Sprite::create("bg0.png");
@@ -102,41 +89,17 @@ ParallaxBackground::ParallaxBackground(float width)
 }
 
 
-/// <summary>
-/// Summary for ~ParallaxBackground()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
 ParallaxBackground::~ParallaxBackground()
 {
 	
 }
 
-/// <summary>
-/// Summary for update(float delta)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+
 void ParallaxBackground::update(float delta)
 {
-	/*for (int i = 0; i < _clouds.size(); ++i)
-	{
-		Vec2 newPosition = _clouds[i]->getPosition();
-		newPosition.x -= CLOUDS_SPEED * delta;
-
-		if (newPosition.x < 0)
-		{
-			log("Cloud off screen");
-			newPosition.x = 800.0f;
-		}
-
-		_clouds[i]->setPosition(newPosition);
-	}*/
+	
 }
+
 
 Node* ParallaxBackground::getShadowForNode(Node* node)
 {

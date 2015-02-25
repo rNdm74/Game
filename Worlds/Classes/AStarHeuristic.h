@@ -5,9 +5,6 @@
 
 using namespace cocos2d;
 
-class ParallaxTileMap;
-class GameObject;
-
 
 /**
 * Interface
@@ -17,6 +14,8 @@ class GameObject;
 class IAStarHeuristic
 {
 public:
+	IAStarHeuristic(){};
+	virtual ~IAStarHeuristic(){};
 	virtual float getCost(Vec2 evaluatedTile, Vec2 targetLocation) = 0;
 };
 

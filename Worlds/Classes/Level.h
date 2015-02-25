@@ -3,47 +3,35 @@
 
 #include "cocos2d.h"
 
-class AppGlobal;
-class IGameObject;
-class ParallaxTileMap;
-class IPathFinder;
-class IPath;
-
 using namespace cocos2d;
+
+typedef std::stack<class IParallaxTileMap*> ActiveTileMap;
 
 class Level : public Node
 {	
 public:
 	// "creator" methods first	
-	static Level* create(std::string mapName);
+	static Level* create();
 
 	Level();
-	virtual ~Level();
+	virtual ~Level(){};
 
-	void loadMap(std::string mapname);		
+	void loadMap();		
 	void loadPlayer();
 	
 	void update(float& delta);
-
-	void updateState();
-		    
-    void setViewPointCenter();
-		
+	
+    void setViewPointCenter();		
 	void checkNextMap();	
 
 private:
-	ParallaxTileMap* _parallaxTileMap;
-	IPathFinder* _pathFinder;
+	ActiveTileMap activeMap;
 
-	
-
-	Vec2 _origin;
-	Vec2 _center;
-
-	Size _visibleSize;
-	Size _mapSize;
-	Size _tileSize;
-
+	/** **/
+	Size _visibleSize, _mapSize, _tileSize;
+	/** **/
+	Vec2 _origin, _center;
+	/** **/
 	int _objectCount;
 };
 

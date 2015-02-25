@@ -58,7 +58,7 @@ bool LoadingScene::init()
 
 void LoadingScene::loadGameplayScene()
 {
-    AppGlobal::getInstance()->IsGameSceneRunning = true;
+    AppGlobal::getInstance()->setIsGameSceneRunning(true);
     auto gameplayScene = GameplayScene::createScene();
     Director::getInstance()->replaceScene(gameplayScene);
 }

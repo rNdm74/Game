@@ -58,7 +58,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	// create global area for game
 	auto appGlobal = AppGlobal::getInstance();
-	appGlobal->IsGameSceneRunning = false;
+	appGlobal->setIsGameSceneRunning(false);
 	appGlobal->initMouseListener();
 	appGlobal->initKeyboardListener();
 	appGlobal->initTouchListener();

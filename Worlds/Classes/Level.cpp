@@ -1,13 +1,14 @@
 #include "AppGlobal.h"
 #include "Constants.h"
 #include "GameObject.h"
+#include "GameObjectFactory.h"
 #include "Level.h"
 #include "ParallaxTileMap.h"
+#include "ParallaxFactory.h"
 #include "PathFinder.h"
-
 #include "Utils.h"
 
-Level* Level::create(std::string mapName)
+Level* Level::create()
 {
 	// Create an instance of Level
 	Level* node = new Level();
@@ -16,8 +17,6 @@ Level* Level::create(std::string mapName)
 	{
 		// Add it to autorelease pool
 		node->autorelease();
-		node->loadMap(mapName);
-		node->loadPlayer();
 	}
 	else 
 	{
@@ -29,92 +28,54 @@ Level* Level::create(std::string mapName)
 	return node;
 }
 
-
 Level::Level()
 {
-	_origin = Director::getInstance()->getVisibleOrigin();
-	_visibleSize = Director::getInstance()->getVisibleSize();
-	_center = Vec2(_origin.x + _visibleSize.width / 2, (_origin.y + _visibleSize.height / 2));	
+	//
+	activeMap = AppGlobal::getInstance()->activeMap;
+	activeMap.push(ParallaxFactory::create("Planet"));
+	//
+	this->addChild(activeMap.top());
+
+	this->loadPlayer();
 }
 
-
-Level::~Level(){}
-
-
-void Level::loadMap(std::string mapname)
-{	
-	this->removeAllChildrenWithCleanup(true);
-
-	_parallaxTileMap = ParallaxTileMap::create(mapname);
-	this->addChild(_parallaxTileMap);
-
-	_mapSize = _parallaxTileMap->getMapSize();
-	_tileSize = _parallaxTileMap->getTileSize();
-
-	//_pathFinder = new AStarPathFinder(_parallaxTileMap, 500, false);
-	
-	AppGlobal::getInstance()->activeMap = _parallaxTileMap;
-	AppGlobal::getInstance()->player = _parallaxTileMap->getPlayer();
+void Level::loadMap()
+{
+	//
+	if (activeMap.size() > 0)
+	{
+		//
+		if (activeMap.top()->getPlayer() != nullptr)
+			activeMap.top()->getPlayer()->removeFromParent();
+		//
+		this->removeChild(activeMap.top());
+	}	
+	//
+	activeMap.push(ParallaxFactory::create("Cave"));
+	//
+	this->addChild(activeMap.top());
 }
-
 
 void Level::loadPlayer()
-{	
-	if (_parallaxTileMap->isPlayerLoaded == false)
-	{		
-		//player = _parallaxTileMap->getPlayer();
-	}
-	else
-	{
-		//_parallaxTileMap->getObjectLayer()->addChild(&player);
-		//Vec2 transition = _parallaxTileMap->getMapTransition(player.getMapTransition());
+{
+	ValueMap properties = activeMap.top()->getInitialProperties();	
 
-		//player.setPositionX(transition.x - player.getContentSize().width / 2);
-		//player.setPositionY(transition.y);
-	}
-		
-	this->setViewPointCenter();
+	activeMap.top()->addPlayer(GameObjectFactory::create("Player", properties));
 }
-
-
-void Level::setViewPointCenter()
-{	
-	Vec2 position = _parallaxTileMap->getPlayer()->getCenterPosition();
-
-    float scale = AppGlobal::getInstance()->getScale();
-    Size _winSize = Director::getInstance()->getWinSize();
-    
-	_winSize =  _winSize / scale;
-	
-	float x = MAX(position.x, _winSize.width / 2);
-	float y = MAX(position.y, _winSize.height / 2);
-	x = MIN(x, (_mapSize.width * _tileSize.width) - _winSize.width / 2);
-	y = MIN(y, (_mapSize.height * _tileSize.height) - _winSize.height / 2);
-    
-	Vec2 actualPosition = Vec2(x, y);    
-	Vec2 centerOfView = Vec2(_winSize.width / 2, _winSize.height / 2);
-    Vec2 viewPoint = centerOfView - actualPosition;
-    
-	this->_parallaxTileMap->setPosition(viewPoint);
-}
-
 
 void Level::update(float& delta)
 {
-	/** updates scale creates zoom effect **/
-	this->setScale(AppGlobal::getInstance()->scale);
-	
-	/**  **/
-	_parallaxTileMap->update(delta);
-		
-	/** centre viewport on player **/
-	this->setViewPointCenter();
+	/** Updates scale creates zoom effect **/
+	this->setScale(AppGlobal::getInstance()->getScale());	
+	/** Update the active map **/
+	activeMap.top()->update(delta);
+	/** Keep active map position centered on player **/
+	activeMap.top()->setPositionOnPlayer();
 }
-
 
 void Level::checkNextMap()
 {
-	IGameObject* player = _parallaxTileMap->getPlayer();
+	/*IGameObject* player = _tileMap->getPlayer();
 
 	Vec2 transition = player->getMapTransition();
 	IsMoving isMoving = player->getIsMoving();
@@ -123,21 +84,16 @@ void Level::checkNextMap()
 	{		
 		player->removeFromParent();
 		                
-		loadMap("planet1.tmx");
-
-		_parallaxTileMap->isPlayerLoaded = true;
-
+		loadMap();
+				
 		loadPlayer();  
 	}
 	else if (transition.y > 0 && isMoving[STATE_UP])
 	{
 		player->removeFromParent();
 		
-		loadMap(kLevelTMX);
-
-		_parallaxTileMap->getObjectLayer()->removeChildByName("Player", true);
-		_parallaxTileMap->isPlayerLoaded = true;
-
+		loadMap();
+		
 		loadPlayer();
-	}
+	}*/
 }

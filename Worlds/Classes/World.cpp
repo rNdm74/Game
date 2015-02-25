@@ -32,7 +32,7 @@ World* World::create()
 */
 World::World()
 {
-	level = Level::create(kLevelTMX);
+	level = Level::create();
 	this->addChild(level);
 }
 

@@ -3,79 +3,58 @@
 
 #include "cocos2d.h"
 #include "Constants.h"
-#include "Fsm.h"
 
 using namespace cocos2d;
 
-struct GameStates {
-	bool SPRINT;
-	bool JUMP;
-	bool ESCAPE;
-	bool HUD;
-	bool ENTER;
-	bool UP;
-	bool DOWN;
-	bool LEFT;
-	bool RIGHT;
-	bool STOP;
-};
 
-enum EGameObjectState
-{
-	CheckCanClimbUp,
-	CheckCanClimbDown,
-	CheckCanWalkLeft,
-	CheckCanWalkRight,	
-	Stop,
-	LoadNextMap,
-	LoadPreviousMap
-};
 
-class  AppGlobal
+class AppGlobal
 {
 public:
-    bool IsGameSceneRunning;
-    
-	float scale;
-	
-    bool touchEvent;
-    
-	GameStates states;
-		
 	EGameObjectState gameObjectState;
 
-	class ParallaxTileMap* activeMap;
-
+	std::stack<class IParallaxTileMap*> activeMap;
+	
 	class IGameObject* player;
     
 public:
     static AppGlobal* getInstance();
 
+	/** Init functions **/
 	void initMouseListener();
 	void initKeyboardListener();
 	void initTouchListener();
 	void initPathFinderListener();
-			    
-    float getScale();
-
+		    
+    
 	void addCursor(Layer& layer);
 
 	void zoomIn();
 	void zoomOut();	
+
+	float getScale();
+
+	bool getIsGameSceneRunning() { return _isGameSceneRunning; };
+	void setIsGameSceneRunning(bool isRunning) { _isGameSceneRunning = isRunning; };
 		    
 private:
-    float zoomVelocity;
-    
-    void setGameObjectState(Vec2 direction);
-    
-	KeyMatrix keyMatrix;
-
     AppGlobal();
 	AppGlobal(const AppGlobal&); // Prevent construction by copying
 	AppGlobal& operator=(const AppGlobal&); // Prevent assignment
 	virtual ~AppGlobal(){};
 	
-    static AppGlobal* m_pInstance;    
+	/** **/
+	void setGameObjectState(Vec2 direction);
+
+    static AppGlobal* m_pInstance;  
+
+	bool _isGameSceneRunning;
+	bool _touchEvent;
+
+	float _scaleFactor;
+	float _zoomFactor;
+	
+	KeyMatrix _keyMatrix;
 };
 
 //#define GETSCALEX ( AppGlobal::getInstance()->GetScaleX() )

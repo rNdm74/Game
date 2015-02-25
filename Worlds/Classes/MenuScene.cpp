@@ -47,7 +47,7 @@ bool MenuScene::init()
     
     
     
-    if(AppGlobal::getInstance()->IsGameSceneRunning)
+    if(AppGlobal::getInstance()->getIsGameSceneRunning())
     {
         menu = Menu::create(menu_item_1, menu_item_3, menu_item_4, NULL);
     }
@@ -71,7 +71,7 @@ void MenuScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 {       
     if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE)
     {
-        if(AppGlobal::getInstance()->IsGameSceneRunning)
+        if(AppGlobal::getInstance()->getIsGameSceneRunning())
         {
             Director::getInstance()->popScene();
         }
@@ -81,7 +81,7 @@ void MenuScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
             keyCode == EventKeyboard::KeyCode::KEY_ENTER)
     {
         
-        if(AppGlobal::getInstance()->IsGameSceneRunning)
+        if(AppGlobal::getInstance()->getIsGameSceneRunning())
         {
             Director::getInstance()->popScene();
         }
@@ -120,9 +120,9 @@ void MenuScene::Settings(Ref* sender)
 
 void MenuScene::Quit(Ref* sender)
 {
-    if(AppGlobal::getInstance()->IsGameSceneRunning)
+    if(AppGlobal::getInstance()->getIsGameSceneRunning())
     {
-        AppGlobal::getInstance()->IsGameSceneRunning = false;
+        AppGlobal::getInstance()->setIsGameSceneRunning(false);
         
         Director::getInstance()->popToRootScene();
     }

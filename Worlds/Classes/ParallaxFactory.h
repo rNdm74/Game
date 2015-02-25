@@ -5,40 +5,20 @@
 
 using namespace cocos2d;
 
+class IParallaxTileMap;
+
 class IParallaxFactory
 {
 public:
-	static Sprite* create(std::string className, Size mapSize);
+	IParallaxFactory(){};
+	virtual ~IParallaxFactory(){};
+	static IParallaxTileMap* create(std::string className);
 };
 
 class ParallaxFactory : public IParallaxFactory
 {
 public:
-	static Sprite* create(std::string className, Size mapSize);
-};
-
-class ParallaxObject : public Sprite
-{
-public:
-    static Sprite* create(Size size);
-};
-
-class Background : public ParallaxObject
-{
-public:
-	Background(Size mapSize);
-};
-
-class Mountains : public ParallaxObject
-{
-public:
-	Mountains(Size mapSize);
-};
-
-class Hills : public ParallaxObject
-{
-public:
-	Hills(Size mapSize);
+	static IParallaxTileMap* create(std::string className);
 };
 
 #endif /* defined(__com_dotdat_World__PARALLAX_FACTORY_H__) */

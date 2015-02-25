@@ -13,12 +13,15 @@ AppGlobal* AppGlobal::getInstance()
 
 AppGlobal::AppGlobal() 
 {
-    zoomVelocity = 0.0f;
+	player = nullptr;
 
-    scale = 1.5f;
+    _zoomFactor = 0.0f;
+
+    _scaleFactor = 1.5f;
     
 	gameObjectState = EGameObjectState::Stop;
-	for (bool& key : keyMatrix)	key = false;
+
+	for (bool& key : _keyMatrix) key = false;
 }
 
 void AppGlobal::initMouseListener()
@@ -72,37 +75,37 @@ void AppGlobal::initKeyboardListener()
 	{
 		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanClimbUp] = true;
+			_keyMatrix[EGameObjectState::CheckCanClimbUp] = true;
 			gameObjectState = EGameObjectState::CheckCanClimbUp;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanClimbDown] = true;
+			_keyMatrix[EGameObjectState::CheckCanClimbDown] = true;
 			gameObjectState = EGameObjectState::CheckCanClimbDown;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanWalkLeft] = true;
+			_keyMatrix[EGameObjectState::CheckCanWalkLeft] = true;
 			gameObjectState = EGameObjectState::CheckCanWalkLeft;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanWalkRight] = true;
+			_keyMatrix[EGameObjectState::CheckCanWalkRight] = true;
 			gameObjectState = EGameObjectState::CheckCanWalkRight;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_UP)
 		{			
-			keyMatrix[EGameObjectState::LoadNextMap] = true;
+			_keyMatrix[EGameObjectState::LoadNextMap] = true;
 			gameObjectState = EGameObjectState::LoadNextMap;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN)
 		{
-			keyMatrix[EGameObjectState::LoadPreviousMap] = true;
+			_keyMatrix[EGameObjectState::LoadPreviousMap] = true;
 			gameObjectState = EGameObjectState::LoadPreviousMap;
 		}
 
@@ -116,42 +119,42 @@ void AppGlobal::initKeyboardListener()
 	{
 		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanClimbUp] = false;
+			_keyMatrix[EGameObjectState::CheckCanClimbUp] = false;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanClimbDown] = false;
+			_keyMatrix[EGameObjectState::CheckCanClimbDown] = false;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanWalkLeft] = false;
+			_keyMatrix[EGameObjectState::CheckCanWalkLeft] = false;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 		{
-			keyMatrix[EGameObjectState::CheckCanWalkRight] = false;
+			_keyMatrix[EGameObjectState::CheckCanWalkRight] = false;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_PG_UP)
 		{
-			keyMatrix[EGameObjectState::LoadNextMap] = false;
+			_keyMatrix[EGameObjectState::LoadNextMap] = false;
 		}
 
 		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN)
 		{
-			keyMatrix[EGameObjectState::LoadPreviousMap] = false;
+			_keyMatrix[EGameObjectState::LoadPreviousMap] = false;
 		}
 		
 		bool isAllStatesFalse = false;
 
 		int index = 0;
 
-		while (index < keyMatrix.size() && isAllStatesFalse == false)
+		while (index < _keyMatrix.size() && isAllStatesFalse == false)
 		{
 			//log("index: %i", index);
-			isAllStatesFalse = keyMatrix[index];
+			isAllStatesFalse = _keyMatrix[index];
 			index++;
 		}
 		
@@ -166,12 +169,12 @@ void AppGlobal::initKeyboardListener()
 
 void AppGlobal::initPathFinderListener()
 {
-	if (activeMap /** When there is an instance of a ParallaxTileMap **/)
-	{
-		/** Create the pathfinder **/
-		auto _pathFinder = new AStarPathFinder(activeMap, 500, false);
-        //_pathFinder->findPath(<#cocos2d::Vec2 startLocation#>, <#cocos2d::Vec2 targetLocation#>)
-	}
+	//if (activeMap /** When there is an instance of a ParallaxTileMap **/)
+	//{
+	//	/** Create the pathfinder **/
+	//	auto _pathFinder = new AStarPathFinder(activeMap, 500, false);
+	//		_pathFinder->findPath(<#cocos2d::Vec2 startLocation#>, <#cocos2d::Vec2 targetLocation#>)
+	//}
 };
 
 void AppGlobal::initTouchListener()
@@ -180,7 +183,7 @@ void AppGlobal::initTouchListener()
 
 	listener->onTouchBegan = [=](Touch* touch, Event* e) -> bool
 	{
-        touchEvent = true;
+        _touchEvent = true;
         
 		if (player)
 		{
@@ -205,7 +208,7 @@ void AppGlobal::initTouchListener()
 
 	listener->onTouchMoved = [=](Touch* touch, Event* e)
 	{
-        if(touchEvent /** When we have depressed the pad **/)
+        if(_touchEvent /** When we have depressed the pad **/)
         {
             Vec2 v1 = player->getCenterPosition();
             Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
@@ -228,7 +231,7 @@ void AppGlobal::initTouchListener()
 
 	listener->onTouchEnded = [=](Touch* touch, Event* e)
 	{
-        touchEvent = false;
+        _touchEvent = false;
         
 		gameObjectState = EGameObjectState::Stop;
 	};
@@ -238,7 +241,7 @@ void AppGlobal::initTouchListener()
 
 float AppGlobal::getScale()
 {
-    return scale;
+    return _scaleFactor;
 };
 
 void AppGlobal::setGameObjectState(Vec2 direction)
@@ -266,8 +269,7 @@ void AppGlobal::setGameObjectState(Vec2 direction)
 };
 
 void AppGlobal::addCursor(Layer& layer)
-{
-	
+{	
 	auto _cursor = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("tap.png"));//Sprite::createWithSpriteFrameName("tap.png");
 	_cursor->setTag(kTagCursor);
 	_cursor->setAnchorPoint(Vec2(0.5, 0.5));
@@ -279,22 +281,22 @@ void AppGlobal::addCursor(Layer& layer)
 void AppGlobal::zoomIn()
 {
 	/** Increment to scale factor **/
-	scale += kZoomFactor;
+	_scaleFactor += kZoomFactor;
 
 	/** Clamp scale factor **/
-	if (scale > 1.5f) scale = 1.5f;
+	if (_scaleFactor > 1.5f) _scaleFactor = 1.5f;
 };
 
 void AppGlobal::zoomOut()
 {
-    zoomVelocity += 0.00015f;
+    _zoomFactor += 0.00050f;
 	/** Increment to scale factor **/
-    scale -= zoomVelocity;
+	_scaleFactor -= _zoomFactor;
 
 	/** Clamp scale factor **/
-	if (scale < 1.3f)
+	if (_scaleFactor < 1.2f)
     {
-        scale = 1.3f;
-        zoomVelocity = 0.0f;
+		_scaleFactor = 1.2f;
+		_zoomFactor = 0.0f;
     }
 };

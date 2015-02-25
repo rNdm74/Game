@@ -5,28 +5,37 @@
 
 using namespace cocos2d;
 
-
-/**
-* A single node in the search graph
-*/
-class SearchGraphNode
+class ISearchGraphNode
 {
 public:
-    
-	SearchGraphNode(Vec2 coordinate);
-	virtual ~SearchGraphNode(){}
+	ISearchGraphNode(){};
+	virtual ~ISearchGraphNode(){};
 
-	int setParent(SearchGraphNode* parent);
-	int compareTo(SearchGraphNode* searchGraphNode);
+	virtual int setParent(ISearchGraphNode* parent) = 0;
+	virtual int compareTo(ISearchGraphNode* searchGraphNode) = 0;
 
 	/**
 	* Variables
 	*/
-	Vec2 coordinate;	
-	SearchGraphNode* parent;
+	ISearchGraphNode* parent;
+	Vec2 coordinate;
 	float heuristic;
 	float cost;
 	int depth;
+};
+
+
+/**
+* A single node in the search graph
+*/
+class SearchGraphNode : public ISearchGraphNode
+{
+public:    
+	SearchGraphNode(Vec2 coordinate);
+	virtual ~SearchGraphNode(){};
+
+	virtual int setParent(ISearchGraphNode* parent) override;
+	virtual int compareTo(ISearchGraphNode* searchGraphNode) override;
 };
 
 #endif /* defined(__com_dotdat_World__SEARCH_GRAPH_NODE_H__) */

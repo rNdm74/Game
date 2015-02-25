@@ -30,6 +30,18 @@
 #define PARTICLES_PLIST		"particles.plist"
 #define TILES_PLIST			"tiles.plist"
 
+#define kTagBackgroundLayer	0
+#define kTagCollisionLayer	1
+#define kTagLadderLayer		2
+#define kTagForegroundLayer	3
+#define kTagShadowLayer		4
+#define kTagObjectLayer		5
+#define kTagDebugLayer		6
+
+#define kTagPlanet 0
+#define kTagCave 1
+#define kTagPlayer 2 
+
 #define kTagCursor 999
 #define KTagSceneLayer 1
 
@@ -69,7 +81,8 @@ const int	kGameObjectFixtureFilterMaskBits	= 0xffff;
 
 #define kGameObjectVelocity	( Vec2( kPixelsPerMeter * kMaxVelocityX, kPixelsPerMeter * kMaxVelocityX ) )
 
-const std::string kLevelTMX						= "grassPlanet.tmx";
+const std::string kPlanetTMX					= "grassPlanet.tmx";
+const std::string kCaveTMX						= "planet1.tmx";
 const std::string kPlayerFileName				= "alienBeige.png";
 
 //enumeration of possible input states
@@ -120,6 +133,16 @@ enum ETileGrid
 	CENTER = 1
 };
 
+enum EGameObjectState
+{
+	CheckCanClimbUp,
+	CheckCanClimbDown,
+	CheckCanWalkLeft,
+	CheckCanWalkRight,
+	Stop,
+	LoadNextMap,
+	LoadPreviousMap
+};
 
 struct TileData
 {

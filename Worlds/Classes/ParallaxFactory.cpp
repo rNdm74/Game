@@ -1,41 +1,20 @@
 #include "ParallaxFactory.h"
+#include "ParallaxTileMap.h"
 
-Sprite* ParallaxFactory::create(std::string className, Size mapSize)
+IParallaxTileMap* ParallaxFactory::create(std::string className)
 {
-    Sprite* sprite = nullptr;
-    
-	if (className == "Background")
+	IParallaxTileMap* parallaxTileMap = nullptr;
+
+	if (className == "Planet")
 	{
-		
+		parallaxTileMap = Planet::create(kPlanetTMX);
+		parallaxTileMap->setTag(kTagPlanet);
 	}
-    
-    return sprite;
-}
-
-Background::Background(Size mapSize)
-{
-	this->setContentSize(mapSize);
-	this->setAnchorPoint(Vec2::ZERO);
+	else if (className == "Cave")
+	{
+		parallaxTileMap = Cave::create(kCaveTMX);
+		parallaxTileMap->setTag(kTagCave);
+	}
 	
-	Sprite* sprite = Sprite::create("bg0.png");
-
-	int count = mapSize.width / sprite->getContentSize().width;
-
-	for (int i = 0; i < count; ++i)
-	{
-		sprite = Sprite::create("bg0.png");
-		sprite->setAnchorPoint(Vec2::ZERO);
-		sprite->setPositionX(sprite->getContentSize().width * i);
-		this->addChild(sprite);
-	}
-}
-
-Mountains::Mountains(Size mapSize)
-{
-
-}
-
-Hills::Hills(Size mapSize)
-{
-
+	return parallaxTileMap;
 }

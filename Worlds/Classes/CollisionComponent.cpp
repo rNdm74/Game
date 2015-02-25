@@ -61,7 +61,7 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 	Rect collisionBox = gameObject.getCollisionBox();
 	
 	/** Get array of tiles surrounding the gameobject **/
-	TileDataArray tileDataArray = static_cast<ParallaxTileMap&>(node).getTileDataArrayFromCollisionLayerAt(centerPosition);
+	TileDataArray tileDataArray = static_cast<IParallaxTileMap&>(node).getCollisionDataAt(centerPosition);
 		    
 	for (unsigned int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
 	{ 	
@@ -69,7 +69,7 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 
 #if DEBUG_ENABLE
 		/** debug draw tile rect RED **/
-		static_cast<ParallaxTileMap&>(node).drawDebugRect(tileRect, Color4F(1.0f, 0.3f, 0.3f, 0.5f));
+		static_cast<IParallaxTileMap&>(node).drawDebugRect(tileRect, Color4F(1.0f, 0.3f, 0.3f, 0.5f));
 #endif // DEBUG_ENABLE
 
 		if (tileRect.intersectsRect(collisionBox) /** Intersection has occurred **/)
@@ -163,7 +163,7 @@ void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObjec
 	Rect collisionBox = gameObject.getCollisionBox();
 
 	/** Get array of tiles surrounding the gameobject **/
-	TileDataArray tileDataArray = static_cast<ParallaxTileMap&>(node).getTileDataArrayFromLadderLayerAt(centerPosition);
+	TileDataArray tileDataArray = static_cast<IParallaxTileMap&>(node).getLadderDataAt(centerPosition);
 		
 	for (unsigned int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
 	{
@@ -187,7 +187,7 @@ void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObjec
 				}
 			}
 			
-			static_cast<ParallaxTileMap&>(node).drawDebugRect(tileRect, Color4F(0.0f, 0.5f, 0.5f, 0.5f));
+			static_cast<IParallaxTileMap&>(node).drawDebugRect(tileRect, Color4F(0.0f, 0.5f, 0.5f, 0.5f));
 		}
 		
 		/** Update gameObject with updated velocity and desiredPosition **/
@@ -212,7 +212,7 @@ void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObjec
 		Vec2 velocity = gameObject.getVelocity();
 
 		// get array of tiles surrounding the gameobject
-		TileDataArray tileDataArray = static_cast<ParallaxTileMap&>(node).getTileDataArrayFromLadderLayerAt(centerPosition);
+		TileDataArray tileDataArray = static_cast<IParallaxTileMap&>(node).getLadderDataAt(centerPosition);
 
 		CanMove canMove = gameObject.getCanMove();
 		IsMoving isMoving = gameObject.getIsMoving();

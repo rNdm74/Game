@@ -6,42 +6,15 @@
 #include "PathFinder.h"
 #include "Path.h"
 
-/// <summary>
-/// Summary for create(std::string mapName)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-ParallaxTileMap* ParallaxTileMap::create(std::string mapName)
-{
-	// Create an instance of InfiniteParallaxNode
-	ParallaxTileMap* node = new ParallaxTileMap(mapName);
 
-	if (node) 
-	{
-		// Add it to autorelease pool
-		node->autorelease();
-		node->addObjects();
-	}
-	else 
-	{
-		// Otherwise delete
-		delete node;
-		node = 0;
-	}
-
-	return node;
-}
-
-
-/// <summary>
-/// Summary for ParallaxTileMap(std::string mapName)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Constructor a new ParallaxTileMap,
+* This will create and retain a new TMXTiledMap passing in the filename of the tmx map file,
+* Define the Size in tile count of the tilemap and the tile size
+*
+* @param mapName The std::string that contains the tmx filename
+* @return The ParallaxTileMap pointer that has been created with objects
+*/
 ParallaxTileMap::ParallaxTileMap(std::string mapName)
 {
 	// create tilemap
@@ -53,138 +26,322 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	_tileSize = _tileMap->getTileSize();
 		
 	// get background layer
-	_backgroundLayer = _tileMap->getLayer("background");
+	auto _backgroundLayer = _tileMap->getLayer("background");	
 	_backgroundLayer->retain();
+	_backgroundLayer->setTag(kTagBackgroundLayer);
 	_backgroundLayer->removeFromParentAndCleanup(false);
-	_backgroundLayer->getTexture()->setAntiAliasTexParameters();
 	_backgroundLayer->release();
 
 	// get collision layer
-	_collisionLayer = _tileMap->getLayer("collision");
+	auto _collisionLayer = _tileMap->getLayer("collision");
 	_collisionLayer->retain();
+	_collisionLayer->setTag(kTagCollisionLayer);
 	_collisionLayer->removeFromParentAndCleanup(false);
-	_collisionLayer->getTexture()->setAntiAliasTexParameters();
 	_collisionLayer->release();
 
 	// get ladder layer
-	_ladderLayer = _tileMap->getLayer("ladder");
+	auto _ladderLayer = _tileMap->getLayer("ladder");
 	_ladderLayer->retain();
+	_ladderLayer->setTag(kTagLadderLayer);
 	_ladderLayer->removeFromParentAndCleanup(false);
-	_ladderLayer->getTexture()->setAntiAliasTexParameters();
 	_ladderLayer->release();
 
 	// get foreground layer
-	_foregroundLayer = _tileMap->getLayer("foreground");
+	auto _foregroundLayer = _tileMap->getLayer("foreground");
 	_foregroundLayer->retain();
+	_foregroundLayer->setTag(kTagForegroundLayer);
 	_foregroundLayer->removeFromParentAndCleanup(false);
-	_foregroundLayer->getTexture()->setAntiAliasTexParameters();
 	_foregroundLayer->release();
 
 	// create shadow layer
-	_shadowLayer = Node::create();
+	auto _shadowLayer = Node::create();
+	_shadowLayer->setTag(kTagShadowLayer);
 
 	// create object layer
-	_objectLayer = Node::create();
+	auto _objectLayer = Node::create();
+	_objectLayer->setTag(kTagObjectLayer);
 
 	// create debug layer
 	_debugLayer = DrawNode::create();
+	_debugLayer->setTag(kTagDebugLayer);
     
 	this->setAnchorPoint(Vec2::ZERO);
 	this->setContentSize(_tileMap->getContentSize());
-	
-	_parallaxBackgroundLayer = ParallaxBackground::create(_mapSize.width * _tileSize.width);
-	
-	this->addChild(_parallaxBackgroundLayer, - 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_backgroundLayer,	-2, Vec2(0.9f, 1.0f), Vec2::ZERO);
-	this->addChild(_shadowLayer,		-1, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_collisionLayer,		 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_ladderLayer,		 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_objectLayer,		 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
-    this->addChild(_debugLayer,			 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_foregroundLayer,	 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
+			
+	/** **/	
+	this->addChild(_backgroundLayer,			-2, Vec2(0.9f, 1.0f), Vec2::ZERO);
+	this->addChild(_shadowLayer,				-1, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_collisionLayer,				 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_ladderLayer,				 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_objectLayer,				 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
+    this->addChild(_debugLayer,					 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_foregroundLayer,			 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
-    //
-	
+    /** **/
+	this->addShadows(static_cast<TMXLayer&>(*_collisionLayer));
+	this->addShadows(static_cast<TMXLayer&>(*_ladderLayer));
+	this->addShadows(static_cast<TMXLayer&>(*_foregroundLayer));
 
-	isPlayerLoaded = false;
-
-	this->addShadows(_collisionLayer);
-	this->addShadows(_ladderLayer);
-	this->addShadows(_foregroundLayer);
+	/** **/
+	this->addObjects();
 }
 
-
-/// <summary>
-/// Summary for ~ParallaxTileMap()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Destructor
+*
+* This will release the retained _tileMap instance
+*/
 ParallaxTileMap::~ParallaxTileMap()
 {
 	_tileMap->release();
 }
 
-
-/// <summary>
-/// Summary for setAliasTexParameters(TMXLayer& layer)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-void ParallaxTileMap::setAliasTexParameters(TMXLayer& layer)
+/**
+* Update all the game objects in the parallax tile map.
+*
+* @param delta The float fixed time step
+*/
+void ParallaxTileMap::update(float& delta)
 {
-	layer.getTexture()->setAntiAliasTexParameters();
+
+#if DEBUG_ENABLE
+
+	this->clearDebugDraw();
+
+#endif // DEBUG_ENABLE
+
+	// Tile map is responsible for updating its children
+	for (auto& child : this->getChildByTag(kTagObjectLayer)->getChildren())
+	{
+		IGameObject* gameObject = static_cast<IGameObject*>(child);
+		gameObject->update(this);
+
+#if DEBUG_ENABLE
+
+		this->drawDebugRect(gameObject->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+
+#endif // DEBUG_ENABLE
+
+	}
+}
+
+#pragma region Pathfinding
+
+/**
+* Check if the given location is blocked, i.e. blocks movement of
+* the supplied mover.
+*
+* @param mover The mover that is potentially moving through the specified
+* tile.
+* @param coordinate The Vec2
+* @return True if the location is blocked
+*/
+bool ParallaxTileMap::isBlocked(Vec2 coordinate)
+{
+	TMXLayer& layer = static_cast<TMXLayer&>(*this->getChildByTag(kTagCollisionLayer));
+
+	TileData tileData = getTileDataFromLayerAt(layer, coordinate);
+
+	return (tileData.GID != 0);
+}
+
+/**
+* Get the cost of moving through the given tile. This can be used to
+* make certain areas more desirable. A simple and valid implementation
+* of this method would be to return 1 in all cases.
+*
+* @param startLocation The mover that is trying to move across the tile
+* @param targetLocation The x coordinate of the tile we're moving from
+* @return The relative cost of moving across the given tile
+*/
+float ParallaxTileMap::getCost(Vec2 startLocation, Vec2 targetLocation)
+{
+	return 1;
+}
+
+#pragma endregion Pathfinding
+
+#pragma region Getters
+
+/**
+* Gets the map size in tiles
+*
+* @return mapsize
+*/
+Size ParallaxTileMap::getMapSize()
+{
+	return _tileMap->getMapSize();
+}
+
+/**
+* Gets the tile size
+*
+* @return the tilesize
+*/
+Size ParallaxTileMap::getTileSize()
+{
+	return _tileMap->getTileSize();
+}
+
+/**
+* Check if the given location is blocked, i.e. blocks movement of
+* the supplied mover.
+*
+* @return True if the location is blocked
+*/
+IGameObject* ParallaxTileMap::getPlayer()
+{
+	Node* player = this->getChildByTag(kTagObjectLayer)->getChildByTag(kTagPlayer);
+	return static_cast<IGameObject*>(player);
+}
+
+/**
+* Returns the collision TileDataArray surrounding the game objects position
+*
+* @param position The Vec2 of the game objects position
+* @return The TileDataArray surrounding the game objects position
+*/
+TileDataArray ParallaxTileMap::getCollisionDataAt(Vec2 position)
+{
+	return this->getTileDataArrayFromCollisionLayerAt(position);
+};
+
+/**
+* Returns the ladder TileDataArray surrounding the game objects position
+*
+* @param position The Vec2 of the game objects position
+* @return The TileDataArray surrounding the game objects position
+*/
+TileDataArray ParallaxTileMap::getLadderDataAt(Vec2 position)
+{
+	return this->getTileDataArrayFromLadderLayerAt(position);
+};
+
+#pragma endregion Getters
+
+#pragma region Player
+
+/** **/
+void ParallaxTileMap::addPlayer(IGameObject* player)
+{
+	/**  **/
+	this->getChildByTag(kTagObjectLayer)->addChild(player);
+};
+
+/** **/
+IGameObject* ParallaxTileMap::removePlayer()
+{
+	Node* player = this->getChildByTag(kTagObjectLayer)->getChildByTag(kTagPlayer);
+	player->removeFromParentAndCleanup(true);
+
+	return static_cast<IGameObject*>(player);
+};
+
+/** **/
+void ParallaxTileMap::setPositionOnPlayer()
+{
+	Vec2 _position = this->getPlayer()->getCenterPosition();
+	Size _winSize = Director::getInstance()->getWinSize() / this->getParent()->getScale();
+	
+	float x = MAX(_position.x, _winSize.width / 2);
+	float y = MAX(_position.y, _winSize.height / 2);
+	x = MIN(x, (_mapSize.width * _tileSize.width) - _winSize.width / 2);
+	y = MIN(y, (_mapSize.height * _tileSize.height) - _winSize.height / 2);
+
+	Vec2 _actualPosition = Vec2(x, y);
+	Vec2 _centerOfView = Vec2(_winSize.width / 2, _winSize.height / 2);
+	Vec2 _viewPoint = _centerOfView - _actualPosition;
+
+	this->setPosition(_viewPoint);
+};
+
+/** **/
+ValueMap ParallaxTileMap::getInitialProperties()
+{
+	Node* node = this->getChildByTag(kTagObjectLayer)->getChildByName("Left");
+
+	return static_cast<IGameObject*>(node)->getProperties();
+};
+
+#pragma endregion Player
+
+#pragma region Flags
+
+/**
+* Returns if the tilecoordinates are within the map bounds
+*
+* @param tileCoordinates The Vec2 that is the tile coordinates being queried
+* @return true if tilecoordinates are within the map bounds
+*/
+bool ParallaxTileMap::isValid(Vec2 tileCoordinates)
+{
+	return (tileCoordinates.y < _mapSize.height && tileCoordinates.y >= 0 &&
+		tileCoordinates.x < _mapSize.width && tileCoordinates.x >= 0);
 }
 
 
+/**
+* Returns if the tilecoordinates are within the map bounds
+*
+* @param tileCoordinates The Vec2 that is the tile coordinates being queried
+* @return true if tilecoordinates have found a ladder
+*/
+bool ParallaxTileMap::isTileLadder(Vec2 tileCoordinates)
+{
+	/** **/
+	TMXLayer& layer = static_cast<TMXLayer&>(*this->getChildByTag(kTagLadderLayer));
+	/** **/
+	TileData tileData = this->getTileDataFromLayerAt(layer, tileCoordinates);
+	/** **/
+	return (tileData.GID != 0);
+}
+
+#pragma endregion Flags
+
 #if DEBUG_ENABLE
-/// <summary>
-/// Summary for clearDebugDraw()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Reset the _debug layer
+*
+* Clear of the debug rectangles that have been added to the layer
+*/
 void ParallaxTileMap::clearDebugDraw()
 {
 	_debugLayer->clear();
 }
 
 
-/// <summary>
-/// Summary for drawDebugRect(Rect rect, Color4F color)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Adds a filled rectangle to the debug layer with a set color
+*
+* @param rect The Rect wanting to be drawn
+* @param color The Color4F of the rectangle to be drawn
+*/
 void ParallaxTileMap::drawDebugRect(Rect rect, Color4F color)
 {
-	_debugLayer->drawSolidRect( rect.origin, Vec2(rect.getMaxX(), rect.getMaxY()), color );
+	_debugLayer->drawSolidRect(rect.origin, Vec2(rect.getMaxX(), rect.getMaxY()), color);
 }
 
 
-/// <summary>
-/// Summary for drawDebugRectAt(Vec2 position, Color4F color)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Adds a filled rectangle to the debug layer at from a given position with a set color
+*
+* @param position The Vec2 position where the rect is to be drawn
+* @param color The Color4F of the rectangle to be drawn
+*/
 void ParallaxTileMap::drawDebugRectAt(Vec2 position, Color4F color)
 {
-    Vec2 coordinates = this->getTileCoordinatesFor(position);
-    Rect rect = this->getTileRectFrom(coordinates);
-    this->drawDebugRect(rect, color);
+	Vec2 coordinates = this->getTileCoordinatesFor(position);
+	Rect rect = this->getTileRectFrom(coordinates);
+	this->drawDebugRect(rect, color);
 }
 
 
-///
-///
-///
+/**
+* Adds a filled rectangle to the debug layer at from a given coordinate with a set color
+*
+* @param position The Vec2 tile coordinates where the rect is to be drawn
+* @param color The Color4F of the rectangle to be drawn
+*/
 void ParallaxTileMap::drawDebugRectAtTile(Vec2 coordinates, Color4F color)
 {
 	Rect rect = this->getTileRectFrom(coordinates);
@@ -194,14 +351,11 @@ void ParallaxTileMap::drawDebugRectAtTile(Vec2 coordinates, Color4F color)
 
 #endif // DEBUG_ENABLE
 
+#pragma region Protected Functions
 
-/// <summary>
-/// Summary for addObjects()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Adds all objects from the object layer in the tmx file
+*/
 void ParallaxTileMap::addObjects()
 {
 	// loop over the object groups in this tmx file
@@ -214,23 +368,21 @@ void ParallaxTileMap::addObjects()
 
 			if (type.isNull() == false)
 			{
-				if(addObject(type.asString(), properties))
-                {
-                    _objectCount++;
-                }
+				if (addObject(type.asString(), properties))
+				{
+					_objectCount++;
+				}
 			}
 		}
 	}
 }
 
-
-/// <summary>
-/// Summary for addObject(std::string className, ValueMap& properties)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+/**
+* Adds a new object from the tmx file using the GameObjectFactory to the object layer of the ParallaxTileMap
+*
+* @param className The std::string that tells us the name of the object being added
+* @param properties The ValueMap of the object being added
+*/
 bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 {
 	// create the object
@@ -240,277 +392,191 @@ bool ParallaxTileMap::addObject(std::string className, ValueMap& properties)
 	if (o != nullptr)
 	{
 		o->setName(className);
-		_objectLayer->addChild(o);
-        
+		this->getChildByTag(kTagObjectLayer)->addChild(o);
+
 		return true;
 	}
 
 	return false;
 }
 
-
-/**
-* Update all the game objects in the parallax tile map.
-*
-* @param delta The float fixed time step
-*/
-void ParallaxTileMap::update(float& delta)
-{
-
-#if DEBUG_ENABLE
-	// debug
-	this->clearDebugDraw();
-#endif // DEBUG_ENABLE
-
-	_parallaxBackgroundLayer->update(delta);
-
-    // Tile map is responsible for updating its children
-	for (auto& child : _objectLayer->getChildren())
-    {
-		IGameObject* gameObject = static_cast<IGameObject*>(child);
-        gameObject->update(this);
-
-#if DEBUG_ENABLE
-		this->drawDebugRect(gameObject->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-#endif // DEBUG_ENABLE
-    
-	}
-}
-
-
-///
-void ParallaxTileMap::addShadows(TMXLayer* layer)
-{
-	Size s = layer->getLayerSize();
-	for (int col = 0; col < s.width; ++col)
-	{
-		for (int row = 0; row < s.height; ++row)
-		{
-			Sprite* tile = layer->getTileAt(Vec2(col, row));
-
-			if (tile)
-			{
-				Node* shadow = getShadowForNode(tile);
-				shadow->setPosition(tile->getPosition());
-				_shadowLayer->addChild(shadow);
-			}			
-		}
-	}
-};
-
-
-/// <summary>
-/// Summary for getShadowForNode(Node* node)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-Node* ParallaxTileMap::getShadowForNode(Node* node)
-{	
-	auto object = static_cast<Sprite*>(node);
-
-	auto shadow = Sprite::create();
-	shadow->setSpriteFrame(object->getSpriteFrame());
-	shadow->setAnchorPoint(Vec2(-0.05f, 0.02f));
-	shadow->setColor(Color3B(0, 0, 0));
-	shadow->setOpacity(50);
-
-	return shadow;
-}
-
-
-/// <summary>
-/// Summary for getPlayer()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-IGameObject* ParallaxTileMap::getPlayer()
-{
-	return static_cast<Player*>(_objectLayer->getChildByName("Player"));
-}
-
-
-/// <summary>
-/// Summary for getCollisionLayer()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-TMXLayer* ParallaxTileMap::getCollisionLayer()
-{
-	return _collisionLayer;
-}
-
-
-/// <summary>
-/// Summary for getLadderLayer()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-TMXLayer* ParallaxTileMap::getLadderLayer()
-{
-	return _ladderLayer;
-}
-
-
-/// <summary>
-/// Summary for getObjectLayer()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-Node* ParallaxTileMap::getObjectLayer()
-{
-	return _objectLayer;
-}
-
-
-/// <summary>
-/// Summary for getMapSize()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-Size ParallaxTileMap::getMapSize()
-{
-	return _tileMap->getMapSize();
-}
-
-
-/// <summary>
-/// Summary for getTileSize()
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-Size ParallaxTileMap::getTileSize()
-{
-	return _tileMap->getTileSize();
-}
-
-
-/**
-* Notification that the path finder visited a given tile. This is
-* used for debugging new heuristics.
-*
-* @param x The x coordinate of the tile that was visited
-* @param y The y coordinate of the tile that was visited
-*/
-void ParallaxTileMap::pathFinderVisited(Vec2 coordinate)
-{
-}
-
-
 /**
 * Check if the given location is blocked, i.e. blocks movement of
 * the supplied mover.
 *
-* @param mover The mover that is potentially moving through the specified
-* tile.
-* @param x The x coordinate of the tile to check
-* @param y The y coordinate of the tile to check
+* @param delta The float fixed time step
 * @return True if the location is blocked
 */
-bool ParallaxTileMap::isBlocked(Vec2 coordinate)
+void ParallaxTileMap::addShadows(TMXLayer& layer)
 {
-	TileData tileData = getTileDataFromLayerAt(*_collisionLayer, coordinate);
 
-	return (tileData.GID != 0);		
-}
+	Size s = layer.getLayerSize();
 
+	for (int col = 0; col < s.width; ++col)
+	{
+		for (int row = 0; row < s.height; ++row)
+		{
+			int gid = layer.getTileGIDAt(Vec2(col, row));
+
+			if (gid)
+			{
+				Sprite& tile = *layer.getTileAt(Vec2(col, row));
+
+				Sprite* shadow = getShadowForNode(tile);
+				shadow->setPosition(tile.getPosition());
+
+				this->getChildByTag(kTagShadowLayer)->addChild(shadow);
+			}
+		}
+	}
+};
 
 /**
 * Get the cost of moving through the given tile. This can be used to
-* make certain areas more desirable. A simple and valid implementation
-* of this method would be to return 1 in all cases.
 *
-* @param mover The mover that is trying to move across the tile
-* @param sx The x coordinate of the tile we're moving from
-* @param sy The y coordinate of the tile we're moving from
-* @param tx The x coordinate of the tile we're moving to
-* @param ty The y coordinate of the tile we're moving to
+* @param GID The int that is trying to move across the tile
 * @return The relative cost of moving across the given tile
 */
-float ParallaxTileMap::getCost(Vec2 startLocation, Vec2 targetLocation)
-{
-	return 1;
-}
-
-
-/// <summary>
-/// Summary for getPropertiesForGID(int GID)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
 Value ParallaxTileMap::getPropertiesForGID(int GID)
 {
 	return _tileMap->getPropertiesForGID(GID);
 }
 
-
-/// <summary>
-/// Summary for getTileDataArrayFromCollisionLayerAt(Vec2 position)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-TileDataArray ParallaxTileMap::getTileDataArrayFromCollisionLayerAt(Vec2 position)
+/**
+* Returns a Rect from a given tileCoordinates
+*
+* @param tileCoordinates The Vec2 that is the tile coordinates being queried
+* @return Rect from the given tileCoordinates
+*/
+Vec2 ParallaxTileMap::getMapTransition(Vec2 direction)
 {
-	return this->getTileDataArrayFromLayerAt(*_collisionLayer, position);
+	//
+	Vec2 transition = Vec2::ZERO;
+	//
+	if (direction.y < 0)
+	{
+		//Rect r = _objectLayer->getChildByName("Exit")->getBoundingBox();
+		//transition = Vec2(r.getMidX(), r.getMinY());
+	}
+	else if (direction.y > 0)
+	{
+		//Rect r = _objectLayer->getChildByName("Enter")->getBoundingBox();
+		//transition = Vec2(r.getMidX(), r.getMaxY());
+	}
+	//
+	return transition;
 }
 
+/**
+* Returns if the tilecoordinates from a opengl position
+*
+* @param tileCoordinates The Vec2 that is the tile coordinates being queried
+* @return true if tilecoordinates have found a ladder
+*/
+Vec2 ParallaxTileMap::getTileCoordinatesFor(Vec2 position)
+{
+	float x = floor(position.x / _tileSize.width);
 
-/// <summary>
-/// Summary for getTileDataArrayFromLadderLayerAt(Vec2 position)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+	float levelHeightInPixels = _mapSize.height * _tileSize.height;
+
+	float y = floor((levelHeightInPixels - position.y) / _tileSize.height);
+
+	return Vec2(x, y);
+}
+
+/**
+* Returns a Rect from a given tileCoordinates
+*
+* @param tileCoordinates The Vec2 that is the tile coordinates being queried
+* @return Rect from the given tileCoordinates
+*/
+Rect ParallaxTileMap::getTileRectFrom(Vec2 tileCoords)
+{
+	float levelHeightInPixels = _mapSize.height * _tileSize.height;
+
+	Vec2 origin = Vec2(tileCoords.x * _tileSize.width, levelHeightInPixels - ((tileCoords.y + 1) * _tileSize.height));
+
+	return Rect(origin.x, origin.y, _tileSize.width, _tileSize.height);
+}
+
+/**
+* Returns the TileData from the TMXLayer at the given tilecoordinates
+*
+* @param layer The TMXLayer that is being queried
+* @param tileCoordinates The Vec2 that is the tile coordinates
+* @return The TileData from the TMXLayer at the given tilecoordinates
+*/
+TileData ParallaxTileMap::getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates)
+{
+	int tileGID = 0;
+	TileData tileData;
+
+	// Make sure the coordinates are valid
+	if (isValid(tileCoordinates))
+		tileGID = layer.getTileGIDAt(tileCoordinates);
+
+	// create tiledata object
+	if (tileGID)
+	{
+		tileData.GID = tileGID;
+		tileData.tileRect = getTileRectFrom(tileCoordinates);
+		tileData.tileCoordinates = tileCoordinates;
+	}
+
+	return tileData;
+}
+
+/**
+* Returns the ladder TileDataArray surrounding the game objects position
+*
+* @param position The Vec2 of the game objects position
+* @return The TileDataArray surrounding the game objects position
+*/
 TileDataArray ParallaxTileMap::getTileDataArrayFromLadderLayerAt(Vec2 position)
 {
-	// local variables
 	TileDataArray tileDataArray;
 
-	// get gameObjects tileCoordinates from position
+	/** get gameObjects tileCoordinates from position **/
 	Vec2 tileCoordinates = getTileCoordinatesFor(position);
-	
-	tileDataArray[ETileGrid::BOTTOM] = getTileDataFromLayerAt(*_ladderLayer, Vec2(tileCoordinates.x, tileCoordinates.y + 1));
-	tileDataArray[ETileGrid::CENTER] = getTileDataFromLayerAt(*_ladderLayer, tileCoordinates);
+
+	/**  **/
+	TMXLayer& layer = static_cast<TMXLayer&>(*this->getChildByTag(kTagLadderLayer));
+
+	tileDataArray[ETileGrid::BOTTOM] = getTileDataFromLayerAt(layer, Vec2(tileCoordinates.x, tileCoordinates.y + 1));
+	tileDataArray[ETileGrid::CENTER] = getTileDataFromLayerAt(layer, tileCoordinates);
 	//tileDataArray[ETileGrid::LEFT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x - 1, tileCoordinates.y));
 	//tileDataArray[ETileGrid::RIGHT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x + 1, tileCoordinates.y));
 	//tileDataArray[ETileGrid::BOTTOM_LEFT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x - 1, tileCoordinates.y + 1));
 	//tileDataArray[ETileGrid::BOTTOM_RIGHT] = getTileDataFromLayerAt(*_collisionLayer, Vec2(tileCoordinates.x + 1, tileCoordinates.y + 1));
-				
+
 	return tileDataArray;
 }
 
+/**
+* Returns the collision TileDataArray surrounding the game objects position
+*
+* @param position The Vec2 of the game objects position
+* @return The TileDataArray surrounding the game objects position
+*/
+TileDataArray ParallaxTileMap::getTileDataArrayFromCollisionLayerAt(Vec2 position)
+{
+	TMXLayer& layer = static_cast<TMXLayer&>(*this->getChildByTag(kTagCollisionLayer));
 
-/// <summary>
-/// Summary for getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
+	return this->getTileDataArrayFromLayerAt(layer, position);
+}
+
+/**
+* Returns the ladder TileDataArray surrounding the game objects position
+*
+* @param position The Vec2 of the game objects position
+* @return The TileDataArray surrounding the game objects position
+*/
 TileDataArray ParallaxTileMap::getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2& position)
 {
 	// local variables
 	int count = 0;
 	TileDataArray tileDataArray;
-		
+
 	// get gameObjects tileCoordinates from position
 	Vec2 tileCoordinates = this->getTileCoordinatesFor(position);
 
@@ -526,7 +592,7 @@ TileDataArray ParallaxTileMap::getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2
 
 		//
 		Vec2 gridCoordinates = Vec2(tileCoordinates.x + (col - 1), tileCoordinates.y + (row - 1));
-		
+
 		//
 		tileDataArray[count++] = this->getTileDataFromLayerAt(layer, gridCoordinates);
 	}
@@ -541,121 +607,103 @@ TileDataArray ParallaxTileMap::getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2
 	return tileDataArray;
 }
 
-
-/// <summary>
-/// Summary for getTileDataFromLayerAt(TMXLayer layer, Vec2 tileCoordinates)
-///	
-/// PRE-CONDITION:	
-///
-/// POST-CONDITION: 
-/// </summary>
-TileData ParallaxTileMap::getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates)
+/**
+* Creates a shadow for a given sprite
+*
+* @param object The Sprite to create the shadow
+* @return a new sprite shadow
+*/
+Sprite* ParallaxTileMap::getShadowForNode(Sprite& sprite)
 {
-	int tileGID = 0;
-	TileData tileData;
-		
-	// Make sure the coordinates are valid
-	if ( isValid(tileCoordinates) )
-		tileGID = layer.getTileGIDAt(tileCoordinates);
+	Sprite* shadow = Sprite::create();
+	shadow->setSpriteFrame(sprite.getSpriteFrame());
+	shadow->setAnchorPoint(Vec2(-0.05f, 0.02f));
+	shadow->setColor(Color3B(0, 0, 0));
+	shadow->setOpacity(50);
 
-	// create tiledata object
-	if (tileGID)
+	return shadow;
+}
+
+/**
+* Turn on anitaliasling on a layer of the TileMap
+*
+* @param layer The TMXLayer reference of the layer your want to apply antialiasing to
+*/
+void ParallaxTileMap::setAliasTexParameters(TMXLayer& layer)
+{
+	layer.getTexture()->setAntiAliasTexParameters();
+}
+
+#pragma endregion Protected Functions
+
+#pragma region Cave
+
+/**
+* Create a new ParallaxTileMap, This will create and addObjects from the tmx file
+*
+* @param mapName The std::string that contains the tmx filename
+* @return The ParallaxTileMap pointer that has been created with objects
+*/
+IParallaxTileMap* Cave::create(std::string mapName)
+{
+	// Create an instance of InfiniteParallaxNode
+	IParallaxTileMap* node = new Cave(mapName);
+
+	if (node)
 	{
-		tileData.GID = tileGID;
-		tileData.tileRect = getTileRectFrom(tileCoordinates);
-		tileData.tileCoordinates = tileCoordinates;
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
 	}
 
-	return tileData;
+	return node;
 }
 
-
-/// <summary>
-/// Summary for isValidTileCoordinates
-///	
-/// PRE-CONDITION:	Vec of tilemap tile coordinates
-///					Function accesses local mapSize variable
-///
-/// POST-CONDITION: Returns true if tile coordinates are within tilemap coordinate bounds.
-/// </summary>
-bool ParallaxTileMap::isValid(Vec2 tileCoordinates)
-{	
-	return ( tileCoordinates.y < _mapSize.height && tileCoordinates.y >= 0 &&
-             tileCoordinates.x < _mapSize.width && tileCoordinates.x >= 0 );
-}
-
-
-/// <summary>
-/// Summary for isTileLadder
-///	
-/// PRE-CONDITION:	Argument gameobject position in pixels 
-///
-/// POST-CONDITION: Returns true if position is on a ladder
-/// </summary>
-bool ParallaxTileMap::isTileLadder(Vec2 position)
-{			
-	//
-	return true;
-}
-
-
-/// <summary>
-/// Summary for getTileCoordinatesForPosition
-///	
-/// PRE-CONDITION:	A position vec of a gameobject in pixels must be passed in as an argument.
-///					Functions accesses the tilemap mapSize & tileSize local variables to return coordinates.
-///
-/// POST-CONDITION: A tile coordinate vec of the gameobject is returned.
-/// </summary>
-Vec2 ParallaxTileMap::getTileCoordinatesFor(Vec2 position)
+Cave::Cave(std::string mapName) : super(mapName)
 {
-	float x = floor(position.x / _tileSize.width);
 
-	float levelHeightInPixels = _mapSize.height * _tileSize.height;
+};
 
-	float y = floor((levelHeightInPixels - position.y) / _tileSize.height);
+#pragma endregion Cave
 
-	return Vec2(x, y);
-}
+#pragma region Planet
 
-
-/// <summary>
-/// Summary for getTileRectFrom(tileCoordinates)
-///	
-/// PRE-CONDITION:	A vec of TMX tilemap coordinates must be passed in as an argument.
-///				-_	Functions accesses the tilemap mapSize & tileSize local variables to return coordinates.
-///
-/// POST-CONDITION: A rect is returned from the passed in tile coordinates.
-/// </summary>
-Rect ParallaxTileMap::getTileRectFrom(Vec2 tileCoords)
+/**
+* Create a new ParallaxTileMap, This will create and addObjects from the tmx file
+*
+* @param mapName The std::string that contains the tmx filename
+* @return The ParallaxTileMap pointer that has been created with objects
+*/
+IParallaxTileMap* Planet::create(std::string mapName)
 {
-	float levelHeightInPixels = _mapSize.height * _tileSize.height;
+	// Create an instance of InfiniteParallaxNode
+	IParallaxTileMap* node = new Planet(mapName);
 
-	Vec2 origin = Vec2(tileCoords.x * _tileSize.width, levelHeightInPixels - ((tileCoords.y + 1) * _tileSize.height));
-
-	return Rect(origin.x, origin.y, _tileSize.width, _tileSize.height);
-}
-
-IPath* ParallaxTileMap::getPath(Vec2 startLocation, Vec2 targetLocation)
-{
-	return _pathFinder->findPath(startLocation, targetLocation);
-}
-
-Vec2 ParallaxTileMap::getMapTransition(Vec2 direction)
-{
-	//
-    Vec2 transition = Vec2::ZERO;
-    //
-	if (direction.y < 0)
+	if (node)
 	{
-		Rect r = _objectLayer->getChildByName("Exit")->getBoundingBox();
-		transition = Vec2(r.getMidX(), r.getMinY());
-	}        
-	else if (direction.y > 0)
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
 	{
-		Rect r = _objectLayer->getChildByName("Enter")->getBoundingBox();
-		transition = Vec2(r.getMidX(), r.getMaxY());
-	}        
-    //
-    return transition;    
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
 }
+
+Planet::Planet(std::string mapName) : super(mapName)
+{
+	_parallaxBackgroundLayer = ParallaxBackground::create(_mapSize.width * _tileSize.width);
+
+	this->addChild(_parallaxBackgroundLayer, -3, Vec2(1.0f, 1.0f), Vec2::ZERO);
+};
+
+#pragma endregion Planet
