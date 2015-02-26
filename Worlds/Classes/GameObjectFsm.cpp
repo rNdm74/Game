@@ -176,6 +176,8 @@ void ClimbingUp::destroyInstance()
 
 void ClimbingUp::Up(IGameObjectFsm& fsm)
 {
+    AppGlobal::getInstance()->zoomOut();
+    
 	/** Tell the game object to climb up **/
 	fsm.gameObject->ClimbUp();
 };
@@ -208,6 +210,8 @@ void ClimbingDown::destroyInstance()
 
 void ClimbingDown::Down(IGameObjectFsm& fsm)
 {
+    AppGlobal::getInstance()->zoomOut();
+    
 	/** Tell the game object to climb down **/
 	fsm.gameObject->ClimbDown();
 };

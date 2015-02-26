@@ -47,7 +47,18 @@ void InputComponent::Stop(IGameObject& gameObject)
 		velocity.x = 0.0f;
 	}
 		
-	velocity.y = 0.0f;
+    if (velocity.y > 1.0f)
+    {
+        velocity.y -= 10.0f;
+    }
+    else if (velocity.y < -1.0f)
+    {
+        velocity.y += 10.0f;
+    }
+    else
+    {
+        velocity.y = 0.0f;
+    }
 
 	gameObject.setVelocity(velocity);
 };

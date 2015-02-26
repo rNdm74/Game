@@ -279,9 +279,11 @@ void AppGlobal::addCursor(Layer& layer)
 }
 
 void AppGlobal::zoomIn()
-{	
+{
+    Vec2 v = player->getVelocity();
+    float zoom = v.x + v.y;
 	/** Increment to scale factor **/
-	_scaleFactor += std::abs(player->getVelocity().x / kZoomInFactor);
+	_scaleFactor += std::abs(zoom / kZoomInFactor);
 
 	/** Clamp scale factor **/
 	if (_scaleFactor > kZoomMax) 
@@ -289,9 +291,11 @@ void AppGlobal::zoomIn()
 };
 
 void AppGlobal::zoomOut()
-{			   
+{
+    Vec2 v = player->getVelocity();
+    float zoom = v.x + v.y;
 	/** Increment to scale factor **/
-	_scaleFactor -= std::abs(player->getVelocity().x / kZoomOutFactor);
+	_scaleFactor -= std::abs(zoom / kZoomOutFactor);
 
 	/** Clamp scale factor **/
 	if (_scaleFactor < kZoomMin)
