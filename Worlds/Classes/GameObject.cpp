@@ -341,47 +341,50 @@ void Player::update(Node* node)
 	this->setPosition(this->getDesiredPosition());
 };
 
-void Player::ExecuteAction()
+void Player::ClimbUp()
 {
-	_input->ExecuteAction(*this);
+	// Run climbing animation
+	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_climb1.png"));
+	_input->ClimbUp(*this);
 };
 
-//void Player::ClimbUp()
-//{
-//	_input->ClimbUp(*this);
-//};
-//
-//void Player::ClimbDown()
-//{
-//	_input->ClimbDown(*this);
-//};
-//
-//void Player::WalkLeft()
-//{
-//	_input->WalkLeft(*this);
-//};
-//
-//void Player::WalkRight()
-//{
-//	_input->WalkRight(*this);
-//};
-//
-//void Player::Stop()
-//{
-//	_input->Stop(*this);
-//};
+void Player::ClimbDown()
+{
+	// Run climbing animation
+	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_climb2.png"));
+	_input->ClimbDown(*this);
+};
+
+void Player::WalkLeft()
+{
+	// Run walking animation
+	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_walk1.png"));
+	_input->WalkLeft(*this);
+};
+
+void Player::WalkRight()
+{
+	// Run walking animation
+	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_walk2.png"));
+	_input->WalkRight(*this);
+};
+
+void Player::Stop()
+{
+	// Run stop animation
+	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige.png"));
+	_input->Stop(*this);
+};
 
 Size Player::getSize()
 {
 	return _sprite->getContentSize();
 };
 
-
 Sprite* Player::getSprite()
 {
 	return _sprite;
 };
-
 
 Rect Player::getCollisionBox()
 {
@@ -393,7 +396,6 @@ Rect Player::getCollisionBox()
 			
 	return collisionBox;
 };
-
 
 bool Player::IsLoaded()
 {

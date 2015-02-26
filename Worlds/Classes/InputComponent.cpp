@@ -6,36 +6,51 @@
 #include "Path.h"
 #include "Utils.h"
 
-void InputComponent::ExecuteAction(IGameObject& gameObject)
+
+void InputComponent::ClimbUp(IGameObject& gameObject)
 {
 	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
 };
 
-//void InputComponent::ClimbUp(IGameObject& gameObject)
-//{
-//	this->updateDesiredPosition(gameObject, BEARING[EBearing::NORTH]);
-//};
-//
-//void InputComponent::ClimbDown(IGameObject& gameObject)
-//{
-//	this->updateDesiredPosition(gameObject, BEARING[EBearing::SOUTH]);
-//};
-//
-//void InputComponent::WalkLeft(IGameObject& gameObject)
-//{
-//	this->updateDesiredPosition(gameObject, BEARING[EBearing::WEST]);
-//};
-//
-//void InputComponent::WalkRight(IGameObject& gameObject)
-//{
-//	this->updateDesiredPosition(gameObject, BEARING[EBearing::EAST]);
-//};
-//
-//void InputComponent::Stop(IGameObject& gameObject)
-//{
-//	//
-//	this->updateDesiredPosition(gameObject, BEARING[EBearing::STOP]);
-//};
+void InputComponent::ClimbDown(IGameObject& gameObject)
+{
+	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+};
+
+void InputComponent::WalkLeft(IGameObject& gameObject)
+{
+	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+};
+
+void InputComponent::WalkRight(IGameObject& gameObject)
+{
+	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+};
+
+void InputComponent::Stop(IGameObject& gameObject)
+{
+	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+
+	Vec2 velocity = gameObject.getVelocity();
+		
+
+	if (velocity.x > 1.0f)
+	{
+		velocity.x -= 10.0f;
+	}
+	else if (velocity.x < -1.0f)
+	{
+		velocity.x += 10.0f;
+	}
+	else
+	{
+		velocity.x = 0.0f;
+	}
+		
+	velocity.y = 0.0f;
+
+	gameObject.setVelocity(velocity);
+};
 
 void InputComponent::updateDesiredPosition(IGameObject& gameObject, Vec2 direction)
 {

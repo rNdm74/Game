@@ -279,24 +279,21 @@ void AppGlobal::addCursor(Layer& layer)
 }
 
 void AppGlobal::zoomIn()
-{
+{	
 	/** Increment to scale factor **/
-	_scaleFactor += kZoomFactor;
+	_scaleFactor += std::abs(player->getVelocity().x / kZoomInFactor);
 
 	/** Clamp scale factor **/
-	if (_scaleFactor > 1.5f) _scaleFactor = 1.5f;
+	if (_scaleFactor > kZoomMax) 
+		_scaleFactor = kZoomMax;
 };
 
 void AppGlobal::zoomOut()
-{
-    _zoomFactor += 0.00050f;
+{			   
 	/** Increment to scale factor **/
-	_scaleFactor -= _zoomFactor;
+	_scaleFactor -= std::abs(player->getVelocity().x / kZoomOutFactor);
 
 	/** Clamp scale factor **/
-	if (_scaleFactor < 1.2f)
-    {
-		_scaleFactor = 1.2f;
-		_zoomFactor = 0.0f;
-    }
+	if (_scaleFactor < kZoomMin)
+		_scaleFactor = kZoomMin;
 };

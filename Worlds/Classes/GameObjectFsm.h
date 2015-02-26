@@ -271,7 +271,7 @@ public:
 	virtual void setCurrentState(IGameObjectState* state) = 0;
 		
 	bool timeoutBegin;
-	float timeout;
+	long timeout;
 };
 
 class GameObjectFsm : public IGameObjectFsm

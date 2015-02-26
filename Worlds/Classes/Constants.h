@@ -80,7 +80,12 @@ typedef std::array<bool, 4> CanMove;
 
 //#define kGameObjectVelocity	( Vec2( kPixelsPerMeter * kMaxVelocityX, kPixelsPerMeter * kMaxVelocityX ) )
 
-const float kZoomFactor = 0.025f;
+const float kZoomMin = 1.2f;
+const float kZoomMax = 1.5f;
+const float kZoomInFactor = 50000.0f;
+const float kZoomOutFactor = 100000.0f;
+
+
 const float kUpdateInterval = 1.0f / 60.0f;
 const double kSecondsPerUpdate = 0.1;
 

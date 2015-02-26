@@ -177,7 +177,7 @@ void ClimbingUp::destroyInstance()
 void ClimbingUp::Up(IGameObjectFsm& fsm)
 {
 	/** Tell the game object to climb up **/
-	fsm.gameObject->ExecuteAction();
+	fsm.gameObject->ClimbUp();
 };
 
 void ClimbingUp::StopClimbing(IGameObjectFsm& fsm)
@@ -209,7 +209,7 @@ void ClimbingDown::destroyInstance()
 void ClimbingDown::Down(IGameObjectFsm& fsm)
 {
 	/** Tell the game object to climb down **/
-	fsm.gameObject->ExecuteAction();
+	fsm.gameObject->ClimbDown();
 };
 
 void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)
@@ -243,7 +243,7 @@ void WalkingLeft::Left(IGameObjectFsm& fsm)
 	AppGlobal::getInstance()->zoomOut();
 
 	/** Tell the game object to walk left **/
-	fsm.gameObject->ExecuteAction();
+	fsm.gameObject->WalkLeft();
 };
 
 
@@ -278,7 +278,7 @@ void WalkingRight::Right(IGameObjectFsm& fsm)
 	AppGlobal::getInstance()->zoomOut();
 
 	/** Tell the game object to walk right **/
-	fsm.gameObject->ExecuteAction();
+	fsm.gameObject->WalkRight();
 };
 
 void WalkingRight::StopWalking(IGameObjectFsm& fsm)
@@ -313,6 +313,9 @@ void IsIdle::Stop(IGameObjectFsm& fsm)
 
 	/** Zoom in effect **/
 	AppGlobal::getInstance()->zoomIn();
+
+	/** Tell game object to continue stopping **/
+	fsm.gameObject->Stop();
 };
 
 #pragma endregion IsIdle
@@ -340,33 +343,21 @@ void Stopped::Stop(IGameObjectFsm& fsm)
 {
 	/** Zoom in effect **/
 	AppGlobal::getInstance()->zoomIn();
-
-	Vec2 direction = GameObjectStates[AppGlobal::getInstance()->gameObjectState];
-
-	/** Tell the game object to stop **/
-	Vec2 velocity = fsm.gameObject->getVelocity();
-	
-	velocity.x += 15.0f * direction.x;
-	velocity.y = 0.0f;
-
-	/*if (velocity.x < 0.0f)
-		velocity.x = 0.0f;*/
-
-	fsm.gameObject->setVelocity(velocity);
-	
-	fsm.gameObject->ExecuteAction();
+		
+	/** Tell the game object to stop **/	
+	fsm.gameObject->Stop();
 			
 	/**  Wait so many seconds then change state to idle **/
-	if (fsm.timeout > 10.0f /** Reached timeout period  **/)
+	if (fsm.timeout > 100l /** Reached timeout period  **/)
 	{
 		/** Reset timeout period **/
-		fsm.timeout = 0.0f;
+		fsm.timeout = 0l;
 		/** Change to idle state **/
 		this->becomeIdle(fsm);
 	}
 
 	/** Increment the timeout period  **/
-	fsm.timeout += 0.1f;
+	fsm.timeout += 1l;
 	//log("%f", fsm.timeout);
 };
 
