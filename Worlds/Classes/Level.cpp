@@ -61,6 +61,8 @@ void Level::loadPlayer()
 	ValueMap properties = activeMap.top()->getInitialProperties();	
 
 	activeMap.top()->addPlayer(GameObjectFactory::create("Player", properties));
+
+	AppGlobal::getInstance()->player = activeMap.top()->getPlayer();
 }
 
 void Level::update(float& delta)

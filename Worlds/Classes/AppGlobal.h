@@ -6,8 +6,6 @@
 
 using namespace cocos2d;
 
-
-
 class AppGlobal
 {
 public:
@@ -25,8 +23,7 @@ public:
 	void initKeyboardListener();
 	void initTouchListener();
 	void initPathFinderListener();
-		    
-    
+		        
 	void addCursor(Layer& layer);
 
 	void zoomIn();
@@ -69,7 +66,6 @@ private:
 //#define SCALENODE_XY(n) n->setScaleX(GETSCALEX); n->setScaleY(GETSCALEY)
 //
 //#define SCALENODE_Y(n) n->setScale(GETSCALEY)
-
 
 #endif // _APP_GLOBAL_H_
 

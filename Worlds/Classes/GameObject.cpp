@@ -22,10 +22,10 @@
 * @param properties The ValueMap that contains information about the gameObject
 */
 GameObject::GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics)
-{
+{	
 	_collision = collision;
 	_graphics = graphics;
-
+		
 	_path = nullptr;
 
 	for (int i = 0; i < 4; ++i)
@@ -47,6 +47,8 @@ GameObject::GameObject(ValueMap& properties, ICollisionComponent* collision, IGr
 	this->setContentSize(Size(width, height));
 	this->setAnchorPoint(Vec2::ZERO);
 	this->setPosition(Vec2(x, y));
+
+	this->CurrentState = EGameObjectState::Stop;
 };
 
 
@@ -330,38 +332,44 @@ void Player::update(Node* node)
 		&GameObjectFsm::LoadPreviousMap
 	};
 
-	(_fsm->*ptrs[AppGlobal::getInstance()->gameObjectState])();
+	EGameObjectState state = AppGlobal::getInstance()->gameObjectState;
+
+	(_fsm->*ptrs[state])();
 
 	_collision->update(*node, *this);
 
 	this->setPosition(this->getDesiredPosition());
 };
 
-
-void Player::ClimbUp()
+void Player::ExecuteAction()
 {
-	_input->ClimbUp(*this);
+	_input->ExecuteAction(*this);
 };
 
-void Player::ClimbDown()
-{
-	_input->ClimbDown(*this);
-};
-
-void Player::WalkLeft()
-{
-	_input->WalkLeft(*this);
-};
-
-void Player::WalkRight()
-{
-	_input->WalkRight(*this);
-};
-
-void Player::Stop()
-{
-	_input->Stop(*this);
-};
+//void Player::ClimbUp()
+//{
+//	_input->ClimbUp(*this);
+//};
+//
+//void Player::ClimbDown()
+//{
+//	_input->ClimbDown(*this);
+//};
+//
+//void Player::WalkLeft()
+//{
+//	_input->WalkLeft(*this);
+//};
+//
+//void Player::WalkRight()
+//{
+//	_input->WalkRight(*this);
+//};
+//
+//void Player::Stop()
+//{
+//	_input->Stop(*this);
+//};
 
 Size Player::getSize()
 {

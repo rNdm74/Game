@@ -13,14 +13,14 @@ AppGlobal* AppGlobal::getInstance()
 
 AppGlobal::AppGlobal() 
 {
+	gameObjectState = EGameObjectState::Stop;
+
 	player = nullptr;
 
     _zoomFactor = 0.0f;
 
     _scaleFactor = 1.5f;
-    
-	gameObjectState = EGameObjectState::Stop;
-
+    	
 	for (bool& key : _keyMatrix) key = false;
 }
 
@@ -248,19 +248,19 @@ void AppGlobal::setGameObjectState(Vec2 direction)
 {
     if (direction.y > 0)
     {
-        gameObjectState = EGameObjectState::CheckCanClimbUp;
+		gameObjectState = EGameObjectState::CheckCanClimbUp;
     }
     else if (direction.y < 0)
     {
-        gameObjectState = EGameObjectState::CheckCanClimbDown;
+		gameObjectState = EGameObjectState::CheckCanClimbDown;
     }
     else if (direction.x < 0)
     {
-        gameObjectState = EGameObjectState::CheckCanWalkLeft;
+		gameObjectState = EGameObjectState::CheckCanWalkLeft;
     }
     else if (direction.x > 0)
     {
-        gameObjectState = EGameObjectState::CheckCanWalkRight;
+		gameObjectState = EGameObjectState::CheckCanWalkRight;
     }
 	else
 	{

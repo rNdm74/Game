@@ -177,7 +177,7 @@ void ClimbingUp::destroyInstance()
 void ClimbingUp::Up(IGameObjectFsm& fsm)
 {
 	/** Tell the game object to climb up **/
-	fsm.gameObject->ClimbUp();
+	fsm.gameObject->ExecuteAction();
 };
 
 void ClimbingUp::StopClimbing(IGameObjectFsm& fsm)
@@ -209,7 +209,7 @@ void ClimbingDown::destroyInstance()
 void ClimbingDown::Down(IGameObjectFsm& fsm)
 {
 	/** Tell the game object to climb down **/
-	fsm.gameObject->ClimbDown();	
+	fsm.gameObject->ExecuteAction();
 };
 
 void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)
@@ -243,7 +243,7 @@ void WalkingLeft::Left(IGameObjectFsm& fsm)
 	AppGlobal::getInstance()->zoomOut();
 
 	/** Tell the game object to walk left **/
-	fsm.gameObject->WalkLeft();
+	fsm.gameObject->ExecuteAction();
 };
 
 
@@ -278,7 +278,7 @@ void WalkingRight::Right(IGameObjectFsm& fsm)
 	AppGlobal::getInstance()->zoomOut();
 
 	/** Tell the game object to walk right **/
-	fsm.gameObject->WalkRight();
+	fsm.gameObject->ExecuteAction();
 };
 
 void WalkingRight::StopWalking(IGameObjectFsm& fsm)
@@ -311,6 +311,8 @@ void IsIdle::Stop(IGameObjectFsm& fsm)
 {
 	/** Run idle animation  **/
 
+	/** Zoom in effect **/
+	AppGlobal::getInstance()->zoomIn();
 };
 
 #pragma endregion IsIdle
@@ -339,8 +341,20 @@ void Stopped::Stop(IGameObjectFsm& fsm)
 	/** Zoom in effect **/
 	AppGlobal::getInstance()->zoomIn();
 
+	Vec2 direction = GameObjectStates[AppGlobal::getInstance()->gameObjectState];
+
 	/** Tell the game object to stop **/
-	fsm.gameObject->Stop();
+	Vec2 velocity = fsm.gameObject->getVelocity();
+	
+	velocity.x += 15.0f * direction.x;
+	velocity.y = 0.0f;
+
+	/*if (velocity.x < 0.0f)
+		velocity.x = 0.0f;*/
+
+	fsm.gameObject->setVelocity(velocity);
+	
+	fsm.gameObject->ExecuteAction();
 			
 	/**  Wait so many seconds then change state to idle **/
 	if (fsm.timeout > 10.0f /** Reached timeout period  **/)

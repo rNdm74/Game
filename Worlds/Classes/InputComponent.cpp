@@ -6,31 +6,36 @@
 #include "Path.h"
 #include "Utils.h"
 
-void InputComponent::ClimbUp(IGameObject& gameObject)
+void InputComponent::ExecuteAction(IGameObject& gameObject)
 {
-	this->updateDesiredPosition(gameObject, Vec2(0.0f, 1.0f));
+	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
 };
 
-void InputComponent::ClimbDown(IGameObject& gameObject)
-{
-	this->updateDesiredPosition(gameObject, Vec2(0.0f, -1.0f));
-};
-
-void InputComponent::WalkLeft(IGameObject& gameObject)
-{
-	this->updateDesiredPosition(gameObject, Vec2(-1.0f, 0.0f));
-};
-
-void InputComponent::WalkRight(IGameObject& gameObject)
-{
-	this->updateDesiredPosition(gameObject, Vec2(1.0f, 0.0f));
-};
-
-void InputComponent::Stop(IGameObject& gameObject)
-{
-	//
-	gameObject.setVelocity(Vec2::ZERO);
-};
+//void InputComponent::ClimbUp(IGameObject& gameObject)
+//{
+//	this->updateDesiredPosition(gameObject, BEARING[EBearing::NORTH]);
+//};
+//
+//void InputComponent::ClimbDown(IGameObject& gameObject)
+//{
+//	this->updateDesiredPosition(gameObject, BEARING[EBearing::SOUTH]);
+//};
+//
+//void InputComponent::WalkLeft(IGameObject& gameObject)
+//{
+//	this->updateDesiredPosition(gameObject, BEARING[EBearing::WEST]);
+//};
+//
+//void InputComponent::WalkRight(IGameObject& gameObject)
+//{
+//	this->updateDesiredPosition(gameObject, BEARING[EBearing::EAST]);
+//};
+//
+//void InputComponent::Stop(IGameObject& gameObject)
+//{
+//	//
+//	this->updateDesiredPosition(gameObject, BEARING[EBearing::STOP]);
+//};
 
 void InputComponent::updateDesiredPosition(IGameObject& gameObject, Vec2 direction)
 {
@@ -43,15 +48,14 @@ void InputComponent::updateDesiredPosition(IGameObject& gameObject, Vec2 directi
 	velocity.clamp(_minMovement, _maxMovement);
 	Vec2 stepVelocity = velocity * kUpdateInterval;
 	// 
-	gameObject.setVelocity(velocity);
 	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
+	gameObject.setVelocity(velocity);
 };
 
 
 void PlayerInputComponent::update(Node& node, IGameObject& gameObject)
 {	
-	//this->findpath(node, gameObject);
-	
+	//this->findpath(node, gameObject);	
 	//this->desiredPosition(gameObject);
 }
 

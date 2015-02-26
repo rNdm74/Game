@@ -5,6 +5,19 @@
 #include <string>
 #include "cocos2d.h"
 
+struct TileData
+{
+	cocos2d::Rect tileRect;
+	cocos2d::Vec2 tileCoordinates;
+	int GID = 0;
+};
+
+typedef std::array<TileData, 8> TileDataArray;
+typedef std::array<cocos2d::Vec2, 7> States;
+typedef std::array<bool, 7> KeyMatrix;
+typedef std::array<bool, 4> IsMoving;
+typedef std::array<bool, 4> CanMove;
+
 #define DEBUG_ENABLE 1
 
 #define CLOUDS_VARIETY			3
@@ -12,7 +25,9 @@
 #define CLOUDS_STARTING_TAG		100
 #define CLOUDS_SPEED			150
 
-// PNG assets
+/**
+* PNG assets
+*/
 #define BACKGROUND_PNG		"background.png"
 #define CHARACTERS_PNG		"characters.png"
 #define CONTROLS_PNG		"controls.png"
@@ -20,8 +35,9 @@
 #define ITEMS_PNG			"items.png"
 #define PARTICLES_PNG		"particles.png"
 #define TILES_PNG			"tiles.png"
-
-// PLIST assets
+/**
+* PLIST assets
+*/ 
 #define BACKGROUND_PLIST	"background.plist"
 #define CHARACTERS_PLIST	"characters.plist"
 #define CONTROLS_PLIST		"controls.plist"
@@ -29,7 +45,9 @@
 #define ITEMS_PLIST			"items.plist"
 #define PARTICLES_PLIST		"particles.plist"
 #define TILES_PLIST			"tiles.plist"
-
+/**
+*
+*/
 #define kTagBackgroundLayer	0
 #define kTagCollisionLayer	1
 #define kTagLadderLayer		2
@@ -60,30 +78,38 @@
 
 #define PI 3.14159265
 
+//#define kGameObjectVelocity	( Vec2( kPixelsPerMeter * kMaxVelocityX, kPixelsPerMeter * kMaxVelocityX ) )
 
 const float kZoomFactor = 0.025f;
-const float kPixelsPerMeter = 32.0f;
-const float kGravity = -100.0f; // adjust this to taste
 const float kUpdateInterval = 1.0f / 60.0f;
 const double kSecondsPerUpdate = 0.1;
-
-const float kMapBoundsX = 0;
-const float kMapBoundsY = 1.0f;
-
-const float kMinVelocityX						= 1.0f;
-const float kMaxVelocityX						= 15.0f;
-const float kStopVelocity						= 0.70f; // 98%
-
-const float kGameObjectFixtureDensity			= 1.0f;
-const float kGameObjectFixtureFriction			= 0.1f;
-const float kGameObjectFixtureRestitution		= 0.0f;
-const int	kGameObjectFixtureFilterMaskBits	= 0xffff;
-
-#define kGameObjectVelocity	( Vec2( kPixelsPerMeter * kMaxVelocityX, kPixelsPerMeter * kMaxVelocityX ) )
 
 const std::string kPlanetTMX					= "grassPlanet.tmx";
 const std::string kCaveTMX						= "planet1.tmx";
 const std::string kPlayerFileName				= "alienBeige.png";
+
+/**  **/
+const States GameObjectStates =
+{
+	cocos2d::Vec2( 0.0f,  1.0f),	/** CheckCanClimbUp **/
+	cocos2d::Vec2( 0.0f, -1.0f),	/** CheckCanClimbDown **/
+	cocos2d::Vec2(-1.0f,  0.0f),	/** CheckCanWalkLeft **/
+	cocos2d::Vec2( 1.0f,  0.0f),	/** CheckCanWalkRight **/
+	cocos2d::Vec2::ZERO,			/** Stop **/
+	cocos2d::Vec2::ZERO,			/** LoadNextMap **/
+	cocos2d::Vec2::ZERO				/** LoadPreviousMap **/
+};
+
+enum EGameObjectState
+{
+	CheckCanClimbUp,
+	CheckCanClimbDown,
+	CheckCanWalkLeft,
+	CheckCanWalkRight,
+	Stop,
+	LoadNextMap,
+	LoadPreviousMap
+};
 
 //enumeration of possible input states
 enum EState 
@@ -92,31 +118,15 @@ enum EState
 	STATE_DOWN,
 	STATE_LEFT,
 	STATE_RIGHT,
-	STATE_JUMP,
-	STATE_ENTER,
-	STATE_ESCAPE,
-	STATE_HUD,
-	STATE_SPRINT,
-	STATE_STOP,
-};
-
-enum kFilterCatagory 
-{
-	SOLID_PLATFORM	= 0x0001,
-	SOLID_SLOPE		= 0x0002,
-	PLAYER			= 0x0004,
-	ENEMY			= 0x0008,
-	SENSOR			= 0x0010,
-	//FRIENDLY_TOWER = 0x0020,
-	//RADAR_SENSOR = 0x0040,
+	STATE_STOP
 };
 
 enum EBearing
 {
 	NORTH,
 	SOUTH,
-	EAST,
 	WEST,
+	EAST,	
 	STOP
 };
 
@@ -132,31 +142,5 @@ enum ETileGrid
 	BOTTOM_RIGHT,
 	CENTER = 1
 };
-
-enum EGameObjectState
-{
-	CheckCanClimbUp,
-	CheckCanClimbDown,
-	CheckCanWalkLeft,
-	CheckCanWalkRight,
-	Stop,
-	LoadNextMap,
-	LoadPreviousMap
-};
-
-struct TileData
-{
-	cocos2d::Rect tileRect;
-    cocos2d::Vec2 tileCoordinates;
-	int GID = 0;
-};
-
-typedef std::array<TileData, 8> TileDataArray;
-
-typedef std::array<bool, 4> CanMove;
-
-typedef std::array<bool, 4> IsMoving;
-
-typedef std::array<bool, 7> KeyMatrix;
 
 #endif /* defined(__CONSTANTS__) */

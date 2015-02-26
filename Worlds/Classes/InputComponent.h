@@ -14,11 +14,12 @@ public:
 	virtual ~IInputComponent() {};
 
 	/** Actions **/
-	virtual void ClimbUp(IGameObject& gameObject) = 0;
+	virtual void ExecuteAction(IGameObject& gameObject) = 0;
+	/*virtual void ClimbUp(IGameObject& gameObject) = 0;
 	virtual void ClimbDown(IGameObject& gameObject) = 0;
 	virtual void WalkLeft(IGameObject& gameObject) = 0;
 	virtual void WalkRight(IGameObject& gameObject) = 0;
-	virtual void Stop(IGameObject& gameObject) = 0;
+	virtual void Stop(IGameObject& gameObject) = 0;*/
 
 	/** **/
 	virtual void update(Node& node, IGameObject& gameObject) = 0;
@@ -30,11 +31,12 @@ class InputComponent : public IInputComponent
 {
 public:
 	/** Actions **/
-	virtual void ClimbUp(IGameObject& gameObject);
+	virtual void ExecuteAction(IGameObject& gameObject);
+	/*virtual void ClimbUp(IGameObject& gameObject);
 	virtual void ClimbDown(IGameObject& gameObject);
 	virtual void WalkLeft(IGameObject& gameObject);
 	virtual void WalkRight(IGameObject& gameObject);
-	virtual void Stop(IGameObject& gameObject);
+	virtual void Stop(IGameObject& gameObject);*/
 
 	virtual void update(Node& node, IGameObject& gameObject){};
 	//void findpath(Node& node, IGameObject& gameObject);

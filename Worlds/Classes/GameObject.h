@@ -2,7 +2,6 @@
 #define __Worlds__GAME_OBJECT_H__
 
 #include "cocos2d.h"
-#include <array>
 #include "Constants.h"
 
 class IMenuComponent;
@@ -27,15 +26,19 @@ public:
 	IGameObject(){};
 	virtual ~IGameObject(){};			
 	
+	/** **/
+	EGameObjectState CurrentState;
+
 	/** Update the gameObject **/
 	virtual void update(Node* node) = 0;
 
 	/** Action methods **/
-	virtual void ClimbUp() = 0;
+	virtual void ExecuteAction() = 0;
+	/*virtual void ClimbUp() = 0;
 	virtual void ClimbDown() = 0;
 	virtual void WalkLeft() = 0;
 	virtual void WalkRight() = 0;
-	virtual void Stop() = 0;
+	virtual void Stop() = 0;*/
 
 	/** **/
 	virtual bool containsPoint(Vec2 point) = 0;
@@ -91,16 +94,20 @@ public:
 	/** Constructor and the Destructor **/
 	GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~GameObject(){};
-    		
+    
+	/** **/
+	EGameObjectState CurrentState;
+
 	/** Update the gameObject **/
 	virtual void update(Node* node);
 
 	/** Action methods **/
-	virtual void ClimbUp(){};
+	virtual void ExecuteAction(){};
+	/*virtual void ClimbUp(){};
 	virtual void ClimbDown(){};
 	virtual void WalkLeft(){};
 	virtual void WalkRight(){};
-	virtual void Stop(){};
+	virtual void Stop(){};*/
 	
 	/** **/
 	virtual bool containsPoint(Vec2 point);
@@ -188,11 +195,12 @@ public:
 	virtual void update(Node* node) override;
 
 	/** Action methods overridden **/
-	virtual void ClimbUp() override;
+	virtual void ExecuteAction() override;
+	/*virtual void ClimbUp() override;
 	virtual void ClimbDown() override;
 	virtual void WalkLeft() override;
 	virtual void WalkRight() override;
-	virtual void Stop() override;
+	virtual void Stop() override;*/
 
 	/** Getters Overridden **/
 	virtual Size getSize() override;
