@@ -24,7 +24,6 @@ typedef std::array<bool, 4> CanMove;
 #define CLOUDS_SPACE_BETWEEN	10
 #define CLOUDS_STARTING_TAG		100
 #define CLOUDS_SPEED			150
-
 /**
 * PNG assets
 */
@@ -45,9 +44,29 @@ typedef std::array<bool, 4> CanMove;
 #define ITEMS_PLIST			"items.plist"
 #define PARTICLES_PLIST		"particles.plist"
 #define TILES_PLIST			"tiles.plist"
-/**
-*
-*/
+/****/
+#define _PREFIX				"alienBeige"
+#define _SUFFIX				".png"
+#define _WALK				"_walk"
+#define _DUCK				"_duck"
+#define _STAND				"_stand"
+#define _JUMP				"_jump"
+#define _CLIMB				"_climb"
+#define _HURT				"_hurt"
+/****/
+#define kPlanetTMX			"grassPlanet.tmx"
+#define kCaveTMX			"planet1.tmx"
+#define kPlayerFileName		"alienBeige.png"
+#define kFilePrefix			"alien"
+#define kFileSuffix			"_badge2.png"
+/****/
+#define kTagClimbUp			0
+#define kTagClimbDown		1
+#define kTagWalkLeft		2
+#define kTagWalkRight		3
+#define kTagStop			4
+#define kTagHurt			5
+/****/
 #define kTagBackgroundLayer	0
 #define kTagCollisionLayer	1
 #define kTagLadderLayer		2
@@ -55,51 +74,31 @@ typedef std::array<bool, 4> CanMove;
 #define kTagShadowLayer		4
 #define kTagObjectLayer		5
 #define kTagDebugLayer		6
-
-#define kTagPlanet 0
-#define kTagCave 1
-#define kTagPlayer 2 
-
-#define kTagCursor 999
-#define KTagSceneLayer 1
-
-#define kTagScrollingBackground 0
-#define kTagScrollingCloud 1
-#define kTagScrollingBush 2
-
-#define kBackgroundLayer 1
-#define kMidgroundLayer 2
-#define kForegroundLayer 3
-
-#define FILE_PREFIX "alien"
-#define FILE_SUFFIX "_badge2.png"
-
-#define MENU 1
-
-#define PI 3.14159265
-
-//#define kGameObjectVelocity	( Vec2( kPixelsPerMeter * kMaxVelocityX, kPixelsPerMeter * kMaxVelocityX ) )
-
-const float kZoomMin = 1.2f;
-const float kZoomMax = 1.5f;
-const float kZoomInFactor = 50000.0f;
-const float kZoomOutFactor = 100000.0f;
-
-
+/****/
+#define kTagPlanet			0
+#define kTagCave			1
+#define kTagPlayer			2 
+/****/
+#define kTagCursor			0
+#define KTagSceneLayer		1
+/****/
+#define PI					3.14159265
+/****/
+#define kFrameRate			12.0f
+#define kFrameRateFactor	100.0f
+#define kZoomMin			1.2f
+#define kZoomMax			1.5f
+#define kZoomInFactor		50000.0f
+#define kZoomOutFactor		100000.0f
+/****/
 const float kUpdateInterval = 1.0f / 60.0f;
-const double kSecondsPerUpdate = 0.1;
-
-const std::string kPlanetTMX					= "grassPlanet.tmx";
-const std::string kCaveTMX						= "planet1.tmx";
-const std::string kPlayerFileName				= "alienBeige.png";
-
 /**  **/
 const States GameObjectStates =
 {
-	cocos2d::Vec2( 0.0f,  1.0f),	/** CheckCanClimbUp **/
-	cocos2d::Vec2( 0.0f, -1.0f),	/** CheckCanClimbDown **/
-	cocos2d::Vec2(-1.0f,  0.0f),	/** CheckCanWalkLeft **/
-	cocos2d::Vec2( 1.0f,  0.0f),	/** CheckCanWalkRight **/
+	cocos2d::Vec2( 0.0f,  1.0f ),	/** CheckCanClimbUp **/
+	cocos2d::Vec2( 0.0f, -1.0f ),	/** CheckCanClimbDown **/
+	cocos2d::Vec2(-1.0f,  0.0f ),	/** CheckCanWalkLeft **/
+	cocos2d::Vec2( 1.0f,  0.0f ),	/** CheckCanWalkRight **/
 	cocos2d::Vec2::ZERO,			/** Stop **/
 	cocos2d::Vec2::ZERO,			/** LoadNextMap **/
 	cocos2d::Vec2::ZERO				/** LoadPreviousMap **/
@@ -114,25 +113,6 @@ enum EGameObjectState
 	Stop,
 	LoadNextMap,
 	LoadPreviousMap
-};
-
-//enumeration of possible input states
-enum EState 
-{		
-	STATE_UP,
-	STATE_DOWN,
-	STATE_LEFT,
-	STATE_RIGHT,
-	STATE_STOP
-};
-
-enum EBearing
-{
-	NORTH,
-	SOUTH,
-	WEST,
-	EAST,	
-	STOP
 };
 
 enum ETileGrid

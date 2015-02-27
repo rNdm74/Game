@@ -185,64 +185,68 @@ void PlayerInputComponent::update(Node& node, IGameObject& gameObject)
 //}
 
 void InputComponent::desiredPosition(IGameObject& gameObject)
-{	
-	CanMove canMove = gameObject.getCanMove();
-	Vec2 direction = gameObject.getDirection();
-	Vec2 velocity = gameObject.getVelocity();	
-	IsMoving isMoving;
+{
+};
 
-	for (bool& b : isMoving) b = false;
-
-	bool move = false;
-
-	if (canMove[STATE_UP] && direction.y > 0)
-	{
-		isMoving[STATE_UP] = true;
-		move = true;
-	}
-	else if (canMove[STATE_DOWN] && direction.y < 0)
-	{
-		isMoving[STATE_DOWN] = true;
-		move = true;
-	}
-	else if (canMove[STATE_LEFT] && direction.x < 0)
-	{
-		isMoving[STATE_LEFT] = true;
-		move = true;
-	}
-	else if (canMove[STATE_RIGHT] && direction.x > 0)
-	{
-		isMoving[STATE_RIGHT] = true;
-		move = true;
-	}
-	else if (direction == Vec2::ZERO)
-	{
-		for (bool& b : isMoving) b = false;
-
-		move = false;
-		velocity = Vec2::ZERO;
-	}
-	//
-	Vec2 movement = Vec2(1600.0, 1600.0);
-	Vec2 step = movement * kUpdateInterval;
-	//
-	if (move)
-	{
-		velocity.x = velocity.x + step.x * direction.x;
-		velocity.y = velocity.y + step.y * direction.y;
-	}
-	//
-	Vec2 minMovement = Vec2(-340.0, -340.0);
-	Vec2 maxMovement = Vec2(340.0, 340.0);
-	//
-	velocity.clamp(minMovement, maxMovement);
-	//
-	Vec2 stepVelocity = velocity * kUpdateInterval;
-	// 
-	gameObject.setVelocity(velocity);
-	gameObject.setIsMoving(isMoving);
-	//
-	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
-
-	
-}
+//void InputComponent::desiredPosition(IGameObject& gameObject)
+//{	
+//	CanMove canMove = gameObject.getCanMove();
+//	Vec2 direction = gameObject.getDirection();
+//	Vec2 velocity = gameObject.getVelocity();	
+//	IsMoving isMoving;
+//
+//	for (bool& b : isMoving) b = false;
+//
+//	bool move = false;
+//
+//	if (canMove[STATE_UP] && direction.y > 0)
+//	{
+//		isMoving[STATE_UP] = true;
+//		move = true;
+//	}
+//	else if (canMove[STATE_DOWN] && direction.y < 0)
+//	{
+//		isMoving[STATE_DOWN] = true;
+//		move = true;
+//	}
+//	else if (canMove[STATE_LEFT] && direction.x < 0)
+//	{
+//		isMoving[STATE_LEFT] = true;
+//		move = true;
+//	}
+//	else if (canMove[STATE_RIGHT] && direction.x > 0)
+//	{
+//		isMoving[STATE_RIGHT] = true;
+//		move = true;
+//	}
+//	else if (direction == Vec2::ZERO)
+//	{
+//		for (bool& b : isMoving) b = false;
+//
+//		move = false;
+//		velocity = Vec2::ZERO;
+//	}
+//	//
+//	Vec2 movement = Vec2(1600.0, 1600.0);
+//	Vec2 step = movement * kUpdateInterval;
+//	//
+//	if (move)
+//	{
+//		velocity.x = velocity.x + step.x * direction.x;
+//		velocity.y = velocity.y + step.y * direction.y;
+//	}
+//	//
+//	Vec2 minMovement = Vec2(-340.0, -340.0);
+//	Vec2 maxMovement = Vec2(340.0, 340.0);
+//	//
+//	velocity.clamp(minMovement, maxMovement);
+//	//
+//	Vec2 stepVelocity = velocity * kUpdateInterval;
+//	// 
+//	gameObject.setVelocity(velocity);
+//	gameObject.setIsMoving(isMoving);
+//	//
+//	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
+//
+//	
+//}

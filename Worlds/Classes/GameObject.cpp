@@ -344,35 +344,35 @@ void Player::update(Node* node)
 void Player::ClimbUp()
 {
 	// Run climbing animation
-	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_climb1.png"));
+	_graphics->ClimbUp(*this);
 	_input->ClimbUp(*this);
 };
 
 void Player::ClimbDown()
 {
 	// Run climbing animation
-	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_climb2.png"));
+	_graphics->ClimbDown(*this);
 	_input->ClimbDown(*this);
 };
 
 void Player::WalkLeft()
 {
 	// Run walking animation
-	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_walk1.png"));
+	_graphics->WalkLeft(*this);
 	_input->WalkLeft(*this);
 };
 
 void Player::WalkRight()
 {
 	// Run walking animation
-	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige_walk2.png"));
+	_graphics->WalkRight(*this);
 	_input->WalkRight(*this);
 };
 
 void Player::Stop()
 {
 	// Run stop animation
-	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige.png"));
+	_graphics->Stop(*this);
 	_input->Stop(*this);
 };
 

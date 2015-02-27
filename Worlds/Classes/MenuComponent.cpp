@@ -61,8 +61,8 @@ bool PlayerMenuComponent::addMenu(IGameObject& gameObject)
     {
 		std::string name( color );
 
-		auto menu_item = MenuComponentItem::createMenuWithFrameName(FILE_PREFIX + name + FILE_SUFFIX);
-		menu_item->setName(FILE_PREFIX + name + FILE_SUFFIX);
+		auto menu_item = MenuComponentItem::createMenuWithFrameName(kFilePrefix + name + kFileSuffix);
+		menu_item->setName(kFilePrefix + name + kFileSuffix);
         menu_item->setTag(_ptr++);
 		menu_item->getTexture()->setAntiAliasTexParameters();
 

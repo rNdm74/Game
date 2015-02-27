@@ -16,10 +16,8 @@ AppGlobal::AppGlobal()
 	gameObjectState = EGameObjectState::Stop;
 
 	player = nullptr;
-
-    _zoomFactor = 0.0f;
-
-    _scaleFactor = 1.5f;
+	    
+	_scaleFactor = kZoomMin;
     	
 	for (bool& key : _keyMatrix) key = false;
 }
