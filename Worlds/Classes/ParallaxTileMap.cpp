@@ -634,6 +634,44 @@ void ParallaxTileMap::setAliasTexParameters(TMXLayer& layer)
 	layer.getTexture()->setAntiAliasTexParameters();
 }
 
+void ParallaxTileMap::enableForegroundOpacity(int opacity)
+{
+    TMXLayer& layer = static_cast<TMXLayer&>(*this->getChildByTag(kTagForegroundLayer));
+    
+    Size s = layer.getLayerSize();
+    
+    for (int col = 0; col < s.width; ++col)
+    {
+        for (int row = 0; row < s.height; ++row)
+        {
+            int gid = layer.getTileGIDAt(Vec2(col, row));
+            
+            if (gid)
+            {
+                Sprite* tile = layer.getTileAt(Vec2(col, row));
+                
+                int currentOpacity = tile->getOpacity();
+                
+                if(currentOpacity > opacity)
+                {
+                    currentOpacity -= 5;
+                }
+                else
+                {
+                    currentOpacity += 5;
+                }
+                
+                if(currentOpacity < 0)
+                    currentOpacity = 0;
+                if(currentOpacity > 255)
+                    currentOpacity = 255;
+                
+                tile->setOpacity(currentOpacity); // 0 - opaque,  255 - solid
+            }
+        }
+    }
+};
+
 #pragma endregion Protected Functions
 
 #pragma region Cave

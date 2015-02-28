@@ -18,7 +18,8 @@ public:
 	virtual void update(Node& node, IGameObject& gameObject) = 0;
 
 protected:
-	virtual void checkCollision(Node& node, IGameObject& gameObject) = 0;	
+    virtual void isLadderCollision(Node& node, IGameObject& gameObject) = 0;
+    virtual void checkCollision(Node& node, IGameObject& gameObject) = 0;
 	virtual void checkTileCollision(Node& node, IGameObject& gameObject) = 0;
 	virtual void checkLadderCollision(Node& node, IGameObject& gameObject) = 0;
     virtual void checkObjectCollision(Node& node, IGameObject& gameObject) = 0;
@@ -32,6 +33,7 @@ public:
 	virtual void update(Node& node, IGameObject& gameObjectNode);
 
 protected:
+    virtual void isLadderCollision(Node& node, IGameObject& gameObject){};
 	virtual void checkCollision(Node& node, IGameObject& gameObject);	
 	virtual void checkTileCollision(Node& node, IGameObject& gameObject);
 	virtual void checkLadderCollision(Node& node, IGameObject& gameObject);
@@ -43,6 +45,7 @@ protected:
 class PlayerCollisionComponent : public CollisionComponent
 {
 public:
+    virtual void isLadderCollision(Node& node, IGameObject& gameObject) override;
 	virtual void update(Node& node, IGameObject& gameObject) override;
 };
 

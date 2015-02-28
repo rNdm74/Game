@@ -302,7 +302,7 @@ Player::Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsCo
 	_sprite->getTexture()->setAntiAliasTexParameters();
 	_sprite->setScale(1.0f);
 	_sprite->setAnchorPoint(Vec2::ZERO);
-	
+    
 	auto shadow = Sprite::create();
 	shadow->setSpriteFrame(_sprite->getSpriteFrame());
 	shadow->setAnchorPoint(Vec2(-0.1f, 0.0f)); // position it to the center of the target node

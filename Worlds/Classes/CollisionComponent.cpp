@@ -36,6 +36,8 @@ void PlayerCollisionComponent::update(Node& node, IGameObject& gameObject)
 #endif // DEBUG_ENABLE
 
 	this->checkTileCollision(node, gameObject);
+    this->isLadderCollision(node, gameObject);
+    
 	//this->checkLadderCollision(node, gameObject);
 	//
 	
@@ -205,6 +207,23 @@ void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObjec
 */
 void CollisionComponent::ladderTileCollision(Node& node, IGameObject& gameObject)
 {
+};
+
+void PlayerCollisionComponent::isLadderCollision(Node& node, IGameObject& gameObject)
+{
+    Player& player = static_cast<Player&>(gameObject);
+    ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
+    
+    TileDataArray tileDataArray = map.getLadderDataAt(player.getCenterPosition());
+    
+    if(tileDataArray[ETileGrid::CENTER].GID)
+    {
+        map.enableForegroundOpacity(0);
+    }
+    else
+    {
+        map.enableForegroundOpacity(255);
+    }
 };
 
 //void CollisionComponent::ladderTileCollision(Node& node, IGameObject& gameObject)

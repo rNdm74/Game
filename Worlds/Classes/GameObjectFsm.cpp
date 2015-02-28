@@ -214,13 +214,15 @@ void ClimbingDown::Down(IGameObjectFsm& fsm)
     
     if(fsm.gameObject->isOnGround())
     {
-        fsm.gameObject->Crouch();
+        //fsm.gameObject->Crouch();
     }
     else
     {
         /** Tell the game object to climb down **/
-        fsm.gameObject->ClimbDown();
+        //fsm.gameObject->ClimbDown();
     }
+    
+    fsm.gameObject->ClimbDown();
 };
 
 void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)

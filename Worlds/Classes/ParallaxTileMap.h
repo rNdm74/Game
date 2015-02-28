@@ -62,6 +62,9 @@ public:
 	virtual TileDataArray getCollisionDataAt(Vec2 position) override;
 	virtual TileDataArray getLadderDataAt(Vec2 position) override;
 
+    /** Setters **/
+    void enableForegroundOpacity(int opacity);
+    
 	/** Player **/
 	virtual void addPlayer(IGameObject* player);
 	virtual IGameObject* removePlayer();
@@ -82,6 +85,7 @@ public:
 #endif // DEBUG_ENABLE
     	    
 protected: /** Protected Functions **/
+    
 	void addObjects();
 	bool addObject(std::string className, ValueMap& properties);
 	void addShadows(TMXLayer& layer);
@@ -99,7 +103,8 @@ protected: /** Protected Functions **/
 	/**  **/
 	Sprite* getShadowForNode(Sprite& sprite);
 	void setAliasTexParameters(TMXLayer& layer);
-
+    
+    
 protected: /** Variables **/
 	TMXTiledMap* _tileMap;	
 	DrawNode* _debugLayer;		
