@@ -17,6 +17,7 @@ typedef std::array<cocos2d::Vec2, 7> States;
 typedef std::array<bool, 7> KeyMatrix;
 typedef std::array<bool, 4> IsMoving;
 typedef std::array<bool, 4> CanMove;
+typedef std::string AnimationFrames[5][2];
 
 #define DEBUG_ENABLE 0
 
@@ -84,8 +85,8 @@ typedef std::array<bool, 4> CanMove;
 /****/
 #define PI					3.14159265
 /****/
-#define kFrameRate			100.0f
-#define kFrameRateFactor    20.0f
+#define kFrameDelay			100.0f
+#define kFrameTimeFactor    20.0f
 #define kZoomMin			1.2f
 #define kZoomMax			1.5f
 #define kZoomInFactor		50000.0f
@@ -126,6 +127,15 @@ enum ETileGrid
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT,
 	CENTER = 1
+};
+
+enum EAnimationStates
+{
+	CLIMBING,
+	WALKING,
+	IDLE,
+	HURT,
+	CROUCH
 };
 
 #endif /* defined(__CONSTANTS__) */

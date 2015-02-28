@@ -3,8 +3,9 @@
 
 #include "cocos2d.h"
 
-#define getFilename(index) ( _PREFIX _WALK + std::to_string(index) + _SUFFIX )
-#define GetSpriteFrame(frameName) ( SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName) )
+#define climbingFileName(index) ( _PREFIX _CLIMB + std::to_string(index) + _SUFFIX )
+#define walkingFileName(index) ( _PREFIX _WALK + std::to_string(index) + _SUFFIX )
+#define frameCache(frameName) ( SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName) )
 
 class GameObject;
 
@@ -16,8 +17,7 @@ public:
 	//
 	IGraphicsComponent(){};
 	virtual ~IGraphicsComponent() {};
-	virtual void update(IGameObject& gameObject) = 0;
-
+	
 	virtual void ClimbUp(IGameObject& gameObject) = 0;
 	virtual void ClimbDown(IGameObject& gameObject) = 0;
 	virtual void WalkLeft(IGameObject& gameObject) = 0;
@@ -28,6 +28,7 @@ public:
     virtual void Crouch(IGameObject& gameObject) = 0;
 
 protected:
+	virtual void update(IGameObject& gameObject) = 0;
 	virtual void runAction(std::string frameName) = 0;
 
 };
@@ -37,8 +38,7 @@ class GraphicsComponent : public IGraphicsComponent
 public:
 	GraphicsComponent(){};
 	virtual ~GraphicsComponent() {};
-	virtual void update(IGameObject& gameObject){};
-
+	
 	virtual void ClimbUp(IGameObject& gameObject){};
 	virtual void ClimbDown(IGameObject& gameObject){};
 	virtual void WalkLeft(IGameObject& gameObject){};
@@ -49,17 +49,16 @@ public:
     virtual void Crouch(IGameObject& gameObject){};
 
 protected:
+	virtual void update(IGameObject& gameObject){};
 	virtual void runAction(std::string frameName);
 };
 
 class PlayerGraphicsComponent : public GraphicsComponent
 {
 public:
-	PlayerGraphicsComponent(){ animation = nullptr;  index = 1; frameRate = 0.0f; };
+	PlayerGraphicsComponent();
 	virtual ~PlayerGraphicsComponent() {};
-
-	virtual void update(IGameObject& gameObject) override;
-
+		
 	virtual void ClimbUp(IGameObject& gameObject) override;
 	virtual void ClimbDown(IGameObject& gameObject) override;
 	virtual void WalkLeft(IGameObject& gameObject) override;
@@ -70,11 +69,23 @@ public:
     virtual void Crouch(IGameObject& gameObject) override;
 
 private:
-	Animation* animation;
-	Animate* animate;
+	virtual void update(IGameObject& gameObject) override;
 
-	int index;
-	float frameRate;
+	void lookLeft(IGameObject& gameObject);
+	void lookRight(IGameObject& gameObject);
+	void lookUp(IGameObject& gameObject);
+	void lookDown(IGameObject& gameObject);
+	void lookForward(IGameObject& gameObject);
+	
+
+	std::string animationFrames[5][2];
+	EAnimationStates activeState;
+
+	int currentFrame;
+	float frameTime;
+
+	long idleTime;
+	long maxIdleTime;
 };
 
 #endif /* defined(__FranticAlien__GraphicsComponent__) */
