@@ -74,67 +74,95 @@ void PlayerGraphicsComponent::ClimbDown(IGameObject& gameObject)
 
 void PlayerGraphicsComponent::WalkLeft(IGameObject& gameObject)
 {
-	Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
-	//
-	sprite->stopActionByTag(kTagClimbUp);
-	sprite->stopActionByTag(kTagClimbDown);
-	sprite->stopActionByTag(kTagWalkRight);
-
-	auto action = sprite->getActionByTag(kTagWalkLeft);
-
-	if (action != nullptr)
-		return;
-
-	//  create the Animation, and populate it with frames fetched from the SpriteFrameCache
-	auto _anim = Animation::create();
-	_anim->setDelayPerUnit(0.1f);
-	//
-	for (int i = 1; i <= 2; i++)
-	{
-		auto fileName = _PREFIX _WALK + std::to_string(i) + _SUFFIX;
-		auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(fileName);
-		_anim->addSpriteFrame(frame);
-	}
-	//
-	Action* walk = RepeatForever::create(Animate::create(_anim));
-	walk->setTag(kTagWalkLeft);
-	//
-	sprite->runAction(walk);
-	sprite->runAction(FlipX::create(true));
+    Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
+    //
+    
+    if (frameRate > kFrameRate /**  **/)
+    {
+        frameRate = 0.0f;
+        index++;
+    }
+    
+    if (index > 2) index = 1;
+    
+    sprite->setSpriteFrame(GetSpriteFrame(getFilename(index)));
+    
+    //
+    Vec2 v = gameObject.getVelocity();
+    float velocityFactor = std::abs((v.x + v.y) / kFrameRateFactor);
+    //log("velocityFactor: %f", velocityFactor);
+    frameRate += velocityFactor;
+    //log("frameRate: %f", frameRate);
+    
+    sprite->setFlippedX(true);
 };
 
 void PlayerGraphicsComponent::WalkRight(IGameObject& gameObject)
 {
 	Sprite* sprite = static_cast<Player&>(gameObject).getSprite();	
 	//
-	if (frameRate > kFrameRate)
-	{
-		frameRate = 0.0f;
-		
-		if (index > 2) index = 1;
-
-		sprite->setSpriteFrame(GetSpriteFrame(getFilename(index)));
-
-		index++;
-	}
-		
+    
+    if (frameRate > kFrameRate /**  **/)
+    {
+        frameRate = 0.0f;
+        index++;
+    }
+    
+    if (index > 2) index = 1;
+    
+    sprite->setSpriteFrame(GetSpriteFrame(getFilename(index)));
+    
+    //
 	Vec2 v = gameObject.getVelocity();
 	float velocityFactor = std::abs((v.x + v.y) / kFrameRateFactor);
-	log("velocityFactor: %f", velocityFactor);
+	//log("velocityFactor: %f", velocityFactor);
 	frameRate += velocityFactor;
-	log("frameRate: %f", frameRate);
+	//log("frameRate: %f", frameRate);
 
-	sprite->runAction(FlipX::create(false));
+    sprite->setFlippedX(false);
 };
 
 void PlayerGraphicsComponent::Stop(IGameObject& gameObject)
 {
 	Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
-	sprite->stopAllActions();
 
-	sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("alienBeige.png"));
+    if (frameRate > kFrameRate /**  **/)
+    {
+        frameRate = 0.0f;
+        index++;
+    }
+    
+    if (index > 2) index = 1;
+    
+    sprite->setSpriteFrame(GetSpriteFrame(getFilename(index)));
+    
+    //
+    Vec2 v = gameObject.getVelocity();
+    float velocityFactor = std::abs((v.x + v.y) / kFrameRateFactor);
+    //log("velocityFactor: %f", velocityFactor);
+    
+    frameRate += velocityFactor;
+    
+    if(velocityFactor == 0.0f)
+    {
+        sprite->setSpriteFrame(GetSpriteFrame("alienBeige_stand.png"));
+    }
+};
+
+void PlayerGraphicsComponent::Idle(IGameObject &gameObject)
+{
+    Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
+    sprite->setSpriteFrame(GetSpriteFrame("alienBeige.png"));
 };
 
 void PlayerGraphicsComponent::Hurt(IGameObject& gameObject)
 {
+    Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
+    sprite->setSpriteFrame(GetSpriteFrame("alienBeige_hurt.png"));
+};
+
+void PlayerGraphicsComponent::Crouch(IGameObject& gameObject)
+{
+    Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
+    sprite->setSpriteFrame(GetSpriteFrame("alienBeige_duck.png"));
 };

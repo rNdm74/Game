@@ -212,8 +212,15 @@ void ClimbingDown::Down(IGameObjectFsm& fsm)
 {
     AppGlobal::getInstance()->zoomOut();
     
-	/** Tell the game object to climb down **/
-	fsm.gameObject->ClimbDown();
+    if(fsm.gameObject->isOnGround())
+    {
+        fsm.gameObject->Crouch();
+    }
+    else
+    {
+        /** Tell the game object to climb down **/
+        fsm.gameObject->ClimbDown();
+    }
 };
 
 void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)
@@ -319,7 +326,7 @@ void IsIdle::Stop(IGameObjectFsm& fsm)
 	AppGlobal::getInstance()->zoomIn();
 
 	/** Tell game object to continue stopping **/
-	fsm.gameObject->Stop();
+	fsm.gameObject->Idle();
 };
 
 #pragma endregion IsIdle

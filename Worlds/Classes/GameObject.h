@@ -38,6 +38,8 @@ public:
 	virtual void WalkLeft() = 0;
 	virtual void WalkRight() = 0;
 	virtual void Stop() = 0;
+    virtual void Idle() = 0;
+    virtual void Crouch() = 0;
 
 	/** **/
 	virtual bool containsPoint(Vec2 point) = 0;
@@ -57,6 +59,7 @@ public:
 	virtual Vec2 getVelocity() = 0;
 	virtual CanMove getCanMove() = 0;
 	virtual IsMoving getIsMoving() = 0;
+    virtual bool isOnGround() = 0;
 
 	/** Setters **/
 	virtual void setBoundingBox(Rect boundingBox) = 0;
@@ -106,7 +109,9 @@ public:
 	virtual void WalkLeft(){};
 	virtual void WalkRight(){};
 	virtual void Stop(){};
-	
+    virtual void Idle(){};
+    virtual void Crouch(){};
+    
 	/** **/
 	virtual bool containsPoint(Vec2 point);
 
@@ -125,6 +130,7 @@ public:
 	virtual Vec2 getVelocity();
 	virtual CanMove getCanMove();
 	virtual IsMoving getIsMoving();
+    virtual bool isOnGround();
 
 	/** Setters **/
 	virtual void setBoundingBox(Rect boundingBox);
@@ -198,6 +204,8 @@ public:
 	virtual void WalkLeft() override;
 	virtual void WalkRight() override;
 	virtual void Stop() override;
+    virtual void Idle() override;
+    virtual void Crouch() override;
 
 	/** Getters Overridden **/
 	virtual Size getSize() override;

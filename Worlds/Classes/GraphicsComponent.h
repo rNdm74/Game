@@ -23,7 +23,9 @@ public:
 	virtual void WalkLeft(IGameObject& gameObject) = 0;
 	virtual void WalkRight(IGameObject& gameObject) = 0;
 	virtual void Stop(IGameObject& gameObject) = 0;
+    virtual void Idle(IGameObject& gameObject) = 0;
 	virtual void Hurt(IGameObject& gameObject) = 0;
+    virtual void Crouch(IGameObject& gameObject) = 0;
 
 protected:
 	virtual void runAction(std::string frameName) = 0;
@@ -42,7 +44,9 @@ public:
 	virtual void WalkLeft(IGameObject& gameObject){};
 	virtual void WalkRight(IGameObject& gameObject){};
 	virtual void Stop(IGameObject& gameObject){};
+    virtual void Idle(IGameObject& gameObject){};
 	virtual void Hurt(IGameObject& gameObject){};
+    virtual void Crouch(IGameObject& gameObject){};
 
 protected:
 	virtual void runAction(std::string frameName);
@@ -61,7 +65,9 @@ public:
 	virtual void WalkLeft(IGameObject& gameObject) override;
 	virtual void WalkRight(IGameObject& gameObject) override;
 	virtual void Stop(IGameObject& gameObject) override;
+    virtual void Idle(IGameObject& gameObject) override;
 	virtual void Hurt(IGameObject& gameObject) override;
+    virtual void Crouch(IGameObject& gameObject) override;
 
 private:
 	Animation* animation;

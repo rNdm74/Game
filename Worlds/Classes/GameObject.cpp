@@ -177,6 +177,10 @@ IsMoving GameObject::getIsMoving()
 	return _isMoving;
 };
 
+bool GameObject::isOnGround()
+{
+    return _onGround;
+};
 
 #pragma endregion Getters
 
@@ -374,6 +378,18 @@ void Player::Stop()
 	// Run stop animation
 	_graphics->Stop(*this);
 	_input->Stop(*this);
+};
+
+void Player::Idle()
+{
+    _graphics->Idle(*this);
+    _input->Stop(*this);
+};
+
+void Player::Crouch()
+{
+    _graphics->Crouch(*this);
+    _input->Stop(*this);
 };
 
 Size Player::getSize()

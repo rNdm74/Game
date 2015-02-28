@@ -18,7 +18,7 @@ typedef std::array<bool, 7> KeyMatrix;
 typedef std::array<bool, 4> IsMoving;
 typedef std::array<bool, 4> CanMove;
 
-#define DEBUG_ENABLE 1
+#define DEBUG_ENABLE 0
 
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10
@@ -84,8 +84,8 @@ typedef std::array<bool, 4> CanMove;
 /****/
 #define PI					3.14159265
 /****/
-#define kFrameRate			12.0f
-#define kFrameRateFactor	100.0f
+#define kFrameRate			100.0f
+#define kFrameRateFactor    20.0f
 #define kZoomMin			1.2f
 #define kZoomMax			1.5f
 #define kZoomInFactor		50000.0f

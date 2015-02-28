@@ -36,7 +36,7 @@ void PlayerCollisionComponent::update(Node& node, IGameObject& gameObject)
 #endif // DEBUG_ENABLE
 
 	this->checkTileCollision(node, gameObject);
-	this->checkLadderCollision(node, gameObject);		
+	//this->checkLadderCollision(node, gameObject);
 	//
 	
 }
@@ -185,8 +185,9 @@ void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObjec
 					velocity.x = 0.0f;
 				}
 			}
-			
+#if DEBUG_ENABLE
 			TileMap(node).drawDebugRect(tileRect, Color4F(0.0f, 0.5f, 0.5f, 0.5f));
+#endif // DEBUG_ENABLE
 		}
 		
 		/** Update gameObject with updated velocity and desiredPosition **/
