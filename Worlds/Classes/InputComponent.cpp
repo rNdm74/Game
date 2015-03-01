@@ -32,8 +32,7 @@ void InputComponent::Stop(IGameObject& gameObject)
 	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
 
 	Vec2 velocity = gameObject.getVelocity();
-		
-
+	
 	if (velocity.x > 1.0f)
 	{
 		velocity.x -= 10.0f;

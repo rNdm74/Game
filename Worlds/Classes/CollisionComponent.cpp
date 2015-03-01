@@ -218,11 +218,11 @@ void PlayerCollisionComponent::isLadderCollision(Node& node, IGameObject& gameOb
     
     if(tileDataArray[ETileGrid::CENTER].GID)
     {
-        map.enableForegroundOpacity(0);
+        map.enableForegroundOpacity(kFadeOut);
     }
     else
     {
-        map.enableForegroundOpacity(255);
+        map.enableForegroundOpacity(kFadeIn);
     }
 };
 

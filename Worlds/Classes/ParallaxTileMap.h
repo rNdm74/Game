@@ -63,7 +63,7 @@ public:
 	virtual TileDataArray getLadderDataAt(Vec2 position) override;
 
     /** Setters **/
-    void enableForegroundOpacity(int opacity);
+	void enableForegroundOpacity(int fade);
     
 	/** Player **/
 	virtual void addPlayer(IGameObject* player);

@@ -634,7 +634,7 @@ void ParallaxTileMap::setAliasTexParameters(TMXLayer& layer)
 	layer.getTexture()->setAntiAliasTexParameters();
 }
 
-void ParallaxTileMap::enableForegroundOpacity(int opacity)
+void ParallaxTileMap::enableForegroundOpacity(int fade)
 {
     TMXLayer& layer = static_cast<TMXLayer&>(*this->getChildByTag(kTagForegroundLayer));
     
@@ -652,19 +652,12 @@ void ParallaxTileMap::enableForegroundOpacity(int opacity)
                 
                 int currentOpacity = tile->getOpacity();
                 
-                if(currentOpacity > opacity)
-                {
-                    currentOpacity -= 5;
-                }
-                else
-                {
-                    currentOpacity += 5;
-                }
+				currentOpacity += kOpacityFadeFactor * fade;
                 
-                if(currentOpacity < 0)
-                    currentOpacity = 0;
-                if(currentOpacity > 255)
-                    currentOpacity = 255;
+				if (currentOpacity < kOpacityMin)
+					currentOpacity = kOpacityMin;
+				if (currentOpacity > kOpacityMax)
+					currentOpacity = kOpacityMax;
                 
                 tile->setOpacity(currentOpacity); // 0 - opaque,  255 - solid
             }

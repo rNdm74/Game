@@ -85,6 +85,11 @@ typedef std::string AnimationFrames[5][2];
 /****/
 #define PI					3.14159265
 /****/
+#define kFadeIn				1
+#define kFadeOut		   -1
+#define kOpacityMin			100
+#define kOpacityMax			255
+#define kOpacityFadeFactor	10
 #define kFrameDelay			100.0f
 #define kFrameTimeFactor    20.0f
 #define kZoomMin			1.2f
