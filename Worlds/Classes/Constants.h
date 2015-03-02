@@ -121,6 +121,12 @@ enum EGameObjectState
 	LoadPreviousMap
 };
 
+enum EParallaxTileMapState
+{
+	LoadCave,
+	LoadPlanet
+};
+
 enum ETileGrid
 {
 	BOTTOM,

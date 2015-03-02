@@ -1,10 +1,12 @@
 #include "ParallaxTileMap.h"
+#include "ParallaxTileMapFsm.h"
 #include "ParallaxBackground.h"
 #include "GameObject.h"
 #include "GameObjectFactory.h"
 #include "Utils.h"
 #include "PathFinder.h"
 #include "Path.h"
+
 
 
 /**
@@ -103,6 +105,18 @@ ParallaxTileMap::~ParallaxTileMap()
 */
 void ParallaxTileMap::update(float& delta)
 {
+	void(ParallaxTileMapFsm:: *ptrs[])() =
+	{
+		&ParallaxTileMapFsm::LoadCave,
+		&ParallaxTileMapFsm::LoadPlanet,
+		&ParallaxTileMapFsm::LoadSpaceStation,
+		&ParallaxTileMapFsm::LoadPrison,
+		&ParallaxTileMapFsm::LoadBossBattle
+	};
+
+	EParallaxTileMapState state = EParallaxTileMapState::LoadPlanet;
+
+	(_fsm->*ptrs[state])();
 
 #if DEBUG_ENABLE
 

@@ -111,6 +111,7 @@ protected: /** Variables **/
 	int _objectCount;
 	Size _tileSize;
 	Size _mapSize;	
+	class ParallaxTileMapFsm* _fsm;
 };
 
 class Cave : public ParallaxTileMap
