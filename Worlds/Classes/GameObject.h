@@ -45,6 +45,7 @@ public:
 	virtual bool containsPoint(Vec2 point) = 0;
 
 	/** Getters **/
+    virtual EGameObjectState getCurrentState() = 0;
 	virtual Rect getBoundingBox() = 0;
 	virtual Rect getCollisionBox() = 0;	
 	virtual Vec2 getCenterPosition() = 0;
@@ -62,6 +63,7 @@ public:
     virtual bool isOnGround() = 0;
 
 	/** Setters **/
+    virtual void setCurrentState(EGameObjectState newState) = 0;
 	virtual void setBoundingBox(Rect boundingBox) = 0;
 	virtual void setCollisionBox(Rect collisionBox) = 0;
 	virtual void setClimbing(bool climbing) = 0;
@@ -116,6 +118,7 @@ public:
 	virtual bool containsPoint(Vec2 point);
 
 	/** Getters **/
+    virtual EGameObjectState getCurrentState();
 	virtual Rect getBoundingBox();
 	virtual Rect getCollisionBox();
 	virtual bool getClimbing();
@@ -133,6 +136,7 @@ public:
     virtual bool isOnGround();
 
 	/** Setters **/
+    virtual void setCurrentState(EGameObjectState newState);
 	virtual void setBoundingBox(Rect boundingBox);
 	virtual void setCollisionBox(Rect collisionBox);
 	virtual void setClimbing(bool climbing);

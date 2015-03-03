@@ -73,6 +73,12 @@ bool GameObject::containsPoint(Vec2 point)
 /** Getters **/
 #pragma region Getters
 
+/****/
+EGameObjectState GameObject::getCurrentState()
+{
+    return CurrentState;
+};
+
 /**
 * Get the GameObject bounding box
 *
@@ -186,6 +192,13 @@ bool GameObject::isOnGround()
 
 /** Setters **/
 #pragma region Setters
+
+/****/
+void GameObject::setCurrentState(EGameObjectState newState)
+{
+    this->CurrentState = newState;
+};
+
 
 void GameObject::setBoundingBox(Rect boundingBox)
 {
