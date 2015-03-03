@@ -47,6 +47,47 @@ void GameObjectState::PreviousMap(IGameObjectFsm& fsm)
 
 #pragma endregion GameObjectState
 
+
+#pragma region OnGround
+
+OnGround* OnGround::m_pInstance = NULL;
+
+OnGround* OnGround::getInstance()
+{
+	log("Check can climb state is being accessed");
+	return m_pInstance ? m_pInstance : m_pInstance = new OnGround();
+}
+
+void OnGround::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void OnGround::Up(IGameObjectFsm& fsm)
+{
+	log("You can only jump when on the ground");
+};
+
+void OnGround::Down(IGameObjectFsm& fsm)
+{
+	log("Lets crouch");
+};
+
+void OnGround::Left(IGameObjectFsm& fsm)
+{
+	log("Check walk left");
+};
+
+void OnGround::Right(IGameObjectFsm& fsm)
+{
+	log("Check walk right");
+};
+
+
+#pragma endregion OnGround
+
+
 /**
 *
 */
@@ -125,6 +166,7 @@ void CheckCanWalk::Left(IGameObjectFsm& fsm)
 	log("We are checking if we can walk left");
 	if (true /** if check returns true state can walk left **/)
 	{
+		fsm.gameObject->setVelocity(Vec2::ZERO);
 		/** we can walk left **/
 		this->canWalkLeft(fsm);
 	}
@@ -135,6 +177,7 @@ void CheckCanWalk::Right(IGameObjectFsm& fsm)
 	log("We are checking if we can walk right");
 	if (true /** if check returns true state can walk right **/)
 	{
+		fsm.gameObject->setVelocity(Vec2::ZERO);
 		/** we can walk right **/
 		this->canWalkRight(fsm);
 	}
@@ -553,6 +596,11 @@ void GameObjectFsm::LoadNextMap()
 void GameObjectFsm::LoadPreviousMap()
 {
 	currentState->PreviousMap(*this);
+};
+
+void GameObjectFsm::OnGround()
+{
+	currentState->OnGr
 };
 
 #pragma endregion GameObjectFSM Actions

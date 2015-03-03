@@ -33,42 +33,25 @@ void InputComponent::Stop(IGameObject& gameObject)
 
 	Vec2 velocity = gameObject.getVelocity();
 	
-	if (velocity.x > 1.0f)
-	{
-		velocity.x -= 10.0f;
-	}
-	else if (velocity.x < -1.0f)
-	{
-		velocity.x += 10.0f;
-	}
-	else
-	{
-		velocity.x = 0.0f;
-	}
+	/** Dampens velocity **/
+	velocity *= pow(0.005, kUpdateInterval);
 		
-    if (velocity.y > 1.0f)
-    {
-        velocity.y -= 10.0f;
-    }
-    else if (velocity.y < -1.0f)
-    {
-        velocity.y += 10.0f;
-    }
-    else
-    {
-        velocity.y = 0.0f;
-    }
-
 	gameObject.setVelocity(velocity);
 };
 
 void InputComponent::updateDesiredPosition(IGameObject& gameObject, Vec2 direction)
 {
 	Vec2 velocity = gameObject.getVelocity();
+	
+	//	
+	Vec2 gravityStep = _gravity * kUpdateInterval;
+	velocity = velocity + gravityStep;
+	
 	//
-	Vec2 step = _movement * kUpdateInterval;
-	velocity.x = velocity.x + step.x * direction.x;
-	velocity.y = velocity.y + step.y * direction.y;
+	Vec2 movementStep = _movement * kUpdateInterval;
+	velocity.x = velocity.x + movementStep.x * direction.x;
+	velocity.y = velocity.y + movementStep.y * direction.y;
+	
 	//
 	velocity.clamp(_minMovement, _maxMovement);
 	Vec2 stepVelocity = velocity * kUpdateInterval;

@@ -5,86 +5,164 @@
 /** Event Overrides**/
 #pragma region Event Overrides
 
-/**
-*
-*/
-#pragma region ParallaxTileMapState
-
-void ParallaxTileMapState::ToCave(IParallaxTileMapFsm& fsm)
-{
-	//fsm.setCurrentState(Cave::getInstance());
-};
-
-void ParallaxTileMapState::ToPlanet(IParallaxTileMapFsm& fsm)
-{
-	//fsm.setCurrentState(Planet::getInstance());
-};
-
-#pragma endregion ParallaxTileMapState
 
 /**
 *
 */
-#pragma region Cave
+#pragma region CaveActive
 
-Cave* Cave::m_pInstance = NULL;
+CaveActive* CaveActive::m_pInstance = NULL;
 
-Cave* Cave::getInstance()
+CaveActive* CaveActive::getInstance()
 {
 	log("Check can climb state is being accessed");
-	return m_pInstance ? m_pInstance : m_pInstance = new Cave();
+	return m_pInstance ? m_pInstance : m_pInstance = new CaveActive();
 }
 
-void Cave::destroyInstance()
+void CaveActive::destroyInstance()
 {
 	delete m_pInstance;
 	m_pInstance = 0;
 };
 
-void Cave::ToPlanet(IParallaxTileMapFsm& fsm)
+void CaveActive::ToPlanet(IParallaxTileMapFsm& fsm)
 {
 	log("Moving to planet");
+	fsm.setCurrentState(PlanetActive::getInstance());
 };
 
-#pragma endregion Cave
+#pragma endregion CaveActive
 
 /**
 *
 */
-#pragma region Planet
+#pragma region PlanetActive
 
-Planet* Planet::m_pInstance = NULL;
+PlanetActive* PlanetActive::m_pInstance = NULL;
 
-Planet* Planet::getInstance()
+PlanetActive* PlanetActive::getInstance()
 {
-	log("Check can walk state is being accessed");
-	return m_pInstance ? m_pInstance : m_pInstance = new Planet();
+	log("Planet active state is being accessed");
+	return m_pInstance ? m_pInstance : m_pInstance = new PlanetActive();
 }
 
-void Planet::destroyInstance()
+void PlanetActive::destroyInstance()
 {
 	delete m_pInstance;
 	m_pInstance = 0;
 };
 
-void Planet::ToCave(IParallaxTileMapFsm& fsm)
+void PlanetActive::ToCave(IParallaxTileMapFsm& fsm)
 {
 	log("We moving into a cave");
+	fsm.setCurrentState(CaveActive::getInstance());
 };
 
-#pragma endregion CheckCanWalk
+#pragma endregion PlanetActive
 
+/**
+*
+*/
+#pragma region StationActiveState
+
+StationActive* StationActive::m_pInstance = NULL;
+
+StationActive* StationActive::getInstance()
+{
+	log("Space station active state is being accessed");
+	return m_pInstance ? m_pInstance : m_pInstance = new StationActive();
+}
+
+void StationActive::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void StationActive::ToPlanet(IParallaxTileMapFsm& fsm)
+{
+	log("We moving to a planet");
+	fsm.setCurrentState(PrisonActive::getInstance());
+};
+
+void StationActive::ToPrison(IParallaxTileMapFsm& fsm)
+{
+	log("We moving to the prison");
+	fsm.setCurrentState(PrisonActive::getInstance());
+};
+
+void StationActive::ToBossBattle(IParallaxTileMapFsm& fsm)
+{
+	log("We moving to the boss battle");
+	fsm.setCurrentState(BossBattleActive::getInstance());
+};
+
+#pragma endregion StationActiveState
+
+/**
+*
+*/
+#pragma region PrisonActiveState
+
+PrisonActive* PrisonActive::m_pInstance = NULL;
+
+PrisonActive* PrisonActive::getInstance()
+{
+	log("Space station active state is being accessed");
+	return m_pInstance ? m_pInstance : m_pInstance = new PrisonActive();
+}
+
+void PrisonActive::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void PrisonActive::ToStation(IParallaxTileMapFsm& fsm)
+{
+	log("We moving into the station");
+	fsm.setCurrentState(StationActive::getInstance());
+};
+
+#pragma endregion PrisonActiveState
+
+/**
+*
+*/
+#pragma region BossBattleActiveState
+
+BossBattleActive* BossBattleActive::m_pInstance = NULL;
+
+BossBattleActive* BossBattleActive::getInstance()
+{
+	log("Space station active state is being accessed");
+	return m_pInstance ? m_pInstance : m_pInstance = new BossBattleActive();
+}
+
+void BossBattleActive::destroyInstance()
+{
+	delete m_pInstance;
+	m_pInstance = 0;
+};
+
+void BossBattleActive::ToStation(IParallaxTileMapFsm& fsm)
+{
+	log("We moving into the station");
+	fsm.setCurrentState(StationActive::getInstance());
+};
+
+#pragma endregion BossBattleActiveState
 
 #pragma endregion Event Overrides
 
 
-/** ParallaxTileMapFsm Actions **/
-#pragma region ParallaxTileMapFsm Actions
+/** PlanetFsm Events **/
+#pragma region PlanetFsm Events
 
 /**
 * Public access function to the finite state machine to load the cave state
 */
-void ParallaxTileMapFsm::LoadCave()
+void PlanetFsm::LoadCave()
 {
 	currentState->ToCave(*this);
 };
@@ -92,13 +170,41 @@ void ParallaxTileMapFsm::LoadCave()
 /**
 * Public access function to the finite state machine to load the planet state
 */
-void ParallaxTileMapFsm::LoadPlanet()
+void PlanetFsm::LoadPlanet()
 {
 	currentState->ToPlanet(*this);
 };
 
-#pragma endregion ParallaxTileMapFsm Actions
+#pragma endregion PlanetFsm Events
 
+/** StationFsm Events **/
+#pragma region StationFsm Events
+
+/**
+* Public access function to the finite state machine to load the cave state
+*/
+void StationFsm::LoadPrison()
+{
+	currentState->ToPrison(*this);
+};
+
+/**
+* Public access function to the finite state machine to load the planet state
+*/
+void StationFsm::LoadStation()
+{
+	currentState->ToStation(*this);
+};
+
+/**
+* Public access function to the finite state machine to load the planet state
+*/
+void StationFsm::LoadBossBattle()
+{
+	currentState->ToBossBattle(*this);
+};
+
+#pragma endregion StationFsm Events
 
 /**
 * Ctor
@@ -108,7 +214,7 @@ ParallaxTileMapFsm::ParallaxTileMapFsm(IParallaxTileMap* parallaxTileMap)
 {	
 	this->parallaxTileMap = parallaxTileMap;
 
-	currentState = Planet::getInstance();
+	currentState = PlanetActive::getInstance();
 
 	log("Current state == Planet");
 };

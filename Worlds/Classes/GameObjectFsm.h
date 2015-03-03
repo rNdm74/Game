@@ -35,7 +35,7 @@ protected:
 class GameObjectState : public IGameObjectState
 {
 public:	
-	/** Events **/
+	/** Actions **/
 	virtual void Up(IGameObjectFsm& fsm);
 	virtual void Down(IGameObjectFsm& fsm);
 	virtual void Left(IGameObjectFsm& fsm);
@@ -60,6 +60,24 @@ protected:
 
 /** GameObjectState Inherited Classes **/
 #pragma region GameObjectState 
+
+class OnGround : public GameObjectState
+{
+public:
+	static OnGround* getInstance();
+
+	virtual void Up(IGameObjectFsm& fsm) override;
+	virtual void Down(IGameObjectFsm& fsm) override;
+	virtual void Left(IGameObjectFsm& fsm) override;
+	virtual void Right(IGameObjectFsm& fsm) override;
+	virtual void destroyInstance();
+
+private:
+	OnGround(){ log("OnGround State"); };
+	virtual ~OnGround(){};
+
+	static OnGround* m_pInstance;
+};
 
 class CheckCanClimb : public GameObjectState
 {
@@ -282,6 +300,7 @@ public:
 	GameObjectFsm(IGameObject* gameObject);
 	virtual ~GameObjectFsm()
 	{	
+		OnGround::getInstance()->destroyInstance();
 		CheckCanClimb::getInstance()->destroyInstance();
 		CheckCanWalk::getInstance()->destroyInstance();
 		ClimbingUp::getInstance()->destroyInstance();
@@ -302,6 +321,7 @@ public:
 	virtual void Stop();
 	virtual void LoadNextMap();
 	virtual void LoadPreviousMap();
+	virtual void OnGround();
 
 	virtual void update();
 

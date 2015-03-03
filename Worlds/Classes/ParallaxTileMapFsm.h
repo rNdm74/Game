@@ -14,7 +14,7 @@ public:
 	virtual void ToCave(IParallaxTileMapFsm& fsm) = 0;
 	virtual void ToPlanet(IParallaxTileMapFsm& fsm) = 0;
 	virtual void ToPrison(IParallaxTileMapFsm& fsm) = 0;
-	virtual void ToSpaceStation(IParallaxTileMapFsm& fsm) = 0;
+	virtual void ToStation(IParallaxTileMapFsm& fsm) = 0;
 	virtual void ToBossBattle(IParallaxTileMapFsm& fsm) = 0;
 
 	virtual void destroyInstance() = 0;
@@ -29,10 +29,10 @@ class ParallaxTileMapState : public IParallaxTileMapState
 {
 public:	
 	/** Events **/
-	virtual void ToCave(IParallaxTileMapFsm& fsm);
-	virtual void ToPlanet(IParallaxTileMapFsm& fsm);
+	virtual void ToCave(IParallaxTileMapFsm& fsm){};
+	virtual void ToPlanet(IParallaxTileMapFsm& fsm){};
 	virtual void ToPrison(IParallaxTileMapFsm& fsm){};
-	virtual void ToSpaceStation(IParallaxTileMapFsm& fsm){};
+	virtual void ToStation(IParallaxTileMapFsm& fsm){};
 	virtual void ToBossBattle(IParallaxTileMapFsm& fsm){};
 
 	virtual void destroyInstance(){};
@@ -80,32 +80,32 @@ private:
 	static PlanetActive* m_pInstance;
 };
 
-class SpaceStationActive : public ParallaxTileMapState
+class StationActive : public ParallaxTileMapState
 {
 public:
-	static SpaceStationActive* getInstance();
-
-	/** Overrides **/
-	virtual void ToPrison(IParallaxTileMapFsm& fsm) override;
-
+	static StationActive* getInstance();
 	virtual void destroyInstance();
 
+	/** Overrides **/
+	virtual void ToPlanet(IParallaxTileMapFsm& fsm) override;
+	virtual void ToPrison(IParallaxTileMapFsm& fsm) override;
+	virtual void ToBossBattle(IParallaxTileMapFsm& fsm) override;
+		
 private:
-	SpaceStationActive(){ log("SpaceStationActive State"); };
-	virtual ~SpaceStationActive(){};
+	StationActive(){ log("SpaceStationActive State"); };
+	virtual ~StationActive(){};
 
-	static SpaceStationActive* m_pInstance;
+	static StationActive* m_pInstance;
 };
 
 class PrisonActive : public ParallaxTileMapState
 {
 public:
 	static PrisonActive* getInstance();
+	virtual void destroyInstance();
 
 	/** Overrides **/
-	virtual void ToSpaceStation(IParallaxTileMapFsm& fsm) override;
-
-	virtual void destroyInstance();
+	virtual void ToStation(IParallaxTileMapFsm& fsm) override;	
 
 private:
 	PrisonActive(){ log("PrisonActive State"); };
@@ -118,11 +118,10 @@ class BossBattleActive : public ParallaxTileMapState
 {
 public:
 	static BossBattleActive* getInstance();
+	virtual void destroyInstance();
 
 	/** Overrides **/
-	virtual void ToCave(IParallaxTileMapFsm& fsm) override;
-
-	virtual void destroyInstance();
+	virtual void ToStation(IParallaxTileMapFsm& fsm) override;
 
 private:
 	BossBattleActive(){ log("BossBattleActive State"); };
@@ -138,46 +137,58 @@ private:
 class IParallaxTileMapFsm
 {
 public:
-	class IParallaxTileMap* parallaxTileMap;
-
 	IParallaxTileMapFsm(){};
 	virtual ~IParallaxTileMapFsm(){};
 
+public:
 	/** Actions - Public outside the machine **/
 	virtual void LoadCave() = 0;
 	virtual void LoadPlanet() = 0;
+	virtual void LoadSpaceStation() = 0;
+	virtual void LoadPrison() = 0;
+	virtual void LoadBossBattle() = 0;
 
 	/**  **/
 	virtual void setCurrentState(IParallaxTileMapState* state) = 0;
-		
-	bool timeoutBegin;
-	long timeout;
+
+	class IParallaxTileMap* parallaxTileMap;
 };
 
 class ParallaxTileMapFsm : public IParallaxTileMapFsm
 {
-	class IParallaxTileMapState* currentState;
-
 public:
 	ParallaxTileMapFsm(IParallaxTileMap* parallaxTileMap);
 	virtual ~ParallaxTileMapFsm()
 	{	
 		CaveActive::getInstance()->destroyInstance();
 		PlanetActive::getInstance()->destroyInstance();
-		SpaceStationActive::getInstance()->destroyInstance();
+		StationActive::getInstance()->destroyInstance();
 		PrisonActive::getInstance()->destroyInstance();
 		BossBattleActive::getInstance()->destroyInstance();
 	};
 		
-	/** Actions - Public outside the machine **/		
-	virtual void LoadCave();
-	virtual void LoadPlanet();
-	virtual void LoadSpaceStation();
-	virtual void LoadPrison();
-	virtual void LoadBossBattle();
-
 	/** Setters **/
 	virtual void setCurrentState(IParallaxTileMapState* currentState);
+
+protected:
+	class IParallaxTileMapState* currentState;
+};
+
+class PlanetFsm : public ParallaxTileMapFsm
+{
+public:
+	/** Actions - Public outside the machine **/
+	virtual void LoadCave();
+	virtual void LoadPlanet();
+};
+
+class StationFsm : public ParallaxTileMapFsm
+{
+public:
+	/** Actions - Public outside the machine **/
+	virtual void LoadPrison();
+	virtual void LoadStation();
+	virtual void LoadBossBattle();
 };
 
 #endif /* defined(__com_dotdat_World__ParallaxTileMapFsm_H__) */

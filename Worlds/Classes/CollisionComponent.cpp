@@ -82,6 +82,7 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 			{				
 				desiredPosition.y += intersection.size.height;
 				velocity.y = 0.0f;
+				gameObject.CurrentState = E
 				gameObject.setOnGround(true);
 			}
 			else if (tileIndex == ETileGrid::TOP /** Tile is above gameObject **/)

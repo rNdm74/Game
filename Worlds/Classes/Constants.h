@@ -118,7 +118,8 @@ enum EGameObjectState
 	CheckCanWalkRight,
 	Stop,
 	LoadNextMap,
-	LoadPreviousMap
+	LoadPreviousMap,
+	OnGround
 };
 
 enum EParallaxTileMapState
