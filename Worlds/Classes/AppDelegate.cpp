@@ -34,14 +34,16 @@ bool AppDelegate::applicationDidFinishLaunching() {
         glview = GLViewImpl::create("Worlds");
 		//glview = GLViewImpl::createWithRect("Worlds", Rect(0,0, 480,320), 1.0f);
 		//glview = GLViewImpl::createWithFullScreen("Worlds");
-   		//		
-		static_cast<GLViewImpl*>(glview)->setCursorVisible(false);
-		
+   		//
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+        // Only disable cursor on a desktop computer
+        static_cast<GLViewImpl*>(glview)->setCursorVisible(false);
+#endif
 		director->setOpenGLView(glview);
     }
 
     // turn on display FPS
-    //director->setDisplayStats(true);
+    director->setDisplayStats(true);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);

@@ -116,7 +116,7 @@ void ParallaxTileMap::update(float& delta)
 
 	EParallaxTileMapState state = EParallaxTileMapState::LoadPlanet;
 
-	(_fsm->*ptrs[state])();
+	//(_fsm->*ptrs[state])();
 
 #if DEBUG_ENABLE
 
