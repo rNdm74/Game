@@ -10,7 +10,7 @@
 void InputComponent::ClimbUp(IGameObject& gameObject)
 {	
 	EGameObjectState state = gameObject.getCurrentState();
-	updateDesiredPosition(gameObject, GameObjectStates[state]);
+	gameObject.setDirection(GameObjectStates[state]);
 };
 
 void InputComponent::ClimbDown(IGameObject& gameObject)
