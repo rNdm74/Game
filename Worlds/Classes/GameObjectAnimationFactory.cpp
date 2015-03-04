@@ -13,9 +13,9 @@ void GameObjectAnimationFactory::Climb(IGameObject& gameObject)
 
 void GameObjectAnimationFactory::Walk(IGameObject& gameObject)
 {
-	Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
+	//Sprite& sprite = static_cast<Player&>(gameObject).getSprite();
 	// Stop all running actions
-	sprite->stopAllActions();
+	gameObject.stopAllActions();
 
 	//  create the Animation, and populate it with frames fetched from the SpriteFrameCache
 	auto _anim = Animation::create();
@@ -28,7 +28,7 @@ void GameObjectAnimationFactory::Walk(IGameObject& gameObject)
 		_anim->addSpriteFrame(frame);
 	}
 
-	sprite->runAction(RepeatForever::create(Animate::create(_anim)));
+	gameObject.runAction(RepeatForever::create(Animate::create(_anim)));
 
 	//sprite->runAction(FlipX::create(_direction.x < 0));
 };

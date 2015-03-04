@@ -254,7 +254,7 @@ IGameObject* ParallaxTileMap::removePlayer()
 /** **/
 void ParallaxTileMap::setPositionOnPlayer()
 {
-	Vec2 _position = this->getPlayer()->getCenterPosition();
+	Vec2 _position = this->getPlayer()->getPosition();
 	Size _winSize = Director::getInstance()->getWinSize() / this->getParent()->getScale();
 	
 	float x = MAX(_position.x, _winSize.width / 2);

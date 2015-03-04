@@ -5,8 +5,6 @@
 
 using namespace cocos2d;
 
-typedef std::stack<class IParallaxTileMap*> ActiveTileMap;
-
 class Level : public Node
 {	
 public:

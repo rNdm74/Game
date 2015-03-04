@@ -12,6 +12,7 @@ struct TileData
 	int GID = 0;
 };
 
+typedef std::stack<class IParallaxTileMap*> ActiveTileMap;
 typedef std::array<TileData, 8> TileDataArray;
 typedef std::array<cocos2d::Vec2, 7> States;
 typedef std::array<bool, 7> KeyMatrix;
@@ -19,7 +20,7 @@ typedef std::array<bool, 4> IsMoving;
 typedef std::array<bool, 4> CanMove;
 typedef std::string AnimationFrames[5][2];
 
-#define DEBUG_ENABLE 0
+#define DEBUG_ENABLE 1
 
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10

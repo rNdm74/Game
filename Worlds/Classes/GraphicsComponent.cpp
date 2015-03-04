@@ -36,13 +36,11 @@ PlayerGraphicsComponent::PlayerGraphicsComponent()
 
 void PlayerGraphicsComponent::update(IGameObject& gameObject)
 {
-	Sprite* sprite = static_cast<Player&>(gameObject).getSprite();
-
 	/** Reset the currentFrame to init frame **/
 	currentFrame %= 2;
 	
 	/** Set the sprite frame **/
-	sprite->setSpriteFrame(frameCache(animationFrames[activeState][currentFrame]));
+	gameObject.setSpriteFrame(frameCache(animationFrames[activeState][currentFrame]));
 
 	/** Add delay so animation effect is realisitic **/
 	if (frameTime > kFrameDelay /**  **/)
@@ -60,7 +58,7 @@ void PlayerGraphicsComponent::update(IGameObject& gameObject)
 
 	if (velocityFactor < 1.0f && activeState != EAnimationStates::IDLE)
 	{
-		sprite->setSpriteFrame(frameCache("alienBeige_stand.png"));
+		gameObject.setSpriteFrame(frameCache("alienBeige_stand.png"));
 	}
 }
 
@@ -82,7 +80,7 @@ void PlayerGraphicsComponent::WalkLeft(IGameObject& gameObject)
 	this->activeState = EAnimationStates::WALKING;
 	this->update(gameObject);	
 
-	static_cast<Player&>(gameObject).getSprite()->setFlippedX(true);
+	gameObject.setFlippedX(true);
 };
 
 void PlayerGraphicsComponent::WalkRight(IGameObject& gameObject)
@@ -91,7 +89,7 @@ void PlayerGraphicsComponent::WalkRight(IGameObject& gameObject)
 
 	this->update(gameObject);	
 
-	static_cast<Player&>(gameObject).getSprite()->setFlippedX(false);
+	gameObject.setFlippedX(false);
 };
 
 void PlayerGraphicsComponent::Stop(IGameObject& gameObject)
@@ -148,25 +146,25 @@ void PlayerGraphicsComponent::Crouch(IGameObject& gameObject)
 */
 void PlayerGraphicsComponent::lookLeft(IGameObject& gameObject)
 {
-	static_cast<Player&>(gameObject).getSprite()->setFlippedX(true);
+	gameObject.setFlippedX(true);
 };
 
 void PlayerGraphicsComponent::lookRight(IGameObject& gameObject)
 {
-	static_cast<Player&>(gameObject).getSprite()->setFlippedX(false);
+	gameObject.setFlippedX(false);
 };
 
 void PlayerGraphicsComponent::lookUp(IGameObject& gameObject)
 {
-	static_cast<Player&>(gameObject).getSprite()->setSpriteFrame(frameCache("alienBeige_stand.png"));
+	gameObject.setSpriteFrame(frameCache("alienBeige_stand.png"));
 };
 
 void PlayerGraphicsComponent::lookDown(IGameObject& gameObject)
 {
-	static_cast<Player&>(gameObject).getSprite()->setSpriteFrame(frameCache("alienBeige_stand.png"));
+	gameObject.setSpriteFrame(frameCache("alienBeige_stand.png"));
 };
 
 void PlayerGraphicsComponent::lookForward(IGameObject& gameObject)
 {
-	static_cast<Player&>(gameObject).getSprite()->setSpriteFrame(frameCache("alienBeige.png"));
+	gameObject.setSpriteFrame(frameCache("alienBeige.png"));
 };

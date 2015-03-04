@@ -7,6 +7,7 @@
 #include "InputComponent.h"
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
+#include "ParallaxTileMap.h"
 
 /**
 * GameObject
@@ -15,6 +16,21 @@
 */
 #pragma region GameObject
 
+GameObject* GameObject::create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics)
+{
+	// Create an instance of Level
+	GameObject* gameObject = new (std::nothrow) GameObject(properties, collision, graphics);
+
+	if (gameObject && gameObject->init())
+	{
+		gameObject->autorelease();
+		gameObject->setAnchorPoint(Vec2::ZERO);
+		return gameObject;
+	}
+
+	CC_SAFE_DELETE(gameObject);
+	return nullptr;
+};
 
 /**
 * Create a new GameObject
@@ -25,15 +41,11 @@ GameObject::GameObject(ValueMap& properties, ICollisionComponent* collision, IGr
 {	
 	_collision = collision;
 	_graphics = graphics;
-		
+	_desiredPosition.x = properties["x"].asFloat();
+	_desiredPosition.y = properties["y"].asFloat();
+
 	_path = nullptr;
-
-	for (int i = 0; i < 4; ++i)
-	{
-		_canMove[i] = false;
-		_isMoving[i] = false;		
-	}
-
+		
 	_onGround = false;
 	_isClimbing = false;
 		
@@ -45,10 +57,7 @@ GameObject::GameObject(ValueMap& properties, ICollisionComponent* collision, IGr
 	this->setProperties(properties);
 	this->setName(properties["name"].asString());
 	this->setContentSize(Size(width, height));
-	this->setAnchorPoint(Vec2::ZERO);
 	this->setPosition(Vec2(x, y));
-
-	this->CurrentState = EGameObjectState::Stop;
 };
 
 
@@ -73,28 +82,42 @@ bool GameObject::containsPoint(Vec2 point)
 /** Getters **/
 #pragma region Getters
 
-/****/
+/**
+* Get the GameObject currentState
+*
+* @return enum EGameObjectState
+*/
 EGameObjectState GameObject::getCurrentState()
 {
-    return CurrentState;
+	return CurrentState;
 };
-
 /**
-* Get the GameObject bounding box
+* Get the GameObject finite state machine
 *
-* @return The Rect of the GameObject bounding box
+* @return the pointer to the finite state machine
 */
-Rect GameObject::getBoundingBox()
+IGameObjectFsm* GameObject::getFsm()
 {
-	return Rect
-	(
-		this->getPosition().x,
-		this->getPosition().y,
-		this->getSize().width,
-		this->getSize().width
-	);
+	return _fsm;
 };
-
+/**
+* Get the path of the gameObject
+*
+* @return the pointer to the finite state machine
+*/
+IPath* GameObject::getPath()
+{
+	return _path;
+};
+/**
+* Get the GameObject property ValueMap information
+*
+* @return The ValueMap reference of the GameObjects properties
+*/
+ValueMap GameObject::getProperties()
+{
+	return _properties;
+};
 /**
 * Get the GameObject collision bounding box, overridden by child classes
 *
@@ -104,7 +127,6 @@ Rect GameObject::getCollisionBox()
 {
 	return this->getBoundingBox();
 };
-
 /**
 * Get the GameObject center Vec2
 *
@@ -112,81 +134,57 @@ Rect GameObject::getCollisionBox()
 */
 Vec2 GameObject::getCenterPosition()
 {
-	float x = this->getPosition().x + this->getSize().width / 2;
-	float y = this->getPosition().y + this->getSize().height / 2;
+	float x = this->getPosition().x + this->getContentSize().width / 2;
+	float y = this->getPosition().y + this->getContentSize().height / 2;
 
 	return Vec2(x, y);
 };
-
-bool GameObject::getClimbing()
-{
-	return _isClimbing;
-};
-
+/**
+* Get the GameObject desiredPosition
+*
+* @return The Vec2 of the GameObject desired position
+*/
 Vec2 GameObject::getDesiredPosition()
 {
 	return _desiredPosition;
 };
-
+/**
+* Get the GameObject's direction
+*
+* @return The Vec2 of the GameObject moving direction
+*/
 Vec2 GameObject::getDirection()
 {
 	return _direction;
 };
-
-Vec2 GameObject::getMapTransition()
-{
-	return _mapTransition;
-};
-
-bool GameObject::getOnGround()
-{
-	return _onGround;
-};
-
-IPath* GameObject::getPath()
-{
-	return _path;
-};
-
 /**
-* Get the GameObject property ValueMap information
+* Get the GameObject's velocity
 *
-* @return The ValueMap reference of the GameObjects properties
+* @return The Vec2 of the GameObject moving velocity
 */
-ValueMap GameObject::getProperties()
+Vec2 GameObject::getVelocity()
 {
-	return _properties; 
+	return _velocity;
 };
-
+/**
+* Get the is GameObject climbing
+*
+* @return The bool of the GameObject isClimbing
+*/
+bool GameObject::getClimbing()
+{
+	return _isClimbing;
+};
 /**
 * Get the GameObject content size
 *
 * @return The Size of the GameObject
 */
-Size GameObject::getSize()
+bool GameObject::getOnGround()
 {
-	return this->getContentSize();
+	return _onGround;
 };
 
-Vec2 GameObject::getVelocity()
-{
-	return _velocity;
-};
-
-CanMove GameObject::getCanMove()
-{
-	return _canMove;
-};
-
-IsMoving GameObject::getIsMoving()
-{
-	return _isMoving;
-};
-
-bool GameObject::isOnGround()
-{
-    return _onGround;
-};
 
 #pragma endregion Getters
 
@@ -199,25 +197,33 @@ void GameObject::setCurrentState(EGameObjectState newState)
     this->CurrentState = newState;
 };
 
-
-void GameObject::setBoundingBox(Rect boundingBox)
+void GameObject::setPath(IPath* path)
 {
-
+	_path = path;
+};
+/**
+* Sets the properties of a GameObject
+*
+* @param properties The ValueMap that contains information about the gameObject
+*/
+void GameObject::setProperties(ValueMap& properties)
+{
+	_properties = properties;
 };
 
-void GameObject::setCollisionBox(Rect collisionBox)
+void GameObject::setDirection(Vec2 direction)
 {
-
-};
-
-void GameObject::setClimbing(bool climbing)
-{
-	_isClimbing = climbing;
+	_direction = direction;
 };
 
 void GameObject::setDesiredPosition(Vec2 desiredPosition)
 {
 	_desiredPosition = desiredPosition;
+};
+
+void GameObject::setVelocity(Vec2 velocity)
+{
+	_velocity = velocity;
 };
 
 void GameObject::setDesiredPositionX(float x)
@@ -230,53 +236,14 @@ void GameObject::setDesiredPositionY(float y)
 	_desiredPosition.y = y;
 };
 
-void GameObject::setDirection(Vec2 direction)
+void GameObject::setClimbing(bool climbing)
 {
-	_direction = direction;
-};
-
-void GameObject::setMapTransition(Vec2 mapTransition)
-{
-	_mapTransition = mapTransition;
+	_isClimbing = climbing;
 };
 
 void GameObject::setOnGround(bool onGround)
 {
 	_onGround = onGround;
-};
-
-void GameObject::setPath(IPath* path)
-{
-	_path = path;
-};
-
-/**
-* Sets the properties of a GameObject
-*
-* @param properties The ValueMap that contains information about the gameObject
-*/
-void GameObject::setProperties(ValueMap& properties)
-{
-	_properties = properties;
-};
-
-void GameObject::setSize(Vec2 size)
-{
-};
-
-void GameObject::setVelocity(Vec2 velocity)
-{
-	_velocity = velocity;
-};
-
-void GameObject::setCanMove(CanMove canMove)
-{
-	_canMove = canMove;
-};
-
-void GameObject::setIsMoving(IsMoving isMoving)
-{
-	_isMoving = isMoving;
 };
 
 #pragma endregion Setters
@@ -292,6 +259,26 @@ void GameObject::setIsMoving(IsMoving isMoving)
 #pragma region Player
 
 
+Player* Player::create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input)
+{
+	// Create an instance of Level
+	Player* player = new (std::nothrow) Player(properties, collision, graphics, menu, input);
+
+	if (player && player->init())
+	{
+		player->autorelease();
+		player->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(kPlayerFileName));
+		player->getTexture()->setAliasTexParameters();
+		player->getTexture()->setAntiAliasTexParameters();
+		player->setAnchorPoint(Vec2::ZERO);
+
+		return player;
+	}
+
+	CC_SAFE_DELETE(player);
+	return nullptr;
+};
+
 /**
 * Create a Player GameObject, in the constructor, its properties are set
 * All components that are passed in are set, the sprite that contains the image of the player is created and added, 
@@ -305,57 +292,48 @@ void GameObject::setIsMoving(IsMoving isMoving)
 */
 Player::Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input) : super(properties, collision, graphics)
 {
-	_menu = menu;
-	_input = input;
-
 	_fsm = new GameObjectFsm(this);
 
-	_sprite = Sprite::createWithSpriteFrameName(kPlayerFileName);
-	_sprite->getTexture()->setAliasTexParameters();
-	_sprite->getTexture()->setAntiAliasTexParameters();
-	_sprite->setScale(1.0f);
-	_sprite->setAnchorPoint(Vec2::ZERO);
-    
-	auto shadow = Sprite::create();
-	shadow->setSpriteFrame(_sprite->getSpriteFrame());
-	shadow->setAnchorPoint(Vec2(-0.1f, 0.0f)); // position it to the center of the target node
-	shadow->setColor(Color3B(0, 0, 0));
-	shadow->setOpacity(50);
-	_sprite->addChild(shadow, -1);
-
-	float width = _sprite->getContentSize().width;
-	float height = _sprite->getContentSize().height;
-	
-	this->setContentSize(Size(width, width));
+	_menu = menu;
+	_input = input;
+		
 	this->setTag(kTagPlayer);
-	this->addChild(_sprite);
 
-	_isLoaded = true;
+	_shadow = Sprite::create();
+	_shadow->setSpriteFrame(this->getSpriteFrame());
+	_shadow->setAnchorPoint(Vec2(-0.1f, 0.0f)); // position it to the center of the target node
+	_shadow->setColor(Color3B(0, 0, 0));
+	_shadow->setOpacity(50);
 
-	_desiredPosition = this->getPosition();	
+	this->addChild(_shadow, -1);
+		
+	this->CurrentState = EGameObjectState::Stop;
+
+	activeMap = AppGlobal::getInstance()->activeMap;
 };
 
-
 void Player::update(Node* node)
-{	
-	void(GameObjectFsm:: *ptrs[])() =
+{		
+	void(IGameObjectFsm:: *ptrs[])() =
 	{
-		&GameObjectFsm::CheckCanClimbUp,
-		&GameObjectFsm::CheckCanClimbDown,
-		&GameObjectFsm::CheckCanWalkLeft,
-		&GameObjectFsm::CheckCanWalkRight,
-		&GameObjectFsm::Stop,
-		&GameObjectFsm::LoadNextMap,
-		&GameObjectFsm::LoadPreviousMap
+		&IGameObjectFsm::CheckCanClimbUp,
+		&IGameObjectFsm::CheckCanClimbDown,
+		&IGameObjectFsm::CheckCanWalkLeft,
+		&IGameObjectFsm::CheckCanWalkRight,
+		&IGameObjectFsm::Stop,
+		&IGameObjectFsm::LoadNextMap,
+		&IGameObjectFsm::LoadPreviousMap,
+		&IGameObjectFsm::OnGround
 	};
+		
+	(_fsm->*ptrs[this->getCurrentState()])();
 
-	EGameObjectState state = AppGlobal::getInstance()->gameObjectState;
-
-	(_fsm->*ptrs[state])();
-
+	_input->update(*node, *this);
 	_collision->update(*node, *this);
-
+		
 	this->setPosition(this->getDesiredPosition());
+
+	_shadow->setSpriteFrame(this->getSpriteFrame());
 };
 
 void Player::ClimbUp()
@@ -376,14 +354,14 @@ void Player::WalkLeft()
 {
 	// Run walking animation
 	_graphics->WalkLeft(*this);
-	_input->WalkLeft(*this);
+	_input->WalkLeft(*this);	
 };
 
 void Player::WalkRight()
 {
 	// Run walking animation
 	_graphics->WalkRight(*this);
-	_input->WalkRight(*this);
+	_input->WalkRight(*this);	
 };
 
 void Player::Stop()
@@ -405,14 +383,28 @@ void Player::Crouch()
     _input->Stop(*this);
 };
 
-Size Player::getSize()
+void Player::Jump()
 {
-	return _sprite->getContentSize();
 };
 
-Sprite* Player::getSprite()
+void Player::Die()
 {
-	return _sprite;
+};
+
+void Player::Hurt()
+{
+};
+
+void Player::ThrowGem()
+{
+};
+
+void Player::PickUpGem()
+{
+};
+
+void Player::Talk()
+{
 };
 
 Rect Player::getCollisionBox()
@@ -425,12 +417,6 @@ Rect Player::getCollisionBox()
 			
 	return collisionBox;
 };
-
-bool Player::IsLoaded()
-{
-	return _isLoaded;
-};
-
 
 #pragma endregion Player
 

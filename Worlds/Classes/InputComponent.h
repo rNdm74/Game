@@ -40,19 +40,22 @@ public:
 	//void findpath(Node& node, IGameObject& gameObject);
 	void desiredPosition(IGameObject& gameObject);
 
-private:
+protected:
 	void updateDesiredPosition(IGameObject& gameObject, Vec2 direction);
 
 	const Vec2 _gravity = Vec2(0.0, -1000.0);
-	const Vec2 _movement = Vec2(340.0, 1340.0);
-	const Vec2 _minMovement = Vec2(-340.0, -450.0);
-	const Vec2 _maxMovement = Vec2(340.0, 1340.0);
+	const Vec2 _movement = Vec2(840.0, 840.0);
+	const Vec2 _minMovement = Vec2(-340.0, -340.0);
+	const Vec2 _maxMovement = Vec2(340.0, 340.0);
 };
 
 class PlayerInputComponent : public InputComponent
 {
 public:
-	void update(Node& node, IGameObject& gameObject) override;
+	PlayerInputComponent();
+	virtual ~PlayerInputComponent(){};
+	void update(Node& node, IGameObject& gameObject) override;		
+
 };
 
 #endif /* defined(__FranticAlien__InputComponent__) */

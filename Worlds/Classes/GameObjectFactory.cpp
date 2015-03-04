@@ -11,7 +11,7 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 
 	if (className == "Player")
 	{
-		gameObject = new Player
+		gameObject = Player::create
 		(
 			properties,
 			new PlayerCollisionComponent(),
@@ -22,19 +22,19 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 	}
 	else if (className == "Left")
 	{
-		gameObject = new Left(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Left::create(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 	else if (className == "Right")
 	{
-		gameObject = new Right(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Right::create(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 	else if (className == "Enter")
 	{
-		gameObject = new Enter(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Enter::create(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 	else if (className == "Exit")
 	{
-		gameObject = new Exit(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Exit::create(properties, new CollisionComponent(), new GraphicsComponent());
 	}
 
 	return gameObject;

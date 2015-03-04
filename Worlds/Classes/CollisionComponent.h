@@ -16,11 +16,12 @@ public:
 	ICollisionComponent(){};
 	virtual ~ICollisionComponent(){};
 	virtual void update(Node& node, IGameObject& gameObject) = 0;
-
-protected:
     virtual void isLadderCollision(Node& node, IGameObject& gameObject) = 0;
     virtual void checkCollision(Node& node, IGameObject& gameObject) = 0;
+
+	virtual void CheckTileCollision(IGameObject& gameObject) = 0;
 	virtual void checkTileCollision(Node& node, IGameObject& gameObject) = 0;
+
 	virtual void checkLadderCollision(Node& node, IGameObject& gameObject) = 0;
     virtual void checkObjectCollision(Node& node, IGameObject& gameObject) = 0;
 	virtual void ladderTileCollision(Node& node, IGameObject& gameObject) = 0;
@@ -31,13 +32,15 @@ class CollisionComponent : public ICollisionComponent
 {
 public:
 	virtual void update(Node& node, IGameObject& gameObjectNode);
-
-protected:
     virtual void isLadderCollision(Node& node, IGameObject& gameObject){};
 	virtual void checkCollision(Node& node, IGameObject& gameObject);	
+	
+	virtual void CheckTileCollision(IGameObject& gameObject);
 	virtual void checkTileCollision(Node& node, IGameObject& gameObject);
+	
 	virtual void checkLadderCollision(Node& node, IGameObject& gameObject);
-    virtual void checkObjectCollision(Node& node, IGameObject& gameObject);    
+    virtual void checkObjectCollision(Node& node, IGameObject& gameObject);  
+
 	virtual void ladderTileCollision(Node& node, IGameObject& gameObject);
 };
 

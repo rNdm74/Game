@@ -9,6 +9,7 @@ class IInputComponent;
 class ICollisionComponent;
 class IGraphicsComponent;
 class IPath;
+class IGameObjectFsm;
 
 using namespace cocos2d;
 
@@ -19,7 +20,7 @@ using namespace cocos2d;
 *
 * @author Adam Charlton
 */
-class IGameObject : public Node
+class IGameObject : public Sprite
 {
 public:
 	/** Constructor and the Destructor **/
@@ -40,45 +41,60 @@ public:
 	virtual void Stop() = 0;
     virtual void Idle() = 0;
     virtual void Crouch() = 0;
+	virtual void Jump() = 0;
+	virtual void Die() = 0;
+	virtual void Hurt() = 0;
+	virtual void ThrowGem() = 0;
+	virtual void PickUpGem() = 0;
+	virtual void Talk() = 0;
+	/** Action methods end **/
 
 	/** **/
 	virtual bool containsPoint(Vec2 point) = 0;
 
 	/** Getters **/
-    virtual EGameObjectState getCurrentState() = 0;
-	virtual Rect getBoundingBox() = 0;
-	virtual Rect getCollisionBox() = 0;	
-	virtual Vec2 getCenterPosition() = 0;
-	virtual bool getClimbing() = 0;
-	virtual Vec2 getDesiredPosition() = 0;
-	virtual Vec2 getDirection() = 0;
-	virtual Vec2 getMapTransition() = 0;
-	virtual bool getOnGround() = 0;
+#pragma region Getters
+	virtual EGameObjectState getCurrentState() = 0;
+
+	virtual IGameObjectFsm* getFsm() = 0;
 	virtual IPath* getPath() = 0;
+
 	virtual ValueMap getProperties() = 0;
-	virtual Size getSize() = 0;
+		
+	virtual Rect getCollisionBox() = 0;	
+		
+	virtual Vec2 getCenterPosition() = 0;		
+	virtual Vec2 getDesiredPosition() = 0;
+	virtual Vec2 getDirection() = 0; 
 	virtual Vec2 getVelocity() = 0;
-	virtual CanMove getCanMove() = 0;
-	virtual IsMoving getIsMoving() = 0;
-    virtual bool isOnGround() = 0;
+				
+	virtual bool getClimbing() = 0;
+	virtual bool getOnGround() = 0;
+
+#pragma endregion Getters
 
 	/** Setters **/
-    virtual void setCurrentState(EGameObjectState newState) = 0;
-	virtual void setBoundingBox(Rect boundingBox) = 0;
-	virtual void setCollisionBox(Rect collisionBox) = 0;
-	virtual void setClimbing(bool climbing) = 0;
+#pragma region Setters
+
+	virtual void setCurrentState(EGameObjectState newState) = 0;
+
+	virtual void setPath(IPath* path) = 0;
+
+	virtual void setProperties(ValueMap& properties) = 0;
+	
+	virtual void setDirection(Vec2 direction) = 0;
+	
+	virtual void setVelocity(Vec2 velocity) = 0;
+		
 	virtual void setDesiredPosition(Vec2 desiredPosition) = 0;
 	virtual void setDesiredPositionX(float x) = 0;
 	virtual void setDesiredPositionY(float y) = 0;
-	virtual void setDirection(Vec2 direction) = 0;
-	virtual void setMapTransition(Vec2 mapTransition) = 0;
+	
+	virtual void setClimbing(bool climbing) = 0;
 	virtual void setOnGround(bool onGround) = 0;
-	virtual void setPath(IPath* path) = 0;
-	virtual void setProperties(ValueMap& properties) = 0;
-	virtual void setSize(Vec2 size) = 0;
-	virtual void setVelocity(Vec2 velocity) = 0;
-	virtual void setCanMove(CanMove canMove) = 0;
-	virtual void setIsMoving(IsMoving isMoving) = 0;
+
+#pragma endregion Setters
+
 };
 
 
@@ -95,6 +111,8 @@ class GameObject : public IGameObject
 	typedef GameObject self;
     
 public:
+	static GameObject* create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
+
 	/** Constructor and the Destructor **/
 	GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~GameObject(){};
@@ -111,47 +129,57 @@ public:
 	virtual void WalkLeft(){};
 	virtual void WalkRight(){};
 	virtual void Stop(){};
-    virtual void Idle(){};
-    virtual void Crouch(){};
+	virtual void Idle(){};
+	virtual void Crouch(){};
+	virtual void Jump(){};
+	virtual void Die(){};
+	virtual void Hurt(){};
+	virtual void ThrowGem(){};
+	virtual void PickUpGem(){};
+	virtual void Talk(){};
     
 	/** **/
 	virtual bool containsPoint(Vec2 point);
 
 	/** Getters **/
-    virtual EGameObjectState getCurrentState();
-	virtual Rect getBoundingBox();
+#pragma region Getters 
+	virtual EGameObjectState getCurrentState();
+
+	virtual IGameObjectFsm* getFsm();
+	virtual IPath* getPath();
+
+	virtual ValueMap getProperties();
+		
 	virtual Rect getCollisionBox();
-	virtual bool getClimbing();
+		
 	virtual Vec2 getCenterPosition();
 	virtual Vec2 getDesiredPosition();
 	virtual Vec2 getDirection();
-	virtual Vec2 getMapTransition();
-	virtual bool getOnGround();
-	virtual IPath* getPath();
-	virtual ValueMap getProperties();
-	virtual Size getSize();
 	virtual Vec2 getVelocity();
-	virtual CanMove getCanMove();
-	virtual IsMoving getIsMoving();
-    virtual bool isOnGround();
+				
+	virtual bool getClimbing();
+	virtual bool getOnGround();
+
+#pragma endregion Getters
 
 	/** Setters **/
-    virtual void setCurrentState(EGameObjectState newState);
-	virtual void setBoundingBox(Rect boundingBox);
-	virtual void setCollisionBox(Rect collisionBox);
-	virtual void setClimbing(bool climbing);
+#pragma region Setters	
+	virtual void setCurrentState(EGameObjectState newState);
+
+	virtual void setPath(IPath* path);
+
+	virtual void setProperties(ValueMap& properties);		
+	virtual void setDirection(Vec2 direction);	
+	virtual void setVelocity(Vec2 velocity);
+		
 	virtual void setDesiredPosition(Vec2 desiredPosition);
 	virtual void setDesiredPositionX(float x);
 	virtual void setDesiredPositionY(float y);
-	virtual void setDirection(Vec2 direction);
-	virtual void setMapTransition(Vec2 mapTransition);
+		
+	virtual void setClimbing(bool climbing);
 	virtual void setOnGround(bool onGround);
-	virtual void setPath(IPath* path);
-	virtual void setProperties(ValueMap& properties);
-	virtual void setSize(Vec2 size);
-	virtual void setVelocity(Vec2 velocity);
-	virtual void setCanMove(CanMove canMove);
-	virtual void setIsMoving(IsMoving isMoving);
+
+#pragma endregion Setters
 
 protected:	
 	/** **/
@@ -159,27 +187,25 @@ protected:
 	/** **/
 	IGraphicsComponent* _graphics;
 	/** **/
-	IPath* _path;
+	IPath* _path;	
+
 	/** **/
-	Sprite* _sprite;
+	ValueMap _properties;
+
 	/** **/
 	Vec2 _desiredPosition;
 	/** **/
 	Vec2 _direction;
 	/** **/
-	Vec2 _mapTransition;	
-	/** **/
-	ValueMap _properties;
-	/** **/
-	Vec2 _velocity;	
-	/** **/
-	CanMove _canMove;
-	/** **/
-	IsMoving _isMoving;
+	Vec2 _velocity;
+			
 	/** **/
 	bool _onGround;
 	/** **/
 	bool _isClimbing;	
+
+	/** **/
+	IGameObjectFsm* _fsm;
 };
 
 
@@ -196,6 +222,8 @@ class Player : public GameObject
 	typedef Player self;
 
 public:
+	static Player* create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input);
+
 	Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input);
 	~Player(){};
 
@@ -208,25 +236,27 @@ public:
 	virtual void WalkLeft() override;
 	virtual void WalkRight() override;
 	virtual void Stop() override;
-    virtual void Idle() override;
-    virtual void Crouch() override;
-
+	virtual void Idle() override;
+	virtual void Crouch() override;
+	virtual void Jump() override;
+	virtual void Die() override;
+	virtual void Hurt() override;
+	virtual void ThrowGem() override;
+	virtual void PickUpGem() override;
+	virtual void Talk() override;
+	
 	/** Getters Overridden **/
-	virtual Size getSize() override;
 	virtual Rect getCollisionBox() override;	
-	virtual Sprite* getSprite();
-		
-	bool IsLoaded();
-
+	
 private:	
 	/** **/
 	IMenuComponent* _menu;
 	/** **/
-	IInputComponent* _input;	
-	/****/
-	bool _isLoaded;
+	IInputComponent* _input;
+	/** **/
+	Sprite* _shadow;
 
-	class GameObjectFsm* _fsm;
+	ActiveTileMap activeMap;
 };
 
 

@@ -45,45 +45,61 @@ void GameObjectState::PreviousMap(IGameObjectFsm& fsm)
 	fsm.setCurrentState(LoadingPreviousMap::getInstance());
 };
 
+void GameObjectState::OnGround(IGameObjectFsm& fsm)
+{
+	fsm.setCurrentState(IsOnGround::getInstance());
+};
+
 #pragma endregion GameObjectState
 
 
-#pragma region OnGround
+#pragma region IsOnGround
 
-OnGround* OnGround::m_pInstance = NULL;
+IsOnGround* IsOnGround::m_pInstance = NULL;
 
-OnGround* OnGround::getInstance()
+IsOnGround* IsOnGround::getInstance()
 {
-	log("Check can climb state is being accessed");
-	return m_pInstance ? m_pInstance : m_pInstance = new OnGround();
+	log("Is On Ground state is being accessed");
+	return m_pInstance ? m_pInstance : m_pInstance = new IsOnGround();
 }
 
-void OnGround::destroyInstance()
+void IsOnGround::destroyInstance()
 {
 	delete m_pInstance;
 	m_pInstance = 0;
 };
 
-void OnGround::Up(IGameObjectFsm& fsm)
+void IsOnGround::Up(IGameObjectFsm& fsm)
 {
 	log("You can only jump when on the ground");
 };
 
-void OnGround::Down(IGameObjectFsm& fsm)
+void IsOnGround::Down(IGameObjectFsm& fsm)
 {
 	log("Lets crouch");
 };
 
-void OnGround::Left(IGameObjectFsm& fsm)
+void IsOnGround::Left(IGameObjectFsm& fsm)
 {
-	log("Check walk left");
+	AppGlobal::getInstance()->zoomOut();
+
+	/** Tell the game object to walk left **/
+	fsm.gameObject->WalkLeft();
 };
 
-void OnGround::Right(IGameObjectFsm& fsm)
+void IsOnGround::Right(IGameObjectFsm& fsm)
 {
-	log("Check walk right");
+	AppGlobal::getInstance()->zoomOut();
+
+	/** Tell the game object to walk left **/
+	fsm.gameObject->WalkRight();
 };
 
+void IsOnGround::OnGround(IGameObjectFsm& fsm)
+{
+	/** Tell the game object to disable gravity **/
+	//fsm.gameObject->disableGravity();
+};
 
 #pragma endregion OnGround
 
@@ -111,7 +127,7 @@ void CheckCanClimb::Up(IGameObjectFsm& fsm)
 {
 	log("We are checking if we can climb up");
 	if (true /** if check returns true state is now climbing up **/)
-	{
+	{		
 		/** we can climb up **/
 		this->canClimbUp(fsm);
 	}
@@ -121,7 +137,7 @@ void CheckCanClimb::Down(IGameObjectFsm& fsm)
 {
 	log("We are checking if we can climb down");
 	if (true /** if check returns true state is now climbing down **/)
-	{
+	{		
 		/** we can climb down **/
 		this->canClimbDown(fsm);
 	}
@@ -166,7 +182,6 @@ void CheckCanWalk::Left(IGameObjectFsm& fsm)
 	log("We are checking if we can walk left");
 	if (true /** if check returns true state can walk left **/)
 	{
-		fsm.gameObject->setVelocity(Vec2::ZERO);
 		/** we can walk left **/
 		this->canWalkLeft(fsm);
 	}
@@ -177,7 +192,6 @@ void CheckCanWalk::Right(IGameObjectFsm& fsm)
 	log("We are checking if we can walk right");
 	if (true /** if check returns true state can walk right **/)
 	{
-		fsm.gameObject->setVelocity(Vec2::ZERO);
 		/** we can walk right **/
 		this->canWalkRight(fsm);
 	}
@@ -225,11 +239,6 @@ void ClimbingUp::Up(IGameObjectFsm& fsm)
 	fsm.gameObject->ClimbUp();
 };
 
-void ClimbingUp::StopClimbing(IGameObjectFsm& fsm)
-{	
-	fsm.setCurrentState(Stopped::getInstance());
-};
-
 #pragma endregion ClimbingUp
 
 /**
@@ -255,22 +264,17 @@ void ClimbingDown::Down(IGameObjectFsm& fsm)
 {
     AppGlobal::getInstance()->zoomOut();
     
-    if(fsm.gameObject->isOnGround())
-    {
-        //fsm.gameObject->Crouch();
-    }
-    else
-    {
-        /** Tell the game object to climb down **/
-        //fsm.gameObject->ClimbDown();
-    }
+    //if(fsm.gameObject->isOnGround())
+    //{
+    //    //fsm.gameObject->Crouch();
+    //}
+    //else
+    //{
+    //    /** Tell the game object to climb down **/
+    //    //fsm.gameObject->ClimbDown();
+    //}
     
     fsm.gameObject->ClimbDown();
-};
-
-void ClimbingDown::StopClimbing(IGameObjectFsm& fsm)
-{	
-	fsm.setCurrentState(Stopped::getInstance());
 };
 
 #pragma endregion ClimbingDown
@@ -294,6 +298,24 @@ void WalkingLeft::destroyInstance()
 	m_pInstance = 0;
 };
 
+void WalkingLeft::Up(IGameObjectFsm& fsm)
+{
+	// Tell gameobject to keep its velocity
+	Vec2 v = fsm.gameObject->getVelocity();
+	fsm.gameObject->setVelocity(Vec2(0.0f, -v.x));
+	//
+	fsm.setCurrentState(CheckCanClimb::getInstance());
+};
+
+void WalkingLeft::Down(IGameObjectFsm& fsm)
+{
+	// Tell gameobject to keep its velocity
+	Vec2 v = fsm.gameObject->getVelocity();
+	fsm.gameObject->setVelocity(Vec2(0.0f, v.x));
+	//
+	fsm.setCurrentState(CheckCanClimb::getInstance());
+};
+
 void WalkingLeft::Left(IGameObjectFsm& fsm)
 {	
 	AppGlobal::getInstance()->zoomOut();
@@ -302,10 +324,12 @@ void WalkingLeft::Left(IGameObjectFsm& fsm)
 	fsm.gameObject->WalkLeft();
 };
 
-
-void WalkingLeft::StopWalking(IGameObjectFsm& fsm)
+void WalkingLeft::Right(IGameObjectFsm& fsm)
 {
-	fsm.setCurrentState(Stopped::getInstance());
+	Vec2 velocity = fsm.gameObject->getVelocity();
+	fsm.gameObject->setVelocity(Vec2(-velocity.x, 0.0f));
+
+	fsm.setCurrentState(CheckCanWalk::getInstance());
 };
 
 #pragma endregion WalkingLeft
@@ -329,17 +353,37 @@ void WalkingRight::destroyInstance()
 	m_pInstance = 0;
 };
 
+void WalkingRight::Up(IGameObjectFsm& fsm)
+{
+	// Tell gameobject to keep its velocity
+	Vec2 v = fsm.gameObject->getVelocity();
+	fsm.gameObject->setVelocity(Vec2(0.0f, v.x));
+	//
+	fsm.setCurrentState(CheckCanClimb::getInstance());
+};
+
+void WalkingRight::Down(IGameObjectFsm& fsm)
+{
+	// Tell gameobject to keep its velocity
+	Vec2 v = fsm.gameObject->getVelocity();
+	fsm.gameObject->setVelocity(Vec2(0.0f, -v.x));
+	//
+	fsm.setCurrentState(CheckCanClimb::getInstance());
+};
+
+void WalkingRight::Left(IGameObjectFsm& fsm)
+{
+	Vec2 velocity = fsm.gameObject->getVelocity();
+	fsm.gameObject->setVelocity(Vec2(-velocity.x, 0.0f));
+	fsm.setCurrentState(CheckCanWalk::getInstance());
+};
+
 void WalkingRight::Right(IGameObjectFsm& fsm)
 {	
 	AppGlobal::getInstance()->zoomOut();
 
 	/** Tell the game object to walk right **/
 	fsm.gameObject->WalkRight();
-};
-
-void WalkingRight::StopWalking(IGameObjectFsm& fsm)
-{	
-	fsm.setCurrentState(Stopped::getInstance());
 };
 
 #pragma endregion WalkingRight
@@ -600,7 +644,7 @@ void GameObjectFsm::LoadPreviousMap()
 
 void GameObjectFsm::OnGround()
 {
-	currentState->OnGr
+	currentState->OnGround(*this);
 };
 
 #pragma endregion GameObjectFSM Actions

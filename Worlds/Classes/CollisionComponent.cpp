@@ -43,6 +43,111 @@ void PlayerCollisionComponent::update(Node& node, IGameObject& gameObject)
 	
 }
 
+
+/**
+* Check if a gameObject has a tile collision
+* The velocity and desiredPosition of the game object will be modified depending on collisions found
+*
+* @param node The Node containing the gameObject
+* @param gameObject The IGameObject that is checking collisions
+*/
+void CollisionComponent::CheckTileCollision(IGameObject& gameObject)
+{
+	/** Game objects desired position **/
+	Vec2 desiredPosition = gameObject.getDesiredPosition();
+	/** Game objects center position **/
+	Vec2 centerPosition = gameObject.getCenterPosition();
+	/** Game objects velocity **/
+	Vec2 velocity = gameObject.getVelocity();
+	/** Game objects collision bounding box **/
+	Rect collisionBox = gameObject.getCollisionBox();
+
+	ParallaxTileMap* map = static_cast<ParallaxTileMap*>(gameObject.getParent()->getParent());
+
+	/** Get array of tiles surrounding the gameobject **/
+	TileDataArray tileDataArray = map->getCollisionDataAt(centerPosition);
+
+	for (unsigned int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
+	{
+		Rect& tileRect = tileDataArray[tileIndex].tileRect;
+
+#if DEBUG_ENABLE
+		/** debug draw tile rect RED **/
+		map->drawDebugRect(tileRect, Color4F(1.0f, 0.3f, 0.3f, 0.5f));
+#endif // DEBUG_ENABLE
+
+		if (tileRect.intersectsRect(collisionBox) /** Intersection has occurred **/)
+		{
+			/** Get the intersecting rect **/
+			Rect intersection = Utils::getRectIntersection(collisionBox, tileRect);
+
+			if (tileIndex == ETileGrid::BOTTOM /** Tile is below gameObject **/)
+			{
+				desiredPosition.y += intersection.size.height;
+				velocity.y = 0.0f;
+				gameObject.setOnGround(true);
+			}
+			else if (tileIndex == ETileGrid::TOP /** Tile is above gameObject **/)
+			{
+				desiredPosition.y += -intersection.size.height;
+				velocity.y = 0.0f;
+			}
+			else if (tileIndex == ETileGrid::LEFT /** Tile is left of gameObject **/)
+			{
+				desiredPosition.x += intersection.size.width;
+				velocity.x = 0.0f;
+			}
+			else if (tileIndex == ETileGrid::RIGHT /** Tile is right of gameObject **/)
+			{
+				desiredPosition.x += -intersection.size.width;
+				velocity.x = 0.0f;
+			}
+			else
+			{
+				if (intersection.size.width > intersection.size.height)
+				{
+					/** Tile is diagonal, but resolving collision vertically **/
+					velocity.y = 0.0f;
+
+					float resolutionHeight;
+
+					if (tileIndex > ETileGrid::TOP_RIGHT)
+					{
+						resolutionHeight = intersection.size.height;
+						gameObject.setOnGround(true);
+					}
+					else
+					{
+						resolutionHeight = -intersection.size.height;
+					}
+
+					desiredPosition.y += resolutionHeight;
+				}
+				else
+				{
+					/** Tile is diagonal, but resolving collision horizontally **/
+					float resolutionWidth;
+
+					if (tileIndex == ETileGrid::TOP_LEFT || tileIndex == ETileGrid::BOTTOM_LEFT)
+					{
+						resolutionWidth = intersection.size.width;
+					}
+					else
+					{
+						resolutionWidth = -intersection.size.width;
+					}
+
+					desiredPosition.x += resolutionWidth;
+				}
+			}
+		}
+	}
+
+	/** Update gameObject with updated velocity and desiredPosition **/
+	gameObject.setVelocity(velocity);
+	gameObject.setDesiredPosition(desiredPosition);
+}
+
 /**
 * Check if a gameObject has a tile collision
 * The velocity and desiredPosition of the game object will be modified depending on collisions found 
@@ -81,8 +186,7 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 			if (tileIndex == ETileGrid::BOTTOM /** Tile is below gameObject **/)
 			{				
 				desiredPosition.y += intersection.size.height;
-				velocity.y = 0.0f;
-				gameObject.CurrentState = E
+				velocity.y = 0.0f;				
 				gameObject.setOnGround(true);
 			}
 			else if (tileIndex == ETileGrid::TOP /** Tile is above gameObject **/)
@@ -97,7 +201,7 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 			}
 			else if (tileIndex == ETileGrid::RIGHT /** Tile is right of gameObject **/) 
 			{
-				desiredPosition.x += -intersection.size.width;
+				desiredPosition.x -= intersection.size.width;
 				velocity.x = 0.0f;
 			}
 			else
@@ -111,7 +215,7 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 
 					if (tileIndex > ETileGrid::TOP_RIGHT)
 					{
-						resolutionHeight = intersection.size.height;
+						resolutionHeight = intersection.size.height;						
 						gameObject.setOnGround(true);
 					}
 					else

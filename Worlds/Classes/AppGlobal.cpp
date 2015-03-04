@@ -111,6 +111,8 @@ void AppGlobal::initKeyboardListener()
 		{
 			
 		}
+
+		player->setCurrentState(gameObjectState);
 	};
 
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event *event)
@@ -160,20 +162,12 @@ void AppGlobal::initKeyboardListener()
 		{
 			gameObjectState = EGameObjectState::Stop;
 		}
+
+		player->setCurrentState(gameObjectState);
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
-
-void AppGlobal::initPathFinderListener()
-{
-	//if (activeMap /** When there is an instance of a ParallaxTileMap **/)
-	//{
-	//	/** Create the pathfinder **/
-	//	auto _pathFinder = new AStarPathFinder(activeMap, 500, false);
-	//		_pathFinder->findPath(<#cocos2d::Vec2 startLocation#>, <#cocos2d::Vec2 targetLocation#>)
-	//}
-};
 
 void AppGlobal::initTouchListener()
 {
@@ -223,8 +217,6 @@ void AppGlobal::initTouchListener()
 				this->setGameObjectState(d);
 			}
         }
-        
-		Vec2 location = touch->getLocationInView();
 	};
 
 	listener->onTouchEnded = [=](Touch* touch, Event* e)
@@ -236,6 +228,16 @@ void AppGlobal::initTouchListener()
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
+
+void AppGlobal::initPathFinderListener()
+{
+	//if (activeMap /** When there is an instance of a ParallaxTileMap **/)
+	//{
+	//	/** Create the pathfinder **/
+	//	auto _pathFinder = new AStarPathFinder(activeMap, 500, false);
+	//		_pathFinder->findPath(<#cocos2d::Vec2 startLocation#>, <#cocos2d::Vec2 targetLocation#>)
+	//}
+};
 
 float AppGlobal::getScale()
 {
@@ -264,6 +266,8 @@ void AppGlobal::setGameObjectState(Vec2 direction)
 	{
 		gameObjectState = EGameObjectState::Stop;
 	}
+
+	player->setCurrentState(gameObjectState);
 };
 
 void AppGlobal::addCursor(Layer& layer)

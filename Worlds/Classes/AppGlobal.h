@@ -11,7 +11,7 @@ class AppGlobal
 public:
 	EGameObjectState gameObjectState;
 
-	std::stack<class IParallaxTileMap*> activeMap;
+	ActiveTileMap activeMap;
 	
 	class IGameObject* player;
     

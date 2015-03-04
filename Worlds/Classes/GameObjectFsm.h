@@ -16,11 +16,10 @@ public:
 	virtual void Left(IGameObjectFsm& fsm) = 0;
 	virtual void Right(IGameObjectFsm& fsm) = 0;
 	virtual void Stop(IGameObjectFsm& fsm) = 0;
-	virtual void StopWalking(IGameObjectFsm& fsm) = 0;
-	virtual void StopClimbing(IGameObjectFsm& fsm) = 0;	
 	virtual void PreviousMap(IGameObjectFsm& fsm) = 0;
 	virtual void NextMap(IGameObjectFsm& fsm) = 0;
 	virtual void Loaded(IGameObjectFsm& fsm) = 0;
+	virtual void OnGround(IGameObjectFsm& fsm) = 0;
 
 	virtual void update(IGameObjectFsm& fsm) = 0;
 
@@ -40,12 +39,11 @@ public:
 	virtual void Down(IGameObjectFsm& fsm);
 	virtual void Left(IGameObjectFsm& fsm);
 	virtual void Right(IGameObjectFsm& fsm);
-	virtual void Stop(IGameObjectFsm& fsm);	
-	virtual void StopWalking(IGameObjectFsm& fsm){ log("You requested the StopWalking event, not available from your current state!"); };
-	virtual void StopClimbing(IGameObjectFsm& fsm){ log("You requested the StopClimbing event, not available from your current state!"); };		
+	virtual void Stop(IGameObjectFsm& fsm);			
 	virtual void NextMap(IGameObjectFsm& fsm);
 	virtual void PreviousMap(IGameObjectFsm& fsm);
 	virtual void Loaded(IGameObjectFsm& fsm){ log("You requested the Loaded event, not available from your current state!"); };
+	virtual void OnGround(IGameObjectFsm& fsm);
 
 	virtual void update(IGameObjectFsm& fsm){ /** log("Default update state"); **/ };
 
@@ -61,22 +59,24 @@ protected:
 /** GameObjectState Inherited Classes **/
 #pragma region GameObjectState 
 
-class OnGround : public GameObjectState
+class IsOnGround : public GameObjectState
 {
 public:
-	static OnGround* getInstance();
+	static IsOnGround* getInstance();
 
 	virtual void Up(IGameObjectFsm& fsm) override;
 	virtual void Down(IGameObjectFsm& fsm) override;
 	virtual void Left(IGameObjectFsm& fsm) override;
 	virtual void Right(IGameObjectFsm& fsm) override;
+	virtual void OnGround(IGameObjectFsm& fsm) override;
+
 	virtual void destroyInstance();
 
 private:
-	OnGround(){ log("OnGround State"); };
-	virtual ~OnGround(){};
+	IsOnGround(){ log("OnGround State"); };
+	virtual ~IsOnGround(){};
 
-	static OnGround* m_pInstance;
+	static IsOnGround* m_pInstance;
 };
 
 class CheckCanClimb : public GameObjectState
@@ -126,7 +126,6 @@ public:
 
 	/** Overrides **/
 	virtual void Up(IGameObjectFsm& fsm) override;
-	virtual void StopClimbing(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
 private:
@@ -143,7 +142,6 @@ public:
 
 	/** Overrides **/
 	virtual void Down(IGameObjectFsm& fsm) override;
-	virtual void StopClimbing(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
 private:
@@ -157,13 +155,14 @@ class WalkingLeft : public GameObjectState
 {
 public:
 	static WalkingLeft* getInstance();
-
-	/** Overrides **/
-	virtual void Left(IGameObjectFsm& fsm) override;
-	
-	virtual void StopWalking(IGameObjectFsm& fsm) override;
 	virtual void destroyInstance();
 
+	/** Overrides **/
+	virtual void Up(IGameObjectFsm& fsm) override;
+	virtual void Down(IGameObjectFsm& fsm) override;
+	virtual void Left(IGameObjectFsm& fsm) override;	
+	virtual void Right(IGameObjectFsm& fsm) override;
+	
 private:
 	WalkingLeft(){ log("WalkingLeft State"); };
 	virtual ~WalkingLeft(){};
@@ -175,11 +174,13 @@ class WalkingRight : public GameObjectState
 {
 public:
 	static WalkingRight* getInstance();
+	virtual void destroyInstance();
 
 	/** Overrides **/
-	virtual void Right(IGameObjectFsm& fsm) override;
-	virtual void StopWalking(IGameObjectFsm& fsm) override;
-	virtual void destroyInstance();
+	virtual void Up(IGameObjectFsm& fsm) override;
+	virtual void Down(IGameObjectFsm& fsm) override;
+	virtual void Left(IGameObjectFsm& fsm) override;
+	virtual void Right(IGameObjectFsm& fsm) override;	
 
 private:
 	WalkingRight(){ log("WalkingRight State"); };
@@ -192,11 +193,11 @@ class IsIdle : public GameObjectState
 {	
 public:
 	static IsIdle* getInstance();
+	virtual void destroyInstance();
 
 	/** Overrides **/
 	virtual void Stop(IGameObjectFsm& fsm) override;
-	virtual void destroyInstance();
-
+	
 private:
 	IsIdle(){ log("IsIdle State"); };
 	virtual ~IsIdle(){};
@@ -208,12 +209,12 @@ class Stopped : public GameObjectState
 {
 public:
 	static Stopped* getInstance();
+	virtual void destroyInstance();
 
 	/** Overrides **/
 	virtual void Stop(IGameObjectFsm& fsm) override;
 	virtual void update(IGameObjectFsm& fsm) override;
-	virtual void destroyInstance();
-
+	
 private:
 	Stopped(){ log("Stopped State"); };
 	virtual ~Stopped(){};
@@ -227,6 +228,7 @@ class LoadingNextMap : public GameObjectState
 {
 public:
 	static LoadingNextMap* getInstance();
+	virtual void destroyInstance();
 
 	/** Overrides **/
 	virtual void Up(IGameObjectFsm& fsm) override;
@@ -235,8 +237,7 @@ public:
 	virtual void Right(IGameObjectFsm& fsm) override;
 	virtual void Stop(IGameObjectFsm& fsm) override;
 	virtual void Loaded(IGameObjectFsm& fsm) override;
-	virtual void destroyInstance();
-
+	
 private:
 	LoadingNextMap(){ log("LoadingNextMap State"); };
 	virtual ~LoadingNextMap(){};
@@ -248,6 +249,7 @@ class LoadingPreviousMap : public GameObjectState
 {
 public:
 	static LoadingPreviousMap* getInstance();
+	virtual void destroyInstance();
 
 	/** Overrides **/
 	virtual void Up(IGameObjectFsm& fsm) override;
@@ -256,7 +258,7 @@ public:
 	virtual void Right(IGameObjectFsm& fsm) override;
 	virtual void Stop(IGameObjectFsm& fsm) override;
 	virtual void Loaded(IGameObjectFsm& fsm) override;
-	virtual void destroyInstance();
+	
 
 private:
 	LoadingPreviousMap(){ log("LoadingPreviousMap State"); };
@@ -283,7 +285,8 @@ public:
 	virtual void CheckCanWalkRight() = 0;	
 	virtual void Stop() = 0;
 	virtual void LoadNextMap() = 0;
-	virtual void LoadPreviousMap() = 0;
+	virtual void LoadPreviousMap() = 0; 
+	virtual void OnGround() = 0;
 
 	/**  **/
 	virtual void setCurrentState(IGameObjectState* state) = 0;
@@ -300,7 +303,7 @@ public:
 	GameObjectFsm(IGameObject* gameObject);
 	virtual ~GameObjectFsm()
 	{	
-		OnGround::getInstance()->destroyInstance();
+		IsOnGround::getInstance()->destroyInstance();
 		CheckCanClimb::getInstance()->destroyInstance();
 		CheckCanWalk::getInstance()->destroyInstance();
 		ClimbingUp::getInstance()->destroyInstance();
@@ -313,7 +316,7 @@ public:
 		LoadingPreviousMap::getInstance()->destroyInstance();
 	};
 		
-	/** Actions **/	
+	/** Events **/	
 	virtual void CheckCanClimbUp();
 	virtual void CheckCanClimbDown();
 	virtual void CheckCanWalkLeft();

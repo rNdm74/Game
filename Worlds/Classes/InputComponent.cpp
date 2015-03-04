@@ -8,64 +8,74 @@
 
 
 void InputComponent::ClimbUp(IGameObject& gameObject)
-{
-	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+{	
+	EGameObjectState state = gameObject.getCurrentState();
+	updateDesiredPosition(gameObject, GameObjectStates[state]);
 };
 
 void InputComponent::ClimbDown(IGameObject& gameObject)
 {
-	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+	EGameObjectState state = gameObject.getCurrentState();
+	gameObject.setDirection(GameObjectStates[state]);
 };
 
 void InputComponent::WalkLeft(IGameObject& gameObject)
 {
-	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+	EGameObjectState state = gameObject.getCurrentState();
+	gameObject.setDirection(GameObjectStates[state]);
 };
 
 void InputComponent::WalkRight(IGameObject& gameObject)
 {
-	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+	EGameObjectState state = gameObject.getCurrentState();
+	gameObject.setDirection(GameObjectStates[state]);
 };
 
 void InputComponent::Stop(IGameObject& gameObject)
 {
-	this->updateDesiredPosition(gameObject, GameObjectStates[AppGlobal::getInstance()->gameObjectState]);
+	EGameObjectState state = gameObject.getCurrentState();
+	gameObject.setDirection(GameObjectStates[state]);
 
 	Vec2 velocity = gameObject.getVelocity();
 	
 	/** Dampens velocity **/
-	velocity *= pow(0.005, kUpdateInterval);
-		
+	velocity *= pow(0.0001, kUpdateInterval);		
 	gameObject.setVelocity(velocity);
 };
 
 void InputComponent::updateDesiredPosition(IGameObject& gameObject, Vec2 direction)
 {
+	
+};
+
+PlayerInputComponent::PlayerInputComponent()
+{
+	
+};
+
+void PlayerInputComponent::update(Node& node, IGameObject& gameObject)
+{
+	//
+	Vec2 direction = gameObject.getDirection();
+
+	//
 	Vec2 velocity = gameObject.getVelocity();
-	
-	//	
-	Vec2 gravityStep = _gravity * kUpdateInterval;
-	velocity = velocity + gravityStep;
-	
+
 	//
 	Vec2 movementStep = _movement * kUpdateInterval;
 	velocity.x = velocity.x + movementStep.x * direction.x;
 	velocity.y = velocity.y + movementStep.y * direction.y;
-	
+
 	//
 	velocity.clamp(_minMovement, _maxMovement);
 	Vec2 stepVelocity = velocity * kUpdateInterval;
+
 	// 
-	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
 	gameObject.setVelocity(velocity);
-};
-
-
-void PlayerInputComponent::update(Node& node, IGameObject& gameObject)
-{	
-	//this->findpath(node, gameObject);	
-	//this->desiredPosition(gameObject);
+	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
 }
+
+
 
 //void InputComponent::findpath(Node& node, IGameObject& gameObject)
 //{		
