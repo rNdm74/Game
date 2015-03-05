@@ -9,7 +9,7 @@ class IFsmComponent;
 
 using namespace cocos2d;
 
-struct IFsmStates
+struct IFsmState
 {
 	virtual void ActionUp(IFsmComponent& fsm) = 0;
 	virtual void ActionDown(IFsmComponent& fsm) = 0;
@@ -18,7 +18,7 @@ struct IFsmStates
 	virtual void ActionStop(IFsmComponent& fsm) = 0;
 };
 
-struct FsmStates : public IFsmStates
+struct FsmState : public IFsmState
 {
 	/** Actions **/
 	virtual void ActionUp(IFsmComponent& fsm);
@@ -28,62 +28,66 @@ struct FsmStates : public IFsmStates
 	virtual void ActionStop(IFsmComponent& fsm);
 };
 
-struct UpState : public FsmStates
+struct UpState : public FsmState
 {
-	void ActionUp(IFsmComponent& fsm) override
-	{
-		AppGlobal::getInstance()->zoomOut();
-		log("Up");
-	};
+    void ActionUp(IFsmComponent& fsm) override;
 };
 
-struct DownState : public FsmStates
+struct DownState : public FsmState
 {
-	virtual void ActionDown(IFsmComponent& fsm) override
-	{
-		AppGlobal::getInstance()->zoomOut();
-		log("Down");
-	};
+	virtual void ActionDown(IFsmComponent& fsm) override;
 };
 
-struct LeftState : public FsmStates
+struct LeftState : public FsmState
 {
-	virtual void ActionLeft(IFsmComponent& fsm) override
-	{
-		AppGlobal::getInstance()->zoomOut();
-		log("Left");
-	};
+	virtual void ActionLeft(IFsmComponent& fsm) override;
 };
 
-struct RightState : public FsmStates
+struct RightState : public FsmState
 {
-	virtual void ActionRight(IFsmComponent& fsm) override
-	{
-		AppGlobal::getInstance()->zoomOut();
-		log("Right");
-	};
+	virtual void ActionRight(IFsmComponent& fsm) override;
 };
 
-struct StopState : public FsmStates
+struct StopState : public FsmState
 {
-	virtual void ActionStop(IFsmComponent& fsm) override
-	{
-		AppGlobal::getInstance()->zoomIn();
-		log("Stop");
-	};
+    void ActionStop(IFsmComponent& fsm) override;
+    
+    long timeout = 0l;
+};
+
+struct IdleState : public FsmState
+{
+    void ActionStop(IFsmComponent& fsm) override;
 };
 
 class IFsmComponent
 {
 public:
-	UpState StateUp;
-	DownState StateDown;
-	LeftState StateLeft;
-	RightState StateRight;
-	StopState StateStop;
+	UpState* StateUp;
+	DownState* StateDown;
+	LeftState* StateLeft;
+	RightState* StateRight;
+	StopState* StateStop;
+    IdleState* StateIdle;
 
-	IFsmComponent(){};
-	virtual ~IFsmComponent(){};
+	IFsmComponent()
+    {
+        StateUp = new UpState();
+        StateDown = new DownState();
+        StateLeft = new LeftState();
+        StateRight = new RightState();
+        StateStop = new StopState();
+        StateIdle = new IdleState();
+    };
+	virtual ~IFsmComponent()
+    {
+        delete StateUp;
+        delete StateDown;
+        delete StateLeft;
+        delete StateRight;
+        delete StateStop;
+        delete StateIdle;
+    };
 
 	virtual void update(Node& node, IGameObject& gameObject) = 0;
 
@@ -94,7 +98,9 @@ public:
 	virtual void EventRight() = 0;
 	virtual void EventStop() = 0;
 
-	virtual void setCurrentState(FsmStates& currentState) = 0;
+	virtual void setCurrentState(FsmState* currentState) = 0;
+    
+    IGameObject* gameObject;
 };
 
 class FsmComponent : public IFsmComponent
@@ -104,23 +110,27 @@ public:
 	virtual ~FsmComponent(){};
 	virtual void update(Node& node, IGameObject& gameObject){};
 
-	virtual void EventUp(){ currentState.ActionUp(*this); };
-	virtual void EventDown(){ currentState.ActionDown(*this); };
-	virtual void EventLeft(){ currentState.ActionLeft(*this); };
-	virtual void EventRight(){ currentState.ActionRight(*this); };
-	virtual void EventStop(){ currentState.ActionStop(*this); };
+	virtual void EventUp(){ currentState->ActionUp(*this); };
+	virtual void EventDown(){ currentState->ActionDown(*this); };
+	virtual void EventLeft(){ currentState->ActionLeft(*this); };
+	virtual void EventRight(){ currentState->ActionRight(*this); };
+	virtual void EventStop(){ currentState->ActionStop(*this); };
 
-	virtual void setCurrentState(FsmStates& newState){ currentState = newState; log("%i", static_cast<int>(currentState)); };
+	virtual void setCurrentState(FsmState* newState){ currentState = newState; };
 
 protected:
-	FsmStates currentState;
+	FsmState* currentState;
 };
 
 class PlayerFsmComponent : public FsmComponent
 {
 public:
-	PlayerFsmComponent(){};
-	virtual ~PlayerFsmComponent(){};		
+    PlayerFsmComponent()
+    {
+        this->currentState = StateStop;
+    };
+	virtual ~PlayerFsmComponent(){};
+    
 	virtual void update(Node& node, IGameObject& gameObject) override;
 };
 

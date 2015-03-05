@@ -16,7 +16,7 @@
 */
 void CollisionComponent::update(Node& node, IGameObject& gameObject)
 {
-	this->checkCollision(TileMap(node), gameObject);
+	//this->checkCollision(TileMap(node), gameObject);
 };
 
 
@@ -32,15 +32,32 @@ void PlayerCollisionComponent::update(Node& node, IGameObject& gameObject)
 
 #if DEBUG_ENABLE
 	// debug draw gameobject rect GREEN
-	TileMap(node).drawDebugRect(gameObject.getCollisionBox(), Color4F(0.3f, 1.0f, 0.3f, 0.5f));
+	//TileMap(node).drawDebugRect(gameObject.getCollisionBox(), Color4F(0.3f, 1.0f, 0.3f, 0.5f));
 #endif // DEBUG_ENABLE
 
 	this->checkTileCollision(node, gameObject);
-    this->isLadderCollision(node, gameObject);
+    //this->isLadderCollision(node, gameObject);
     		
 	gameObject.updatePosition();
 }
 
+void ShowCaveCollisionComponent::update(Node& node, IGameObject& gameObject)
+{
+    ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
+    
+    Rect r1 = gameObject.getCollisionBox();
+    Rect r2 = map.getPlayer()->getCollisionBox();
+    
+    if(r1.intersectsRect(r2))
+    {
+        map.drawDebugRect(r1, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+        map.enableForegroundOpacity(kFadeOut);
+    }
+    else
+    {
+        map.enableForegroundOpacity(kFadeIn);
+    }
+};
 
 /**
 * Check if a gameObject has a tile collision
@@ -199,7 +216,7 @@ void CollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
 			}
 			else if (tileIndex == ETileGrid::RIGHT /** Tile is right of gameObject **/) 
 			{
-				desiredPosition.x -= intersection.size.width;
+				desiredPosition.x += -intersection.size.width;
 				velocity.x = 0.0f;
 			}
 			else

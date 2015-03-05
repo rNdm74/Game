@@ -52,4 +52,9 @@ public:
 	virtual void update(Node& node, IGameObject& gameObject) override;
 };
 
+class ShowCaveCollisionComponent : public CollisionComponent
+{
+    virtual void update(Node& node, IGameObject& gameObject) override;
+};
+
 #endif /* defined(__FranticAlien__PhysicsComponent__) */

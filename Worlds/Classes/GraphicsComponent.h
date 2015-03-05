@@ -36,7 +36,7 @@ public:
 	GraphicsComponent(){};
 	virtual ~GraphicsComponent(){};
 	
-	virtual void update(Node& node, IGameObject& gameObject){};
+	virtual void update(Node& node, IGameObject& gameObject);
 
 	virtual void ClimbUp(IGameObject& gameObject){};
 	virtual void ClimbDown(IGameObject& gameObject){};

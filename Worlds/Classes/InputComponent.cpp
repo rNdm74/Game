@@ -61,11 +61,19 @@ void PlayerInputComponent::update(Node& node, IGameObject& gameObject)
 	//
 	Vec2 velocity = gameObject.getVelocity();
 
+    Vec2 gravityStep = _gravity * kUpdateInterval;
+    velocity += gravityStep;
+    
 	//
 	Vec2 movementStep = _movement * kUpdateInterval;
-	velocity.x = velocity.x + movementStep.x * direction.x;
-	velocity.y = velocity.y + movementStep.y * direction.y;
-
+    
+    bool isMoving = gameObject.getIsMoving();
+    if(isMoving)
+    {
+        
+    }
+    velocity.x = velocity.x + movementStep.x * direction.x;
+    velocity.y = velocity.y + movementStep.y * direction.y;
 	//
 	velocity.clamp(_minMovement, _maxMovement);
 	Vec2 stepVelocity = velocity * kUpdateInterval;

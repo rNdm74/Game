@@ -63,6 +63,7 @@ GameObject::GameObject
 		
 	_onGround = false;
 	_isClimbing = false;
+    _isMoving = false;
 		
 	float x = properties["x"].asFloat();
 	float y = properties["y"].asFloat();
@@ -84,6 +85,7 @@ GameObject::GameObject
 void GameObject::update(Node* node)
 {
 	_collision->update(*node, *this);
+    _graphics->update(*node, *this);
 };
 
 void GameObject::updatePosition()
@@ -144,7 +146,19 @@ ValueMap GameObject::getProperties()
 */
 Rect GameObject::getCollisionBox()
 {
-	return this->getBoundingBox();
+    float x = _properties["x"].asFloat();
+    float y = _properties["y"].asFloat();
+    float width = _properties["width"].asFloat();
+    float height = _properties["height"].asFloat();
+    
+    return Rect(x,y,width,height);
+//    return Rect
+//    (
+//        this->getPositionX(),
+//        this->getPositionY(),
+//        this->getContentSize().width,
+//        this->getContentSize().height
+//    );//this->getBoundingBox();
 };
 /**
 * Get the GameObject center Vec2
@@ -204,6 +218,10 @@ bool GameObject::getOnGround()
 	return _onGround;
 };
 
+bool GameObject::getIsMoving()
+{
+    return _isMoving;
+};
 
 #pragma endregion Getters
 
@@ -263,6 +281,11 @@ void GameObject::setClimbing(bool climbing)
 void GameObject::setOnGround(bool onGround)
 {
 	_onGround = onGround;
+};
+
+void GameObject::setIsMoving(bool moving)
+{
+    _isMoving = moving;
 };
 
 #pragma endregion Setters
@@ -331,6 +354,8 @@ Player::Player
 	_menu = menu;
 	_input = input;
 		
+    _fsm->gameObject = this;
+    
 	this->setTag(kTagPlayer);				
 	this->setCurrentState(EGameObjectState::Stop);	
 };
@@ -361,14 +386,14 @@ void Player::WalkLeft()
 {
 	// Run walking animation
 	_graphics->WalkLeft(*this);
-	_input->WalkLeft(*this);	
+	_input->WalkLeft(*this);
 };
 
 void Player::WalkRight()
 {
 	// Run walking animation
 	_graphics->WalkRight(*this);
-	_input->WalkRight(*this);	
+	_input->WalkRight(*this);
 };
 
 void Player::Stop()
@@ -400,6 +425,7 @@ void Player::Die()
 
 void Player::Hurt()
 {
+    _graphics->Hurt(*this);
 };
 
 void Player::ThrowGem()
@@ -427,6 +453,20 @@ Rect Player::getCollisionBox()
 
 #pragma endregion Player
 
+
+/**
+ * Moveable gameObject Variables,
+ * Initializes the varaiables to their default state
+ *
+ */
+ShowCave::ShowCave
+(
+  ValueMap& properties,
+  ICollisionComponent* collision,
+  IGraphicsComponent* graphics)
+: super(properties, collision, graphics)
+{
+};
 
 /**
 * Left

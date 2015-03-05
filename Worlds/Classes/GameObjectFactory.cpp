@@ -22,6 +22,10 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 			new PlayerFsmComponent()
 		);
 	}
+    else if(className == "ShowCave")
+    {
+        gameObject = ShowCave::create(properties, new ShowCaveCollisionComponent(), new GraphicsComponent());
+    }
 	else if (className == "Left")
 	{
 		gameObject = Left::create(properties, new CollisionComponent(), new GraphicsComponent());

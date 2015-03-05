@@ -72,6 +72,7 @@ public:
 				
 	virtual bool getClimbing() = 0;
 	virtual bool getOnGround() = 0;
+    virtual bool getIsMoving() = 0;
 
 #pragma endregion Getters
 
@@ -94,7 +95,7 @@ public:
 	
 	virtual void setClimbing(bool climbing) = 0;
 	virtual void setOnGround(bool onGround) = 0;
-
+    virtual void setIsMoving(bool moving) = 0;
 #pragma endregion Setters
 
 };
@@ -162,6 +163,7 @@ public:
 				
 	virtual bool getClimbing();
 	virtual bool getOnGround();
+    virtual bool getIsMoving();
 
 #pragma endregion Getters
 
@@ -181,6 +183,7 @@ public:
 		
 	virtual void setClimbing(bool climbing);
 	virtual void setOnGround(bool onGround);
+    virtual void setIsMoving(bool moving);
 
 #pragma endregion Setters
 
@@ -205,7 +208,9 @@ protected:
 	/** **/
 	bool _onGround;
 	/** **/
-	bool _isClimbing;	
+	bool _isClimbing;
+    
+    bool _isMoving;
 };
 
 
@@ -260,6 +265,27 @@ private:
 	
 
 	ActiveTileMap activeMap;
+};
+
+/**
+ * A path determined by some path finding algorithm. A series of steps from
+ * the starting location to the target location. This includes a step for the
+ * initial location.
+ *
+ * @author Adam Charlton
+ */
+class ShowCave : public GameObject
+{
+    typedef GameObject super;
+    typedef ShowCave self;
+    
+public:
+    ShowCave(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
+    virtual ~ShowCave(){};
+    
+private:
+    /** **/
+    
 };
 
 
