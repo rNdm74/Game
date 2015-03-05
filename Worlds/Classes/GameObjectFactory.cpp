@@ -4,6 +4,7 @@
 #include "InputComponent.h"
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
+#include "FsmComponent.h"
 
 IGameObject* GameObjectFactory::create(std::string className, ValueMap& properties)
 {
@@ -17,7 +18,8 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 			new PlayerCollisionComponent(),
 			new PlayerGraphicsComponent(),
 			new PlayerMenuComponent(),
-			new PlayerInputComponent()			
+			new PlayerInputComponent(),
+			new PlayerFsmComponent()
 		);
 	}
 	else if (className == "Left")

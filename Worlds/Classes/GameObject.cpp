@@ -3,11 +3,16 @@
 #include "GameObject.h"
 #include "GameObjectFsm.h"
 #include "GameObjectFactory.h"
+
+#include "FsmComponent.h"
 #include "GraphicsComponent.h"
 #include "InputComponent.h"
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
+
 #include "ParallaxTileMap.h"
+
+#include "fsm.h"
 
 /**
 * GameObject
@@ -16,7 +21,12 @@
 */
 #pragma region GameObject
 
-GameObject* GameObject::create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics)
+GameObject* GameObject::create
+(
+	ValueMap& properties, 
+	ICollisionComponent* collision, 
+	IGraphicsComponent* graphics
+)
 {
 	// Create an instance of Level
 	GameObject* gameObject = new (std::nothrow) GameObject(properties, collision, graphics);
@@ -37,7 +47,12 @@ GameObject* GameObject::create(ValueMap& properties, ICollisionComponent* collis
 *
 * @param properties The ValueMap that contains information about the gameObject
 */
-GameObject::GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics)
+GameObject::GameObject
+(
+	ValueMap& properties, 
+	ICollisionComponent* collision, 
+	IGraphicsComponent* graphics
+)
 {	
 	_collision = collision;
 	_graphics = graphics;
@@ -71,6 +86,10 @@ void GameObject::update(Node* node)
 	_collision->update(*node, *this);
 };
 
+void GameObject::updatePosition()
+{
+	this->setPosition(_desiredPosition);
+};
 
 bool GameObject::containsPoint(Vec2 point)
 {
@@ -98,7 +117,7 @@ EGameObjectState GameObject::getCurrentState()
 */
 IGameObjectFsm* GameObject::getFsm()
 {
-	return _fsm;
+	return nullptr;
 };
 /**
 * Get the path of the gameObject
@@ -259,10 +278,18 @@ void GameObject::setOnGround(bool onGround)
 #pragma region Player
 
 
-Player* Player::create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input)
+Player* Player::create
+(
+	ValueMap& properties, 
+	ICollisionComponent* collision, 
+	IGraphicsComponent* graphics, 
+	IMenuComponent* menu, 
+	IInputComponent* input, 
+	IFsmComponent* fsm
+)
 {
 	// Create an instance of Level
-	Player* player = new (std::nothrow) Player(properties, collision, graphics, menu, input);
+	Player* player = new (std::nothrow) Player(properties, collision, graphics, menu, input, fsm);
 
 	if (player && player->init())
 	{
@@ -290,50 +317,30 @@ Player* Player::create(ValueMap& properties, ICollisionComponent* collision, IGr
 * @param collision The CollisionComponent that contains information about the gameObject
 * @param graphics The GraphicsComponent that contains information about the gameObject
 */
-Player::Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input) : super(properties, collision, graphics)
+Player::Player
+(
+	ValueMap& properties, 
+	ICollisionComponent* collision, 
+	IGraphicsComponent* graphics, 
+	IMenuComponent* menu, 
+	IInputComponent* input, 
+	IFsmComponent* fsm
+) : super(properties, collision, graphics)
 {
-	_fsm = new GameObjectFsm(this);
-
+	_fsm = fsm;
 	_menu = menu;
 	_input = input;
 		
-	this->setTag(kTagPlayer);
-
-	_shadow = Sprite::create();
-	_shadow->setSpriteFrame(this->getSpriteFrame());
-	_shadow->setAnchorPoint(Vec2(-0.1f, 0.0f)); // position it to the center of the target node
-	_shadow->setColor(Color3B(0, 0, 0));
-	_shadow->setOpacity(50);
-
-	this->addChild(_shadow, -1);
-		
-	this->CurrentState = EGameObjectState::Stop;
-
-	activeMap = AppGlobal::getInstance()->activeMap;
+	this->setTag(kTagPlayer);				
+	this->setCurrentState(EGameObjectState::Stop);	
 };
 
 void Player::update(Node* node)
-{		
-	void(IGameObjectFsm:: *ptrs[])() =
-	{
-		&IGameObjectFsm::CheckCanClimbUp,
-		&IGameObjectFsm::CheckCanClimbDown,
-		&IGameObjectFsm::CheckCanWalkLeft,
-		&IGameObjectFsm::CheckCanWalkRight,
-		&IGameObjectFsm::Stop,
-		&IGameObjectFsm::LoadNextMap,
-		&IGameObjectFsm::LoadPreviousMap,
-		&IGameObjectFsm::OnGround
-	};
-		
-	(_fsm->*ptrs[this->getCurrentState()])();
-
+{	
+	_fsm->update(*node, *this);
 	_input->update(*node, *this);
-	_collision->update(*node, *this);
-		
-	this->setPosition(this->getDesiredPosition());
-
-	_shadow->setSpriteFrame(this->getSpriteFrame());
+	_graphics->update(*node, *this);
+	_collision->update(*node, *this);	
 };
 
 void Player::ClimbUp()

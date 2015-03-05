@@ -8,6 +8,7 @@ class IMenuComponent;
 class IInputComponent;
 class ICollisionComponent;
 class IGraphicsComponent;
+class IFsmComponent;
 class IPath;
 class IGameObjectFsm;
 
@@ -51,6 +52,7 @@ public:
 
 	/** **/
 	virtual bool containsPoint(Vec2 point) = 0;
+	virtual void updatePosition() = 0;
 
 	/** Getters **/
 #pragma region Getters
@@ -140,6 +142,7 @@ public:
     
 	/** **/
 	virtual bool containsPoint(Vec2 point);
+	virtual void updatePosition();
 
 	/** Getters **/
 #pragma region Getters 
@@ -203,9 +206,6 @@ protected:
 	bool _onGround;
 	/** **/
 	bool _isClimbing;	
-
-	/** **/
-	IGameObjectFsm* _fsm;
 };
 
 
@@ -222,9 +222,9 @@ class Player : public GameObject
 	typedef Player self;
 
 public:
-	static Player* create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input);
+	static Player* create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input, IFsmComponent* fsm);
 
-	Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input);
+	Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input, IFsmComponent* fsm);
 	~Player(){};
 
 	/** Update the gameObject overridden **/
@@ -250,11 +250,14 @@ public:
 	
 private:	
 	/** **/
+	IFsmComponent* _fsm;
+	/** **/
 	IMenuComponent* _menu;
 	/** **/
 	IInputComponent* _input;
+	
 	/** **/
-	Sprite* _shadow;
+	
 
 	ActiveTileMap activeMap;
 };

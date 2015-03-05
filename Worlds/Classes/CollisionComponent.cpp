@@ -37,10 +37,8 @@ void PlayerCollisionComponent::update(Node& node, IGameObject& gameObject)
 
 	this->checkTileCollision(node, gameObject);
     this->isLadderCollision(node, gameObject);
-    
-	//this->checkLadderCollision(node, gameObject);
-	//
-	
+    		
+	gameObject.updatePosition();
 }
 
 

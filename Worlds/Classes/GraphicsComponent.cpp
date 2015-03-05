@@ -3,11 +3,6 @@
 #include "GameObject.h"
 #include "GraphicsComponent.h"
 
-void GraphicsComponent::runAction(std::string frameName)
-{
-	
-};
-
 PlayerGraphicsComponent::PlayerGraphicsComponent()
 { 	
 	activeState = EAnimationStates::IDLE;
@@ -31,10 +26,16 @@ PlayerGraphicsComponent::PlayerGraphicsComponent()
 		{
 			animationFrames[i][j] = initFrames[i][j];
 		}
-	}			
+	}
+
+	//_shadow = Sprite::create();
+	//_shadow->setSpriteFrame(this->getSpriteFrame());
+	//_shadow->setAnchorPoint(Vec2(-0.1f, 0.0f)); // position it to the center of the target node
+	//_shadow->setColor(Color3B(0, 0, 0));
+	//_shadow->setOpacity(50);
 };
 
-void PlayerGraphicsComponent::update(IGameObject& gameObject)
+void PlayerGraphicsComponent::update(Node& node, IGameObject& gameObject)
 {
 	/** Reset the currentFrame to init frame **/
 	currentFrame %= 2;
@@ -66,35 +67,27 @@ void PlayerGraphicsComponent::update(IGameObject& gameObject)
 void PlayerGraphicsComponent::ClimbUp(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::CLIMBING;
-	this->update(gameObject);
 };
 
 void PlayerGraphicsComponent::ClimbDown(IGameObject& gameObject)
 {	
 	this->activeState = EAnimationStates::CLIMBING;
-	this->update(gameObject);
 };
 
 void PlayerGraphicsComponent::WalkLeft(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::WALKING;
-	this->update(gameObject);	
-
 	gameObject.setFlippedX(true);
 };
 
 void PlayerGraphicsComponent::WalkRight(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::WALKING;
-
-	this->update(gameObject);	
-
 	gameObject.setFlippedX(false);
 };
 
 void PlayerGraphicsComponent::Stop(IGameObject& gameObject)
 {
-	this->update(gameObject);
 };
 
 void PlayerGraphicsComponent::Idle(IGameObject &gameObject)
@@ -132,13 +125,11 @@ void PlayerGraphicsComponent::Idle(IGameObject &gameObject)
 void PlayerGraphicsComponent::Hurt(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::HURT;
-	this->update(gameObject);
 };
 
 void PlayerGraphicsComponent::Crouch(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::CROUCH;
-	this->update(gameObject);
 };
 
 /**
