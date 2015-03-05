@@ -1578,11 +1578,11 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="457"/>
-   <tile gid="457"/>
-   <tile gid="457"/>
-   <tile gid="457"/>
-   <tile gid="7"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -1724,6 +1724,7 @@
  <objectgroup name="object">
   <object name="Enter" type="Enter" x="770" y="630" width="70" height="70"/>
   <object name="Left" type="Left" x="70" y="490" width="70" height="70"/>
+  <object name="ShowCave" type="ShowCave" x="630" y="490" width="350" height="70"/>
  </objectgroup>
  <layer name="foreground" width="50" height="10">
   <data>
