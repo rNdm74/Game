@@ -105,19 +105,6 @@ ParallaxTileMap::~ParallaxTileMap()
 */
 void ParallaxTileMap::update(float& delta)
 {
-	void(ParallaxTileMapFsm:: *ptrs[])() =
-	{
-		&ParallaxTileMapFsm::LoadCave,
-		&ParallaxTileMapFsm::LoadPlanet,
-		&ParallaxTileMapFsm::LoadSpaceStation,
-		&ParallaxTileMapFsm::LoadPrison,
-		&ParallaxTileMapFsm::LoadBossBattle
-	};
-
-	EParallaxTileMapState state = EParallaxTileMapState::LoadPlanet;
-
-	//(_fsm->*ptrs[state])();
-
 #if DEBUG_ENABLE
 
 	this->clearDebugDraw();
@@ -138,8 +125,6 @@ void ParallaxTileMap::update(float& delta)
 
 	}
 }
-
-#pragma region Pathfinding
 
 /**
 * Check if the given location is blocked, i.e. blocks movement of
@@ -172,10 +157,6 @@ float ParallaxTileMap::getCost(Vec2 startLocation, Vec2 targetLocation)
 {
 	return 1;
 }
-
-#pragma endregion Pathfinding
-
-#pragma region Getters
 
 /**
 * Gets the map size in tiles
@@ -231,10 +212,6 @@ TileDataArray ParallaxTileMap::getLadderDataAt(Vec2 position)
 	return this->getTileDataArrayFromLadderLayerAt(position);
 };
 
-#pragma endregion Getters
-
-#pragma region Player
-
 /** **/
 void ParallaxTileMap::addPlayer(IGameObject* player)
 {
@@ -254,19 +231,28 @@ IGameObject* ParallaxTileMap::removePlayer()
 /** **/
 void ParallaxTileMap::setPositionOnPlayer()
 {
-	Vec2 _position = this->getPlayer()->getPosition();
-	Size _winSize = Director::getInstance()->getWinSize() / this->getParent()->getScale();
-	
-	float x = MAX(_position.x, _winSize.width / 2);
-	float y = MAX(_position.y, _winSize.height / 2);
-	x = MIN(x, (_mapSize.width * _tileSize.width) - _winSize.width / 2);
-	y = MIN(y, (_mapSize.height * _tileSize.height) - _winSize.height / 2);
+	Vec2 v = this->getPlayer()->getVelocity();
+	Rect r = this->getPlayer()->getCollisionBox();
+	/** Bottom middle of sprite **/
+	Vec2 p = Vec2(r.origin.x + (r.size.width / 2), r.origin.y);
+	p.x += v.x * kUpdateInterval;
+			
+	float s = this->getParent()->getScale();
+		
+	Size m = _mapSize;
+	Size t = _tileSize;
+	Size w = Director::getInstance()->getWinSize() / s;
 
-	Vec2 _actualPosition = Vec2(x, y);
-	Vec2 _centerOfView = Vec2(_winSize.width / 2, _winSize.height / 2);
-	Vec2 _viewPoint = _centerOfView - _actualPosition;
+	float x = MAX(p.x, w.width / 2);
+	float y = MAX(p.y, w.height / 2);
+	x = MIN(x, (m.width * t.width) - w.width / 2);
+	y = MIN(y, (m.height * t.height) - w.height / 2);
 
-	this->setPosition(_viewPoint);
+	Vec2 ap = Vec2(x, y);
+	Vec2 cov = Vec2(w.width / 2, w.height / 2);
+	Vec2 vp = cov - ap;
+
+	this->setPosition(vp);
 };
 
 /** **/
@@ -276,10 +262,6 @@ ValueMap ParallaxTileMap::getInitialProperties()
 
 	return static_cast<IGameObject*>(node)->getProperties();
 };
-
-#pragma endregion Player
-
-#pragma region Flags
 
 /**
 * Returns if the tilecoordinates are within the map bounds
@@ -292,7 +274,6 @@ bool ParallaxTileMap::isValid(Vec2 tileCoordinates)
 	return (tileCoordinates.y < _mapSize.height && tileCoordinates.y >= 0 &&
 		tileCoordinates.x < _mapSize.width && tileCoordinates.x >= 0);
 }
-
 
 /**
 * Returns if the tilecoordinates are within the map bounds
@@ -310,8 +291,6 @@ bool ParallaxTileMap::isTileLadder(Vec2 tileCoordinates)
 	return (tileData.GID != 0);
 }
 
-#pragma endregion Flags
-
 #if DEBUG_ENABLE
 /**
 * Reset the _debug layer
@@ -323,7 +302,6 @@ void ParallaxTileMap::clearDebugDraw()
 	_debugLayer->clear();
 }
 
-
 /**
 * Adds a filled rectangle to the debug layer with a set color
 *
@@ -334,7 +312,6 @@ void ParallaxTileMap::drawDebugRect(Rect rect, Color4F color)
 {
 	_debugLayer->drawSolidRect(rect.origin, Vec2(rect.getMaxX(), rect.getMaxY()), color);
 }
-
 
 /**
 * Adds a filled rectangle to the debug layer at from a given position with a set color
@@ -349,7 +326,6 @@ void ParallaxTileMap::drawDebugRectAt(Vec2 position, Color4F color)
 	this->drawDebugRect(rect, color);
 }
 
-
 /**
 * Adds a filled rectangle to the debug layer at from a given coordinate with a set color
 *
@@ -362,10 +338,7 @@ void ParallaxTileMap::drawDebugRectAtTile(Vec2 coordinates, Color4F color)
 	this->drawDebugRect(rect, color);
 }
 
-
 #endif // DEBUG_ENABLE
-
-#pragma region Protected Functions
 
 /**
 * Adds all objects from the object layer in the tmx file
@@ -679,10 +652,6 @@ void ParallaxTileMap::enableForegroundOpacity(int fade)
     }
 };
 
-#pragma endregion Protected Functions
-
-#pragma region Cave
-
 /**
 * Create a new ParallaxTileMap, This will create and addObjects from the tmx file
 *
@@ -713,10 +682,6 @@ Cave::Cave(std::string mapName) : super(mapName)
 {
 
 };
-
-#pragma endregion Cave
-
-#pragma region Planet
 
 /**
 * Create a new ParallaxTileMap, This will create and addObjects from the tmx file
@@ -750,5 +715,3 @@ Planet::Planet(std::string mapName) : super(mapName)
 
 	this->addChild(_parallaxBackgroundLayer, -3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 };
-
-#pragma endregion Planet

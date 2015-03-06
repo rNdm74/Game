@@ -1,8 +1,10 @@
 #ifndef __FranticAlien__FSM_COMPONENT_H__
 #define __FranticAlien__FSM_COMPONENT_H__
 
+#include <typeinfo>
 #include "cocos2d.h"
 #include "AppGlobal.h"
+
 
 class IGameObject;
 class IFsmComponent;
@@ -16,6 +18,9 @@ struct IFsmState
 	virtual void ActionLeft(IFsmComponent& fsm) = 0;
 	virtual void ActionRight(IFsmComponent& fsm) = 0;
 	virtual void ActionStop(IFsmComponent& fsm) = 0;
+	virtual void ActionJump(IFsmComponent& fsm) = 0;
+	
+	virtual Type GetState() = 0;
 };
 
 struct FsmState : public IFsmState
@@ -26,30 +31,45 @@ struct FsmState : public IFsmState
 	virtual void ActionLeft(IFsmComponent& fsm);
 	virtual void ActionRight(IFsmComponent& fsm);
 	virtual void ActionStop(IFsmComponent& fsm);
+	virtual void ActionJump(IFsmComponent& fsm);
+	
+	virtual Type GetState(){ return "FsmState"; };
 };
 
 struct UpState : public FsmState
 {
+	Type GetState() override { return typeid(this).name(); };
+
     void ActionUp(IFsmComponent& fsm) override;
 };
 
 struct DownState : public FsmState
 {
-	virtual void ActionDown(IFsmComponent& fsm) override;
+	Type GetState() override { return typeid(this).name(); };
+
+	void ActionDown(IFsmComponent& fsm) override;
 };
 
 struct LeftState : public FsmState
 {
-	virtual void ActionLeft(IFsmComponent& fsm) override;
+	Type GetState() override { return typeid(this).name(); };
+
+	void ActionLeft(IFsmComponent& fsm) override;
 };
 
 struct RightState : public FsmState
 {
-	virtual void ActionRight(IFsmComponent& fsm) override;
+	Type GetState() override { return typeid(this).name(); };
+
+	void ActionRight(IFsmComponent& fsm) override;
 };
 
 struct StopState : public FsmState
 {
+	Type GetState() override { return typeid(this).name(); };
+	
+	void ActionLeft(IFsmComponent& fsm) override;
+	void ActionRight(IFsmComponent& fsm) override;
     void ActionStop(IFsmComponent& fsm) override;
     
     long timeout = 0l;
@@ -57,8 +77,18 @@ struct StopState : public FsmState
 
 struct IdleState : public FsmState
 {
+	Type GetState() override { return typeid(this).name(); };
+
     void ActionStop(IFsmComponent& fsm) override;
 };
+
+struct JumpState : public FsmState
+{
+	Type GetState() override { return typeid(this).name(); };
+
+	void ActionJump(IFsmComponent& fsm) override;	
+};
+
 
 class IFsmComponent
 {
@@ -69,6 +99,7 @@ public:
 	RightState* StateRight;
 	StopState* StateStop;
     IdleState* StateIdle;
+	JumpState* StateJump;	
 
 	IFsmComponent()
     {
@@ -78,6 +109,7 @@ public:
         StateRight = new RightState();
         StateStop = new StopState();
         StateIdle = new IdleState();
+		StateJump = new JumpState();		
     };
 	virtual ~IFsmComponent()
     {
@@ -87,6 +119,7 @@ public:
         delete StateRight;
         delete StateStop;
         delete StateIdle;
+		delete StateJump;
     };
 
 	virtual void update(Node& node, IGameObject& gameObject) = 0;
@@ -97,7 +130,9 @@ public:
 	virtual void EventLeft() = 0;
 	virtual void EventRight() = 0;
 	virtual void EventStop() = 0;
+	virtual void EventJump() = 0;
 
+	virtual Type getCurrentState() = 0;
 	virtual void setCurrentState(FsmState* currentState) = 0;
     
     IGameObject* gameObject;
@@ -115,7 +150,9 @@ public:
 	virtual void EventLeft(){ currentState->ActionLeft(*this); };
 	virtual void EventRight(){ currentState->ActionRight(*this); };
 	virtual void EventStop(){ currentState->ActionStop(*this); };
-
+	virtual void EventJump(){ currentState->ActionJump(*this); };
+	
+	virtual Type getCurrentState(){ return currentState->GetState(); };
 	virtual void setCurrentState(FsmState* newState){ currentState = newState; };
 
 protected:

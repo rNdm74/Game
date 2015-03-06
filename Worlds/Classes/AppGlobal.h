@@ -7,14 +7,7 @@
 using namespace cocos2d;
 
 class AppGlobal
-{
-public:
-	EGameObjectState gameObjectState;
-
-	ActiveTileMap activeMap;
-	
-	class IGameObject* player;
-    
+{ 
 public:
     static AppGlobal* getInstance();
 
@@ -27,24 +20,26 @@ public:
 	void addCursor(Layer& layer);
 
 	void zoomIn();
-	void zoomOut();	
+	void zoomOut();	 
 
 	float getScale();
 
 	bool getIsGameSceneRunning() { return _isGameSceneRunning; };
 	void setIsGameSceneRunning(bool isRunning) { _isGameSceneRunning = isRunning; };
-		    
+	
+public: /** Variables **/	
+	ActiveTileMap ActiveMap;
+	class IGameObject* PlayerInstance;
+	std::stack<EGameObjectEvent> EventStack;
+
 private:
     AppGlobal();
 	AppGlobal(const AppGlobal&); // Prevent construction by copying
 	AppGlobal& operator=(const AppGlobal&); // Prevent assignment
-	virtual ~AppGlobal(){};
-	
-	/** **/
-	void setGameObjectState(Vec2 direction);
-
+	virtual ~AppGlobal(){};	
     static AppGlobal* m_pInstance;  
 
+private: /** Variables **/
 	bool _isGameSceneRunning;
 	bool _touchEvent;
 

@@ -12,11 +12,11 @@ AppGlobal* AppGlobal::getInstance()
 }
 
 AppGlobal::AppGlobal() 
-{
-	gameObjectState = EGameObjectState::Stop;
-
-	player = nullptr;
-	    
+{	
+	EventStack.push(EGameObjectEvent::Stop);
+	
+	PlayerInstance = nullptr;
+	
 	_scaleFactor = kZoomMin;
     	
 	for (bool& key : _keyMatrix) key = false;
@@ -71,99 +71,74 @@ void AppGlobal::initKeyboardListener()
 
 	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{
-		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
+		switch (keyCode)
 		{
-			_keyMatrix[EGameObjectState::CheckCanClimbUp] = true;
-			gameObjectState = EGameObjectState::CheckCanClimbUp;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
-		{
-			_keyMatrix[EGameObjectState::CheckCanClimbDown] = true;
-			gameObjectState = EGameObjectState::CheckCanClimbDown;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
-		{
-			_keyMatrix[EGameObjectState::CheckCanWalkLeft] = true;
-			gameObjectState = EGameObjectState::CheckCanWalkLeft;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
-		{
-			_keyMatrix[EGameObjectState::CheckCanWalkRight] = true;
-			gameObjectState = EGameObjectState::CheckCanWalkRight;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_UP)
-		{			
-			_keyMatrix[EGameObjectState::LoadNextMap] = true;
-			gameObjectState = EGameObjectState::LoadNextMap;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN)
-		{
-			_keyMatrix[EGameObjectState::LoadPreviousMap] = true;
-			gameObjectState = EGameObjectState::LoadPreviousMap;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_SPACE)
-		{
+			case EventKeyboard::KeyCode::KEY_UP_ARROW:
+			{
+				EventStack.push(EGameObjectEvent::Up);
+			}
+			break;
 			
-		}
-
-		player->setCurrentState(gameObjectState);
+			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+			{
+				EventStack.push(EGameObjectEvent::Down);
+			}
+			break;
+			
+			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			{	
+				EventStack.push(EGameObjectEvent::Left);					
+			}
+			break;
+			
+			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			{
+				EventStack.push(EGameObjectEvent::Right);					
+			}
+			break;
+			
+			case EventKeyboard::KeyCode::KEY_SPACE:
+			{
+				if (PlayerInstance->OnGround)
+					EventStack.push(EGameObjectEvent::Jump);
+			}
+			break;
+		};				
 	};
 
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event *event)
 	{
-		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
+		switch (keyCode)
 		{
-			_keyMatrix[EGameObjectState::CheckCanClimbUp] = false;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
-		{
-			_keyMatrix[EGameObjectState::CheckCanClimbDown] = false;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
-		{
-			_keyMatrix[EGameObjectState::CheckCanWalkLeft] = false;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
-		{
-			_keyMatrix[EGameObjectState::CheckCanWalkRight] = false;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_PG_UP)
-		{
-			_keyMatrix[EGameObjectState::LoadNextMap] = false;
-		}
-
-		if (keyCode == EventKeyboard::KeyCode::KEY_KP_PG_DOWN)
-		{
-			_keyMatrix[EGameObjectState::LoadPreviousMap] = false;
-		}
-		
-		bool isAllStatesFalse = false;
-
-		int index = 0;
-
-		while (index < _keyMatrix.size() && isAllStatesFalse == false)
-		{
-			//log("index: %i", index);
-			isAllStatesFalse = _keyMatrix[index];
-			index++;
-		}
-		
-		if (isAllStatesFalse == false)
-		{
-			gameObjectState = EGameObjectState::Stop;
-		}
-
-		player->setCurrentState(gameObjectState);
+			case EventKeyboard::KeyCode::KEY_UP_ARROW:
+			{
+				EventStack.pop();
+			}
+			break;
+			
+			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+			{
+				EventStack.pop();
+			}
+			break;
+			
+			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			{
+				EventStack.pop();					
+			}
+			break;
+			
+			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:	
+			{
+				EventStack.pop();
+			}
+			break;
+			
+			case EventKeyboard::KeyCode::KEY_SPACE:	
+			{			
+			}	
+			break;
+		};
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
@@ -177,21 +152,36 @@ void AppGlobal::initTouchListener()
 	{
         _touchEvent = true;
         
-		if (player)
+		if (PlayerInstance)
 		{
-            Vec2 v1 = player->getCenterPosition();
-            Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
+			Vec2 v1 = PlayerInstance->getCenterPosition();
+			Vec2 v2 = PlayerInstance->getParent()->convertToNodeSpaceAR(touch->getLocation());
             
             Vec2 n = Vec2(v2 - v1).getNormalized();
             Vec2 d = Vec2(std::round(n.x), std::round(n.y));
             
-			if (player->containsPoint(v2))
+			if (PlayerInstance->getBoundingBox().containsPoint(v2))
 			{
-				gameObjectState = EGameObjectState::Stop;
+				//PlayerInstance->setRunningEvent(EGameObjectEvent::Stop);
 			}
 			else
-			{
-				this->setGameObjectState(d);
+			{		
+				if (d.y > 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Up);
+				}
+				else if (d.y < 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Down);
+				}
+				else if (d.x < 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Left);
+				}
+				else if (d.x > 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Right);
+				}
 			}
         }
 
@@ -202,19 +192,34 @@ void AppGlobal::initTouchListener()
 	{
         if(_touchEvent /** When we have depressed the pad **/)
         {
-            Vec2 v1 = player->getCenterPosition();
-            Vec2 v2 = player->getParent()->convertToNodeSpaceAR(touch->getLocation());
+			Vec2 v1 = PlayerInstance->getCenterPosition();
+			Vec2 v2 = PlayerInstance->getParent()->convertToNodeSpaceAR(touch->getLocation());
             
             Vec2 n = Vec2(v2 - v1).getNormalized();
             Vec2 d = Vec2(std::round(n.x), std::round(n.y));
             
-			if (player->containsPoint(v2))
+			if (PlayerInstance->getBoundingBox().containsPoint(v2))
 			{
-				gameObjectState = EGameObjectState::Stop;
+				//PlayerInstance->setRunningEvent(EGameObjectEvent::Stop);
 			}
 			else
 			{
-				this->setGameObjectState(d);
+				if (d.y > 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Up);
+				}
+				else if (d.y < 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Down);
+				}
+				else if (d.x < 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Left);
+				}
+				else if (d.x > 0)
+				{
+					//PlayerInstance->setRunningEvent(EGameObjectEvent::Right);
+				}
 			}
         }
 	};
@@ -223,7 +228,7 @@ void AppGlobal::initTouchListener()
 	{
         _touchEvent = false;
         
-		gameObjectState = EGameObjectState::Stop;
+		//PlayerInstance->setRunningEvent(EGameObjectEvent::Stop);
 	};
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
@@ -244,32 +249,6 @@ float AppGlobal::getScale()
     return _scaleFactor;
 };
 
-void AppGlobal::setGameObjectState(Vec2 direction)
-{
-    if (direction.y > 0)
-    {
-		gameObjectState = EGameObjectState::CheckCanClimbUp;
-    }
-    else if (direction.y < 0)
-    {
-		gameObjectState = EGameObjectState::CheckCanClimbDown;
-    }
-    else if (direction.x < 0)
-    {
-		gameObjectState = EGameObjectState::CheckCanWalkLeft;
-    }
-    else if (direction.x > 0)
-    {
-		gameObjectState = EGameObjectState::CheckCanWalkRight;
-    }
-	else
-	{
-		gameObjectState = EGameObjectState::Stop;
-	}
-
-	player->setCurrentState(gameObjectState);
-};
-
 void AppGlobal::addCursor(Layer& layer)
 {	
 	auto _cursor = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("tap.png"));//Sprite::createWithSpriteFrameName("tap.png");
@@ -282,7 +261,7 @@ void AppGlobal::addCursor(Layer& layer)
 
 void AppGlobal::zoomIn()
 {
-    Vec2 v = player->getVelocity();
+    Vec2 v = PlayerInstance->getVelocity();
     float zoom = v.x + v.y;
 	/** Increment to scale factor **/
 	_scaleFactor += std::abs(zoom / kZoomInFactor);
@@ -294,7 +273,7 @@ void AppGlobal::zoomIn()
 
 void AppGlobal::zoomOut()
 {
-    Vec2 v = player->getVelocity();
+	Vec2 v = PlayerInstance->getVelocity();
     float zoom = v.x + v.y;
 	/** Increment to scale factor **/
 	_scaleFactor -= std::abs(zoom / kZoomOutFactor);

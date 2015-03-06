@@ -6,49 +6,60 @@ void FsmState::ActionDown(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateDown
 void FsmState::ActionLeft(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateLeft); };
 void FsmState::ActionRight(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateRight); };
 void FsmState::ActionStop(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateStop); };
+void FsmState::ActionJump(IFsmComponent& fsm)
+{
+	//
+	AppGlobal::getInstance()->EventStack.pop();
+	// Tell the gameObject to jump
+	fsm.gameObject->Jump();
+	// Then change to the jump state
+	fsm.setCurrentState(fsm.StateJump); 
+};
 
-void UpState::ActionUp(IFsmComponent& fsm)
+void UpState::ActionUp(IFsmComponent& fsm) /** Override **/
+{
+    AppGlobal::getInstance()->zoomOut();
+    fsm.gameObject->Up();
+};
+
+void DownState::ActionDown(IFsmComponent& fsm) /** Override **/
 {
     AppGlobal::getInstance()->zoomOut();
     
-    fsm.gameObject->setOnGround(false);
-    fsm.gameObject->ClimbUp();
+	fsm.gameObject->Down();        
 };
 
-void DownState::ActionDown(IFsmComponent& fsm)
+void LeftState::ActionLeft(IFsmComponent& fsm) /** Override **/
 {
     AppGlobal::getInstance()->zoomOut();
-    
-    if(fsm.gameObject->getOnGround())
-    {
-        fsm.gameObject->Crouch();
-    }
-    else
-    {
-        fsm.gameObject->ClimbDown();
-    }
+
+	fsm.gameObject->Left();
 };
 
-void LeftState::ActionLeft(IFsmComponent& fsm)
+void RightState::ActionRight(IFsmComponent& fsm) /** Override **/
 {
     AppGlobal::getInstance()->zoomOut();
-    fsm.gameObject->WalkLeft();
+
+	fsm.gameObject->Right();
 };
 
-void RightState::ActionRight(IFsmComponent& fsm)
+void StopState::ActionLeft(IFsmComponent& fsm) /** Override **/
+{	
+	fsm.setCurrentState(fsm.StateLeft);
+};
+
+void StopState::ActionRight(IFsmComponent& fsm) /** Override **/
 {
-    AppGlobal::getInstance()->zoomOut();
-    fsm.gameObject->WalkRight();
-    fsm.gameObject->setIsMoving(true);
+	fsm.setCurrentState(fsm.StateRight);		
 };
 
-void StopState::ActionStop(IFsmComponent& fsm)
+void StopState::ActionStop(IFsmComponent& fsm) /** Override **/
 {
     AppGlobal::getInstance()->zoomIn();
     fsm.gameObject->Stop();
     
     /**  Wait so many seconds then change state to idle **/
-    if (timeout > 100l /** Reached timeout period  **/)
+    if (timeout > 1000l /** Reached timeout period  **/)
     {
         /** Reset timeout period **/
         timeout = 0l;
@@ -60,9 +71,15 @@ void StopState::ActionStop(IFsmComponent& fsm)
     timeout += 1l;
 };
 
-void IdleState::ActionStop(IFsmComponent& fsm)
+void IdleState::ActionStop(IFsmComponent& fsm) /** Override **/
 {
-    fsm.gameObject->Hurt();
+	AppGlobal::getInstance()->zoomIn();
+    fsm.gameObject->Idle();
+};
+
+void JumpState::ActionJump(IFsmComponent& fsm) /** Override **/
+{
+
 };
 
 void PlayerFsmComponent::update(Node& node, IGameObject& gameObject)
@@ -73,11 +90,12 @@ void PlayerFsmComponent::update(Node& node, IGameObject& gameObject)
 		&IFsmComponent::EventDown,
 		&IFsmComponent::EventLeft,
 		&IFsmComponent::EventRight,
-		&IFsmComponent::EventStop
+		&IFsmComponent::EventStop,
+		&IFsmComponent::EventJump,
 	};
 	
-	int index = gameObject.getCurrentState();
+	int runningEvent = AppGlobal::getInstance()->EventStack.top();
 
-	(this->*ptrs[index])();	
+	(this->*ptrs[runningEvent])();
 }
 

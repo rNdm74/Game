@@ -9,8 +9,6 @@ class IInputComponent;
 class ICollisionComponent;
 class IGraphicsComponent;
 class IFsmComponent;
-class IPath;
-class IGameObjectFsm;
 
 using namespace cocos2d;
 
@@ -27,19 +25,17 @@ public:
 	/** Constructor and the Destructor **/
 	IGameObject(){};
 	virtual ~IGameObject(){};			
-	
-	/** **/
-	EGameObjectState CurrentState;
-
+		
 	/** Update the gameObject **/
 	virtual void update(Node* node) = 0;
 
 	/** Action methods **/
-	virtual void ClimbUp() = 0;
-	virtual void ClimbDown() = 0;
-	virtual void WalkLeft() = 0;
-	virtual void WalkRight() = 0;
-	virtual void Stop() = 0;
+	virtual void Up() = 0;
+	virtual void Down() = 0;
+	virtual void Left() = 0;
+	virtual void Right() = 0;
+	virtual void Stop() = 0;	
+	virtual void Gravity() = 0;
     virtual void Idle() = 0;
     virtual void Crouch() = 0;
 	virtual void Jump() = 0;
@@ -48,58 +44,31 @@ public:
 	virtual void ThrowGem() = 0;
 	virtual void PickUpGem() = 0;
 	virtual void Talk() = 0;
+	virtual void HitWall() = 0;
 	/** Action methods end **/
-
-	/** **/
-	virtual bool containsPoint(Vec2 point) = 0;
-	virtual void updatePosition() = 0;
-
+	
 	/** Getters **/
-#pragma region Getters
-	virtual EGameObjectState getCurrentState() = 0;
-
-	virtual IGameObjectFsm* getFsm() = 0;
-	virtual IPath* getPath() = 0;
-
-	virtual ValueMap getProperties() = 0;
-		
-	virtual Rect getCollisionBox() = 0;	
-		
+	virtual ValueMap getProperties() = 0;		
+	virtual Rect getCollisionBox() = 0;			
 	virtual Vec2 getCenterPosition() = 0;		
 	virtual Vec2 getDesiredPosition() = 0;
 	virtual Vec2 getDirection() = 0; 
 	virtual Vec2 getVelocity() = 0;
-				
-	virtual bool getClimbing() = 0;
-	virtual bool getOnGround() = 0;
-    virtual bool getIsMoving() = 0;
+	/** Getters end **/
 
-#pragma endregion Getters
-
-	/** Setters **/
-#pragma region Setters
-
-	virtual void setCurrentState(EGameObjectState newState) = 0;
-
-	virtual void setPath(IPath* path) = 0;
-
-	virtual void setProperties(ValueMap& properties) = 0;
-	
-	virtual void setDirection(Vec2 direction) = 0;
-	
-	virtual void setVelocity(Vec2 velocity) = 0;
-		
+	/** Setters **/	
+	virtual void setProperties(ValueMap& properties) = 0;	
+	virtual void setVelocity(Vec2 velocity) = 0;		
 	virtual void setDesiredPosition(Vec2 desiredPosition) = 0;
 	virtual void setDesiredPositionX(float x) = 0;
 	virtual void setDesiredPositionY(float y) = 0;
-	
-	virtual void setClimbing(bool climbing) = 0;
-	virtual void setOnGround(bool onGround) = 0;
-    virtual void setIsMoving(bool moving) = 0;
-#pragma endregion Setters
+	/** Setters end **/
 
+public: /** Variables **/
+	bool OnGround;
+	bool LeftStop;
+	bool RightStop;
 };
-
 
 /**
 * A path determined by some path finding algorithm. A series of steps from
@@ -114,24 +83,32 @@ class GameObject : public IGameObject
 	typedef GameObject self;
     
 public:
-	static GameObject* create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
+	static GameObject* create
+	(
+		ValueMap& properties, 
+		ICollisionComponent* collision, 
+		IGraphicsComponent* graphics
+	);
 
 	/** Constructor and the Destructor **/
-	GameObject(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
-	virtual ~GameObject(){};
-    
-	/** **/
-	EGameObjectState CurrentState;
-
+	GameObject
+	(
+		ValueMap& properties, 
+		ICollisionComponent* collision, 
+		IGraphicsComponent* graphics
+	);
+	virtual ~GameObject();
+    		
 	/** Update the gameObject **/
 	virtual void update(Node* node);
 
 	/** Action methods **/	
-	virtual void ClimbUp(){};
-	virtual void ClimbDown(){};
-	virtual void WalkLeft(){};
-	virtual void WalkRight(){};
-	virtual void Stop(){};
+	virtual void Up(){};
+	virtual void Down(){};
+	virtual void Left(){};
+	virtual void Right(){};
+	virtual void Stop(){};	
+	virtual void Gravity(){};
 	virtual void Idle(){};
 	virtual void Crouch(){};
 	virtual void Jump(){};
@@ -140,52 +117,26 @@ public:
 	virtual void ThrowGem(){};
 	virtual void PickUpGem(){};
 	virtual void Talk(){};
-    
-	/** **/
-	virtual bool containsPoint(Vec2 point);
-	virtual void updatePosition();
+	virtual void HitWall(){};
+	/** Action methods end **/
 
 	/** Getters **/
-#pragma region Getters 
-	virtual EGameObjectState getCurrentState();
-
-	virtual IGameObjectFsm* getFsm();
-	virtual IPath* getPath();
-
-	virtual ValueMap getProperties();
-		
-	virtual Rect getCollisionBox();
-		
+	virtual ValueMap getProperties();		
+	virtual Rect getCollisionBox();		
 	virtual Vec2 getCenterPosition();
 	virtual Vec2 getDesiredPosition();
 	virtual Vec2 getDirection();
 	virtual Vec2 getVelocity();
-				
-	virtual bool getClimbing();
-	virtual bool getOnGround();
-    virtual bool getIsMoving();
+	/** Getters end **/
 
-#pragma endregion Getters
-
-	/** Setters **/
-#pragma region Setters	
-	virtual void setCurrentState(EGameObjectState newState);
-
-	virtual void setPath(IPath* path);
-
+	/** Setters **/	
 	virtual void setProperties(ValueMap& properties);		
 	virtual void setDirection(Vec2 direction);	
-	virtual void setVelocity(Vec2 velocity);
-		
+	virtual void setVelocity(Vec2 velocity);		
 	virtual void setDesiredPosition(Vec2 desiredPosition);
 	virtual void setDesiredPositionX(float x);
 	virtual void setDesiredPositionY(float y);
-		
-	virtual void setClimbing(bool climbing);
-	virtual void setOnGround(bool onGround);
-    virtual void setIsMoving(bool moving);
-
-#pragma endregion Setters
+	/** Setters end **/
 
 protected:	
 	/** **/
@@ -193,26 +144,14 @@ protected:
 	/** **/
 	IGraphicsComponent* _graphics;
 	/** **/
-	IPath* _path;	
-
-	/** **/
 	ValueMap _properties;
-
 	/** **/
 	Vec2 _desiredPosition;
 	/** **/
 	Vec2 _direction;
 	/** **/
-	Vec2 _velocity;
-			
-	/** **/
-	bool _onGround;
-	/** **/
-	bool _isClimbing;
-    
-    bool _isMoving;
+	Vec2 _velocity;	
 };
-
 
 /**
 * A path determined by some path finding algorithm. A series of steps from
@@ -227,20 +166,38 @@ class Player : public GameObject
 	typedef Player self;
 
 public:
-	static Player* create(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input, IFsmComponent* fsm);
+	static Player* create
+	(
+		ValueMap& properties, 
+		ICollisionComponent* collision, 
+		IGraphicsComponent* graphics, 
+		IMenuComponent* menu, 
+		IInputComponent* input, 
+		IFsmComponent* fsm
+	);
 
-	Player(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics, IMenuComponent* menu, IInputComponent* input, IFsmComponent* fsm);
-	~Player(){};
+	Player
+	(
+		ValueMap& properties, 
+		ICollisionComponent* collision, 
+		IGraphicsComponent* graphics, 
+		IMenuComponent* menu, 
+		IInputComponent* input, 
+		IFsmComponent* fsm
+	);
+
+	~Player();
 
 	/** Update the gameObject overridden **/
 	virtual void update(Node* node) override;
 
 	/** Action methods overridden **/	
-	virtual void ClimbUp() override;
-	virtual void ClimbDown() override;
-	virtual void WalkLeft() override;
-	virtual void WalkRight() override;
-	virtual void Stop() override;
+	virtual void Up() override;
+	virtual void Down() override;
+	virtual void Left() override;
+	virtual void Right() override;
+	virtual void Stop() override;	 
+	virtual void Gravity() override;
 	virtual void Idle() override;
 	virtual void Crouch() override;
 	virtual void Jump() override;
@@ -249,7 +206,8 @@ public:
 	virtual void ThrowGem() override;
 	virtual void PickUpGem() override;
 	virtual void Talk() override;
-	
+	virtual void HitWall() override;
+
 	/** Getters Overridden **/
 	virtual Rect getCollisionBox() override;	
 	
@@ -260,10 +218,7 @@ private:
 	IMenuComponent* _menu;
 	/** **/
 	IInputComponent* _input;
-	
 	/** **/
-	
-
 	ActiveTileMap activeMap;
 };
 
@@ -281,11 +236,7 @@ class ShowCave : public GameObject
     
 public:
     ShowCave(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
-    virtual ~ShowCave(){};
-    
-private:
-    /** **/
-    
+    virtual ~ShowCave(){};    
 };
 
 
@@ -347,9 +298,6 @@ class Enter : public GameObject
 public:
 	Enter(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~Enter(){};
-
-private:
-	/** **/
 };
 
 
@@ -368,9 +316,6 @@ class Exit : public GameObject
 public:
 	Exit(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
 	virtual ~Exit(){};
-
-private:
-	/** **/
 };
 
 

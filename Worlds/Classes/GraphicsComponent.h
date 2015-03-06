@@ -20,14 +20,15 @@ public:
 	
 	virtual void update(Node& node, IGameObject& gameObject) = 0;
 
-	virtual void ClimbUp(IGameObject& gameObject) = 0;
-	virtual void ClimbDown(IGameObject& gameObject) = 0;
-	virtual void WalkLeft(IGameObject& gameObject) = 0;
-	virtual void WalkRight(IGameObject& gameObject) = 0;
+	virtual void Up(IGameObject& gameObject) = 0;
+	virtual void Down(IGameObject& gameObject) = 0;
+	virtual void Left(IGameObject& gameObject) = 0;
+	virtual void Right(IGameObject& gameObject) = 0;
 	virtual void Stop(IGameObject& gameObject) = 0;
     virtual void Idle(IGameObject& gameObject) = 0;
 	virtual void Hurt(IGameObject& gameObject) = 0;
     virtual void Crouch(IGameObject& gameObject) = 0;	
+	virtual void Jump(IGameObject& gameObject) = 0;
 };
 
 class GraphicsComponent : public IGraphicsComponent
@@ -38,14 +39,15 @@ public:
 	
 	virtual void update(Node& node, IGameObject& gameObject);
 
-	virtual void ClimbUp(IGameObject& gameObject){};
-	virtual void ClimbDown(IGameObject& gameObject){};
-	virtual void WalkLeft(IGameObject& gameObject){};
-	virtual void WalkRight(IGameObject& gameObject){};
+	virtual void Up(IGameObject& gameObject){};
+	virtual void Down(IGameObject& gameObject){};
+	virtual void Left(IGameObject& gameObject){};
+	virtual void Right(IGameObject& gameObject){};
 	virtual void Stop(IGameObject& gameObject){};
     virtual void Idle(IGameObject& gameObject){};
 	virtual void Hurt(IGameObject& gameObject){};
     virtual void Crouch(IGameObject& gameObject){};	
+	virtual void Jump(IGameObject& gameObject){};
 };
 
 class PlayerGraphicsComponent : public GraphicsComponent
@@ -56,14 +58,15 @@ public:
 		
 	virtual void update(Node& node, IGameObject& gameObject) override;
 
-	virtual void ClimbUp(IGameObject& gameObject) override;
-	virtual void ClimbDown(IGameObject& gameObject) override;
-	virtual void WalkLeft(IGameObject& gameObject) override;
-	virtual void WalkRight(IGameObject& gameObject) override;
+	virtual void Up(IGameObject& gameObject) override;
+	virtual void Down(IGameObject& gameObject) override;
+	virtual void Left(IGameObject& gameObject) override;
+	virtual void Right(IGameObject& gameObject) override;
 	virtual void Stop(IGameObject& gameObject) override;
     virtual void Idle(IGameObject& gameObject) override;
 	virtual void Hurt(IGameObject& gameObject) override;
     virtual void Crouch(IGameObject& gameObject) override;	
+	virtual void Jump(IGameObject& gameObject) override;
 
 private:
 	void lookLeft(IGameObject& gameObject);
@@ -74,7 +77,7 @@ private:
 	
 	Sprite* _shadow;
 
-	std::string animationFrames[5][2];
+	AnimationFrames animationFrames;
 	EAnimationStates activeState;
 
 	int currentFrame;

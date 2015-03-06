@@ -19,16 +19,17 @@ PlayerGraphicsComponent::PlayerGraphicsComponent()
 	idleTime = 0l;
 	maxIdleTime = 50l;
 			
-	std::string initFrames[5][2] =
+	std::string initFrames[6][2] =
 	{
 		{ climbingFileName(1), climbingFileName(2) },
 		{ walkingFileName(1), walkingFileName(2) },
 		{ "alienBeige.png", "alienBeige.png" },
 		{ "alienBeige_hurt.png", "alienBeige_hurt.png" },
-		{ "alienBeige_duck.png", "alienBeige_duck.png" }
+		{ "alienBeige_duck.png", "alienBeige_duck.png" },
+		{ "alienBeige_jump.png", "alienBeige_jump.png" }
 	};
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		for (int j = 0; j < 2; j++)
 		{
@@ -72,25 +73,27 @@ void PlayerGraphicsComponent::update(Node& node, IGameObject& gameObject)
 }
 
 
-void PlayerGraphicsComponent::ClimbUp(IGameObject& gameObject)
+void PlayerGraphicsComponent::Up(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::CLIMBING;
 };
 
-void PlayerGraphicsComponent::ClimbDown(IGameObject& gameObject)
+void PlayerGraphicsComponent::Down(IGameObject& gameObject)
 {	
 	this->activeState = EAnimationStates::CLIMBING;
 };
 
-void PlayerGraphicsComponent::WalkLeft(IGameObject& gameObject)
+void PlayerGraphicsComponent::Left(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::WALKING;
+	gameObject.setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 	gameObject.setFlippedX(true);
 };
 
-void PlayerGraphicsComponent::WalkRight(IGameObject& gameObject)
+void PlayerGraphicsComponent::Right(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::WALKING;
+	gameObject.setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
 	gameObject.setFlippedX(false);
 };
 
@@ -138,6 +141,11 @@ void PlayerGraphicsComponent::Hurt(IGameObject& gameObject)
 void PlayerGraphicsComponent::Crouch(IGameObject& gameObject)
 {
 	this->activeState = EAnimationStates::CROUCH;
+};
+
+void PlayerGraphicsComponent::Jump(IGameObject& gameObject)
+{
+	this->activeState = EAnimationStates::JUMP;
 };
 
 /**

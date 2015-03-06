@@ -18,7 +18,8 @@ typedef std::array<cocos2d::Vec2, 7> States;
 typedef std::array<bool, 7> KeyMatrix;
 typedef std::array<bool, 4> IsMoving;
 typedef std::array<bool, 4> CanMove;
-typedef std::string AnimationFrames[5][2];
+typedef std::string AnimationFrames[6][2];
+typedef std::string Type;
 
 #define DEBUG_ENABLE 1
 
@@ -102,25 +103,22 @@ const float kUpdateInterval = 1.0f / 60.0f;
 /**  **/
 const States GameObjectStates =
 {
-	cocos2d::Vec2( 0.0f,  1.0f ),	/** CheckCanClimbUp **/
-	cocos2d::Vec2( 0.0f, -1.0f ),	/** CheckCanClimbDown **/
-	cocos2d::Vec2(-1.0f,  0.0f ),	/** CheckCanWalkLeft **/
-	cocos2d::Vec2( 1.0f,  0.0f ),	/** CheckCanWalkRight **/
+	cocos2d::Vec2( 0.0f,  1.0f ),	/** Up **/
+	cocos2d::Vec2( 0.0f, -1.0f ),	/** Down **/
+	cocos2d::Vec2(-1.0f,  0.0f ),	/** Left **/
+	cocos2d::Vec2( 1.0f,  0.0f ),	/** Right **/
 	cocos2d::Vec2::ZERO,			/** Stop **/
-	cocos2d::Vec2::ZERO,			/** LoadNextMap **/
-	cocos2d::Vec2::ZERO				/** LoadPreviousMap **/
+	cocos2d::Vec2( 0.0f,  1.0f )	/** Jump **/
 };
 
-enum EGameObjectState
+enum EGameObjectEvent
 {
-	CheckCanClimbUp,
-	CheckCanClimbDown,
-	CheckCanWalkLeft,
-	CheckCanWalkRight,
+	Up,
+	Down,
+	Left,
+	Right,
 	Stop,
-	LoadNextMap,
-	LoadPreviousMap,
-	OnGround
+	Jump,
 };
 
 enum EParallaxTileMapState
@@ -148,7 +146,8 @@ enum EAnimationStates
 	WALKING,
 	IDLE,
 	HURT,
-	CROUCH
+	CROUCH,
+	JUMP
 };
 
 #endif /* defined(__CONSTANTS__) */

@@ -31,7 +31,7 @@ Level* Level::create()
 Level::Level()
 {
 	//
-	activeMap = AppGlobal::getInstance()->activeMap;
+	activeMap = AppGlobal::getInstance()->ActiveMap;
 	activeMap.push(ParallaxFactory::create("Planet"));
 	//
 	this->addChild(activeMap.top());
@@ -62,7 +62,7 @@ void Level::loadPlayer()
 
 	activeMap.top()->addPlayer(GameObjectFactory::create("Player", properties));
 
-	AppGlobal::getInstance()->player = activeMap.top()->getPlayer();
+	AppGlobal::getInstance()->PlayerInstance = activeMap.top()->getPlayer();
 }
 
 void Level::update(float& delta)
