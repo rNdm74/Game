@@ -12,35 +12,27 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 
 	if (className == "Player")
 	{
-		gameObject = Player::create
-		(
-			properties,
-			new PlayerCollisionComponent(),
-			new PlayerGraphicsComponent(),
-			new PlayerMenuComponent(),
-			new PlayerInputComponent(),
-			new PlayerFsmComponent()
-		);
+		gameObject = Player::create(properties);
 	}
     else if(className == "ShowCave")
     {
-        gameObject = ShowCave::create(properties, new ShowCaveCollisionComponent(), new GraphicsComponent());
+        gameObject = ShowCave::create(properties);
     }
 	else if (className == "Left")
 	{
-		gameObject = Left::create(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Left::create(properties);
 	}
 	else if (className == "Right")
 	{
-		gameObject = Right::create(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Right::create(properties);
 	}
 	else if (className == "Enter")
 	{
-		gameObject = Enter::create(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Enter::create(properties);
 	}
 	else if (className == "Exit")
 	{
-		gameObject = Exit::create(properties, new CollisionComponent(), new GraphicsComponent());
+		gameObject = Exit::create(properties);
 	}
 
 	return gameObject;

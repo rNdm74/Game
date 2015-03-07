@@ -1,12 +1,10 @@
 #include "AppGlobal.h"
-#include "Constants.h"
+#include "ParallaxFactory.h"
+#include "ParallaxTileMap.h"
 #include "GameObject.h"
 #include "GameObjectFactory.h"
 #include "Level.h"
-#include "ParallaxTileMap.h"
-#include "ParallaxFactory.h"
-#include "PathFinder.h"
-#include "Utils.h"
+//#include "cocos2d.h"
 
 Level* Level::create()
 {

@@ -1,6 +1,6 @@
 #include "Constants.h"
 #include "ParallaxBackground.h"
-
+#include "AppGlobal.h"
 
 ParallaxBackground* ParallaxBackground::create(float width)
 {
@@ -22,70 +22,57 @@ ParallaxBackground* ParallaxBackground::create(float width)
 	return node;
 }
 
-
 ParallaxBackground::ParallaxBackground(float width)
 {
-    Sprite* sprite = Sprite::create("bg0.png");
-    
-    int count = width / sprite->getContentSize().width;
+	this->setAnchorPoint(Vec2::ZERO);
+	this->setScale(1.5f);
+
+    Sprite* background = this->getBackground();	
+	int count = width / background->getContentSize().width;
     
 	for (int i = 0; i < count; ++i)
 	{
-		sprite = Sprite::create("bg0.png");
-		sprite->setAnchorPoint(Vec2::ZERO);
-		this->addChild(sprite, -6, Vec2(0.5f, 0.5f), Vec2(sprite->getContentSize().width * i, 110.0f));
+		background = this->getBackground();
+		this->addChild(background, -6, Vec2(0.6f, 0.3f), Vec2(background->getContentSize().width * i, 0.0f * this->getScale()));
 	}
 
-    sprite = Sprite::createWithSpriteFrameName("rockGrass.png");
+	Sprite* mountain = this->getMountain();
 
-	int rand = random(sprite->getContentSize().width, sprite->getContentSize().width * 3);
-
-	count = width / (sprite->getContentSize().width + rand);
+	int rand = random(mountain->getContentSize().width, mountain->getContentSize().width * 3);
+	count = width / (mountain->getContentSize().width + rand);
     
 	for (int i = 0; i < count; ++i)
 	{
-		sprite = Sprite::createWithSpriteFrameName("rockGrass.png");
-		sprite->setAnchorPoint(Vec2::ZERO);
-		sprite->setScale(rand_0_1() + 0.5f);
-		sprite->getTexture()->setAntiAliasTexParameters();
-		sprite->addChild(getShadowForNode(sprite), -99);
-
-		float offset = (sprite->getContentSize().width + rand) * i;
-
+		mountain = this->getMountain();		
+		float offset = (mountain->getContentSize().width + rand) * i;
 		int zindex = random(3, 6);
 
-		this->addChild(sprite, -zindex, Vec2(0.6f, 0.6f), Vec2(offset, 105.0f));
+		this->addChild(getShadowForNode(mountain), -zindex, Vec2(1.0f, 0.5f), Vec2(0.0f, 0.0f));
+
+		this->addChild(mountain, -zindex, Vec2(0.7f, 0.5f), Vec2(offset, 0.0f));
 	}
 
-    sprite = Sprite::createWithSpriteFrameName("groundGrass.png");
-    count = width / sprite->getContentSize().width;
+	Sprite* hill = this->getHill();
+	count = width / hill->getContentSize().width;
     
     for (int i = 0; i < count; ++i)
     {
-        sprite = Sprite::createWithSpriteFrameName("groundGrass.png");
-        sprite->setAnchorPoint(Vec2::ZERO);
-		sprite->addChild(getShadowForNode(sprite), -99);
-        this->addChild(sprite, -2, Vec2(0.7f, 0.7f), Vec2(sprite->getContentSize().width * i, 105.0f));
+		hill = this->getHill();
+		this->addChild(getShadowForNode(hill), -3, Vec2(0.81f, 0.9f), Vec2(hill->getContentSize().width * i, 45.0f * this->getScale()));
+		this->addChild(hill, -2, Vec2(0.8f, 0.9f), Vec2(hill->getContentSize().width * i, 45.0f * this->getScale()));
     }
     
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	for (int i = 0; i < _clouds.size(); ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		std::string filename = "cloud" + std::to_string(i+1) + ".png";
-		_clouds[i] = Sprite::createWithSpriteFrameName(filename);
-		_clouds[i]->setAnchorPoint(Vec2::ZERO);
-		_clouds[i]->setScale(rand_0_1() + 1.0f);
-		_clouds[i]->setTag(CLOUDS_STARTING_TAG + i);
-		_clouds[i]->addChild(getShadowForNode(_clouds[i]), -99);
+		Sprite* cloud = this->getCloud();
 		int zindex = random(3, 6);
 		float height = random(200, 400);
-		this->addChild(_clouds[i], -zindex, Vec2(rand_0_1(), 0.0f), Vec2(origin.x + visibleSize.width, height));
-	}
 
-	this->setAnchorPoint(Vec2::ZERO);
-	this->setScale(1.25f);
+		this->addChild(cloud, -zindex, Vec2(rand_0_1(), 0.0f), Vec2(origin.x + visibleSize.width, height * this->getScale()));
+	}
 }
 
 
@@ -95,21 +82,56 @@ ParallaxBackground::~ParallaxBackground()
 }
 
 
+Sprite* ParallaxBackground::getBackground()
+{
+	Sprite* sprite = Sprite::create("bg0.png");
+	sprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);	
+	return sprite;
+};
+
+Sprite* ParallaxBackground::getMountain()
+{
+	Sprite* sprite = Sprite::createWithSpriteFrameName("rockGrass.png");
+	sprite->setAnchorPoint(Vec2::ZERO);
+	sprite->setScale(rand_0_1() + 0.5f);
+	sprite->getTexture()->setAntiAliasTexParameters();	
+	return sprite;
+};
+
+Sprite* ParallaxBackground::getHill()
+{
+	Sprite* sprite = Sprite::createWithSpriteFrameName("groundGrass.png");
+	sprite->setAnchorPoint(Vec2::ZERO);
+	
+	return sprite;
+};
+
+Sprite* ParallaxBackground::getCloud()
+{
+	std::string cloudType = std::to_string(random(1, 3));
+	std::string filename = "cloud" + cloudType + ".png";
+
+	Sprite* cloud = Sprite::createWithSpriteFrameName(filename);
+	cloud->setAnchorPoint(Vec2::ZERO);
+	cloud->setScale(rand_0_1() + 1.0f);
+	cloud->addChild(getShadowForNode(cloud), -99);
+
+	return cloud;
+};
+
 void ParallaxBackground::update(float delta)
 {
 	
 }
 
-
-Node* ParallaxBackground::getShadowForNode(Node* node)
+Sprite* ParallaxBackground::getShadowForNode(Sprite* sprite)
 {
-	auto object = static_cast<Sprite*>(node);
-
-	auto shadow = Sprite::create();
-	shadow->setSpriteFrame(object->getSpriteFrame());
-	shadow->setAnchorPoint(Vec2(-0.05f, 0.02f));
+	Sprite* shadow = Sprite::create();
+	shadow->setSpriteFrame(sprite->getSpriteFrame());
 	shadow->setColor(Color3B(0, 0, 0));
 	shadow->setOpacity(50);
+
+	shadow->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 
 	return shadow;
 }

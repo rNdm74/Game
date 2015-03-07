@@ -14,9 +14,9 @@
 * @param node The Node that contains the gameObjects
 * @param gameObject The GameObject associated with being updated
 */
-void CollisionComponent::update(Node& node, IGameObject& gameObject)
+void CollisionComponent::update(Node& node)
 {
-	//this->checkCollision(TileMap(node), gameObject);
+	
 };
 
 /**
@@ -26,16 +26,16 @@ void CollisionComponent::update(Node& node, IGameObject& gameObject)
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-void PlayerCollisionComponent::update(Node& node, IGameObject& gameObject)
+void PlayerCollisionComponent::update(Node& node)
 {
-	this->checkTileCollision(node, gameObject);    
+	this->checkTileCollision(node);    
 }
 
-void ShowCaveCollisionComponent::update(Node& node, IGameObject& gameObject)
+void ShowCaveCollisionComponent::update(Node& node)
 {
     ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
     
-    Rect r1 = gameObject.getCollisionBox();
+    Rect r1 = _gameObject->getCollisionBox();
     Rect r2 = map.getPlayer()->getCollisionBox();
     
     if(r1.intersectsRect(r2))
@@ -56,20 +56,18 @@ void ShowCaveCollisionComponent::update(Node& node, IGameObject& gameObject)
 * @param node The Node containing the gameObject
 * @param gameObject The IGameObject that is checking collisions
 */
-void PlayerCollisionComponent::checkTileCollision(Node& node, IGameObject& gameObject)
+void PlayerCollisionComponent::checkTileCollision(Node& node)
 {		
 	/** Game objects desired position **/
-	Vec2 desiredPosition = gameObject.getDesiredPosition();
+	Vec2 desiredPosition = _gameObject->getDesiredPosition();
 	/** Game objects center position **/
-	Vec2 centerPosition = gameObject.getCenterPosition();	
+	Vec2 centerPosition = _gameObject->getCenterPosition();
 	/** Game objects velocity **/
-	Vec2 velocity = gameObject.getVelocity();
+	Vec2 velocity = _gameObject->getVelocity();
 	/** Game objects collision bounding box **/
-	Rect collisionBox = static_cast<Player&>(gameObject).getCollisionBox();
+	Rect collisionBox = _gameObject->getCollisionBox();
 	
-	gameObject.OnGround = false;
-	gameObject.LeftStop = false;
-	gameObject.RightStop = false;
+	_gameObject->OnGround = false;
 
 	/** Get array of tiles surrounding the gameobject **/
 	TileDataArray tileDataArray = TileMap(node).getCollisionDataAt(centerPosition);
@@ -92,7 +90,7 @@ void PlayerCollisionComponent::checkTileCollision(Node& node, IGameObject& gameO
 			{				
 				desiredPosition.y = desiredPosition.y + intersection.size.height;
 				velocity.y = 0.0f;	
-				gameObject.OnGround = true;
+				_gameObject->OnGround = true;
 			}
 			else if (tileIndex == ETileGrid::TOP /** Tile is above gameObject **/)
 			{				
@@ -103,14 +101,12 @@ void PlayerCollisionComponent::checkTileCollision(Node& node, IGameObject& gameO
 			{
 				desiredPosition.x = desiredPosition.x + intersection.size.width;
 				velocity.x = 0.0f;
-				gameObject.LeftStop = true;
 				
 			}
 			else if (tileIndex == ETileGrid::RIGHT /** Tile is right of gameObject **/) 
 			{
 				desiredPosition.x = desiredPosition.x - intersection.size.width;
 				velocity.x = 0.0f;
-				gameObject.RightStop = true;
 			}
 			else
 			{
@@ -124,7 +120,7 @@ void PlayerCollisionComponent::checkTileCollision(Node& node, IGameObject& gameO
 					if (tileIndex > ETileGrid::TOP_RIGHT)
 					{
 						resolutionHeight = intersection.size.height;
-						gameObject.OnGround = true;
+						_gameObject->OnGround = true;
 					}
 					else
 					{
@@ -155,18 +151,17 @@ void PlayerCollisionComponent::checkTileCollision(Node& node, IGameObject& gameO
 	}
 
 	/** Update gameObject with updated desiredPosition and setPosition **/	
-	gameObject.setDesiredPosition(desiredPosition);
-	gameObject.setPosition(desiredPosition);
+	_gameObject->setDesiredPosition(desiredPosition);
+	_gameObject->setPosition(desiredPosition);
 	/** Update gameObject with updated velocity and if object is on ground flag **/
-	gameObject.setVelocity(velocity);	
+	_gameObject->setVelocity(velocity);
 }
 
-void PlayerCollisionComponent::isLadderCollision(Node& node, IGameObject& gameObject)
+void PlayerCollisionComponent::isLadderCollision(Node& node)
 {
-	Player& player = static_cast<Player&>(gameObject);
 	ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
 
-	TileDataArray tileDataArray = map.getLadderDataAt(player.getCenterPosition());
+	TileDataArray tileDataArray = map.getLadderDataAt(_gameObject->getCenterPosition());
 
 	if (tileDataArray[ETileGrid::CENTER].GID)
 	{
@@ -178,335 +173,3 @@ void PlayerCollisionComponent::isLadderCollision(Node& node, IGameObject& gameOb
 	}
 };
 
-/**
-* Check if a gameObject has a ladder collision
-* The velocity and desiredPosition of the game object will be modified depending on collisions found
-*
-* @param node The Node containing the gameObject
-* @param gameObject The IGameObject that is checking collisions
-*/
-//void CollisionComponent::checkLadderCollision(Node& node, IGameObject& gameObject)
-//{
-//	/** Game objects desired position **/
-//	Vec2 desiredPosition = gameObject.getDesiredPosition();
-//	/** Game objects center position **/
-//	Vec2 centerPosition = gameObject.getCenterPosition();
-//	/** Game objects velocity **/
-//	Vec2 velocity = gameObject.getVelocity();
-//	/** Game objects collision bounding box **/
-//	Rect collisionBox = gameObject.getCollisionBox();
-//
-//	/** Get array of tiles surrounding the gameobject **/
-//	TileDataArray tileDataArray = TileMap(node).getLadderDataAt(centerPosition);
-//		
-//	for (unsigned int tileIndex = ETileGrid::BOTTOM; tileIndex < tileDataArray.size(); tileIndex++)
-//	{
-//		{
-//			//if (tileDataArray[tileIndex].GID == false)
-//			//	continue;
-//
-//			Rect tileRect = tileDataArray[tileIndex].tileRect;
-//
-//			if (tileDataArray[tileIndex].GID && tileIndex == ETileGrid::BOTTOM /** Tile is below gameObject **/)
-//			{
-//				if (collisionBox.intersectsRect(tileRect))
-//				{
-//					// clamp gameobject to center of ladder
-//					float tileMidX = tileRect.getMidX();
-//					float gameObjectMidX = collisionBox.size.width / 2;
-//					desiredPosition.x = tileMidX - gameObjectMidX;
-//
-//					velocity.y += 0.1f;
-//					velocity.x = 0.0f;
-//				}
-//			}
-//#if DEBUG_ENABLE
-//			TileMap(node).drawDebugRect(tileRect, Color4F(0.0f, 0.5f, 0.5f, 0.5f));
-//#endif // DEBUG_ENABLE
-//		}
-//		
-//		/** Update gameObject with updated velocity and desiredPosition **/
-//		gameObject.setVelocity(velocity);
-//		gameObject.setDesiredPosition(desiredPosition);
-//	}
-//};
-
-/**
-* Create a path finder
-*
-* @param parallaxTileMap The ParallaxTileMap to be searched
-* @param maxSearchDistance The maximum depth we'll search before giving up
-* @param allowDiagMovement True if the search should try diaganol movement
-*/
-//void CollisionComponent::ladderTileCollision(Node& node, IGameObject& gameObject)
-//{
-//};
-
-//void CollisionComponent::ladderTileCollision(Node& node, IGameObject& gameObject)
-//{
-//	// Variables	
-//	Rect collisionBox = gameObject.getCollisionBox();
-//	Vec2 centerPosition = gameObject.getCenterPosition();
-//	Vec2 newPosition = gameObject.getDesiredPosition();
-//	Vec2 velocity = gameObject.getVelocity();
-//
-//	// get array of tiles surrounding the gameobject
-//	TileDataArray tileDataArray = TileMap(node).getLadderDataAt(centerPosition);
-//
-//	CanMove canMove = gameObject.getCanMove();
-//	IsMoving isMoving = gameObject.getIsMoving();
-//
-//	bool isOnGround = gameObject.getOnGround();
-//	bool isClimbing = gameObject.getClimbing();
-//
-//	// bool flags
-//	bool isLadderTop = false;
-//	bool isLadderMid = false;
-//	bool isLadderBottom = false;
-//
-//	//
-//	if (tileDataArray[ETileGrid::LEFT].GID == false && isClimbing == false)
-//	{
-//		canMove[STATE_LEFT] = true;
-//	}
-//
-//	//
-//	if (tileDataArray[ETileGrid::RIGHT].GID == false && isClimbing == false)
-//	{
-//		canMove[STATE_RIGHT] = true;
-//	}
-//
-//	//
-//	if (tileDataArray[ETileGrid::BOTTOM_LEFT].GID && isClimbing)
-//	{
-//		Rect tileRect = tileDataArray[ETileGrid::BOTTOM_LEFT].tileRect;
-//
-//		float maxOffset = collisionBox.getMinY() + 5.0f;
-//		float minOffset = collisionBox.getMinY() - 15.0f;
-//
-//		if (tileRect.getMaxY() < maxOffset && tileRect.getMaxY() > minOffset)
-//		{
-//			canMove[STATE_LEFT] = true;
-//		}
-//	}
-//
-//	//
-//	if (tileDataArray[ETileGrid::BOTTOM_RIGHT].GID && isClimbing)
-//	{
-//		Rect tileRect = tileDataArray[ETileGrid::BOTTOM_RIGHT].tileRect;
-//
-//		float maxOffset = collisionBox.getMinY() + 5.0f;
-//		float minOffset = collisionBox.getMinY() - 15.0f;
-//
-//		if (tileRect.getMaxY() < maxOffset && tileRect.getMaxY() > minOffset)
-//		{
-//			canMove[STATE_RIGHT] = true;
-//		}
-//
-//	}
-//
-//	// gameobject moves onto a ladder top section
-//	if (tileDataArray[ETileGrid::CENTER].GID == false && tileDataArray[ETileGrid::BOTTOM].GID)
-//	{
-//		isLadderTop = true;
-//	}
-//
-//	// gameobject moves onto a ladder mid section
-//	if (tileDataArray[ETileGrid::CENTER].GID && tileDataArray[ETileGrid::BOTTOM].GID)
-//	{
-//		isLadderMid = true;
-//	}
-//
-//	// gameobject moves onto a ladder mid section when section is bottom of the complete ladder
-//	if (tileDataArray[ETileGrid::CENTER].GID && tileDataArray[ETileGrid::BOTTOM].GID == false)
-//	{
-//		isLadderBottom = true;
-//	}
-//
-//	// gameobject moves down ladder when on a ladder top section
-//	if (isLadderTop)
-//	{
-//		// get the top ladder rect
-//		Rect tileRect = tileDataArray[ETileGrid::BOTTOM].tileRect;
-//
-//		// when gameobject is not intersecting
-//		if (collisionBox.intersectsRect(tileRect) == false)
-//		{
-//			// gameObject is not climbing
-//			isClimbing = false;
-//
-//			// clamp gameObject to top of ladder
-//			newPosition.y = tileRect.getMaxY();
-//			velocity.y = 0.0f;
-//		}
-//		else
-//		{
-//			// set flags
-//			if (collisionBox.getMinX() >= tileRect.getMinX() &&
-//				collisionBox.getMaxX() <= tileRect.getMaxX())
-//			{
-//				canMove[STATE_UP] = true;
-//				canMove[STATE_DOWN] = true;
-//			}
-//		}
-//	}
-//
-//	// gameObject is on ladder top section and climbing down
-//	if (isLadderTop && isMoving[STATE_DOWN])
-//	{
-//		isClimbing = true;
-//
-//		// clamp gameobject to center of ladder
-//		float tileMidX = tileDataArray[ETileGrid::BOTTOM].tileRect.getMidX();
-//		float gameObjectMidX = collisionBox.size.width / 2;
-//
-//		newPosition.x = tileMidX - gameObjectMidX;
-//		velocity.x = 0.0f;
-//	}
-//
-//	// gameObject is on ladder mid section
-//	if (isLadderMid)
-//	{
-//		// get the top ladder rect
-//		Rect tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
-//
-//		if (collisionBox.getMinX() >= tileRect.getMinX() &&
-//			collisionBox.getMaxX() <= tileRect.getMaxX())
-//		{
-//			canMove[STATE_UP] = true;
-//			canMove[STATE_DOWN] = true;
-//		}
-//	}
-//
-//	// gameobject moves up or down when on a ladder mid section
-//	if (isLadderMid && (isMoving[STATE_UP] || isMoving[STATE_DOWN]))
-//	{
-//		isClimbing = true;
-//
-//		// clamp gameobject to center of ladder
-//		float tileMidX = tileDataArray[ETileGrid::CENTER].tileRect.getMidX();
-//		float gameObjectMidX = collisionBox.size.width / 2;
-//
-//		newPosition.x = tileMidX - gameObjectMidX;
-//		velocity.x = 0.0f;
-//	}
-//
-//	// gameobject moves left or right from ladder mid section to stationary platform
-//	if (isLadderMid && (isMoving[STATE_LEFT] || isMoving[STATE_RIGHT]) && (canMove[STATE_LEFT] || canMove[STATE_RIGHT]))
-//	{
-//		isClimbing = false;
-//
-//		newPosition.y = tileDataArray[ETileGrid::BOTTOM].tileRect.getMaxY();
-//		velocity.y = 0.0f;
-//	}
-//
-//	// gameObject is on ladder bottom section
-//	if (isLadderBottom)
-//	{
-//		Rect tileRect = tileDataArray[ETileGrid::CENTER].tileRect;
-//
-//		if (collisionBox.getMinX() >= tileRect.getMinX() &&
-//			collisionBox.getMaxX() <= tileRect.getMaxX())
-//		{
-//			canMove[STATE_UP] = true;
-//			canMove[STATE_DOWN] = true;
-//		}
-//	}
-//
-//	// gameObject is on ladder bottom section and climbing up
-//	if (isLadderBottom && isMoving[STATE_UP])
-//	{
-//		isClimbing = true;
-//
-//		// clamp gameobject to center of ladder
-//		float tileMidX = tileDataArray[ETileGrid::CENTER].tileRect.getMidX();
-//		float gameObjectMidX = collisionBox.size.width / 2;
-//
-//		newPosition.x = tileMidX - gameObjectMidX;
-//		velocity.x = 0.0f;
-//	}
-//
-//	// gameObject has stopped climbing down
-//	if (isLadderBottom && isOnGround)
-//	{
-//		isClimbing = false;
-//	}
-//
-//
-//#if DEBUG_ENABLE
-//	for (TileData tileData : tileDataArray)
-//	{
-//		// debug draw tile (PURPLE)
-//		Color4F color = (isClimbing) ? Color4F(0.5f, 0.5f, 1.0f, 0.5f) : Color4F(0.5f, 0.3f, 1.0f, 0.5f);
-//		TileMap(node).drawDebugRect(tileData.tileRect, color);
-//	}
-//#endif // DEBUG_ENABLE
-//
-//
-//	//
-//	gameObject.setDesiredPosition(newPosition);
-//	gameObject.setVelocity(velocity);
-//
-//	// gameObject flags
-//	gameObject.setClimbing(isClimbing);
-//	gameObject.setIsMoving(isMoving);
-//	gameObject.setCanMove(canMove);
-//}
-
-//void CollisionComponent::checkObjectCollision(Node& node, IGameObject& gameObject)
-//{
-//    ParallaxTileMap& tileMap = static_cast<ParallaxTileMap&>(node);
-//    
-//};
-//
-//
-//void CollisionComponent::checkCollision(Node& node, IGameObject& gameObject)
-//{
-//
-//};
-
-//
-//void CollisionComponent::checkCollision(Node& node, IGameObject& gameObject)
-//{	
-//	IGameObject* player = TileMap(node).getPlayer();
-//
-//	Rect r1 = player->getBoundingBox();
-//	Rect r2 = gameObject.getBoundingBox();
-//
-//	if (r1.intersectsRect(r2) == false)	return;
-//
-//	std::string type = gameObject.getName();
-//
-//	Vec2 v1 = Vec2::ZERO;
-//	Vec2 v2 = Vec2::ZERO;
-//
-//	IsMoving isMoving = player->getIsMoving();
-//
-//	//
-//	if (type == "Left" && isMoving[STATE_LEFT])
-//	{
-//		v1 = Vec2(r1.getMaxX(), r1.origin.y);
-//		v2 = r2.origin;
-//	}
-//	else if (type == "Right" && isMoving[STATE_RIGHT])
-//	{
-//		v1 = r1.origin;
-//		v2 = Vec2(r2.getMaxX(), r2.origin.y);
-//	}
-//	else if (type == "Enter" && isMoving[STATE_DOWN])
-//	{
-//		v1 = Vec2(r1.getMidX(), r1.getMaxY());
-//		v2 = Vec2(r2.getMidX(), r2.origin.y);
-//	}
-//	else if (type == "Exit" && isMoving[STATE_UP])
-//	{
-//		v1 = Vec2(r1.getMidX(), r1.getMinY());
-//		v2 = Vec2(r2.getMidX(), r2.getMaxY());
-//	}
-//
-//	Vec2 n = Vec2(v2 - v1).getNormalized();
-//	Vec2 direction = Vec2(std::round(n.x), std::round(n.y));
-//
-//
-//	player->setMapTransition(direction);
-//}

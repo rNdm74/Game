@@ -4,14 +4,16 @@
 #include "GraphicsComponent.h"
 #include "ParallaxTileMap.h"
 
-void GraphicsComponent::update(Node& node, IGameObject& gameObject)
+void GraphicsComponent::update(Node& node)
 {
-    Rect r = gameObject.getCollisionBox();
+    Rect r = _gameObject->getCollisionBox();
     static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
 };
 
-PlayerGraphicsComponent::PlayerGraphicsComponent()
+PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject)
 { 	
+	_gameObject = &gameObject;
+
 	activeState = EAnimationStates::IDLE;
 	currentFrame = 0; 
 	frameTime = 0.0f; 
@@ -43,13 +45,13 @@ PlayerGraphicsComponent::PlayerGraphicsComponent()
 	//_shadow->setOpacity(50);
 };
 
-void PlayerGraphicsComponent::update(Node& node, IGameObject& gameObject)
+void PlayerGraphicsComponent::update(Node& node)
 {
 	/** Reset the currentFrame to init frame **/
 	currentFrame %= 2;
 	
 	/** Set the sprite frame **/
-	gameObject.setSpriteFrame(frameCache(animationFrames[activeState][currentFrame]));
+	_gameObject->setSpriteFrame(frameCache(animationFrames[activeState][currentFrame]));
 
 	/** Add delay so animation effect is realisitic **/
 	if (frameTime > kFrameDelay /**  **/)
@@ -59,7 +61,7 @@ void PlayerGraphicsComponent::update(Node& node, IGameObject& gameObject)
 	}
 
 	//
-	Vec2 v = gameObject.getVelocity();
+	Vec2 v = _gameObject->getVelocity();
 	float velocityFactor = std::abs((v.x + v.y) / kFrameTimeFactor);
 	//log("velocityFactor: %f", velocityFactor);
 
@@ -67,40 +69,38 @@ void PlayerGraphicsComponent::update(Node& node, IGameObject& gameObject)
 
 	if (velocityFactor < 1.0f && activeState != EAnimationStates::IDLE)
 	{
-		gameObject.setSpriteFrame(frameCache("alienBeige_stand.png"));
+		_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
 	}
 }
 
 
-void PlayerGraphicsComponent::Up(IGameObject& gameObject)
+void PlayerGraphicsComponent::Up()
 {
 	this->activeState = EAnimationStates::CLIMBING;
 };
 
-void PlayerGraphicsComponent::Down(IGameObject& gameObject)
+void PlayerGraphicsComponent::Down()
 {	
 	this->activeState = EAnimationStates::CLIMBING;
 };
 
-void PlayerGraphicsComponent::Left(IGameObject& gameObject)
+void PlayerGraphicsComponent::Left()
 {
 	this->activeState = EAnimationStates::WALKING;
-	gameObject.setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-	gameObject.setFlippedX(true);
+	_gameObject->setFlippedX(true);
 };
 
-void PlayerGraphicsComponent::Right(IGameObject& gameObject)
+void PlayerGraphicsComponent::Right()
 {
 	this->activeState = EAnimationStates::WALKING;
-	gameObject.setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-	gameObject.setFlippedX(false);
+	_gameObject->setFlippedX(false);
 };
 
-void PlayerGraphicsComponent::Stop(IGameObject& gameObject)
+void PlayerGraphicsComponent::Stop()
 {
 };
 
-void PlayerGraphicsComponent::Idle(IGameObject &gameObject)
+void PlayerGraphicsComponent::Idle()
 {
 	this->activeState = EAnimationStates::IDLE;
 		
@@ -112,19 +112,19 @@ void PlayerGraphicsComponent::Idle(IGameObject &gameObject)
 		switch (random(0, 5))
 		{
 			case 0:
-				this->lookLeft(gameObject);
+				this->lookLeft();
 				break;
 			case 1:
-				this->lookRight(gameObject);
+				this->lookRight();
 				break;
 			case 2:
-				this->lookUp(gameObject);
+				this->lookUp();
 				break;
 			case 3:
-				this->lookDown(gameObject);
+				this->lookDown();
 				break;
 			case 4:
-				this->lookForward(gameObject);
+				this->lookForward();
 				break;
 		}
 	}
@@ -132,17 +132,17 @@ void PlayerGraphicsComponent::Idle(IGameObject &gameObject)
 	idleTime++;
 };
 
-void PlayerGraphicsComponent::Hurt(IGameObject& gameObject)
+void PlayerGraphicsComponent::Hurt()
 {
 	this->activeState = EAnimationStates::HURT;
 };
 
-void PlayerGraphicsComponent::Crouch(IGameObject& gameObject)
+void PlayerGraphicsComponent::Crouch()
 {
 	this->activeState = EAnimationStates::CROUCH;
 };
 
-void PlayerGraphicsComponent::Jump(IGameObject& gameObject)
+void PlayerGraphicsComponent::Jump()
 {
 	this->activeState = EAnimationStates::JUMP;
 };
@@ -150,27 +150,27 @@ void PlayerGraphicsComponent::Jump(IGameObject& gameObject)
 /**
 * Private functions
 */
-void PlayerGraphicsComponent::lookLeft(IGameObject& gameObject)
+void PlayerGraphicsComponent::lookLeft()
 {
-	gameObject.setFlippedX(true);
+	_gameObject->setFlippedX(true);
 };
 
-void PlayerGraphicsComponent::lookRight(IGameObject& gameObject)
+void PlayerGraphicsComponent::lookRight()
 {
-	gameObject.setFlippedX(false);
+	_gameObject->setFlippedX(false);
 };
 
-void PlayerGraphicsComponent::lookUp(IGameObject& gameObject)
+void PlayerGraphicsComponent::lookUp()
 {
-	gameObject.setSpriteFrame(frameCache("alienBeige_stand.png"));
+	_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
 };
 
-void PlayerGraphicsComponent::lookDown(IGameObject& gameObject)
+void PlayerGraphicsComponent::lookDown()
 {
-	gameObject.setSpriteFrame(frameCache("alienBeige_stand.png"));
+	_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
 };
 
-void PlayerGraphicsComponent::lookForward(IGameObject& gameObject)
+void PlayerGraphicsComponent::lookForward()
 {
-	gameObject.setSpriteFrame(frameCache("alienBeige.png"));
+	_gameObject->setSpriteFrame(frameCache("alienBeige.png"));
 };

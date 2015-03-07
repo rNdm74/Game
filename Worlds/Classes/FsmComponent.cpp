@@ -26,7 +26,10 @@ void DownState::ActionDown(IFsmComponent& fsm) /** Override **/
 {
     AppGlobal::getInstance()->zoomOut();
     
-	fsm.gameObject->Down();        
+	if (fsm.gameObject->OnGround)
+		fsm.gameObject->Crouch();
+	else
+		fsm.gameObject->Down();        
 };
 
 void LeftState::ActionLeft(IFsmComponent& fsm) /** Override **/
@@ -54,7 +57,7 @@ void StopState::ActionRight(IFsmComponent& fsm) /** Override **/
 };
 
 void StopState::ActionStop(IFsmComponent& fsm) /** Override **/
-{
+{	
     AppGlobal::getInstance()->zoomIn();
     fsm.gameObject->Stop();
     
@@ -79,10 +82,10 @@ void IdleState::ActionStop(IFsmComponent& fsm) /** Override **/
 
 void JumpState::ActionJump(IFsmComponent& fsm) /** Override **/
 {
-
+	log("Lets jump again!!");
 };
 
-void PlayerFsmComponent::update(Node& node, IGameObject& gameObject)
+void PlayerFsmComponent::update()
 {
 	void(IFsmComponent:: *ptrs[])() =
 	{

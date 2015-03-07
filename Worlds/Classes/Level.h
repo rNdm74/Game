@@ -1,11 +1,9 @@
 #ifndef __FranticAlien__LEVEL_H__
 #define __FranticAlien__LEVEL_H__
 
-#include "cocos2d.h"
+#include "Constants.h"
 
-using namespace cocos2d;
-
-class Level : public Node
+class Level : public cocos2d::Node
 {	
 public:
 	// "creator" methods first	
@@ -26,9 +24,9 @@ private:
 	ActiveTileMap activeMap;
 
 	/** **/
-	Size _visibleSize, _mapSize, _tileSize;
+	cocos2d::Size _visibleSize, _mapSize, _tileSize;
 	/** **/
-	Vec2 _origin, _center;
+	cocos2d::Vec2 _origin, _center;
 	/** **/
 	int _objectCount;
 };

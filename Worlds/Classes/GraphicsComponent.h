@@ -1,15 +1,12 @@
 #ifndef __FranticAlien__GRAPHICS_COMPONENT_H__
 #define __FranticAlien__GRAPHICS_COMPONENT_H__
 
-#include "cocos2d.h"
 
 #define climbingFileName(index) ( _PREFIX _CLIMB + std::to_string(index) + _SUFFIX )
 #define walkingFileName(index) ( _PREFIX _WALK + std::to_string(index) + _SUFFIX )
 #define frameCache(frameName) ( SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName) )
 
 class GameObject;
-
-using namespace cocos2d;
 
 class IGraphicsComponent
 {
@@ -18,17 +15,17 @@ public:
 	IGraphicsComponent(){};
 	virtual ~IGraphicsComponent(){};
 	
-	virtual void update(Node& node, IGameObject& gameObject) = 0;
+	virtual void update(Node& node) = 0;
 
-	virtual void Up(IGameObject& gameObject) = 0;
-	virtual void Down(IGameObject& gameObject) = 0;
-	virtual void Left(IGameObject& gameObject) = 0;
-	virtual void Right(IGameObject& gameObject) = 0;
-	virtual void Stop(IGameObject& gameObject) = 0;
-    virtual void Idle(IGameObject& gameObject) = 0;
-	virtual void Hurt(IGameObject& gameObject) = 0;
-    virtual void Crouch(IGameObject& gameObject) = 0;	
-	virtual void Jump(IGameObject& gameObject) = 0;
+	virtual void Up() = 0;
+	virtual void Down() = 0;
+	virtual void Left() = 0;
+	virtual void Right() = 0;
+	virtual void Stop() = 0;
+	virtual void Jump() = 0;
+    virtual void Idle() = 0;
+	virtual void Hurt() = 0;
+    virtual void Crouch() = 0;
 };
 
 class GraphicsComponent : public IGraphicsComponent
@@ -37,43 +34,46 @@ public:
 	GraphicsComponent(){};
 	virtual ~GraphicsComponent(){};
 	
-	virtual void update(Node& node, IGameObject& gameObject);
+	virtual void update(Node& node);
 
-	virtual void Up(IGameObject& gameObject){};
-	virtual void Down(IGameObject& gameObject){};
-	virtual void Left(IGameObject& gameObject){};
-	virtual void Right(IGameObject& gameObject){};
-	virtual void Stop(IGameObject& gameObject){};
-    virtual void Idle(IGameObject& gameObject){};
-	virtual void Hurt(IGameObject& gameObject){};
-    virtual void Crouch(IGameObject& gameObject){};	
-	virtual void Jump(IGameObject& gameObject){};
+	virtual void Up(){};
+	virtual void Down(){};
+	virtual void Left(){};
+	virtual void Right(){};
+	virtual void Stop(){};
+    virtual void Idle(){};
+	virtual void Hurt(){};
+    virtual void Crouch(){};	
+	virtual void Jump(){};
+
+protected:
+	IGameObject* _gameObject;
 };
 
 class PlayerGraphicsComponent : public GraphicsComponent
 {
 public:
-	PlayerGraphicsComponent();
+	PlayerGraphicsComponent(IGameObject& gameObject);
 	virtual ~PlayerGraphicsComponent(){};
 		
-	virtual void update(Node& node, IGameObject& gameObject) override;
+	virtual void update(Node& node) override;
 
-	virtual void Up(IGameObject& gameObject) override;
-	virtual void Down(IGameObject& gameObject) override;
-	virtual void Left(IGameObject& gameObject) override;
-	virtual void Right(IGameObject& gameObject) override;
-	virtual void Stop(IGameObject& gameObject) override;
-    virtual void Idle(IGameObject& gameObject) override;
-	virtual void Hurt(IGameObject& gameObject) override;
-    virtual void Crouch(IGameObject& gameObject) override;	
-	virtual void Jump(IGameObject& gameObject) override;
+	virtual void Up() override;
+	virtual void Down() override;
+	virtual void Left() override;
+	virtual void Right() override;
+	virtual void Stop() override;
+    virtual void Idle() override;
+	virtual void Hurt() override;
+    virtual void Crouch() override;	
+	virtual void Jump() override;
 
 private:
-	void lookLeft(IGameObject& gameObject);
-	void lookRight(IGameObject& gameObject);
-	void lookUp(IGameObject& gameObject);
-	void lookDown(IGameObject& gameObject);
-	void lookForward(IGameObject& gameObject);
+	void lookLeft();
+	void lookRight();
+	void lookUp();
+	void lookDown();
+	void lookForward();
 	
 	Sprite* _shadow;
 

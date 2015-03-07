@@ -11,15 +11,10 @@
 /**
 * GameObject
 */
-GameObject* GameObject::create
-(
-	ValueMap& properties, 
-	ICollisionComponent* collision, 
-	IGraphicsComponent* graphics
-)
+GameObject* GameObject::create(ValueMap& properties)
 {
 	// Create an instance of Level
-	GameObject* gameObject = new (std::nothrow) GameObject(properties, collision, graphics);
+	GameObject* gameObject = new (std::nothrow) GameObject(properties);
 
 	if (gameObject && gameObject->init())
 	{
@@ -37,15 +32,10 @@ GameObject* GameObject::create
 *
 * @param 
 */
-GameObject::GameObject
-(
-	ValueMap& properties, 
-	ICollisionComponent* collision, 
-	IGraphicsComponent* graphics
-)
-{	
-	_collision = collision;
-	_graphics = graphics;
+GameObject::GameObject(ValueMap& properties)
+{
+	_properties = properties;
+				
 	_desiredPosition.x = properties["x"].asFloat();
 	_desiredPosition.y = properties["y"].asFloat();
 							
@@ -53,18 +43,18 @@ GameObject::GameObject
 	float y = properties["y"].asFloat();
 	float width = properties["width"].asFloat();
 	float height = properties["height"].asFloat();
-
-	this->setProperties(properties);
+		
 	this->setName(properties["name"].asString());
 	this->setContentSize(Size(width, height));
 	this->setPosition(Vec2(x, y));
+
+	_sprite = Sprite::create();
+	_sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+	_sprite->setPositionX(width / 2);
+	this->addChild(_sprite);
 };
 
-GameObject::~GameObject()
-{
-	delete _collision;
-	delete _graphics;
-};
+GameObject::~GameObject(){};
 
 /**
 * Updates a GameObject
@@ -73,8 +63,8 @@ GameObject::~GameObject()
 */
 void GameObject::update(Node* node)
 {
-	_collision->update(*node, *this);
-    _graphics->update(*node, *this);
+	//_collision->update(*node);
+    //_graphics->update(*node);
 };
 
 ValueMap GameObject::getProperties()
@@ -145,30 +135,30 @@ void GameObject::setDesiredPositionY(float y)
 	_desiredPosition.y = y;
 };
 
+void GameObject::setSpriteFrame(SpriteFrame* spriteFrame)
+{
+	_sprite->setSpriteFrame(spriteFrame);
+};
+
+void GameObject::setFlippedX(bool flippedX)
+{
+	_sprite->setFlippedX(flippedX);
+};
+
+
 /**
 * Player
 */
-Player* Player::create
-(
-	ValueMap& properties, 
-	ICollisionComponent* collision, 
-	IGraphicsComponent* graphics, 
-	IMenuComponent* menu, 
-	IInputComponent* input, 
-	IFsmComponent* fsm
-)
+Player* Player::create(ValueMap& properties)
 {
 	// Create an instance of Level
-	Player* player = new (std::nothrow) Player(properties, collision, graphics, menu, input, fsm);
+	Player* player = new (std::nothrow) Player(properties);
 
 	if (player && player->init())
 	{
 		player->autorelease();
 		player->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(kPlayerFileName));
-		player->getTexture()->setAliasTexParameters();
-		player->getTexture()->setAntiAliasTexParameters();
 		player->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-
 		return player;
 	}
 
@@ -187,22 +177,14 @@ Player* Player::create
 * @param collision The CollisionComponent that contains information about the gameObject
 * @param graphics The GraphicsComponent that contains information about the gameObject
 */
-Player::Player
-(
-	ValueMap& properties, 
-	ICollisionComponent* collision, 
-	IGraphicsComponent* graphics, 
-	IMenuComponent* menu, 
-	IInputComponent* input, 
-	IFsmComponent* fsm
-) : super(properties, collision, graphics)
+Player::Player(ValueMap& properties) : super(properties)
 {
-	_fsm = fsm;
-	_menu = menu;
-	_input = input;
-		
-    _fsm->gameObject = this;
-    
+	_fsm = new (std::nothrow) PlayerFsmComponent(*this);
+	_menu = new (std::nothrow) PlayerMenuComponent(*this);
+	_input = new (std::nothrow) PlayerInputComponent(*this);
+	_graphics = new (std::nothrow) PlayerGraphicsComponent(*this);
+	_collision = new (std::nothrow) PlayerCollisionComponent(*this);
+	
 	this->setTag(kTagPlayer);	
 };
 
@@ -211,48 +193,53 @@ Player::~Player()
 	delete _fsm;
 	delete _menu;
 	delete _input;
+	delete _graphics;
+	delete _collision;
 };
 
 void Player::update(Node* node)
-{	
-	_graphics->update(*node, *this);
+{		
+	_graphics->update(*node);
 
-	_fsm->update(*node, *this);
-	_input->update(*node, *this);
-	_collision->update(*node, *this);	
+	_fsm->update();
+	_input->update();
+	_collision->update(*node);	
 
-	
+	if (OnGround && JumpRequest)
+	{
+		AppGlobal::getInstance()->EventStack.push(EGameObjectEvent::Jump);
+	}
 };
 
 void Player::Up()
 {
-	_input->Up(*this);
-	_graphics->Up(*this);	
+	_input->Up();
+	_graphics->Up();	
 };
 
 void Player::Down()
 {
-	_input->Down(*this);
-	_graphics->Down(*this);
+	_input->Down();
+	_graphics->Down();
 	
 };
 
 void Player::Left()
 {
-	_input->Left(*this);
-	_graphics->Left(*this);
+	_input->Left();
+	_graphics->Left();
 };
 
 void Player::Right()
 {
-	_input->Right(*this); 
-	_graphics->Right(*this);
+	_input->Right(); 
+	_graphics->Right();
 };
 
 void Player::Stop()
 {
-	_input->Stop(*this);
-	_graphics->Stop(*this);
+	_input->Stop();
+	_graphics->Stop();
 };
 
 void Player::Gravity()
@@ -261,20 +248,20 @@ void Player::Gravity()
 
 void Player::Idle()
 {
-    _graphics->Idle(*this);
-    _input->Stop(*this);
+    _graphics->Idle();
+    _input->Stop();
 };
 
 void Player::Crouch()
 {
-    _graphics->Crouch(*this);
-    _input->Stop(*this);
+    _input->Stop();
+	_graphics->Crouch();
 };
 
 void Player::Jump()
 {
-	_graphics->Jump(*this);
-	_input->Jump(*this);	
+	_graphics->Jump();
+	_input->Jump();	
 };
 
 void Player::Die()
@@ -283,7 +270,7 @@ void Player::Die()
 
 void Player::Hurt()
 {
-    _graphics->Hurt(*this);
+    _graphics->Hurt();
 };
 
 void Player::ThrowGem()
@@ -300,8 +287,8 @@ void Player::Talk()
 
 void Player::HitWall()
 {
-	_input->HitWall(*this);
-	_graphics->Hurt(*this);
+	_input->HitWall();
+	_graphics->Hurt();
 };
 
 Rect Player::getCollisionBox()
@@ -320,13 +307,7 @@ Rect Player::getCollisionBox()
  * Initializes the varaiables to their default state
  *
  */
-ShowCave::ShowCave
-(
-  ValueMap& properties,
-  ICollisionComponent* collision,
-  IGraphicsComponent* graphics
-)
-: super(properties, collision, graphics)
+ShowCave::ShowCave(ValueMap& properties) : super(properties)
 {
 };
 
@@ -334,13 +315,7 @@ ShowCave::ShowCave
 * Moveable gameObject Variables,
 * Initializes the varaiables to their default state
 */
-Left::Left
-(
-	ValueMap& properties,
-	ICollisionComponent* collision,
-	IGraphicsComponent* graphics
-)
-: super(properties, collision, graphics)
+Left::Left(ValueMap& properties) : super(properties)
 {
 };
 
@@ -348,13 +323,7 @@ Left::Left
 * Moveable gameObject Variables,
 * Initializes the varaiables to their default state
 */
-Right::Right
-(
-ValueMap& properties,
-ICollisionComponent* collision,
-IGraphicsComponent* graphics
-)
-: super(properties, collision, graphics)
+Right::Right(ValueMap& properties) : super(properties)
 {	
 };
 
@@ -362,13 +331,7 @@ IGraphicsComponent* graphics
 * Moveable gameObject Variables,
 * Initializes the varaiables to their default state
 */
-Enter::Enter
-(
-ValueMap& properties,
-ICollisionComponent* collision,
-IGraphicsComponent* graphics
-)
-: super(properties, collision, graphics)
+Enter::Enter(ValueMap& properties) : super(properties)
 {			
 	auto _particle = ParticleGalaxy::createWithTotalParticles(900);
 	_particle->setAutoRemoveOnFinish(true);
@@ -406,12 +369,6 @@ IGraphicsComponent* graphics
 * Moveable gameObject Variables,
 * Initializes the varaiables to their default state
 */
-Exit::Exit
-(
-ValueMap& properties,
-ICollisionComponent* collision,
-IGraphicsComponent* graphics
-)
-: super(properties, collision, graphics)
+Exit::Exit(ValueMap& properties) : super(properties)
 {
 };

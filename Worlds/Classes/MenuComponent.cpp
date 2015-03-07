@@ -22,36 +22,36 @@ MenuComponentItem* MenuComponentItem::createMenuWithFrameName(std::string frameN
 
 void MenuComponentItem::initListeners()
 {
-	auto listener = EventListenerTouchOneByOne::create();
+	//auto listener = EventListenerTouchOneByOne::create();
 
-	listener->onTouchBegan = [=](Touch* touch, Event* event) -> bool {
+	//listener->onTouchBegan = [=](Touch* touch, Event* event) -> bool {
 
-		auto touchEvent = static_cast<EventTouch*>(event);
+	//	auto touchEvent = static_cast<EventTouch*>(event);
 
-		auto node = touchEvent->getCurrentTarget();
-				
-		auto tPos = node->getParent()->convertTouchToNodeSpace(touch);
-		auto nBox = node->getBoundingBox();
+	//	auto node = touchEvent->getCurrentTarget();
+	//			
+	//	auto tPos = node->getParent()->convertTouchToNodeSpace(touch);
+	//	auto nBox = node->getBoundingBox();
 
-		if (nBox.containsPoint(tPos))
-		{
-			log(node->getName().c_str());
+	//	if (nBox.containsPoint(tPos))
+	//	{
+	//		log(node->getName().c_str());
 
-			auto scaleUpAction = ScaleTo::create(0.1f, 1.0f);
-			auto scaleDownAction = ScaleTo::create(0.1f, 0.8f);
+	//		auto scaleUpAction = ScaleTo::create(0.1f, 1.0f);
+	//		auto scaleDownAction = ScaleTo::create(0.1f, 0.8f);
 
-			// Button effect
-			node->runAction(Sequence::createWithTwoActions(scaleUpAction, scaleDownAction));
-		}
+	//		// Button effect
+	//		node->runAction(Sequence::createWithTwoActions(scaleUpAction, scaleDownAction));
+	//	}
 
-		return true;
-	};
+	//	return true;
+	//};
 
 
-	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
+	//Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
-bool PlayerMenuComponent::addMenu(IGameObject& gameObject)
+bool PlayerMenuComponent::addMenu()
 {
     int _ptr = 0;
     
@@ -66,19 +66,19 @@ bool PlayerMenuComponent::addMenu(IGameObject& gameObject)
         menu_item->setTag(_ptr++);
 		menu_item->getTexture()->setAntiAliasTexParameters();
 
-        gameObject.addChild(menu_item, -10);
+        _gameObject->addChild(menu_item, -10);
     }
     
 	return true;
 }
 
-void PlayerMenuComponent::showMenu(IGameObject& gameObject)
+void PlayerMenuComponent::showMenu()
 {
     // Show menu
-	auto center = Vec2(gameObject.getContentSize().width / 2, 20 + gameObject.getContentSize().height / 2);
+	auto center = cocos2d::Vec2(_gameObject->getContentSize().width / 2, 20 + _gameObject->getContentSize().height / 2);
     
     // Get all children from gameObject
-    auto children = gameObject.getChildren();
+	auto children = _gameObject->getChildren();
     
     // Displays the radial menu around sprite
     for (int i = 0; i < children.size(); i++)
@@ -90,22 +90,22 @@ void PlayerMenuComponent::showMenu(IGameObject& gameObject)
         float x = center.x + cos(radians) * 80;
         float y = center.y + sin(radians) * 80;
         
-        children.at(i)->runAction(MoveTo::create(0.1f, Vec2(x, y)));
-        children.at(i)->runAction(ScaleTo::create(0.1f, 0.8f));
+		children.at(i)->runAction(cocos2d::MoveTo::create(0.1f, cocos2d::Vec2(x, y)));
+		children.at(i)->runAction(cocos2d::ScaleTo::create(0.1f, 0.8f));
     }
     
 	this->_isActive = true;
 }
 
-void PlayerMenuComponent::hideMenu(IGameObject& gameObject)
+void PlayerMenuComponent::hideMenu()
 {
     // Hides menu
-	auto center = Vec2(gameObject.getContentSize().width / 2, gameObject.getContentSize().height / 2);
+	auto center = cocos2d::Vec2(_gameObject->getContentSize().width / 2, _gameObject->getContentSize().height / 2);
     
-	for (auto child : gameObject.getChildren())
+	for (auto child : _gameObject->getChildren())
     {
-        child->runAction(MoveTo::create(0.1f, center));
-        child->runAction(ScaleTo::create(0.1f, 0));
+		child->runAction(cocos2d::MoveTo::create(0.1f, center));
+		child->runAction(cocos2d::ScaleTo::create(0.1f, 0));
     }
     
 	this->_isActive = false;

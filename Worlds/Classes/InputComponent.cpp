@@ -7,58 +7,58 @@
 #include "Utils.h"
 
 
-void InputComponent::Up(IGameObject& gameObject)
+void InputComponent::Up()
 {
 };
 
-void InputComponent::Down(IGameObject& gameObject)
+void InputComponent::Down()
 {
 };
 
-void InputComponent::Left(IGameObject& gameObject)
+void InputComponent::Left()
 {
 	//
-	Vec2 velocity = gameObject.getVelocity();
+	Vec2 velocity = _gameObject->getVelocity();
 	//
 	Vec2 movementStep = _movement * kUpdateInterval;
 	velocity.x -= movementStep.x;
 	//
-	gameObject.setVelocity(velocity);	
+	_gameObject->setVelocity(velocity);
 };
 
-void InputComponent::Right(IGameObject& gameObject)
+void InputComponent::Right()
 {
 	//
-	Vec2 velocity = gameObject.getVelocity();
+	Vec2 velocity = _gameObject->getVelocity();
 	//
 	Vec2 movementStep = _movement * kUpdateInterval;
 	velocity.x += movementStep.x;
 	//	
-	gameObject.setVelocity(velocity);
+	_gameObject->setVelocity(velocity);
 };
 
-void InputComponent::Stop(IGameObject& gameObject)
+void InputComponent::Stop()
 {
-	Vec2 velocity = gameObject.getVelocity();
+	Vec2 velocity = _gameObject->getVelocity();
 	
 	/** Dampens velocity **/
 	velocity.x *= pow(0.0001, kUpdateInterval);	
 
-	gameObject.setVelocity(velocity);
+	_gameObject->setVelocity(velocity);
 };
 
-void InputComponent::Jump(IGameObject& gameObject)
+void InputComponent::Jump()
 {
-	Vec2 velocity = gameObject.getVelocity();
+	Vec2 velocity = _gameObject->getVelocity();
 	//
 	velocity = velocity + _jumpForce;
 	//
-	gameObject.setVelocity(velocity);
+	_gameObject->setVelocity(velocity);
 };
 
-void InputComponent::Gravity(IGameObject& gameObject)
+void InputComponent::ApplyGravity()
 {
-	Vec2 velocity = gameObject.getVelocity();
+	Vec2 velocity = _gameObject->getVelocity();
  	//
 	if (velocity.y > _jumpLimit)
 	{
@@ -67,25 +67,26 @@ void InputComponent::Gravity(IGameObject& gameObject)
 	//
 	velocity.y += _gravity.y * kUpdateInterval;
 	//
-	gameObject.setVelocity(velocity);
+	_gameObject->setVelocity(velocity);
 };
 
-void InputComponent::HitWall(IGameObject& gameObject)
+void InputComponent::HitWall()
 {
 	/** Immediate stop **/
-	gameObject.setVelocity(Vec2::ZERO);
+	_gameObject->setVelocity(Vec2::ZERO);
 };
 
-void PlayerInputComponent::update(Node& node, IGameObject& gameObject)
+void PlayerInputComponent::update()
 {
 	/** Apply gravity **/
-	this->Gravity(gameObject);
+	if (_gameObject->OnGround == false)
+		this->ApplyGravity();
 
-	Vec2 velocity = gameObject.getVelocity();	
+	Vec2 velocity = _gameObject->getVelocity();
 	//
 	velocity.clamp(_minMovement, _maxMovement);
 	//
 	Vec2 stepVelocity = velocity * kUpdateInterval;
 	//
-	gameObject.setDesiredPosition(gameObject.getPosition() + stepVelocity);
+	_gameObject->setDesiredPosition(_gameObject->getPosition() + stepVelocity);
 }

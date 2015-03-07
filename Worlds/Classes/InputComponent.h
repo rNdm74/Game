@@ -1,11 +1,7 @@
 #ifndef __FranticAlien__INPUT_COMPONENT_H__
 #define __FranticAlien__INPUT_COMPONENT_H__
 
-#include "cocos2d.h"
-
 class IGameObject;
-
-using namespace cocos2d;
 
 class IInputComponent
 {
@@ -14,48 +10,52 @@ public:
 	virtual ~IInputComponent() {};
 
 	/** Actions **/	
-	virtual void Up(IGameObject& gameObject) = 0;
-	virtual void Down(IGameObject& gameObject) = 0;
-	virtual void Left(IGameObject& gameObject) = 0;
-	virtual void Right(IGameObject& gameObject) = 0;
-	virtual void Stop(IGameObject& gameObject) = 0;
-	virtual void Jump(IGameObject& gameObject) = 0;
-	virtual void Gravity(IGameObject& gameObject) = 0;
-	virtual void HitWall(IGameObject& gameObject) = 0;
+	virtual void Up() = 0;
+	virtual void Down() = 0;
+	virtual void Left() = 0;
+	virtual void Right() = 0;
+	virtual void Stop() = 0;
+	virtual void Jump() = 0;
+	virtual void ApplyGravity() = 0;
+	virtual void HitWall() = 0;
 	/** **/
-	virtual void update(Node& node, IGameObject& gameObject) = 0;
+	virtual void update() = 0;
 };
 
 class InputComponent : public IInputComponent
 {
 public:
-	/** Actions **/	
-	virtual void Up(IGameObject& gameObject);
-	virtual void Down(IGameObject& gameObject);
-	virtual void Left(IGameObject& gameObject);
-	virtual void Right(IGameObject& gameObject);
-	virtual void Stop(IGameObject& gameObject);
-	virtual void Jump(IGameObject& gameObject);
-	virtual void Gravity(IGameObject& gameObject);
-	virtual void HitWall(IGameObject& gameObject);
+	InputComponent(){};
+	virtual ~InputComponent(){};
 
-	virtual void update(Node& node, IGameObject& gameObject){};
+	/** Actions **/	
+	virtual void Up();
+	virtual void Down();
+	virtual void Left();
+	virtual void Right();
+	virtual void Stop();
+	virtual void Jump();
+	virtual void ApplyGravity();
+	virtual void HitWall();
+
+	virtual void update(){};
 	
 protected:
-	const float _jumpLimit = 650.0f;
+	IGameObject* _gameObject;
+
+	const float _jumpLimit = 850.0f;
 	const Vec2 _jumpForce = Vec2(0.0f, 2800.0f);
 	const Vec2 _gravity = Vec2(0.0, -1850.0f);
-	const Vec2 _movement = Vec2(1800.0f, 0.0f);
-	const Vec2 _minMovement = Vec2(-320.0f, -850.0f);
-	const Vec2 _maxMovement = Vec2(320.0f, 520.0f);
+	const Vec2 _movement = Vec2(2800.0f, 0.0f);
+	const Vec2 _minMovement = Vec2(-520.0f, -850.0f);
+	const Vec2 _maxMovement = Vec2(520.0f, 520.0f);
 };
 
 class PlayerInputComponent : public InputComponent
 {
 public:
-	PlayerInputComponent(){};
-	virtual ~PlayerInputComponent(){};
-	void update(Node& node, IGameObject& gameObject) override;		
+	PlayerInputComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	void update() override;		
 
 };
 

@@ -1,7 +1,6 @@
 #ifndef __Worlds__GAME_OBJECT_H__
 #define __Worlds__GAME_OBJECT_H__
 
-#include "cocos2d.h"
 #include "Constants.h"
 
 class IMenuComponent;
@@ -10,8 +9,6 @@ class ICollisionComponent;
 class IGraphicsComponent;
 class IFsmComponent;
 
-using namespace cocos2d;
-
 /**
 * A path determined by some path finding algorithm. A series of steps from
 * the starting location to the target location. This includes a step for the
@@ -19,7 +16,7 @@ using namespace cocos2d;
 *
 * @author Adam Charlton
 */
-class IGameObject : public Sprite
+class IGameObject : public cocos2d::Node
 {
 public:
 	/** Constructor and the Destructor **/
@@ -48,26 +45,28 @@ public:
 	/** Action methods end **/
 	
 	/** Getters **/
-	virtual ValueMap getProperties() = 0;		
-	virtual Rect getCollisionBox() = 0;			
-	virtual Vec2 getCenterPosition() = 0;		
-	virtual Vec2 getDesiredPosition() = 0;
-	virtual Vec2 getDirection() = 0; 
-	virtual Vec2 getVelocity() = 0;
+	virtual cocos2d::ValueMap getProperties() = 0;
+	virtual cocos2d::Rect getCollisionBox() = 0;
+	virtual cocos2d::Vec2 getCenterPosition() = 0;
+	virtual cocos2d::Vec2 getDesiredPosition() = 0;
+	virtual cocos2d::Vec2 getDirection() = 0;
+	virtual cocos2d::Vec2 getVelocity() = 0;
 	/** Getters end **/
 
 	/** Setters **/	
-	virtual void setProperties(ValueMap& properties) = 0;	
-	virtual void setVelocity(Vec2 velocity) = 0;		
-	virtual void setDesiredPosition(Vec2 desiredPosition) = 0;
+	virtual void setProperties(cocos2d::ValueMap& properties) = 0;
+	virtual void setVelocity(cocos2d::Vec2 velocity) = 0;
+	virtual void setDesiredPosition(cocos2d::Vec2 desiredPosition) = 0;
 	virtual void setDesiredPositionX(float x) = 0;
 	virtual void setDesiredPositionY(float y) = 0;
+
+	virtual void setSpriteFrame(cocos2d::SpriteFrame* spriteFrame) = 0;
+	virtual void setFlippedX(bool flippedX) = 0;	
 	/** Setters end **/
 
 public: /** Variables **/
-	bool OnGround;
-	bool LeftStop;
-	bool RightStop;
+	bool OnGround = true;
+	bool JumpRequest = false;
 };
 
 /**
@@ -83,20 +82,10 @@ class GameObject : public IGameObject
 	typedef GameObject self;
     
 public:
-	static GameObject* create
-	(
-		ValueMap& properties, 
-		ICollisionComponent* collision, 
-		IGraphicsComponent* graphics
-	);
+	static GameObject* create(cocos2d::ValueMap& properties);
 
 	/** Constructor and the Destructor **/
-	GameObject
-	(
-		ValueMap& properties, 
-		ICollisionComponent* collision, 
-		IGraphicsComponent* graphics
-	);
+	GameObject(cocos2d::ValueMap& properties);
 	virtual ~GameObject();
     		
 	/** Update the gameObject **/
@@ -121,36 +110,33 @@ public:
 	/** Action methods end **/
 
 	/** Getters **/
-	virtual ValueMap getProperties();		
-	virtual Rect getCollisionBox();		
-	virtual Vec2 getCenterPosition();
-	virtual Vec2 getDesiredPosition();
-	virtual Vec2 getDirection();
-	virtual Vec2 getVelocity();
+	virtual cocos2d::ValueMap getProperties();
+	virtual cocos2d::Rect getCollisionBox();
+	virtual cocos2d::Vec2 getCenterPosition();
+	virtual cocos2d::Vec2 getDesiredPosition();
+	virtual cocos2d::Vec2 getDirection();
+	virtual cocos2d::Vec2 getVelocity();
 	/** Getters end **/
 
 	/** Setters **/	
-	virtual void setProperties(ValueMap& properties);		
-	virtual void setDirection(Vec2 direction);	
-	virtual void setVelocity(Vec2 velocity);		
-	virtual void setDesiredPosition(Vec2 desiredPosition);
+	virtual void setProperties(cocos2d::ValueMap& properties);
+	virtual void setDirection(cocos2d::Vec2 direction);
+	virtual void setVelocity(cocos2d::Vec2 velocity);
+	virtual void setDesiredPosition(cocos2d::Vec2 desiredPosition);
 	virtual void setDesiredPositionX(float x);
 	virtual void setDesiredPositionY(float y);
+	virtual void setSpriteFrame(cocos2d::SpriteFrame* spriteFrame);
+	virtual void setFlippedX(bool flippedX);
 	/** Setters end **/
 
-protected:	
-	/** **/
-	ICollisionComponent* _collision;
-	/** **/
-	IGraphicsComponent* _graphics;
-	/** **/
-	ValueMap _properties;
-	/** **/
-	Vec2 _desiredPosition;
-	/** **/
-	Vec2 _direction;
-	/** **/
-	Vec2 _velocity;	
+protected: /** **/
+	cocos2d::Sprite* _sprite;
+	
+	cocos2d::ValueMap _properties;
+	
+	cocos2d::Vec2 _desiredPosition;
+	cocos2d::Vec2 _direction;
+	cocos2d::Vec2 _velocity;
 };
 
 /**
@@ -166,26 +152,9 @@ class Player : public GameObject
 	typedef Player self;
 
 public:
-	static Player* create
-	(
-		ValueMap& properties, 
-		ICollisionComponent* collision, 
-		IGraphicsComponent* graphics, 
-		IMenuComponent* menu, 
-		IInputComponent* input, 
-		IFsmComponent* fsm
-	);
+	static Player* create(cocos2d::ValueMap& properties);
 
-	Player
-	(
-		ValueMap& properties, 
-		ICollisionComponent* collision, 
-		IGraphicsComponent* graphics, 
-		IMenuComponent* menu, 
-		IInputComponent* input, 
-		IFsmComponent* fsm
-	);
-
+	Player(cocos2d::ValueMap& properties);
 	~Player();
 
 	/** Update the gameObject overridden **/
@@ -207,19 +176,17 @@ public:
 	virtual void PickUpGem() override;
 	virtual void Talk() override;
 	virtual void HitWall() override;
+	/** Action methods end **/
 
 	/** Getters Overridden **/
-	virtual Rect getCollisionBox() override;	
+	virtual cocos2d::Rect getCollisionBox() override;
 	
-private:	
-	/** **/
+private: /** **/
 	IFsmComponent* _fsm;
-	/** **/
 	IMenuComponent* _menu;
-	/** **/
 	IInputComponent* _input;
-	/** **/
-	ActiveTileMap activeMap;
+	IGraphicsComponent* _graphics;
+	ICollisionComponent* _collision;
 };
 
 /**
@@ -235,8 +202,11 @@ class ShowCave : public GameObject
     typedef ShowCave self;
     
 public:
-    ShowCave(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
-    virtual ~ShowCave(){};    
+	ShowCave(cocos2d::ValueMap& properties);
+    virtual ~ShowCave(){};   
+
+private: /** **/
+	ICollisionComponent* _collision;
 };
 
 
@@ -253,7 +223,7 @@ class Left : public GameObject
 	typedef Left self;
 
 public:
-	Left(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
+	Left(cocos2d::ValueMap& properties);
 	virtual ~Left(){};
 
 private:
@@ -275,7 +245,7 @@ class Right : public GameObject
 	typedef Right self;
 
 public:
-	Right(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
+	Right(cocos2d::ValueMap& properties);
 	virtual ~Right(){};
 
 private:
@@ -296,7 +266,7 @@ class Enter : public GameObject
 	typedef Enter self;
 
 public:
-	Enter(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
+	Enter(cocos2d::ValueMap& properties);
 	virtual ~Enter(){};
 };
 
@@ -314,7 +284,7 @@ class Exit : public GameObject
 	typedef Exit self;
 
 public:
-	Exit(ValueMap& properties, ICollisionComponent* collision, IGraphicsComponent* graphics);
+	Exit(cocos2d::ValueMap& properties);
 	virtual ~Exit(){};
 };
 

@@ -143,6 +143,8 @@ public:
 
 private:
 	class ParallaxBackground* _parallaxBackgroundLayer;
+	class ParallaxForeground* _parallaxForegroundLayer;
+
 };
 
 

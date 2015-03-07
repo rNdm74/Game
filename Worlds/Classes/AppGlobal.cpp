@@ -99,6 +99,8 @@ void AppGlobal::initKeyboardListener()
 			
 			case EventKeyboard::KeyCode::KEY_SPACE:
 			{
+				PlayerInstance->JumpRequest = true;
+
 				if (PlayerInstance->OnGround)
 					EventStack.push(EGameObjectEvent::Jump);
 			}
@@ -136,6 +138,7 @@ void AppGlobal::initKeyboardListener()
 			
 			case EventKeyboard::KeyCode::KEY_SPACE:	
 			{			
+				PlayerInstance->JumpRequest = false;
 			}	
 			break;
 		};

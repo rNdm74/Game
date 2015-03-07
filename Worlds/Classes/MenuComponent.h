@@ -1,48 +1,46 @@
 #ifndef __FranticAlien__MenuComponent__
 #define __FranticAlien__MenuComponent__
 
-#include "cocos2d.h"
-
-using namespace cocos2d;
-
 class IGameObject;
 
-class MenuComponentItem : public Sprite
+class MenuComponentItem : public cocos2d::Sprite
 {
 public:
 	static MenuComponentItem* createMenuWithFrameName(std::string frameName);
-
 	void initListeners();
 };
 
 class IMenuComponent
 {
 public:
-	//
 	IMenuComponent(){};
-	virtual ~IMenuComponent() {};
+	virtual ~IMenuComponent(){};
 
 	//
-	virtual bool addMenu(IGameObject& gameObject) = 0;
-    virtual void showMenu(IGameObject& gameObject) = 0;
-	virtual void hideMenu(IGameObject& gameObject) = 0;
-
-	virtual void update(IGameObject& gameObject) = 0;
-	
+	virtual bool addMenu() = 0;
+    virtual void showMenu() = 0;
+	virtual void hideMenu() = 0;
+	virtual void update() = 0;	
 	virtual bool isActive() = 0;
+
+protected:
+	IGameObject* _gameObject;
 };
 
 class PlayerMenuComponent : public IMenuComponent
 {
-public:    
-    // init methods
-	bool addMenu(IGameObject& gameObject);
-	void showMenu(IGameObject& gameObject);
-	void hideMenu(IGameObject& gameObject);
-    
-	void update(IGameObject& gameObject){}
+public: 
+	//
+	PlayerMenuComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	virtual ~PlayerMenuComponent() {};
 
-	inline bool isActive() { return _isActive; }
+    // init methods
+	bool addMenu();
+	void showMenu();
+	void hideMenu();    
+	void update(){};
+
+	bool isActive() { return _isActive; }
 
 private:
 	bool _isActive;

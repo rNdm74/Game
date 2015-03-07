@@ -1,5 +1,6 @@
 #include "ParallaxTileMap.h"
 #include "ParallaxTileMapFsm.h"
+#include "ParallaxForeground.h"
 #include "ParallaxBackground.h"
 #include "GameObject.h"
 #include "GameObjectFactory.h"
@@ -713,5 +714,9 @@ Planet::Planet(std::string mapName) : super(mapName)
 {
 	_parallaxBackgroundLayer = ParallaxBackground::create(_mapSize.width * _tileSize.width);
 
-	this->addChild(_parallaxBackgroundLayer, -3, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_parallaxBackgroundLayer, -3, Vec2(1.0f, 0.9f), Vec2::ZERO);
+
+	_parallaxForegroundLayer = ParallaxForeground::create(_mapSize.width * _tileSize.width);
+
+	this->addChild(_parallaxForegroundLayer, 6, Vec2(1.0f, 0.3f), Vec2::ZERO);
 };
