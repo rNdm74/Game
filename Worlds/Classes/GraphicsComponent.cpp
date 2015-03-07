@@ -8,7 +8,6 @@ void GraphicsComponent::update(Node& node, IGameObject& gameObject)
 {
     Rect r = gameObject.getCollisionBox();
     static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-    
 };
 
 PlayerGraphicsComponent::PlayerGraphicsComponent()
