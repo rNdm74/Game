@@ -1,6 +1,7 @@
 #include "AppGlobal.h"
 #include "Constants.h"
 #include "GameObject.h"
+#include "ParallaxTileMap.h"
 
 #include "FsmComponent.h"
 #include "GraphicsComponent.h"
@@ -199,7 +200,20 @@ Player::~Player()
 };
 
 void Player::update(Node* node)
-{		
+{
+    IParallaxTileMap* map = static_cast<IParallaxTileMap*>(node);
+    
+    if(this->getPositionX() > map->getWidth())
+    {
+        map->setPositionX(0.0f);
+        this->setPositionX(0.0f);
+    }
+    
+    if(this->getPositionX() < -this->boundingBox().size.width)
+    {
+        this->setPositionX(map->getWidth() - this->boundingBox().size.width);
+    }
+    
 	_graphics->update(*node);
 
 	_fsm->update();
@@ -208,7 +222,7 @@ void Player::update(Node* node)
 
 	if (OnGround && JumpRequest)
 	{
-		AppGlobal::getInstance()->EventStack.push(EGameObjectEvent::Jump);
+		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::Jump);
 	}
 };
 

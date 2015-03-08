@@ -27,6 +27,7 @@ public:
 	virtual IGameObject* getPlayer() = 0;
 	virtual TileDataArray getCollisionDataAt(Vec2 position) = 0;
 	virtual TileDataArray getLadderDataAt(Vec2 position) = 0;
+    virtual float getWidth() = 0;
     
 	/** Setters **/
 	virtual void enableForegroundOpacity(int fade) = 0;
@@ -70,7 +71,8 @@ public:
 	virtual IGameObject* getPlayer() override;
 	virtual TileDataArray getCollisionDataAt(Vec2 position) override;
 	virtual TileDataArray getLadderDataAt(Vec2 position) override;
-
+    virtual float getWidth() override;
+    
     /** Setters **/
 	virtual void enableForegroundOpacity(int fade) override;
 	virtual void enableParallaxForegroundOpacity(int fade) override;

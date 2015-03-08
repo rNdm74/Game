@@ -213,6 +213,12 @@ TileDataArray ParallaxTileMap::getLadderDataAt(Vec2 position)
 	return this->getTileDataArrayFromLadderLayerAt(position);
 };
 
+float ParallaxTileMap::getWidth()
+{
+    return _tileSize.width * _mapSize.width;
+};
+
+
 /** **/
 void ParallaxTileMap::addPlayer(IGameObject* player)
 {

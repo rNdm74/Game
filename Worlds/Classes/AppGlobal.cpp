@@ -14,7 +14,7 @@ AppGlobal* AppGlobal::getInstance()
 
 AppGlobal::AppGlobal() 
 {	
-	EventStack.push(EGameObjectEvent::Stop);
+	PlayerEvents.push(EGameObjectEvent::Stop);
 	
 	PlayerInstance = nullptr;
 	
@@ -77,26 +77,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					EventStack.push(EGameObjectEvent::Up);
+					PlayerEvents.push(EGameObjectEvent::Up);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					EventStack.push(EGameObjectEvent::Down);
+					PlayerEvents.push(EGameObjectEvent::Down);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{	
-				EventStack.push(EGameObjectEvent::Left);					
+				PlayerEvents.push(EGameObjectEvent::Left);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			{
-				EventStack.push(EGameObjectEvent::Right);					
+				PlayerEvents.push(EGameObjectEvent::Right);
 			}
 			break;
 			
@@ -105,7 +105,7 @@ void AppGlobal::initKeyboardListener()
 				PlayerInstance->JumpRequest = true;
 
 				if (PlayerInstance->OnGround)
-					EventStack.push(EGameObjectEvent::Jump);
+					PlayerEvents.push(EGameObjectEvent::Jump);
 			}
 			break;
 		};				
@@ -118,26 +118,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					EventStack.pop();
+					PlayerEvents.pop();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					EventStack.pop();
+					PlayerEvents.pop();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{
-				EventStack.pop();					
+				PlayerEvents.pop();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:	
 			{
-				EventStack.pop();
+				PlayerEvents.pop();
 			}
 			break;
 			
@@ -152,27 +152,27 @@ void AppGlobal::initKeyboardListener()
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
 
-void AppGlobal::onHttpRequestCompleted(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response)
-{	
-	log("Http Test");
-
-	// The data will be placed in the buffer.
-	std::vector<char> * buffer = response->getResponseData();
-	char * concatenated = (char *)malloc(buffer->size() + 1);
-	std::string s2(buffer->begin(), buffer->end());
-	strcpy(concatenated, s2.c_str());
-
-	Json* json = Json_create(concatenated);
-	const char * test1 = Json_getString(json, "test1", "default");
-	const char * test2 = Json_getString(json, "test2", "default");
-
-	// View the console
-	log("HTTP Response : key 1 : %s", test1);
-	log("HTTP Response : key 2 : %s", test2);
-
-	// Delete the JSON object
-	Json_dispose(json);
-};
+//void AppGlobal::onHttpRequestCompleted(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response)
+//{	
+//	log("Http Test");
+//
+//	// The data will be placed in the buffer.
+//	std::vector<char> * buffer = response->getResponseData();
+//	char * concatenated = (char *)malloc(buffer->size() + 1);
+//	std::string s2(buffer->begin(), buffer->end());
+//	strcpy(concatenated, s2.c_str());
+//
+//	Json* json = Json_create(concatenated);
+//	const char * test1 = Json_getString(json, "test1", "default");
+//	const char * test2 = Json_getString(json, "test2", "default");
+//
+//	// View the console
+//	log("HTTP Response : key 1 : %s", test1);
+//	log("HTTP Response : key 2 : %s", test2);
+//
+//	// Delete the JSON object
+//	Json_dispose(json);
+//};
 
 void AppGlobal::initControllerListener()
 {

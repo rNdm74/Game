@@ -6,6 +6,45 @@
 
 #include "cocos2d.h"
 
+enum EGameObjectEvent
+{
+    Up,
+    Down,
+    Left,
+    Right,
+    Stop,
+    Jump,
+};
+
+enum EParallaxTileMapState
+{
+    LoadCave,
+    LoadPlanet
+};
+
+enum ETileGrid
+{
+    BOTTOM,
+    TOP,
+    LEFT,
+    RIGHT,
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT,
+    CENTER = 1
+};
+
+enum EAnimationStates
+{
+    CLIMBING,
+    WALKING,
+    IDLE,
+    HURT,
+    CROUCH,
+    JUMP
+};
+
 struct TileData
 {
 	cocos2d::Rect tileRect;
@@ -13,6 +52,7 @@ struct TileData
 	int GID = 0;
 };
 
+typedef std::stack<EGameObjectEvent> Events;
 typedef std::stack<class IParallaxTileMap*> ActiveTileMap;
 typedef std::array<TileData, 8> TileDataArray;
 typedef std::array<cocos2d::Vec2, 7> States;
@@ -117,45 +157,6 @@ const States GameObjectStates =
 	cocos2d::Vec2( 1.0f,  0.0f ),	/** Right **/
 	cocos2d::Vec2::ZERO,			/** Stop **/
 	cocos2d::Vec2( 0.0f,  1.0f )	/** Jump **/
-};
-
-enum EGameObjectEvent
-{
-	Up,
-	Down,
-	Left,
-	Right,
-	Stop,
-	Jump,
-};
-
-enum EParallaxTileMapState
-{
-	LoadCave,
-	LoadPlanet
-};
-
-enum ETileGrid
-{
-	BOTTOM,
-	TOP,
-	LEFT,
-	RIGHT,
-	TOP_LEFT,
-	TOP_RIGHT,
-	BOTTOM_LEFT,
-	BOTTOM_RIGHT,
-	CENTER = 1
-};
-
-enum EAnimationStates
-{
-	CLIMBING,
-	WALKING,
-	IDLE,
-	HURT,
-	CROUCH,
-	JUMP
 };
 
 #endif /* defined(__CONSTANTS__) */

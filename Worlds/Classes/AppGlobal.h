@@ -3,9 +3,6 @@
 
 #include "cocos2d.h"
 #include "Constants.h"
-#include "spine\Json.h"
-#include "network\HttpClient.h"
-#include "network\HttpRequest.h"
 
 using namespace cocos2d;
 
@@ -22,7 +19,7 @@ public:
 	void initPathFinderListener();
 	void initControllerListener();
 	
-	void onHttpRequestCompleted(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response);
+//	void onHttpRequestCompleted(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response);
 
 	void addCursor(Layer& layer);
 
@@ -37,7 +34,7 @@ public:
 public: /** Variables **/	
 	ActiveTileMap ActiveMap;
 	class IGameObject* PlayerInstance;
-	std::stack<EGameObjectEvent> EventStack;
+	Events PlayerEvents;
 
 private:
     AppGlobal();
