@@ -3,8 +3,12 @@
 
 #include "cocos2d.h"
 #include "Constants.h"
+#include "spine\Json.h"
+#include "network\HttpClient.h"
+#include "network\HttpRequest.h"
 
 using namespace cocos2d;
+
 
 class AppGlobal
 { 
@@ -16,7 +20,10 @@ public:
 	void initKeyboardListener();
 	void initTouchListener();
 	void initPathFinderListener();
-		        
+	void initControllerListener();
+	
+	void onHttpRequestCompleted(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response);
+
 	void addCursor(Layer& layer);
 
 	void zoomIn();

@@ -1,8 +1,17 @@
 #include "FsmComponent.h"
 #include "GameObject.h"
 
-void FsmState::ActionUp(IFsmComponent& fsm){ fsm.setCurrentState( fsm.StateUp ); };
-void FsmState::ActionDown(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateDown); };
+void FsmState::ActionUp(IFsmComponent& fsm)
+{ 
+	//
+	fsm.gameObject->OnGround = false;		
+	fsm.setCurrentState( fsm.StateUp ); 
+};
+void FsmState::ActionDown(IFsmComponent& fsm)
+{
+	fsm.gameObject->OnGround = false;
+	fsm.setCurrentState(fsm.StateDown); 
+};
 void FsmState::ActionLeft(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateLeft); };
 void FsmState::ActionRight(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateRight); };
 void FsmState::ActionStop(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateStop); };
@@ -19,17 +28,33 @@ void FsmState::ActionJump(IFsmComponent& fsm)
 void UpState::ActionUp(IFsmComponent& fsm) /** Override **/
 {
     AppGlobal::getInstance()->zoomOut();
-    fsm.gameObject->Up();
+
+	Vec2 ladderOrigin = fsm.gameObject->LadderOrigin;
+	fsm.gameObject->setPositionX(ladderOrigin.x);
+    
+	fsm.gameObject->Up();
+};
+
+void UpState::ActionStop(IFsmComponent& fsm) /** Override **/
+{
+	//AppGlobal::getInstance()->zoomOut();
+	fsm.gameObject->HitWall();
 };
 
 void DownState::ActionDown(IFsmComponent& fsm) /** Override **/
 {
     AppGlobal::getInstance()->zoomOut();
     
-	if (fsm.gameObject->OnGround)
-		fsm.gameObject->Crouch();
-	else
-		fsm.gameObject->Down();        
+	Vec2 ladderOrigin = fsm.gameObject->LadderOrigin;
+	fsm.gameObject->setPositionX(ladderOrigin.x);
+
+	fsm.gameObject->Down(); 	       
+};
+
+void DownState::ActionStop(IFsmComponent& fsm) /** Override **/
+{
+	//AppGlobal::getInstance()->zoomOut();
+	fsm.gameObject->HitWall();
 };
 
 void LeftState::ActionLeft(IFsmComponent& fsm) /** Override **/

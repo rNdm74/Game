@@ -15,16 +15,24 @@ public:
 	virtual ~IParallaxTileMap(){};
 
 	virtual void update(float& delta) = 0;
+
+	/** Pathfinding **/
 	virtual bool isBlocked(Vec2 coordinate) = 0;
 	virtual float getCost(Vec2 startLocation, Vec2 targetLocation) = 0;
 
+	/** Getters **/
+	virtual Rect getViewportBoundingBox() = 0;
 	virtual Size getMapSize() = 0;
 	virtual Size getTileSize() = 0;
 	virtual IGameObject* getPlayer() = 0;
-
 	virtual TileDataArray getCollisionDataAt(Vec2 position) = 0;
 	virtual TileDataArray getLadderDataAt(Vec2 position) = 0;
     
+	/** Setters **/
+	virtual void enableForegroundOpacity(int fade) = 0;
+	virtual void enableParallaxForegroundOpacity(int fade) = 0;
+
+	/** Player **/
 	virtual void addPlayer(IGameObject* player) = 0;
 	virtual IGameObject* removePlayer() = 0;
 	virtual void setPositionOnPlayer() = 0;
@@ -56,6 +64,7 @@ public:
 	float getCost(Vec2 startLocation, Vec2 targetLocation) override;
 
 	/** Getters **/
+	virtual Rect getViewportBoundingBox() override;
 	virtual Size getMapSize() override;
 	virtual Size getTileSize() override;
 	virtual IGameObject* getPlayer() override;
@@ -63,7 +72,8 @@ public:
 	virtual TileDataArray getLadderDataAt(Vec2 position) override;
 
     /** Setters **/
-	void enableForegroundOpacity(int fade);
+	virtual void enableForegroundOpacity(int fade) override;
+	virtual void enableParallaxForegroundOpacity(int fade) override;
     
 	/** Player **/
 	virtual void addPlayer(IGameObject* player);

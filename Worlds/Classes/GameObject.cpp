@@ -61,11 +61,12 @@ GameObject::~GameObject(){};
 *
 * @param node The Node that contains the gameObject
 */
-void GameObject::update(Node* node)
-{
-	//_collision->update(*node);
-    //_graphics->update(*node);
-};
+//void GameObject::update(Node* node)
+//{
+//	log("");
+//	//_collision->update(*node);
+//    //_graphics->update(*node);
+//};
 
 ValueMap GameObject::getProperties()
 {
@@ -288,7 +289,7 @@ void Player::Talk()
 void Player::HitWall()
 {
 	_input->HitWall();
-	_graphics->Hurt();
+	_graphics->Stop();
 };
 
 Rect Player::getCollisionBox()
@@ -302,13 +303,39 @@ Rect Player::getCollisionBox()
 	return collisionBox;
 };
 
-/**
- * Moveable gameObject Variables,
- * Initializes the varaiables to their default state
- *
- */
+
+ShowCave* ShowCave::create(ValueMap& properties)
+{
+	// Create an instance of Level
+	ShowCave* showCave = new (std::nothrow) ShowCave(properties);
+
+	if (showCave && showCave->init())
+	{
+		showCave->autorelease();		
+		showCave->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return showCave;
+	}
+
+	CC_SAFE_DELETE(showCave);
+	return nullptr;
+};
+
 ShowCave::ShowCave(ValueMap& properties) : super(properties)
 {
+	_graphics = new (std::nothrow) ShowCaveGraphicsComponent(*this);
+	_collision = new (std::nothrow) ShowCaveCollisionComponent(*this);
+};
+
+ShowCave::~ShowCave()
+{
+    delete _graphics;
+	delete _collision;
+};
+
+void ShowCave::update(Node* node)
+{
+	_collision->update(*node);
+	_graphics->update(*node);
 };
 
 /**

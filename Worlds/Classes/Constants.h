@@ -31,76 +31,83 @@ typedef std::string Type;
 /**
 * PNG assets
 */
-#define BACKGROUND_PNG		"background.png"
-#define CHARACTERS_PNG		"characters.png"
-#define CONTROLS_PNG		"controls.png"
-#define HUD_PNG				"hud.png"
-#define ITEMS_PNG			"items.png"
-#define PARTICLES_PNG		"particles.png"
-#define TILES_PNG			"tiles.png"
+#define BACKGROUND_PNG			"background.png"
+#define CHARACTERS_PNG			"characters.png"
+#define CONTROLS_PNG			"controls.png"
+#define HUD_PNG					"hud.png"
+#define ITEMS_PNG				"items.png"
+#define PARTICLES_PNG			"particles.png"
+#define TILES_PNG				"tiles.png"
 /**
 * PLIST assets
 */ 
-#define BACKGROUND_PLIST	"background.plist"
-#define CHARACTERS_PLIST	"characters.plist"
-#define CONTROLS_PLIST		"controls.plist"
-#define HUD_PLIST			"hud.plist"
-#define ITEMS_PLIST			"items.plist"
-#define PARTICLES_PLIST		"particles.plist"
-#define TILES_PLIST			"tiles.plist"
+#define BACKGROUND_PLIST		"background.plist"
+#define CHARACTERS_PLIST		"characters.plist"
+#define CONTROLS_PLIST			"controls.plist"
+#define HUD_PLIST				"hud.plist"
+#define ITEMS_PLIST				"items.plist"
+#define PARTICLES_PLIST			"particles.plist"
+#define TILES_PLIST				"tiles.plist"
 /****/
-#define _PREFIX				"alienBeige"
-#define _SUFFIX				".png"
-#define _WALK				"_walk"
-#define _DUCK				"_duck"
-#define _STAND				"_stand"
-#define _JUMP				"_jump"
-#define _CLIMB				"_climb"
-#define _HURT				"_hurt"
+#define _PREFIX					"alienBeige"
+#define _SUFFIX					".png"
+#define _WALK					"_walk"
+#define _DUCK					"_duck"
+#define _STAND					"_stand"
+#define _JUMP					"_jump"
+#define _CLIMB					"_climb"
+#define _HURT					"_hurt"
 /****/
-#define kPlanetTMX			"grassPlanet.tmx"
-#define kCaveTMX			"planet1.tmx"
-#define kPlayerFileName		"alienBeige.png"
-#define kFilePrefix			"alien"
-#define kFileSuffix			"_badge2.png"
+#define kPlanetTMX				"grassPlanet.tmx"
+#define kCaveTMX				"planet1.tmx"
+#define kPlayerFileName			"alienBeige.png"
+#define kFilePrefix				"alien"
+#define kFileSuffix				"_badge2.png"
 /****/
-#define kTagClimbUp			0
-#define kTagClimbDown		1
-#define kTagWalkLeft		2
-#define kTagWalkRight		3
-#define kTagStop			4
-#define kTagHurt			5
+#define kTagClimbUp				0
+#define kTagClimbDown			1
+#define kTagWalkLeft			2
+#define kTagWalkRight			3
+#define kTagStop				4
+#define kTagHurt				5
 /****/
-#define kTagBackgroundLayer	0
-#define kTagCollisionLayer	1
-#define kTagLadderLayer		2
-#define kTagForegroundLayer	3
-#define kTagShadowLayer		4
-#define kTagObjectLayer		5
-#define kTagDebugLayer		6
+#define kTagBackgroundLayer		0
+#define kTagCollisionLayer		1
+#define kTagLadderLayer			2
+#define kTagForegroundLayer		3
+#define kTagShadowLayer			4
+#define kTagObjectLayer			5
+#define kTagDebugLayer			6
+#define kTagPBackgroundLayer	7
+#define kTagPForegroundLayer	8
 /****/
-#define kTagPlanet			0
-#define kTagCave			1
-#define kTagPlayer			2 
+#define kTagMountain			0
+#define kTagHill				1
+#define kTagCloud				2
+#define kTagBackground			3
 /****/
-#define kTagCursor			0
-#define KTagSceneLayer		1
+#define kTagPlanet				0
+#define kTagCave				1
+#define kTagPlayer				2 
 /****/
-#define PI					3.14159265
+#define kTagCursor				0
+#define KTagSceneLayer			1
 /****/
-#define kFadeIn				1
-#define kFadeOut		   -1
-#define kOpacityMin			100
-#define kOpacityMax			255
-#define kOpacityFadeFactor	10
-#define kFrameDelay			100.0f
-#define kFrameTimeFactor    20.0f
-#define kZoomMin			1.2f
-#define kZoomMax			1.5f
-#define kZoomInFactor		50000.0f
-#define kZoomOutFactor		100000.0f
+#define PI						3.14159265
 /****/
-const float kUpdateInterval = 1.0f / 60.0f;
+#define kFadeIn					1
+#define kFadeOut			   -1
+#define kOpacityMin				100
+#define kOpacityMax				255
+#define kOpacityFadeFactor		10
+#define kFrameDelay				300.0f /** milliseconds **/
+#define kFrameTimeFactor		20.0f
+#define kZoomMin				1.2f
+#define kZoomMax				1.5f
+#define kZoomInFactor			50000.0f
+#define kZoomOutFactor			100000.0f
+/****/
+const float kUpdateInterval =	1.0f / 60.0f;
 /**  **/
 const States GameObjectStates =
 {

@@ -65,7 +65,10 @@ public:
 	/** Setters end **/
 
 public: /** Variables **/
+	cocos2d::Vec2 LadderOrigin = cocos2d::Vec2::ZERO;
+
 	bool OnGround = true;
+	bool OnLadder = false;
 	bool JumpRequest = false;
 };
 
@@ -89,7 +92,7 @@ public:
 	virtual ~GameObject();
     		
 	/** Update the gameObject **/
-	virtual void update(Node* node);
+	virtual void update(Node* node){};
 
 	/** Action methods **/	
 	virtual void Up(){};
@@ -202,10 +205,18 @@ class ShowCave : public GameObject
     typedef ShowCave self;
     
 public:
-	ShowCave(cocos2d::ValueMap& properties);
-    virtual ~ShowCave(){};   
+	static ShowCave* create(cocos2d::ValueMap& properties);
 
-private: /** **/
+	ShowCave(cocos2d::ValueMap& properties);
+    virtual ~ShowCave();   
+
+	virtual void update(Node* node) override;
+
+public: /** Variables **/
+	bool DetectedPlayer = false;
+
+private: /** Variables **/
+	IGraphicsComponent* _graphics;
 	ICollisionComponent* _collision;
 };
 

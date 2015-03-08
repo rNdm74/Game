@@ -28,25 +28,21 @@ void CollisionComponent::update(Node& node)
 */
 void PlayerCollisionComponent::update(Node& node)
 {
-	this->checkTileCollision(node);    
+	this->checkTileCollision(node);   
+	this->checkLadderCollision(node);
 }
 
 void ShowCaveCollisionComponent::update(Node& node)
-{
-    ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
-    
+{ 
+	/*ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
+
     Rect r1 = _gameObject->getCollisionBox();
-    Rect r2 = map.getPlayer()->getCollisionBox();
+    Vec2 p = map.getPlayer()->getCenterPosition();
     
-    if(r1.intersectsRect(r2))
-    {
-        map.drawDebugRect(r1, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
-        map.enableForegroundOpacity(kFadeOut);
-    }
-    else
-    {
-        map.enableForegroundOpacity(kFadeIn);
-    }
+	if (r1.containsPoint(p))
+	{
+		static_cast<ShowCave*>(_gameObject)->DetectedPlayer = true;
+	}*/
 };
 
 /**
@@ -157,19 +153,29 @@ void PlayerCollisionComponent::checkTileCollision(Node& node)
 	_gameObject->setVelocity(velocity);
 }
 
-void PlayerCollisionComponent::isLadderCollision(Node& node)
+void PlayerCollisionComponent::checkLadderCollision(Node& node)
 {
 	ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
 
 	TileDataArray tileDataArray = map.getLadderDataAt(_gameObject->getCenterPosition());
+	
+	_gameObject->OnLadder = false;
 
 	if (tileDataArray[ETileGrid::CENTER].GID)
 	{
-		map.enableForegroundOpacity(kFadeOut);
+		Rect r = tileDataArray[ETileGrid::CENTER].tileRect;
+		map.drawDebugRect(r, Color4F(0.5f, 1.0f, 0.0f, 0.5f));
+
+		_gameObject->LadderOrigin = r.origin;
+		_gameObject->OnLadder = true;
 	}
-	else
+	if (tileDataArray[ETileGrid::BOTTOM].GID)
 	{
-		map.enableForegroundOpacity(kFadeIn);
+		Rect r = tileDataArray[ETileGrid::BOTTOM].tileRect;
+		map.drawDebugRect(r, Color4F(0.5f, 1.0f, 0.0f, 0.5f));
+
+		_gameObject->LadderOrigin = r.origin;
+		_gameObject->OnLadder = true;
 	}
 };
 

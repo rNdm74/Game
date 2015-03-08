@@ -236,7 +236,7 @@ void ParallaxTileMap::setPositionOnPlayer()
 	Rect r = this->getPlayer()->getCollisionBox();
 	/** Bottom middle of sprite **/
 	Vec2 p = Vec2(r.origin.x + (r.size.width / 2), r.origin.y);
-	p.x += v.x * kUpdateInterval;
+	//p.x += v.x * kUpdateInterval;
 			
 	float s = this->getParent()->getScale();
 		
@@ -254,6 +254,16 @@ void ParallaxTileMap::setPositionOnPlayer()
 	Vec2 vp = cov - ap;
 
 	this->setPosition(vp);
+};
+
+Rect ParallaxTileMap::getViewportBoundingBox()
+{
+	
+	Vec2 p = this->getPosition();
+	float s = this->getParent()->getScale();
+	Size w = Director::getInstance()->getWinSize() / s;
+
+	return Rect(abs(p.x), abs(p.y), w.width, w.height);
 };
 
 /** **/
@@ -642,8 +652,8 @@ void ParallaxTileMap::enableForegroundOpacity(int fade)
                 
 				currentOpacity += kOpacityFadeFactor * fade;
                 
-				if (currentOpacity < kOpacityMin)
-					currentOpacity = kOpacityMin;
+				if (currentOpacity < 0)
+					currentOpacity = 0;
 				if (currentOpacity > kOpacityMax)
 					currentOpacity = kOpacityMax;
                 
@@ -651,6 +661,30 @@ void ParallaxTileMap::enableForegroundOpacity(int fade)
             }
         }
     }
+};
+
+void ParallaxTileMap::enableParallaxForegroundOpacity(int fade)
+{
+	Node& node = *this->getChildByTag(kTagPForegroundLayer);
+		
+	for (auto child : node.getChildren())
+	{
+		if (child->getTag() == kTagHill)
+		{
+			Sprite* sprite = static_cast<Sprite*>(child);
+
+			int currentOpacity = sprite->getOpacity();
+
+			currentOpacity += kOpacityFadeFactor * fade;
+
+			if (currentOpacity < kOpacityMin)
+				currentOpacity = kOpacityMin;
+			if (currentOpacity > kOpacityMax)
+				currentOpacity = kOpacityMax;
+
+			sprite->setOpacity(currentOpacity); // 0 - opaque,  255 - solid
+		}			
+	}
 };
 
 /**
@@ -718,5 +752,5 @@ Planet::Planet(std::string mapName) : super(mapName)
 
 	_parallaxForegroundLayer = ParallaxForeground::create(_mapSize.width * _tileSize.width);
 
-	this->addChild(_parallaxForegroundLayer, 6, Vec2(1.0f, 0.3f), Vec2::ZERO);
+	this->addChild(_parallaxForegroundLayer, 6, Vec2(1.0f, 0.9f), Vec2::ZERO);
 };

@@ -35,13 +35,14 @@ ParallaxForeground::ParallaxForeground(float width)
 		hill = this->getHill();
 
 		/** Add the shadow **/
-		this->addChild(getShadowForNode(hill), -3, Vec2(1.505f, 1.1f), Vec2(hill->getContentSize().width * i, 0.0f));
-		/** Add the hill **/
-		this->addChild(hill, -2, Vec2(1.5f, 1.1f), Vec2(hill->getContentSize().width * i, 0.0f));
+		this->addChild(getShadowForNode(hill), -3, Vec2(1.1025f, 1.0f), Vec2(hill->getContentSize().width * i, 0.0f));
+		/** Add the hill **/		
+		this->addChild(hill, -2, Vec2(1.1f, 1.0f), Vec2(hill->getContentSize().width * i, 0.0f));
     }
 
 	this->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	this->setScale(2.0f);
+	this->setTag(kTagPForegroundLayer);
 }
 
 ParallaxForeground::~ParallaxForeground()
@@ -56,7 +57,7 @@ Sprite* ParallaxForeground::getMountain()
 	sprite->setAnchorPoint(Vec2::ZERO);
 	sprite->setScale(rand_0_1() + 0.5f);
 	sprite->getTexture()->setAntiAliasTexParameters();
-	//sprite->addChild(getShadowForNode(sprite), -99);
+	sprite->setTag(kTagMountain);
 
 	return sprite;
 };
@@ -66,8 +67,7 @@ Sprite* ParallaxForeground::getHill()
 	Sprite* sprite = Sprite::createWithSpriteFrameName("groundGrass.png");
 	sprite->setFlippedX(true);
 	sprite->setAnchorPoint(Vec2::ZERO);
-	sprite->addChild(getShadowForNode(sprite), -99);
-
+	sprite->setTag(kTagHill);
 	return sprite;
 };
 
@@ -81,6 +81,7 @@ Sprite* ParallaxForeground::getCloud()
 	cloud->setAnchorPoint(Vec2::ZERO);
 	cloud->setScale(rand_0_1() + 1.0f);
 	cloud->addChild(getShadowForNode(cloud), -99);
+	cloud->setTag(kTagCloud);
 
 	return cloud;
 };

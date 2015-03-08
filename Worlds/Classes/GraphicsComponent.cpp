@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "GraphicsComponent.h"
 #include "ParallaxTileMap.h"
+#include "Utils.h"
 
 void GraphicsComponent::update(Node& node)
 {
@@ -173,4 +174,35 @@ void PlayerGraphicsComponent::lookDown()
 void PlayerGraphicsComponent::lookForward()
 {
 	_gameObject->setSpriteFrame(frameCache("alienBeige.png"));
+};
+
+ShowCaveGraphicsComponent::ShowCaveGraphicsComponent(IGameObject& gameObject)
+{
+	_gameObject = &gameObject;
+}
+
+void ShowCaveGraphicsComponent::update(Node& node)
+{
+	IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
+	
+	//map.drawDebugRect(r, Color4F(1.0f, 1.0f, 0.0f, 0.1f));
+	//log("x: %f, y:%f", r.origin.x, r.origin.y);
+	Rect r1 = map.getViewportBoundingBox();
+	Rect r2 = _gameObject->getCollisionBox();
+	Rect r3 = map.getPlayer()->getCollisionBox();
+	
+	if (Utils::isRectContainsRect(r1, r2) || Utils::isRectIntersectsRect(r1, r2))
+	{
+		if (r2.intersectsRect(r3))
+		{
+			map.drawDebugRect(r2, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+			map.enableForegroundOpacity(kFadeOut);
+			map.enableParallaxForegroundOpacity(kFadeOut);
+		}
+		else
+		{
+			map.enableForegroundOpacity(kFadeIn);
+			map.enableParallaxForegroundOpacity(kFadeIn);
+		}
+	}
 };

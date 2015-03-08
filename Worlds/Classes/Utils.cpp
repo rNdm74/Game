@@ -24,7 +24,10 @@ bool Utils::isRectIntersectsRect(Rect r1, Rect r2)
 
 bool Utils::isRectContainsRect(Rect r1, Rect r2)
 {
-	return true;
+	return (r2.origin.x >= r1.origin.x) && 
+		   (r2.origin.y >= r1.origin.y) &&
+		   (r2.origin.x + r2.size.width <= r1.origin.x + r1.size.width) && 
+		   (r2.origin.y + r2.size.height <= r1.origin.y + r1.size.height);
 }
 
 int Utils::getTilesetMaxGID(TMXLayer& layer)

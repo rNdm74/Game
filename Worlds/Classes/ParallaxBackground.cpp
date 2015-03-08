@@ -24,6 +24,7 @@ ParallaxBackground* ParallaxBackground::create(float width)
 
 ParallaxBackground::ParallaxBackground(float width)
 {
+	this->setTag(kTagPBackgroundLayer);
 	this->setAnchorPoint(Vec2::ZERO);
 	this->setScale(1.5f);
 
@@ -44,12 +45,15 @@ ParallaxBackground::ParallaxBackground(float width)
 	for (int i = 0; i < count; ++i)
 	{
 		mountain = this->getMountain();		
-		float offset = (mountain->getContentSize().width + rand) * i;
+		
+		float offsetX = (mountain->getContentSize().width + rand) * i;
+		float offsetY = 10.0f * this->getScale();
+
 		int zindex = random(3, 6);
 
-		this->addChild(getShadowForNode(mountain), -zindex, Vec2(1.0f, 0.5f), Vec2(0.0f, 0.0f));
+		this->addChild(getShadowForNode(mountain), -zindex, Vec2(0.703f, 0.51f), Vec2(offsetX + 3.0f, offsetY - 1.0f));
 
-		this->addChild(mountain, -zindex, Vec2(0.7f, 0.5f), Vec2(offset, 0.0f));
+		this->addChild(mountain, -zindex, Vec2(0.7f, 0.5f), Vec2(offsetX, offsetY));
 	}
 
 	Sprite* hill = this->getHill();
@@ -58,8 +62,12 @@ ParallaxBackground::ParallaxBackground(float width)
     for (int i = 0; i < count; ++i)
     {
 		hill = this->getHill();
-		this->addChild(getShadowForNode(hill), -3, Vec2(0.81f, 0.9f), Vec2(hill->getContentSize().width * i, 45.0f * this->getScale()));
-		this->addChild(hill, -2, Vec2(0.8f, 0.9f), Vec2(hill->getContentSize().width * i, 45.0f * this->getScale()));
+
+		float offsetX = hill->getContentSize().width * i;
+		float offsetY = 45.0f * this->getScale();
+
+		this->addChild(getShadowForNode(hill), -3, Vec2(0.803f, 0.91f), Vec2(offsetX + 3.0f, offsetY - 1.0f));
+		this->addChild(hill, -2, Vec2(0.8f, 0.9f), Vec2(offsetX, offsetY));
     }
     
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -130,7 +138,7 @@ Sprite* ParallaxBackground::getShadowForNode(Sprite* sprite)
 	shadow->setSpriteFrame(sprite->getSpriteFrame());
 	shadow->setColor(Color3B(0, 0, 0));
 	shadow->setOpacity(50);
-
+	shadow->setScale(sprite->getScale());
 	shadow->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 
 	return shadow;

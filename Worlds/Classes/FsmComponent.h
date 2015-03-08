@@ -30,11 +30,13 @@ struct FsmState : public IFsmState
 struct UpState : public FsmState
 {	
     void ActionUp(IFsmComponent& fsm) override;
+	void ActionStop(IFsmComponent& fsm) override;
 };
 
 struct DownState : public FsmState
 {	
 	void ActionDown(IFsmComponent& fsm) override;
+	void ActionStop(IFsmComponent& fsm) override;
 };
 
 struct LeftState : public FsmState

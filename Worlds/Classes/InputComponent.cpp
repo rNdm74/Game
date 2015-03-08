@@ -9,10 +9,24 @@
 
 void InputComponent::Up()
 {
+	//
+	Vec2 velocity = _gameObject->getVelocity();
+	//
+	Vec2 movementStep = _movement * kUpdateInterval;
+	velocity.y += movementStep.y;
+	//
+	_gameObject->setVelocity(velocity);
 };
 
 void InputComponent::Down()
 {
+	//
+	Vec2 velocity = _gameObject->getVelocity();
+	//
+	Vec2 movementStep = _movement * kUpdateInterval;
+	velocity.y -= movementStep.y;
+	//
+	_gameObject->setVelocity(velocity);
 };
 
 void InputComponent::Left()
@@ -74,12 +88,14 @@ void InputComponent::HitWall()
 {
 	/** Immediate stop **/
 	_gameObject->setVelocity(Vec2::ZERO);
+
+
 };
 
 void PlayerInputComponent::update()
 {
 	/** Apply gravity **/
-	if (_gameObject->OnGround == false)
+	if (_gameObject->OnGround == false && _gameObject->OnLadder == false)
 		this->ApplyGravity();
 
 	Vec2 velocity = _gameObject->getVelocity();

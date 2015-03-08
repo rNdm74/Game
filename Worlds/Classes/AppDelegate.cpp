@@ -64,6 +64,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	appGlobal->initMouseListener();
 	appGlobal->initKeyboardListener();
 	appGlobal->initTouchListener();
+	appGlobal->initControllerListener();
 
     // create a scene. it's an autorelease object
     auto scene = SplashScene::createScene();

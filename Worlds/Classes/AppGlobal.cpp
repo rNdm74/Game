@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "PathFinder.h"
 
+
 AppGlobal* AppGlobal::m_pInstance = NULL;
 
 AppGlobal* AppGlobal::getInstance()
@@ -33,14 +34,14 @@ void AppGlobal::initMouseListener()
 
 		auto cursorMove = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
 
-		if (Director::getInstance()->getRunningScene()->isRunning())
+		/*if (Director::getInstance()->getRunningScene()->isRunning())
 		{
 			auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
 			auto cursor = layer->getChildByTag(kTagCursor);
 
 			cursor->setPosition(cursorMove);
-		}
+		}*/
 	};
 
 	listener->onMouseDown = [=](Event* event)
@@ -75,13 +76,15 @@ void AppGlobal::initKeyboardListener()
 		{
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
-				EventStack.push(EGameObjectEvent::Up);
+				if (PlayerInstance->OnLadder)
+					EventStack.push(EGameObjectEvent::Up);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
-				EventStack.push(EGameObjectEvent::Down);
+				if (PlayerInstance->OnLadder)
+					EventStack.push(EGameObjectEvent::Down);
 			}
 			break;
 			
@@ -114,13 +117,15 @@ void AppGlobal::initKeyboardListener()
 		{
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
-				EventStack.pop();
+				if (PlayerInstance->OnLadder)
+					EventStack.pop();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
-				EventStack.pop();
+				if (PlayerInstance->OnLadder)
+					EventStack.pop();
 			}
 			break;
 			
@@ -146,6 +151,70 @@ void AppGlobal::initKeyboardListener()
 
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
+
+void AppGlobal::onHttpRequestCompleted(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response)
+{	
+	log("Http Test");
+
+	// The data will be placed in the buffer.
+	std::vector<char> * buffer = response->getResponseData();
+	char * concatenated = (char *)malloc(buffer->size() + 1);
+	std::string s2(buffer->begin(), buffer->end());
+	strcpy(concatenated, s2.c_str());
+
+	Json* json = Json_create(concatenated);
+	const char * test1 = Json_getString(json, "test1", "default");
+	const char * test2 = Json_getString(json, "test2", "default");
+
+	// View the console
+	log("HTTP Response : key 1 : %s", test1);
+	log("HTTP Response : key 2 : %s", test2);
+
+	// Delete the JSON object
+	Json_dispose(json);
+};
+
+void AppGlobal::initControllerListener()
+{
+	/*cocos2d::network::HttpRequest* request = new cocos2d::network::HttpRequest();
+	request->setUrl("http://www.httpbin.org/get");
+	request->setRequestType(cocos2d::network::HttpRequest::Type::GET);
+	request->setResponseCallback(CC_CALLBACK_2(AppGlobal::onHttpRequestCompleted, this));
+	request->setTag("GET test1");
+	cocos2d::network::HttpClient::getInstance()->send(request);
+	request->release();*/
+	
+	//auto listener = EventListenerController::create();
+	
+	/*listener->onConnected = [=](Controller* controller, Event* event)
+	{
+		log("Controller connected");
+	};
+
+	listener->onDisconnected = [=](Controller* controller, Event* event)
+	{
+		log("Controller disconnected");
+	};
+
+	listener->onKeyDown = [=](Controller* controller, int keyCode, Event* event)
+	{
+		log("Controller keydown");
+	};
+
+	listener->onKeyUp = [=](Controller* controller, int keyCode, Event* event)
+	{
+		log("Controller keyup");
+	};
+
+	listener->onAxisEvent = [=](Controller* controller, int keyCode, Event* event)
+	{
+		log("Controller axis event");
+	};*/
+
+	//Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
+
+	//Controller::startDiscoveryController();
+};
 
 void AppGlobal::initTouchListener()
 {

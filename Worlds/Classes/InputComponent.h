@@ -46,7 +46,7 @@ protected:
 	const float _jumpLimit = 850.0f;
 	const Vec2 _jumpForce = Vec2(0.0f, 2800.0f);
 	const Vec2 _gravity = Vec2(0.0, -1850.0f);
-	const Vec2 _movement = Vec2(2800.0f, 0.0f);
+	const Vec2 _movement = Vec2(2800.0f, 2800.0f);
 	const Vec2 _minMovement = Vec2(-520.0f, -850.0f);
 	const Vec2 _maxMovement = Vec2(520.0f, 520.0f);
 };

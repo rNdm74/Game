@@ -87,4 +87,17 @@ private:
 	long maxIdleTime;
 };
 
+class ShowCaveGraphicsComponent : public GraphicsComponent
+{
+public:
+	ShowCaveGraphicsComponent(IGameObject& gameObject);
+	virtual ~ShowCaveGraphicsComponent(){};
+
+	virtual void update(Node& node) override;
+
+private:
+	void Show();
+	void Hide();
+};
+
 #endif /* defined(__FranticAlien__GraphicsComponent__) */
