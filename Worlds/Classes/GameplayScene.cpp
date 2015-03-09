@@ -32,9 +32,8 @@ bool GameplayScene::init()
     if ( !Layer::init() )
         return false;
 
-	world = World::create();
-	this->addChild(world);   
-
+    planet = Planet::create("Grass");
+	this->addChild(planet);
 	//
     this->scheduleUpdateWithPriority(42);   
     
@@ -55,7 +54,7 @@ void GameplayScene::GameplaySceneFinished(Ref* sender)
 
 void GameplayScene::update(float delta)
 {
-	world->update(delta);
+	planet->update(delta);
 }
 
 void GameplayScene::actionFinished()

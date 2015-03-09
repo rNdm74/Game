@@ -2,6 +2,7 @@
 #define __FranticAlien__Planet_H__
 
 #include "cocos2d.h"
+#include "ParallaxTileMap.h"
 
 using namespace cocos2d;
 
@@ -16,7 +17,7 @@ public:
 	IPlanet(){};
 	virtual ~IPlanet(){};
 
-	virtual ValueMap getLandingSite();
+	virtual ValueMap getLandingSite() = 0;
 	virtual void update(float& delta) = 0;
 };
 
@@ -26,13 +27,18 @@ class Planet : public IPlanet
 	typedef Planet self;
 
 public:	
-	static self* create();
+    static self* create(){};
 	
-	Planet();	
+    Planet(){};
 	virtual ~Planet(){};
 
 	/** **/
+    virtual ValueMap getLandingSite() override;
+    /** **/
 	virtual void update(float& delta) override;
+    
+private:
+    IParallaxTileMap* _tileMap;
 };
 
 
@@ -42,6 +48,8 @@ class GrassPlanet : public Planet
 	typedef GrassPlanet self;
 	
 public:
+    static self* create();
+    
 	GrassPlanet();
 	virtual ~GrassPlanet(){};
 };
@@ -52,6 +60,8 @@ class SnowPlanet : public Planet
 	typedef SnowPlanet self;
 
 public:
+    static self* create();
+    
 	SnowPlanet();
 	virtual ~SnowPlanet(){};
 };

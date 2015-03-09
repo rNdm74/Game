@@ -2,10 +2,18 @@
 #include "Planet.h"
 #include "PlanetFactory.h"
 
-IPlanet* Planet::create(std::string planet)
+IPlanet* PlanetFactory::create(std::string planetType)
 {
-	if (planet == "Grass")
-		return new GrassPlanet();
-	else if (planet == "Snow")
-		return new SnowPlanet();
+    IPlanet* planet = nullptr;
+    
+	if (planetType == "Grass")
+    {
+        planet = GrassPlanet::create();
+    }
+	else if (planetType == "Snow")
+    {
+        planet = SnowPlanet::create();
+    }
+    
+    return planet;
 }

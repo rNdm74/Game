@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 
-class World;
+class Planet;
 
 using namespace cocos2d;
 

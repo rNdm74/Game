@@ -9,7 +9,7 @@ using namespace cocos2d;
 class PlanetFactory
 {
 public:	
-	static IPlanet* create(std::string planet);
+	static IPlanet* create(std::string planetType);
 };
 
 

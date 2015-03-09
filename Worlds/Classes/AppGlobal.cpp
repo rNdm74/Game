@@ -16,8 +16,10 @@ AppGlobal::AppGlobal()
 {	
 	PlayerEvents.push(EGameObjectEvent::Stop);
 	
-	PlanetInstance = Planet::create();
+    PlanetInstance = Planet::create("Grass");
 
+    ValueMap landingSite = PlanetInstance->getLandingSite();
+    
 	// Create the player instance however, properties are reqiured for the instantiation of the player instance
 	// This means that the tile map instance is to be instantiated before the player instance so we can get the the starting 
 	// properties of the player
@@ -32,7 +34,7 @@ AppGlobal::AppGlobal()
 	// Note:: The object will always have a 70 x 70 dimension this is for collision detection purposes
 
 
-	PlayerInstance = Player::create(PlanetInstance->getPlayerStartingProperties());
+	PlayerInstance = Player::create(landingSite);
 	
 	_scaleFactor = kZoomMin;
 }
