@@ -1,10 +1,10 @@
 #include "AppGlobal.h"
+#include "AppResources.h"
 #include "ParallaxFactory.h"
 #include "ParallaxTileMap.h"
 #include "GameObject.h"
 #include "GameObjectFactory.h"
 #include "Level.h"
-//#include "cocos2d.h"
 
 Level* Level::create()
 {
@@ -30,7 +30,7 @@ Level::Level()
 {
 	//
 	activeMap = AppGlobal::getInstance()->ActiveMap;
-	activeMap.push(ParallaxFactory::create("Planet"));
+	activeMap.push(ParallaxFactory::create("PlanetSurface"));
 	//
 	this->addChild(activeMap.top());
 
@@ -65,12 +65,6 @@ void Level::loadPlayer()
 
 void Level::update(float& delta)
 {
-	/** Updates scale creates zoom effect **/
-	this->setScale(AppGlobal::getInstance()->getScale());	
-	/** Update the active map **/
-	activeMap.top()->update(delta);
-	/** Keep active map position centered on player **/
-	activeMap.top()->setPositionOnPlayer();
 }
 
 void Level::checkNextMap()

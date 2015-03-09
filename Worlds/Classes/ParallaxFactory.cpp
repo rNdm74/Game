@@ -1,18 +1,21 @@
 #include "ParallaxFactory.h"
 #include "ParallaxTileMap.h"
+#include "AppResources.h"
 
 IParallaxTileMap* ParallaxFactory::create(std::string className)
 {
 	IParallaxTileMap* parallaxTileMap = nullptr;
 
-	if (className == "Planet")
+	if (className == "PlanetSurface")
 	{
-		parallaxTileMap = Planet::create(kPlanetTMX);
-		parallaxTileMap->setTag(kTagPlanet);
+		parallaxTileMap = PlanetSurface::create(kPlanetSurfaceTmx);
+		parallaxTileMap->setName(kPlanetSurfaceTmx);
+		parallaxTileMap->setTag(kTagPlanetSurface);
 	}
 	else if (className == "Cave")
 	{
 		parallaxTileMap = Cave::create(kCaveTMX);
+		parallaxTileMap->setName(kCaveTMX);
 		parallaxTileMap->setTag(kTagCave);
 	}
 	

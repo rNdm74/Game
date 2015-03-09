@@ -68,6 +68,9 @@ typedef std::string Type;
 #define CLOUDS_SPACE_BETWEEN	10
 #define CLOUDS_STARTING_TAG		100
 #define CLOUDS_SPEED			150
+/****/
+#define mapGrass				"Grass"
+#define mapSnow					"Snow"
 /**
 * PNG assets
 */
@@ -77,7 +80,8 @@ typedef std::string Type;
 #define HUD_PNG					"hud.png"
 #define ITEMS_PNG				"items.png"
 #define PARTICLES_PNG			"particles.png"
-#define TILES_PNG				"tiles.png"
+#define GRASS_PNG				"grass.png"
+#define SNOW_PNG				"snow.png"
 /**
 * PLIST assets
 */ 
@@ -87,7 +91,8 @@ typedef std::string Type;
 #define HUD_PLIST				"hud.plist"
 #define ITEMS_PLIST				"items.plist"
 #define PARTICLES_PLIST			"particles.plist"
-#define TILES_PLIST				"tiles.plist"
+#define GRASS_PLIST				"grass.plist"
+#define SNOW_PLIST				"snow.plist"
 /****/
 #define _PREFIX					"alienBeige"
 #define _SUFFIX					".png"
@@ -103,6 +108,7 @@ typedef std::string Type;
 #define kPlayerFileName			"alienBeige.png"
 #define kFilePrefix				"alien"
 #define kFileSuffix				"_badge2.png"
+#define kPlanetSurfaceTmx		"planet_surface.tmx"
 /****/
 #define kTagClimbUp				0
 #define kTagClimbDown			1
@@ -126,7 +132,7 @@ typedef std::string Type;
 #define kTagCloud				2
 #define kTagBackground			3
 /****/
-#define kTagPlanet				0
+#define kTagPlanetSurface		0
 #define kTagCave				1
 #define kTagPlayer				2 
 /****/

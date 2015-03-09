@@ -126,6 +126,7 @@ protected: /** Variables **/
 	class ParallaxTileMapFsm* _fsm;
 };
 
+
 class Cave : public ParallaxTileMap
 {
 	typedef ParallaxTileMap super;
@@ -133,25 +134,26 @@ class Cave : public ParallaxTileMap
 
 public:
 	/** Node create **/
-	static IParallaxTileMap* create(std::string mapName);
+	static self* create(std::string mapName);
 
 	/** Constructor **/
 	Cave(std::string mapName);
 	virtual ~Cave(){};
 };
 
-class Planet : public ParallaxTileMap
+
+class PlanetSurface : public ParallaxTileMap
 {
 	typedef ParallaxTileMap super;
-	typedef Planet self;
+	typedef PlanetSurface self;
 
 public:
 	/** Node create **/
-	static IParallaxTileMap* create(std::string mapName);
+	static self* create(std::string mapName);
 
 	/** Constructor**/
-	Planet(std::string mapName);	
-	virtual ~Planet(){};
+	PlanetSurface(std::string mapName);
+	virtual ~PlanetSurface(){};
 
 private:
 	class ParallaxBackground* _parallaxBackgroundLayer;

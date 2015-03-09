@@ -18,22 +18,18 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
     {
         gameObject = ShowCave::create(properties);
     }
-	else if (className == "Left")
+	else if (className == "ToSurface")
 	{
-		gameObject = Left::create(properties);
+		gameObject = ToSurface::create(properties);
 	}
-	else if (className == "Right")
+	else if (className == "ToCave")
 	{
-		gameObject = Right::create(properties);
+		gameObject = ToCave::create(properties);
 	}
-	else if (className == "Enter")
+	else if (className == "LandingSite")
 	{
-		gameObject = Enter::create(properties);
+		gameObject = LandingSite::create(properties);
 	}
-	else if (className == "Exit")
-	{
-		gameObject = Exit::create(properties);
-	}
-
+	
 	return gameObject;
 }

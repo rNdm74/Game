@@ -3,9 +3,11 @@
 
 #include "cocos2d.h"
 #include "Constants.h"
+#include "Planet.h"
 
 using namespace cocos2d;
 
+class IGameObject;
 
 class AppGlobal
 { 
@@ -32,9 +34,9 @@ public:
 	void setIsGameSceneRunning(bool isRunning) { _isGameSceneRunning = isRunning; };
 	
 public: /** Variables **/	
-	ActiveTileMap ActiveMap;
-	class IGameObject* PlayerInstance;
 	Events PlayerEvents;
+	IGameObject* PlayerInstance;	
+	IPlanet* PlanetInstance;
 
 private:
     AppGlobal();
@@ -48,9 +50,7 @@ private: /** Variables **/
 	bool _touchEvent;
 
 	float _scaleFactor;
-	float _zoomFactor;
-	
-	KeyMatrix _keyMatrix;
+	float _zoomFactor;	
 };
 
 //#define GETSCALEX ( AppGlobal::getInstance()->GetScaleX() )

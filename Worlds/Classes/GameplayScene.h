@@ -10,7 +10,7 @@ using namespace cocos2d;
 class GameplayScene : public Layer
 {
 private:
-	World* world;
+	Planet* planet;
         
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer

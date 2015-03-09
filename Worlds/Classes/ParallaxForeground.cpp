@@ -23,7 +23,6 @@ ParallaxForeground* ParallaxForeground::create(float width)
 	return node;
 }
 
-
 ParallaxForeground::ParallaxForeground(float width)
 {
 	Sprite* hill = this->getHill();
@@ -64,7 +63,7 @@ Sprite* ParallaxForeground::getMountain()
 
 Sprite* ParallaxForeground::getHill()
 {
-	Sprite* sprite = Sprite::createWithSpriteFrameName("groundGrass.png");
+	Sprite* sprite = Sprite::createWithSpriteFrameName("groundIce.png");
 	sprite->setFlippedX(true);
 	sprite->setAnchorPoint(Vec2::ZERO);
 	sprite->setTag(kTagHill);
@@ -90,7 +89,6 @@ void ParallaxForeground::update(float delta)
 {
 	
 }
-
 
 Sprite* ParallaxForeground::getShadowForNode(Sprite* sprite)
 {

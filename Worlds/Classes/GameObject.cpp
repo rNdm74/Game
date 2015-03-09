@@ -9,9 +9,7 @@
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
 
-/**
-* GameObject
-*/
+
 GameObject* GameObject::create(ValueMap& properties)
 {
 	// Create an instance of Level
@@ -28,11 +26,6 @@ GameObject* GameObject::create(ValueMap& properties)
 	return nullptr;
 };
 
-/**
-* Create a new GameObject
-*
-* @param 
-*/
 GameObject::GameObject(ValueMap& properties)
 {
 	_properties = properties;
@@ -55,19 +48,9 @@ GameObject::GameObject(ValueMap& properties)
 	this->addChild(_sprite);
 };
 
-GameObject::~GameObject(){};
-
-/**
-* Updates a GameObject
-*
-* @param node The Node that contains the gameObject
-*/
-//void GameObject::update(Node* node)
-//{
-//	log("");
-//	//_collision->update(*node);
-//    //_graphics->update(*node);
-//};
+GameObject::~GameObject()
+{
+};
 
 ValueMap GameObject::getProperties()
 {
@@ -148,37 +131,23 @@ void GameObject::setFlippedX(bool flippedX)
 };
 
 
-/**
-* Player
-*/
 Player* Player::create(ValueMap& properties)
 {
 	// Create an instance of Level
-	Player* player = new (std::nothrow) Player(properties);
+	Player* gameObject = new (std::nothrow) Player(properties);
 
-	if (player && player->init())
+	if (gameObject && gameObject->init())
 	{
-		player->autorelease();
-		player->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(kPlayerFileName));
-		player->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-		return player;
+		gameObject->autorelease();
+		gameObject->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(kPlayerFileName));
+		gameObject->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return gameObject;
 	}
 
-	CC_SAFE_DELETE(player);
+	CC_SAFE_DELETE(gameObject);
 	return nullptr;
 };
 
-/**
-* Create a Player GameObject, in the constructor, its properties are set
-* All components that are passed in are set, the sprite that contains the image of the player is created and added, 
-* A shadow sprite is created and added, finally is position is set
-*
-* @param properties The ValueMap that contains information about the gameObject
-* @param menu The MenuComponent that contains information about the gameObject
-* @param input The InputComponent that contains information about the gameObject
-* @param collision The CollisionComponent that contains information about the gameObject
-* @param graphics The GraphicsComponent that contains information about the gameObject
-*/
 Player::Player(ValueMap& properties) : super(properties)
 {
 	_fsm = new (std::nothrow) PlayerFsmComponent(*this);
@@ -321,16 +290,16 @@ Rect Player::getCollisionBox()
 ShowCave* ShowCave::create(ValueMap& properties)
 {
 	// Create an instance of Level
-	ShowCave* showCave = new (std::nothrow) ShowCave(properties);
+	ShowCave* gameObject = new (std::nothrow) ShowCave(properties);
 
-	if (showCave && showCave->init())
+	if (gameObject && gameObject->init())
 	{
-		showCave->autorelease();		
-		showCave->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-		return showCave;
+		gameObject->autorelease();
+		gameObject->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return gameObject;
 	}
 
-	CC_SAFE_DELETE(showCave);
+	CC_SAFE_DELETE(gameObject);
 	return nullptr;
 };
 
@@ -352,27 +321,66 @@ void ShowCave::update(Node* node)
 	_graphics->update(*node);
 };
 
-/**
-* Moveable gameObject Variables,
-* Initializes the varaiables to their default state
-*/
-Left::Left(ValueMap& properties) : super(properties)
+
+ToSurface* ToSurface::create(ValueMap& properties)
+{
+	// Create an instance of Level
+	ToSurface* gameObject = new (std::nothrow) ToSurface(properties);
+
+	if (gameObject && gameObject->init())
+	{
+		gameObject->autorelease();
+		gameObject->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return gameObject;
+	}
+
+	CC_SAFE_DELETE(gameObject);
+	return nullptr;
+};
+
+ToSurface::ToSurface(ValueMap& properties) : super(properties)
 {
 };
 
-/**
-* Moveable gameObject Variables,
-* Initializes the varaiables to their default state
-*/
-Right::Right(ValueMap& properties) : super(properties)
+
+ToCave* ToCave::create(ValueMap& properties)
+{
+	// Create an instance of Level
+	ToCave* gameObject = new (std::nothrow) ToCave(properties);
+
+	if (gameObject && gameObject->init())
+	{
+		gameObject->autorelease();
+		gameObject->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return gameObject;
+	}
+
+	CC_SAFE_DELETE(gameObject);
+	return nullptr;
+};
+
+ToCave::ToCave(ValueMap& properties) : super(properties)
 {	
 };
 
-/**
-* Moveable gameObject Variables,
-* Initializes the varaiables to their default state
-*/
-Enter::Enter(ValueMap& properties) : super(properties)
+
+LandingSite* LandingSite::create(ValueMap& properties)
+{
+	// Create an instance of Level
+	LandingSite* gameObject = new (std::nothrow) LandingSite(properties);
+
+	if (gameObject && gameObject->init())
+	{
+		gameObject->autorelease();
+		gameObject->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return gameObject;
+	}
+
+	CC_SAFE_DELETE(gameObject);
+	return nullptr;
+};
+
+LandingSite::LandingSite(ValueMap& properties) : super(properties)
 {			
 	auto _particle = ParticleGalaxy::createWithTotalParticles(900);
 	_particle->setAutoRemoveOnFinish(true);
@@ -403,13 +411,6 @@ Enter::Enter(ValueMap& properties) : super(properties)
 	_particle->setEndSize(50.0f);
 	_particle->setEndSizeVar(0);
 	_particle->setEmissionRate(100);
-	this->addChild(_particle, 10);
-};
 
-/**
-* Moveable gameObject Variables,
-* Initializes the varaiables to their default state
-*/
-Exit::Exit(ValueMap& properties) : super(properties)
-{
+	this->addChild(_particle, 10);
 };

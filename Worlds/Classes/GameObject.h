@@ -155,7 +155,7 @@ class Player : public GameObject
 	typedef Player self;
 
 public:
-	static Player* create(cocos2d::ValueMap& properties);
+	static self* create(cocos2d::ValueMap& properties);
 
 	Player(cocos2d::ValueMap& properties);
 	~Player();
@@ -205,7 +205,7 @@ class ShowCave : public GameObject
     typedef ShowCave self;
     
 public:
-	static ShowCave* create(cocos2d::ValueMap& properties);
+	static self* create(cocos2d::ValueMap& properties);
 
 	ShowCave(cocos2d::ValueMap& properties);
     virtual ~ShowCave();   
@@ -228,14 +228,16 @@ private: /** Variables **/
 *
 * @author Adam Charlton
 */
-class Left : public GameObject
+class ToSurface : public GameObject
 {
 	typedef GameObject super;
-	typedef Left self;
+	typedef ToSurface self;
 
 public:
-	Left(cocos2d::ValueMap& properties);
-	virtual ~Left(){};
+	static self* create(cocos2d::ValueMap& properties);
+
+	ToSurface(cocos2d::ValueMap& properties);
+	virtual ~ToSurface(){};
 
 private:
 	/** **/
@@ -250,14 +252,16 @@ private:
 *
 * @author Adam Charlton
 */
-class Right : public GameObject
+class ToCave : public GameObject
 {
 	typedef GameObject super;
-	typedef Right self;
+	typedef ToCave self;
 
 public:
-	Right(cocos2d::ValueMap& properties);
-	virtual ~Right(){};
+	static self* create(cocos2d::ValueMap& properties);
+
+	ToCave(cocos2d::ValueMap& properties);
+	virtual ~ToCave(){};
 
 private:
 	/** **/
@@ -271,33 +275,15 @@ private:
 *
 * @author Adam Charlton
 */
-class Enter : public GameObject
+class LandingSite : public GameObject
 {
 	typedef GameObject super;
-	typedef Enter self;
+	typedef LandingSite self;
 
 public:
-	Enter(cocos2d::ValueMap& properties);
-	virtual ~Enter(){};
+	static self* create(cocos2d::ValueMap& properties);
+	LandingSite(cocos2d::ValueMap& properties);
+	virtual ~LandingSite(){};
 };
-
-
-/**
-* A path determined by some path finding algorithm. A series of steps from
-* the starting location to the target location. This includes a step for the
-* initial location.
-*
-* @author Adam Charlton
-*/
-class Exit : public GameObject
-{
-	typedef GameObject super;
-	typedef Exit self;
-
-public:
-	Exit(cocos2d::ValueMap& properties);
-	virtual ~Exit(){};
-};
-
 
 #endif /* defined(__Worlds__GAME_OBJECT_H__) */

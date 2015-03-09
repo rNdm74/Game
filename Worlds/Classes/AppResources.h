@@ -19,6 +19,9 @@ public:
 	bool initLoad();
 	bool mainLoad();
 
+	void loadGrassResources(Texture2D* texture);
+	void loadSnowResources(Texture2D* texture);
+
 private:
     AppResources();
     virtual ~AppResources();
@@ -33,6 +36,8 @@ private:
 	void loadItemResources(Texture2D* texture);
 	void loadParticleResources(Texture2D* texture);
 	void loadTileResources(Texture2D* texture);
+
+	
 
     
 };
