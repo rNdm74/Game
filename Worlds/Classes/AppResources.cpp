@@ -12,8 +12,7 @@ AppResources* AppResources::getInstance()
 AppResources::AppResources()
 {
     cache = SpriteFrameCache::getInstance();		
-	textureCache = Director::getInstance()->getTextureCache();
-		
+	textureCache = Director::getInstance()->getTextureCache();		
 }
 
 AppResources::~AppResources()

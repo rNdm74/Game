@@ -2,119 +2,121 @@
 #include "ParallaxBackground.h"
 #include "AppGlobal.h"
 
-ParallaxBackground* ParallaxBackground::create(float width)
-{
-	// Create an instance of ParallaxBackground
-	ParallaxBackground* node = new ParallaxBackground(width);
-
-	if (node)
-	{
-		// Add it to autorelease pool
-		node->autorelease();
-	}
-	else
-	{
-		// Otherwise delete
-		delete node;
-		node = 0;
-	}
-
-	return node;
-}
-
 ParallaxBackground::ParallaxBackground(float width)
 {
 	this->setTag(kTagPBackgroundLayer);
 	this->setAnchorPoint(Vec2::ZERO);
 	this->setScale(1.5f);
+}
 
-    Sprite* background = this->getBackground();	
-	int count = width / background->getContentSize().width;
-    
-	for (int i = 0; i < count; ++i)
+void ParallaxBackground::initBackground(std::string type, float width)
+{
+	Size size = Sprite::create(type)->getContentSize();
+
+	int count = width / size.width;
+
+	for (int i = 0; i < count + 1; ++i)
 	{
-		background = this->getBackground();
-		this->addChild(background, -6, Vec2(0.6f, 0.3f), Vec2(background->getContentSize().width * i, 0.0f * this->getScale()));
+		Sprite* background = this->getBackground(type);
+
+		Vec2 offset = Vec2(size.width * i, 0.0f);
+
+		this->addChild(background, -6, BackgroundLayerBackgroundParallaxRatio, offset);
 	}
+};
 
-	Sprite* mountain = this->getMountain();
+void ParallaxBackground::initMountains(std::string type, float width)
+{
+	Size size = Sprite::createWithSpriteFrameName(type)->getContentSize();
+	
+	int rand = random(size.width, size.width * 3);
+	int count = width / (size.width + rand);
 
-	int rand = random(mountain->getContentSize().width, mountain->getContentSize().width * 3);
-	count = width / (mountain->getContentSize().width + rand);
-    
 	for (int i = 0; i < count; ++i)
 	{
-		mountain = this->getMountain();		
-		
-		float offsetX = (mountain->getContentSize().width + rand) * i;
+		Sprite* sprite = this->getMountain(type);
+
+		float offsetX = (sprite->getContentSize().width + rand) * i;
 		float offsetY = 10.0f * this->getScale();
+
+		Vec2 offset = Vec2(offsetX, offsetY);
 
 		int zindex = random(3, 6);
 
-		this->addChild(getShadowForNode(mountain), -zindex, Vec2(0.703f, 0.51f), Vec2(offsetX + 3.0f, offsetY - 1.0f));
+		this->addChild(getShadowForNode(sprite), -zindex, BackgroundLayerMountainsShadowParallaxRatio, Vec2(offsetX + 3.0f, offsetY - 1.0f));
 
-		this->addChild(mountain, -zindex, Vec2(0.7f, 0.5f), Vec2(offsetX, offsetY));
+		this->addChild(sprite, -zindex, BackgroundLayerMountainsParallaxRatio, Vec2(offsetX, offsetY));
 	}
+};
 
-	Sprite* hill = this->getHill();
-	count = width / hill->getContentSize().width;
-    
-    for (int i = 0; i < count; ++i)
-    {
-		hill = this->getHill();
+void ParallaxBackground::initHills(std::string type, float width)
+{
+	Size size = Sprite::createWithSpriteFrameName(type)->getContentSize();
+
+	int count = width / size.width;
+
+	for (int i = 0; i < count; ++i)
+	{
+		Sprite* hill = this->getHill(type);
 
 		float offsetX = hill->getContentSize().width * i;
 		float offsetY = 45.0f * this->getScale();
 
-		this->addChild(getShadowForNode(hill), -3, Vec2(0.803f, 0.91f), Vec2(offsetX + 3.0f, offsetY - 1.0f));
-		this->addChild(hill, -2, Vec2(0.8f, 0.9f), Vec2(offsetX, offsetY));
-    }
-    
+		Vec2 offset = Vec2(offsetX, offsetY);
+
+		this->addChild(getShadowForNode(hill), -3, BackgroundLayerHillsShadowParallaxRatio, Vec2(offsetX + 3.0f, offsetY - 1.0f));
+		this->addChild(hill, -2, BackgroundLayerHillsParallaxRatio, offset);
+	}
+};
+
+void ParallaxBackground::initRocks(std::string type, float)
+{
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	for (int i = 0; i < 5; ++i)
 	{
-		Sprite* cloud = this->getCloud();
+		Sprite* cloud = this->getCloud(type);
 		int zindex = random(3, 6);
 		float height = random(200, 400);
 
 		this->addChild(cloud, -zindex, Vec2(rand_0_1(), 0.0f), Vec2(origin.x + visibleSize.width, height * this->getScale()));
 	}
-}
+};
 
-
-ParallaxBackground::~ParallaxBackground()
+Sprite* ParallaxBackground::getBackground(std::string type)
 {
-	
-}
-
-
-Sprite* ParallaxBackground::getBackground()
-{
-	Sprite* sprite = Sprite::create("bg0.png");
+	Sprite* sprite = Sprite::create(type);
 	sprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);	
 	return sprite;
 };
 
-Sprite* ParallaxBackground::getMountain()
+Sprite* ParallaxBackground::getMountain(std::string type)
 {
-	Sprite* sprite = Sprite::createWithSpriteFrameName("rockGrass.png");
+	Sprite* sprite = Sprite::createWithSpriteFrameName(type);
 	sprite->setAnchorPoint(Vec2::ZERO);
 	sprite->setScale(rand_0_1() + 0.5f);
 	sprite->getTexture()->setAntiAliasTexParameters();	
 	return sprite;
 };
 
-Sprite* ParallaxBackground::getHill()
+Sprite* ParallaxBackground::getHill(std::string type)
 {
-	Sprite* sprite = Sprite::createWithSpriteFrameName("groundGrass.png");
+	Sprite* sprite = Sprite::createWithSpriteFrameName(type);
 	sprite->setAnchorPoint(Vec2::ZERO);
 	
 	return sprite;
 };
 
-Sprite* ParallaxBackground::getCloud()
+Sprite* ParallaxBackground::getRock(std::string type)
+{
+	Sprite* sprite = Sprite::createWithSpriteFrameName(type);
+	sprite->setAnchorPoint(Vec2::ZERO);
+
+	return sprite;
+};
+
+Sprite* ParallaxBackground::getCloud(std::string type)
 {
 	std::string cloudType = std::to_string(random(1, 3));
 	std::string filename = "cloud" + cloudType + ".png";
@@ -142,4 +144,116 @@ Sprite* ParallaxBackground::getShadowForNode(Sprite* sprite)
 	shadow->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 
 	return shadow;
+}
+
+
+GrassBackground* GrassBackground::create(float width)
+{
+	// Create an instance of ParallaxBackground
+	GrassBackground* node = new GrassBackground(width);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
+GrassBackground::GrassBackground(float width) : super(width)
+{
+	this->initBackground("bg0.png", width);
+	this->initMountains("rockGrass.png", width);
+	this->initHills("groundGrass.png", width);
+}
+
+
+SnowBackground* SnowBackground::create(float width)
+{
+	// Create an instance of ParallaxBackground
+	SnowBackground* node = new SnowBackground(width);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
+SnowBackground::SnowBackground(float width) : super(width)
+{
+	this->initBackground("bg0.png", width);
+	this->initMountains("rockSnow.png", width);
+	this->initHills("groundSnow.png", width);
+}
+
+
+SandBackground* SandBackground::create(float width)
+{
+	// Create an instance of ParallaxBackground
+	SandBackground* node = new SandBackground(width);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
+SandBackground::SandBackground(float width) : super(width)
+{
+	this->initBackground("bg0.png", width);	
+	this->initMountains("hill_largeAlt.png", width);
+	this->initHills("groundDirt.png", width);
+}
+
+
+DirtBackground* DirtBackground::create(float width)
+{
+	// Create an instance of ParallaxBackground
+	DirtBackground* node = new DirtBackground(width);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+}
+
+DirtBackground::DirtBackground(float width) : super(width)
+{
+	this->initBackground("bg0.png", width);
+	this->initMountains("meteorGrey_big1.png", width);
+	this->initHills("groundRock.png", width);
 }

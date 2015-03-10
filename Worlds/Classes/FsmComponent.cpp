@@ -24,6 +24,8 @@ void FsmState::ActionJump(IFsmComponent& fsm)
 	// Then change to the jump state
 	fsm.setCurrentState(fsm.StateJump); 
 };
+void FsmState::ActionToCave(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateToCave); };
+void FsmState::ActionToSurface(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateToSurface); };
 
 void UpState::ActionUp(IFsmComponent& fsm) /** Override **/
 {
@@ -110,6 +112,23 @@ void JumpState::ActionJump(IFsmComponent& fsm) /** Override **/
 	log("Lets jump again!!");
 };
 
+void ToCaveState::ActionToCave(IFsmComponent& fsm) /** Override **/
+{
+	if (AppGlobal::getInstance()->PlayerEvents.top() == EGameObjectEvent::MoveToCave)
+		AppGlobal::getInstance()->PlayerEvents.pop();
+	
+	if (AppGlobal::getInstance()->PlanetInstance->ToCave(*fsm.gameObject))
+	{
+		fsm.setCurrentState(fsm.StateStop);
+	}	
+};
+
+void ToSurfaceState::ActionStop(IFsmComponent& fsm) /** Override **/
+{
+	log("Lets jump again!!");
+};
+
+
 void PlayerFsmComponent::update()
 {
 	void(IFsmComponent:: *ptrs[])() =
@@ -120,12 +139,17 @@ void PlayerFsmComponent::update()
 		&IFsmComponent::EventRight,
 		&IFsmComponent::EventStop,
 		&IFsmComponent::EventJump,
+		&IFsmComponent::EventToCave,
+		&IFsmComponent::EventToSurface,
 	};
 	
     Events events = AppGlobal::getInstance()->PlayerEvents;
     
-    int runningEvent = events.top();
+	if (events.size() > 0)
+	{
+		int runningEvent = events.top();
 
-	(this->*ptrs[runningEvent])();
+		(this->*ptrs[runningEvent])();
+	}    
 }
 

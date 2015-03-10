@@ -178,9 +178,9 @@ void Player::update(Node* node)
         this->setPositionX(0.0f);
     }
     
-    if(this->getPositionX() < -this->boundingBox().size.width)
+    if(this->getPositionX() < -this->getBoundingBox().size.width)
     {
-        this->setPositionX(map->getWidth() - this->boundingBox().size.width);
+        this->setPositionX(map->getWidth() - this->getBoundingBox().size.width);
     }
     
 	_graphics->update(*node);
@@ -340,6 +340,13 @@ ToSurface* ToSurface::create(ValueMap& properties)
 
 ToSurface::ToSurface(ValueMap& properties) : super(properties)
 {
+	this->setTag(kTagToSurface);
+	_collision = new (std::nothrow) ToSurfaceCollisionComponent(*this);
+};
+
+void ToSurface::update(Node* node)
+{
+	_collision->update(*node);
 };
 
 
@@ -361,8 +368,14 @@ ToCave* ToCave::create(ValueMap& properties)
 
 ToCave::ToCave(ValueMap& properties) : super(properties)
 {	
+	this->setTag(kTagToCave);
+	_collision = new (std::nothrow) ToCaveCollisionComponent(*this);
 };
 
+void ToCave::update(Node* node)
+{
+	_collision->update(*node);
+};
 
 LandingSite* LandingSite::create(ValueMap& properties)
 {

@@ -14,6 +14,8 @@ enum EGameObjectEvent
     Right,
     Stop,
     Jump,
+	MoveToCave,
+	MoveToSurface,
 };
 
 enum EParallaxTileMapState
@@ -82,6 +84,8 @@ typedef std::string Type;
 #define PARTICLES_PNG			"particles.png"
 #define GRASS_PNG				"grass.png"
 #define SNOW_PNG				"snow.png"
+#define SAND_PNG				"sand.png"
+#define DIRT_PNG				"dirt.png"
 /**
 * PLIST assets
 */ 
@@ -135,6 +139,8 @@ typedef std::string Type;
 #define kTagPlanetSurface		0
 #define kTagCave				1
 #define kTagPlayer				2 
+#define kTagToSurface			3
+#define kTagToCave				4
 /****/
 #define kTagCursor				0
 #define KTagSceneLayer			1
@@ -164,5 +170,22 @@ const States GameObjectStates =
 	cocos2d::Vec2::ZERO,			/** Stop **/
 	cocos2d::Vec2( 0.0f,  1.0f )	/** Jump **/
 };
+
+#define ForegroundLayerHillsParallaxRatio			( Vec2(1.1f, 1.0f) )
+#define ForeGroundLayerHillsShadowParallaxRatio		( Vec2(1.1025f, 1.0f) )
+
+#define BackgroundLayerBackgroundParallaxRatio		( Vec2(0.6f, 0.3f) )
+
+#define BackgroundLayerMountainsParallaxRatio		( Vec2(0.7f, 0.5f) )
+#define BackgroundLayerMountainsShadowParallaxRatio	( Vec2(0.703f, 0.51f) )
+
+#define BackgroundLayerHillsParallaxRatio			( Vec2(0.8f, 0.9f) )
+#define BackgroundLayerHillsShadowParallaxRatio		( Vec2(0.803f, 0.91f) )
+
+#define BackgroundLayerRocksParallaxRatio			( Vec2(1.1f, 1.0f) )
+#define BackgroundLayerRocksShadowParallaxRatio		( Vec2(1.1f, 1.0f) )
+
+/****/
+#define GetSize(name) ( SpriteFrameCache::getInstance()->getSpriteFrameByName( (name) )->getOriginalSize() )
 
 #endif /* defined(__CONSTANTS__) */

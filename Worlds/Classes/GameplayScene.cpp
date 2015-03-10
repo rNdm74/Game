@@ -4,6 +4,9 @@
 #include "GameplayFinishedScene.h"
 #include "MenuScene.h"
 #include "Planet.h"
+#include "PlanetFactory.h"
+#include "GameObject.h"
+#include "GameObjectFactory.h"
 
 Scene* GameplayScene::createScene()
 {
@@ -32,8 +35,15 @@ bool GameplayScene::init()
     if ( !Layer::init() )
         return false;
 
-    planet = Planet::create("Grass");
+    planet = PlanetFactory::create("Grass");
 	this->addChild(planet);
+		
+	player = GameObjectFactory::create("Player", planet->getLandingSite());
+	planet->addPlayer(player);
+
+	AppGlobal::getInstance()->PlayerInstance = player;
+	AppGlobal::getInstance()->PlanetInstance = planet;
+	
 	//
     this->scheduleUpdateWithPriority(42);   
     

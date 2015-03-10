@@ -14,6 +14,8 @@ struct IFsmState
 	virtual void ActionRight(IFsmComponent& fsm) = 0;
 	virtual void ActionStop(IFsmComponent& fsm) = 0;
 	virtual void ActionJump(IFsmComponent& fsm) = 0;
+	virtual void ActionToCave(IFsmComponent& fsm) = 0;
+	virtual void ActionToSurface(IFsmComponent& fsm) = 0;
 };
 
 struct FsmState : public IFsmState
@@ -25,6 +27,8 @@ struct FsmState : public IFsmState
 	virtual void ActionRight(IFsmComponent& fsm);
 	virtual void ActionStop(IFsmComponent& fsm);
 	virtual void ActionJump(IFsmComponent& fsm);	
+	virtual void ActionToCave(IFsmComponent& fsm);
+	virtual void ActionToSurface(IFsmComponent& fsm);
 };
 
 struct UpState : public FsmState
@@ -68,6 +72,18 @@ struct JumpState : public FsmState
 	void ActionJump(IFsmComponent& fsm) override;	
 };
 
+struct ToCaveState : public FsmState
+{
+	/** Action**/
+	virtual void ActionToCave(IFsmComponent& fsm) override;
+};
+
+struct ToSurfaceState : public FsmState
+{
+	/** Action**/
+	virtual void ActionStop(IFsmComponent& fsm) override;
+};
+
 class IFsmComponent
 {
 public:
@@ -78,6 +94,8 @@ public:
 	StopState* StateStop;
     IdleState* StateIdle;
 	JumpState* StateJump;	
+	ToCaveState* StateToCave;
+	ToSurfaceState* StateToSurface;
 
 	IFsmComponent()
     {
@@ -87,7 +105,9 @@ public:
         StateRight = new RightState();
         StateStop = new StopState();
         StateIdle = new IdleState();
-		StateJump = new JumpState();		
+		StateJump = new JumpState();	
+		StateToCave = new ToCaveState();
+		StateToSurface = new ToSurfaceState();
     };
 
 	virtual ~IFsmComponent()
@@ -110,9 +130,12 @@ public:
 	virtual void EventRight() = 0;
 	virtual void EventStop() = 0;
 	virtual void EventJump() = 0;
+	virtual void EventToCave() = 0;
+	virtual void EventToSurface() = 0;
+
 	/** Events end **/
 
-	virtual void setCurrentState(FsmState* currentState) = 0;
+	virtual void setCurrentState(IFsmState* currentState) = 0;
 
 public: /** Variables **/
     IGameObject* gameObject;
@@ -132,11 +155,13 @@ public:
 	virtual void EventRight(){ currentState->ActionRight(*this); };
 	virtual void EventStop(){ currentState->ActionStop(*this); };
 	virtual void EventJump(){ currentState->ActionJump(*this); };
+	virtual void EventToCave(){ currentState->ActionToCave(*this); };
+	virtual void EventToSurface(){ currentState->ActionToSurface(*this); };
 	
-	virtual void setCurrentState(FsmState* newState){ currentState = newState; };
+	virtual void setCurrentState(IFsmState* newState){ currentState = newState; };
 
 protected:
-	FsmState* currentState;
+	IFsmState* currentState;
 };
 
 class PlayerFsmComponent : public FsmComponent

@@ -1,12 +1,61 @@
 #include "Constants.h"
 #include "ParallaxForeground.h"
-#include "AppGlobal.h"
 
 
-ParallaxForeground* ParallaxForeground::create(float width)
+ParallaxForeground::ParallaxForeground(float width)
+{
+	this->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	this->setScale(2.0f);
+	this->setTag(kTagPForegroundLayer);
+}
+
+void ParallaxForeground::init(std::string type, float width)
+{
+	Size size = GetSize(type);
+
+	int count = width / size.width;
+
+	for (int i = 0; i < count; ++i)
+	{		
+		Sprite* hill = getHill(type);
+		Sprite* hillShadow = getShadowForNode(hill);
+
+		Vec2 offset = Vec2(size.width * i, 0.0f);
+
+		/** Add the shadow **/
+		this->addChild(hillShadow, -3, ForeGroundLayerHillsShadowParallaxRatio, offset);
+		/** Add the hill **/
+		this->addChild(hill, -2, ForegroundLayerHillsParallaxRatio, offset);
+	}
+};
+
+Sprite* ParallaxForeground::getHill(std::string type)
+{
+	Sprite* sprite = Sprite::createWithSpriteFrameName(type);
+
+	sprite->setAnchorPoint(Vec2::ZERO);
+	sprite->setFlippedX(true);
+	sprite->setTag(kTagHill);
+
+	return sprite;
+};
+
+Sprite* ParallaxForeground::getShadowForNode(Sprite* sprite)
+{
+	Sprite* shadow = Sprite::create();
+	shadow->setSpriteFrame(sprite->getSpriteFrame());
+	shadow->setAnchorPoint(Vec2(-0.005f, 0.02f));
+	shadow->setColor(Color3B(0, 0, 0));
+	shadow->setOpacity(50);
+	shadow->setFlippedX(true);
+	return shadow;
+}
+
+
+GrassForeground* GrassForeground::create(float width)
 {
 	// Create an instance of ParallaxBackground
-	ParallaxForeground* node = new ParallaxForeground(width);
+	GrassForeground* node = new GrassForeground(width);
 
 	if (node)
 	{
@@ -21,82 +70,87 @@ ParallaxForeground* ParallaxForeground::create(float width)
 	}
 
 	return node;
-}
-
-ParallaxForeground::ParallaxForeground(float width)
-{
-	Sprite* hill = this->getHill();
-
-	int count = width / hill->getContentSize().width;
-    
-    for (int i = 0; i < count; ++i)
-    {
-		hill = this->getHill();
-
-		/** Add the shadow **/
-		this->addChild(getShadowForNode(hill), -3, Vec2(1.1025f, 1.0f), Vec2(hill->getContentSize().width * i, 0.0f));
-		/** Add the hill **/		
-		this->addChild(hill, -2, Vec2(1.1f, 1.0f), Vec2(hill->getContentSize().width * i, 0.0f));
-    }
-
-	this->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-	this->setScale(2.0f);
-	this->setTag(kTagPForegroundLayer);
-}
-
-ParallaxForeground::~ParallaxForeground()
-{
-	
-}
-
-Sprite* ParallaxForeground::getMountain()
-{
-	Sprite* sprite = Sprite::createWithSpriteFrameName("rockGrass.png");
-
-	sprite->setAnchorPoint(Vec2::ZERO);
-	sprite->setScale(rand_0_1() + 0.5f);
-	sprite->getTexture()->setAntiAliasTexParameters();
-	sprite->setTag(kTagMountain);
-
-	return sprite;
 };
 
-Sprite* ParallaxForeground::getHill()
+GrassForeground::GrassForeground(float width) : super(width)
 {
-	Sprite* sprite = Sprite::createWithSpriteFrameName("groundIce.png");
-	sprite->setFlippedX(true);
-	sprite->setAnchorPoint(Vec2::ZERO);
-	sprite->setTag(kTagHill);
-	return sprite;
+	this->init("groundDirt.png", width);
 };
 
-Sprite* ParallaxForeground::getCloud()
+
+SnowForeground* SnowForeground::create(float width)
 {
-	std::string cloudType = std::to_string(random(1, 4));
-	std::string filename = "cloud" + cloudType + ".png";
+	// Create an instance of ParallaxBackground
+	SnowForeground* node = new SnowForeground(width);
 
-	Sprite* cloud = Sprite::createWithSpriteFrameName(filename);
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
 
-	cloud->setAnchorPoint(Vec2::ZERO);
-	cloud->setScale(rand_0_1() + 1.0f);
-	cloud->addChild(getShadowForNode(cloud), -99);
-	cloud->setTag(kTagCloud);
-
-	return cloud;
+	return node;
 };
 
-void ParallaxForeground::update(float delta)
-{
-	
-}
+SnowForeground::SnowForeground(float width) : super(width)
+{		
+	this->init("groundIce.png", width);
+};
 
-Sprite* ParallaxForeground::getShadowForNode(Sprite* sprite)
+
+SandForeground* SandForeground::create(float width)
 {
-	Sprite* shadow = Sprite::create();
-	shadow->setSpriteFrame(sprite->getSpriteFrame());
-	shadow->setAnchorPoint(Vec2(-0.005f, 0.02f));
-	shadow->setColor(Color3B(0, 0, 0));
-	shadow->setOpacity(50);
-	shadow->setFlippedX(true);
-	return shadow;
-}
+	// Create an instance of ParallaxBackground
+	SandForeground* node = new SandForeground(width);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+};
+
+SandForeground::SandForeground(float width) : super(width)
+{
+	this->init("groundDirt.png", width);
+};
+
+
+DirtForeground* DirtForeground::create(float width)
+{
+	// Create an instance of ParallaxBackground
+	DirtForeground* node = new DirtForeground(width);
+
+	if (node)
+	{
+		// Add it to autorelease pool
+		node->autorelease();
+	}
+	else
+	{
+		// Otherwise delete
+		delete node;
+		node = 0;
+	}
+
+	return node;
+};
+
+DirtForeground::DirtForeground(float width) : super(width)
+{
+	this->init("groundRock.png", width);
+};

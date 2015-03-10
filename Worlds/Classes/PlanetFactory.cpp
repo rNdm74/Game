@@ -14,6 +14,14 @@ IPlanet* PlanetFactory::create(std::string planetType)
     {
         planet = SnowPlanet::create();
     }
+	else if (planetType == "Sand")
+	{
+		planet = SandPlanet::create();
+	}
+	else if (planetType == "Dirt")
+	{
+		planet = DirtPlanet::create();
+	}
     
     return planet;
 }

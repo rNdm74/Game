@@ -239,9 +239,11 @@ public:
 	ToSurface(cocos2d::ValueMap& properties);
 	virtual ~ToSurface(){};
 
+	virtual void update(Node* node) override;
+
 private:
 	/** **/
-	
+	ICollisionComponent* _collision;
 };
 
 
@@ -263,8 +265,11 @@ public:
 	ToCave(cocos2d::ValueMap& properties);
 	virtual ~ToCave(){};
 
+	virtual void update(Node* node) override;
+
 private:
 	/** **/
+	ICollisionComponent* _collision;
 };
 
 

@@ -35,7 +35,7 @@ public:
 
 	/** Player **/
 	virtual void addPlayer(IGameObject* player) = 0;
-	virtual IGameObject* removePlayer() = 0;
+	virtual void removePlayer() = 0;
 	virtual void setPositionOnPlayer() = 0;
 	virtual ValueMap getInitialProperties() = 0;
 		
@@ -54,8 +54,10 @@ class ParallaxTileMap : public IParallaxTileMap
 {
 public:
 	/** Constructors and the Destructor **/
-	ParallaxTileMap(std::string mapName);
+	ParallaxTileMap(std::string type);
 	virtual ~ParallaxTileMap();
+
+	void init(TMXTiledMap* tileMap, Texture2D* texture);
 
 	/** Overrides**/
 	void update(float& delta) override;	
@@ -79,7 +81,7 @@ public:
     
 	/** Player **/
 	virtual void addPlayer(IGameObject* player);
-	virtual IGameObject* removePlayer();
+	virtual void removePlayer();
 	virtual void setPositionOnPlayer();
 	virtual ValueMap getInitialProperties();
 
@@ -134,11 +136,13 @@ class Cave : public ParallaxTileMap
 
 public:
 	/** Node create **/
-	static self* create(std::string mapName);
+	static self* create(std::string type);
 
 	/** Constructor **/
 	Cave(std::string mapName);
 	virtual ~Cave(){};
+
+	ValueMap getToSurfaceProperties();
 };
 
 
@@ -149,15 +153,19 @@ class PlanetSurface : public ParallaxTileMap
 
 public:
 	/** Node create **/
-	static self* create(std::string mapName);
+	static self* create(std::string type);
 
 	/** Constructor**/
 	PlanetSurface(std::string mapName);
 	virtual ~PlanetSurface(){};
 
+	ValueMap getToCaveProperties();
+
 private:
 	class ParallaxBackground* _parallaxBackgroundLayer;
 	class ParallaxForeground* _parallaxForegroundLayer;
+
+	
 
 };
 

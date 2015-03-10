@@ -2,6 +2,9 @@
 #define __FranticAlien__Planet_H__
 
 #include "cocos2d.h"
+#include "GameObject.h"
+#include "ParallaxForeground.h"
+#include "ParallaxBackground.h"
 #include "ParallaxTileMap.h"
 
 using namespace cocos2d;
@@ -19,6 +22,11 @@ public:
 
 	virtual ValueMap getLandingSite() = 0;
 	virtual void update(float& delta) = 0;
+	virtual void addPlayer(IGameObject* gameObject) = 0;
+	virtual PlanetSurface& getPlanetSurface() = 0;
+	virtual Cave& getPlanetCave(int index) = 0;
+	virtual bool ToCave(IGameObject& gameObject) = 0;
+	virtual bool ToSurface(IGameObject& gameObject) = 0;
 };
 
 class Planet : public IPlanet
@@ -26,9 +34,7 @@ class Planet : public IPlanet
 	typedef IPlanet super;
 	typedef Planet self;
 
-public:	
-    static self* create(){};
-	
+public:		
     Planet(){};
 	virtual ~Planet(){};
 
@@ -36,9 +42,20 @@ public:
     virtual ValueMap getLandingSite() override;
     /** **/
 	virtual void update(float& delta) override;
+
+	virtual void addPlayer(IGameObject* gameObject) override;
+
+	virtual PlanetSurface& getPlanetSurface() override;
+	virtual Cave& getPlanetCave(int index) override;
     
-private:
-    IParallaxTileMap* _tileMap;
+	virtual bool ToCave(IGameObject& gameObject) override;
+	virtual bool ToSurface(IGameObject& gameObject) override;
+
+protected:
+	PlanetSurface* _planetSurface;
+	Cave* _planetCave;
+
+	std::stack<IParallaxTileMap*> planetMaps;
 };
 
 
@@ -66,5 +83,28 @@ public:
 	virtual ~SnowPlanet(){};
 };
 
+class SandPlanet : public Planet
+{
+	typedef Planet super;
+	typedef SandPlanet self;
+
+public:
+	static self* create();
+
+	SandPlanet();
+	virtual ~SandPlanet(){};
+};
+
+class DirtPlanet : public Planet
+{
+	typedef Planet super;
+	typedef DirtPlanet self;
+
+public:
+	static self* create();
+
+	DirtPlanet();
+	virtual ~DirtPlanet(){};
+};
 
 #endif /* defined(__FranticAlien__Planet_H__) */

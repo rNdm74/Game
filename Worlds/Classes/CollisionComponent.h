@@ -51,4 +51,23 @@ public:
 
 };
 
+class ToCaveCollisionComponent : public CollisionComponent
+{
+public:
+	ToCaveCollisionComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	virtual ~ToCaveCollisionComponent(){};
+
+	virtual void update(Node& node) override;
+};
+
+class ToSurfaceCollisionComponent : public CollisionComponent
+{
+public:
+	ToSurfaceCollisionComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	virtual ~ToSurfaceCollisionComponent(){};
+
+	virtual void update(Node& node) override;
+};
+
+
 #endif /* defined(__FranticAlien__PhysicsComponent__) */

@@ -9,19 +9,27 @@
 #include "Path.h"
 
 
-ParallaxTileMap::ParallaxTileMap(std::string mapName)
+ParallaxTileMap::ParallaxTileMap(std::string type)
+{
+}
+
+ParallaxTileMap::~ParallaxTileMap()
+{
+	_tileMap->release();
+}
+
+void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 {
 	// create tilemap
-	_tileMap = TMXTiledMap::create(mapName);
+	_tileMap = tileMap;
 	_tileMap->retain();
-		
-	Texture2D* texture = Sprite::create(SNOW_PNG)->getTexture();
+
 	//
 	_mapSize = _tileMap->getMapSize();
 	_tileSize = _tileMap->getTileSize();
-		
+
 	// get background layer
-	auto _backgroundLayer = _tileMap->getLayer("background");	
+	auto _backgroundLayer = _tileMap->getLayer("background");
 	_backgroundLayer->retain();
 	_backgroundLayer->setTexture(texture);
 	_backgroundLayer->setTag(kTagBackgroundLayer);
@@ -63,32 +71,27 @@ ParallaxTileMap::ParallaxTileMap(std::string mapName)
 	// create debug layer
 	_debugLayer = DrawNode::create();
 	_debugLayer->setTag(kTagDebugLayer);
-    
+
 	this->setAnchorPoint(Vec2::ZERO);
 	this->setContentSize(_tileMap->getContentSize());
-			
-	/** **/	
-	this->addChild(_backgroundLayer,			-2, Vec2(0.9f, 1.0f), Vec2::ZERO);
-	this->addChild(_shadowLayer,				-1, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_collisionLayer,				 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_ladderLayer,				 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_objectLayer,				 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
-    this->addChild(_debugLayer,					 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_foregroundLayer,			 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
-    /** **/
+	/** **/
+	this->addChild(_backgroundLayer, -2, Vec2(0.9f, 1.0f), Vec2::ZERO);
+	this->addChild(_shadowLayer, -1, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_collisionLayer, 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_ladderLayer, 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_objectLayer, 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_debugLayer, 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_foregroundLayer, 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
+
+	/** **/
 	this->addShadows(static_cast<TMXLayer&>(*_collisionLayer));
 	this->addShadows(static_cast<TMXLayer&>(*_ladderLayer));
 	this->addShadows(static_cast<TMXLayer&>(*_foregroundLayer));
 
 	/** **/
 	this->addObjects();
-}
-
-ParallaxTileMap::~ParallaxTileMap()
-{
-	_tileMap->release();
-}
+};
 
 void ParallaxTileMap::update(float& delta)
 {
@@ -98,18 +101,23 @@ void ParallaxTileMap::update(float& delta)
 
 #endif // DEBUG_ENABLE
 
-	// Tile map is responsible for updating its children
-	for (auto& child : this->getChildByTag(kTagObjectLayer)->getChildren())
+	auto children = this->getChildByTag(kTagObjectLayer)->getChildren();
+
+	if (children.size() > 0)
 	{
-		IGameObject* gameObject = static_cast<IGameObject*>(child);
-		gameObject->update(this);
+		// Tile map is responsible for updating its children
+		for (auto& child : children)
+		{
+			IGameObject* gameObject = static_cast<IGameObject*>(child);
+			gameObject->update(this);
 
 #if DEBUG_ENABLE
 
-		this->drawDebugRect(gameObject->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+			this->drawDebugRect(gameObject->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
 
 #endif // DEBUG_ENABLE
 
+		}
 	}
 }
 
@@ -164,12 +172,9 @@ void ParallaxTileMap::addPlayer(IGameObject* player)
 	this->getChildByTag(kTagObjectLayer)->addChild(player);
 };
 
-IGameObject* ParallaxTileMap::removePlayer()
+void ParallaxTileMap::removePlayer()
 {
-	Node* player = this->getChildByTag(kTagObjectLayer)->getChildByTag(kTagPlayer);
-	player->removeFromParentAndCleanup(true);
-
-	return static_cast<IGameObject*>(player);
+	this->getChildByTag(kTagObjectLayer)->getChildByTag(kTagPlayer)->removeFromParentAndCleanup(true);
 };
 
 void ParallaxTileMap::setPositionOnPlayer()
@@ -530,8 +535,8 @@ void ParallaxTileMap::enableParallaxForegroundOpacity(int fade)
 
 			currentOpacity += kOpacityFadeFactor * fade;
 
-			if (currentOpacity < kOpacityMin)
-				currentOpacity = kOpacityMin;
+			if (currentOpacity < 0)
+				currentOpacity = 0;
 			if (currentOpacity > kOpacityMax)
 				currentOpacity = kOpacityMax;
 
@@ -541,10 +546,10 @@ void ParallaxTileMap::enableParallaxForegroundOpacity(int fade)
 };
 
 
-Cave* Cave::create(std::string mapName)
+PlanetSurface* PlanetSurface::create(std::string type)
 {
 	// Create an instance of InfiniteParallaxNode
-	Cave* node = new Cave(mapName);
+	PlanetSurface* node = new PlanetSurface(type);
 
 	if (node)
 	{
@@ -561,21 +566,53 @@ Cave* Cave::create(std::string mapName)
 	return node;
 }
 
-Cave::Cave(std::string mapName) : super(mapName)
+PlanetSurface::PlanetSurface(std::string type) : super(type)
 {
+	this->setTag(kTagPlanetSurface);
+	this->init(TMXTiledMap::create(kPlanetSurfaceTmx), Sprite::create(type)->getTexture());
 
+	float width = _mapSize.width * _tileSize.width;
+	Vec2 parallaxRatio = Vec2(1.0f, 1.0f);
+	Vec2 offset = Vec2::ZERO;
+	int bZindex = -3;
+	int fZindex = 6;
+
+	if (type == GRASS_PNG)
+	{		
+		this->addChild(GrassBackground::create(width), bZindex, parallaxRatio, offset);
+		this->addChild(GrassForeground::create(width), fZindex, parallaxRatio, offset);
+	}
+	else if (type == SNOW_PNG)
+	{		
+		this->addChild(SnowBackground::create(width), bZindex, parallaxRatio, offset);
+		this->addChild(SnowForeground::create(width), fZindex, parallaxRatio, offset);
+	}
+	else if (type == SAND_PNG)
+	{
+		this->addChild(SandBackground::create(width), bZindex, parallaxRatio, offset);
+		this->addChild(SandForeground::create(width), fZindex, parallaxRatio, offset);
+	}
+	else if (type == DIRT_PNG)
+	{
+		this->addChild(DirtBackground::create(width), bZindex, parallaxRatio, offset);
+		this->addChild(DirtForeground::create(width), fZindex, parallaxRatio, offset);
+	}	
 };
 
+ValueMap PlanetSurface::getToCaveProperties()
+{
+	return static_cast<ToCave*>(getChildByTag(kTagObjectLayer)->getChildByTag(kTagToCave))->getProperties();
+};
 
-PlanetSurface* PlanetSurface::create(std::string mapName)
+Cave* Cave::create(std::string type)
 {
 	// Create an instance of InfiniteParallaxNode
-	PlanetSurface* node = new PlanetSurface(mapName);
+	Cave* node = new Cave(type);
 
 	if (node)
 	{
 		// Add it to autorelease pool
-		node->autorelease();
+		node->autorelease();		
 	}
 	else
 	{
@@ -587,13 +624,14 @@ PlanetSurface* PlanetSurface::create(std::string mapName)
 	return node;
 }
 
-PlanetSurface::PlanetSurface(std::string mapName) : super(mapName)
+Cave::Cave(std::string type) : super(type)
 {
-	_parallaxBackgroundLayer = ParallaxBackground::create(_mapSize.width * _tileSize.width);
+	this->setTag(kTagCave);
 
-	this->addChild(_parallaxBackgroundLayer, -3, Vec2(1.0f, 0.9f), Vec2::ZERO);
+	this->init(TMXTiledMap::create("cave1.tmx"), Sprite::create(type)->getTexture());
+};
 
-	_parallaxForegroundLayer = ParallaxForeground::create(_mapSize.width * _tileSize.width);
-
-	this->addChild(_parallaxForegroundLayer, 6, Vec2(1.0f, 0.9f), Vec2::ZERO);
+ValueMap Cave::getToSurfaceProperties()
+{
+	return static_cast<ToSurface*>(getChildByTag(kTagObjectLayer)->getChildByTag(kTagToSurface))->getProperties();
 };

@@ -3,15 +3,13 @@
 
 #include "cocos2d.h"
 
-class Planet;
-
 using namespace cocos2d;
 
 class GameplayScene : public Layer
-{
-private:
-	Planet* planet;
-        
+{  
+	class IPlanet* planet;
+	class IGameObject* player;
+
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static Scene* createScene();

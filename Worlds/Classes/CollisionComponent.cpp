@@ -19,39 +19,60 @@ void CollisionComponent::update(Node& node)
 	
 };
 
-/**
-* Create a path finder
-*
-* @param parallaxTileMap The ParallaxTileMap to be searched
-* @param maxSearchDistance The maximum depth we'll search before giving up
-* @param allowDiagMovement True if the search should try diaganol movement
-*/
+
+void ShowCaveCollisionComponent::update(Node& node)
+{ 	
+};
+
+void ToCaveCollisionComponent::update(Node& node)
+{
+	if (AppGlobal::getInstance()->PlayerEvents.top() == EGameObjectEvent::MoveToCave)
+		return;
+
+	IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
+
+	Rect r1 = map.getPlayer()->getCollisionBox();
+	Rect r2 = _gameObject->getCollisionBox();
+	
+	if (r1.origin.y < r2.origin.y)
+	{
+		while (AppGlobal::getInstance()->PlayerEvents.top() != EGameObjectEvent::Stop )
+		{
+			AppGlobal::getInstance()->PlayerEvents.pop();
+		}
+					
+		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::MoveToCave);
+	}
+};
+
+void ToSurfaceCollisionComponent::update(Node& node)
+{
+	//if (AppGlobal::getInstance()->PlayerEvents.top() == EGameObjectEvent::MoveToSurface)
+	//	return;
+
+	IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
+
+	Rect r1 = map.getPlayer()->getCollisionBox();
+	Rect r2 = _gameObject->getCollisionBox();
+
+	if (r1.origin.y > r2.origin.y + r2.size.height)
+	{
+		while (AppGlobal::getInstance()->PlayerEvents.top() != EGameObjectEvent::Stop)
+		{
+			AppGlobal::getInstance()->PlayerEvents.pop();
+		}
+
+		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::MoveToSurface);
+	}
+};
+
+
 void PlayerCollisionComponent::update(Node& node)
 {
-	this->checkTileCollision(node);   
+	this->checkTileCollision(node);
 	this->checkLadderCollision(node);
 }
 
-void ShowCaveCollisionComponent::update(Node& node)
-{ 
-	/*ParallaxTileMap& map = static_cast<ParallaxTileMap&>(node);
-
-    Rect r1 = _gameObject->getCollisionBox();
-    Vec2 p = map.getPlayer()->getCenterPosition();
-    
-	if (r1.containsPoint(p))
-	{
-		static_cast<ShowCave*>(_gameObject)->DetectedPlayer = true;
-	}*/
-};
-
-/**
-* Check if a gameObject has a tile collision
-* The velocity and desiredPosition of the game object will be modified depending on collisions found 
-*
-* @param node The Node containing the gameObject
-* @param gameObject The IGameObject that is checking collisions
-*/
 void PlayerCollisionComponent::checkTileCollision(Node& node)
 {		
 	/** Game objects desired position **/
