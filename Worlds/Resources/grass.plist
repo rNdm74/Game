@@ -7,7 +7,7 @@
 			<key>slice01_01.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{142,355},{70,70}}</string>
+				<string>{{213,0},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -21,7 +21,7 @@
 			<key>slice02_02.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{355,284},{70,70}}</string>
+				<string>{{426,0},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -35,7 +35,7 @@
 			<key>slice03_03.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{355,213},{70,70}}</string>
+				<string>{{355,497},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -49,7 +49,7 @@
 			<key>slice04_04.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{355,142},{70,70}}</string>
+				<string>{{355,426},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -63,7 +63,7 @@
 			<key>slice05_05.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{355,71},{70,70}}</string>
+				<string>{{355,355},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -77,7 +77,7 @@
 			<key>slice06_06.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{355,0},{70,70}}</string>
+				<string>{{355,284},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -91,7 +91,63 @@
 			<key>slice07_07.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{284,355},{70,70}}</string>
+				<string>{{355,213},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice08_08.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{355,142},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice09_09.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{355,71},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice10_10.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{355,0},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice11_11.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{284,497},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -105,7 +161,7 @@
 			<key>slice12_12.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{284,284},{70,70}}</string>
+				<string>{{284,426},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -119,7 +175,7 @@
 			<key>slice13_13.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{284,213},{70,70}}</string>
+				<string>{{284,355},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -133,7 +189,7 @@
 			<key>slice14_14.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{284,142},{70,70}}</string>
+				<string>{{284,284},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -147,7 +203,7 @@
 			<key>slice15_15.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{284,71},{70,70}}</string>
+				<string>{{284,213},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -161,7 +217,7 @@
 			<key>slice16_16.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{284,0},{70,70}}</string>
+				<string>{{284,142},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -175,7 +231,7 @@
 			<key>slice17_17.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{213,355},{70,70}}</string>
+				<string>{{284,71},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -189,7 +245,7 @@
 			<key>slice18_18.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{213,284},{70,70}}</string>
+				<string>{{284,0},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -203,7 +259,7 @@
 			<key>slice19_19.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{213,213},{70,70}}</string>
+				<string>{{213,497},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -217,7 +273,7 @@
 			<key>slice20_20.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{213,142},{70,70}}</string>
+				<string>{{213,426},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -231,7 +287,7 @@
 			<key>slice21_21.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{213,71},{70,70}}</string>
+				<string>{{213,355},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -245,7 +301,7 @@
 			<key>slice22_22.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{213,0},{70,70}}</string>
+				<string>{{213,284},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -259,7 +315,7 @@
 			<key>slice23_23.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{355,355},{70,70}}</string>
+				<string>{{213,213},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -273,7 +329,7 @@
 			<key>slice24_24.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{142,284},{70,70}}</string>
+				<string>{{213,142},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -287,7 +343,7 @@
 			<key>slice25_25.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{142,213},{70,70}}</string>
+				<string>{{213,71},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -301,7 +357,7 @@
 			<key>slice26_26.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{142,142},{70,70}}</string>
+				<string>{{426,71},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -315,7 +371,7 @@
 			<key>slice27_27.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{142,71},{70,70}}</string>
+				<string>{{142,497},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -329,7 +385,7 @@
 			<key>slice28_28.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{142,0},{70,70}}</string>
+				<string>{{142,426},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -343,7 +399,7 @@
 			<key>slice29_29.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{71,355},{70,70}}</string>
+				<string>{{142,355},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -357,7 +413,7 @@
 			<key>slice30_30.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{71,284},{70,70}}</string>
+				<string>{{142,284},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -371,7 +427,7 @@
 			<key>slice31_31.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{71,213},{70,70}}</string>
+				<string>{{142,213},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -385,7 +441,7 @@
 			<key>slice32_32.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{71,142},{70,70}}</string>
+				<string>{{142,142},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -399,7 +455,7 @@
 			<key>slice33_33.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{71,71},{70,70}}</string>
+				<string>{{142,71},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -413,7 +469,7 @@
 			<key>slice34_34.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{71,0},{70,70}}</string>
+				<string>{{142,0},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -427,7 +483,7 @@
 			<key>slice35_35.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,354},{70,70}}</string>
+				<string>{{71,497},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -441,13 +497,13 @@
 			<key>slice36_36.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,284},{70,69}}</string>
+				<string>{{71,426},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
 				<false/>
 				<key>sourceColorRect</key>
-				<string>{{0,0},{70,69}}</string>
+				<string>{{0,0},{70,70}}</string>
 				<key>sourceSize</key>
 				<string>{70,70}</string>
 			</dict>
@@ -455,7 +511,7 @@
 			<key>slice37_37.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,213},{70,70}}</string>
+				<string>{{71,355},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -469,7 +525,7 @@
 			<key>slice38_38.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,142},{70,70}}</string>
+				<string>{{71,284},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -483,7 +539,7 @@
 			<key>slice39_39.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,71},{70,70}}</string>
+				<string>{{71,213},{70,70}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -495,6 +551,146 @@
 			</dict>
 
 			<key>slice40_40.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{71,142},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice41_41.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{71,71},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice42_42.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{71,0},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice43_43.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,497},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice44_44.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,426},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice45_45.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,355},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice46_46.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,284},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice47_47.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,213},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice48_48.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,142},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice49_49.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,71},{70,70}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+			</dict>
+
+			<key>slice50_50.png</key>
 			<dict>
 				<key>frame</key>
 				<string>{{0,0},{70,70}}</string>
@@ -515,7 +711,7 @@
 			<key>format</key>
 			<integer>2</integer>
 			<key>size</key>
-			<string>{426,426}</string>
+			<string>{568,568}</string>
 			<key>textureFileName</key>
 			<string>grass.png</string>
 			</dict>

@@ -713,7 +713,7 @@
 			<key>size</key>
 			<string>{568,568}</string>
 			<key>textureFileName</key>
-			<string>snow.png</string>
+			<string>dirt.png</string>
 			</dict>
 		</dict>
 </plist>
