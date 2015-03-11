@@ -74,7 +74,7 @@ GrassForeground* GrassForeground::create(float width)
 
 GrassForeground::GrassForeground(float width) : super(width)
 {
-	this->init("groundDirt.png", width);
+	this->init("groundGrass.png", width);
 };
 
 

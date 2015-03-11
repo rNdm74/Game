@@ -70,6 +70,8 @@ public: /** Variables **/
 	bool OnGround = true;
 	bool OnLadder = false;
 	bool JumpRequest = false;
+
+	Events events;
 };
 
 /**
@@ -184,6 +186,42 @@ public:
 	/** Getters Overridden **/
 	virtual cocos2d::Rect getCollisionBox() override;
 	
+private: /** **/
+	IFsmComponent* _fsm;
+	IMenuComponent* _menu;
+	IInputComponent* _input;
+	IGraphicsComponent* _graphics;
+	ICollisionComponent* _collision;
+};
+
+
+class Npc : public GameObject
+{
+	typedef GameObject super;
+	typedef Npc self;
+
+public:
+	static self* create(cocos2d::ValueMap& properties);
+
+	Npc(cocos2d::ValueMap& properties);
+	~Npc();
+
+	/** Update the gameObject overridden **/
+	virtual void update(Node* node) override;
+
+	/** Action methods overridden **/
+	virtual void Up() override;
+	virtual void Down() override;
+	virtual void Left() override;
+	virtual void Right() override;
+	virtual void Stop() override;
+	virtual void Idle() override;
+	virtual void Talk() override;
+	/** Action methods end **/
+
+	/** Getters Overridden **/
+	virtual cocos2d::Rect getCollisionBox() override;
+
 private: /** **/
 	IFsmComponent* _fsm;
 	IMenuComponent* _menu;

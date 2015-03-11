@@ -1,5 +1,5 @@
-#ifndef __FranticAlien__FSM_COMPONENT_H__
-#define __FranticAlien__FSM_COMPONENT_H__
+#ifndef __FranticAlien__AI_COMPONENT_H__
+#define __FranticAlien__AI_COMPONENT_H__
 
 #include "AppGlobal.h"
 
@@ -193,4 +193,4 @@ public:
 
 
 
-#endif /* defined(__FranticAlien__FSM_COMPONENT_H__) */
+#endif /* defined(__FranticAlien__AI_COMPONENT_H__) */

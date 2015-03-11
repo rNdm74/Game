@@ -88,11 +88,24 @@ void InputComponent::HitWall()
 {
 	/** Immediate stop **/
 	_gameObject->setVelocity(Vec2::ZERO);
-
-
 };
 
 void PlayerInputComponent::update()
+{
+	/** Apply gravity **/
+	if (_gameObject->OnGround == false && _gameObject->OnLadder == false)
+		this->ApplyGravity();
+
+	Vec2 velocity = _gameObject->getVelocity();
+	//
+	velocity.clamp(_minMovement, _maxMovement);
+	//
+	Vec2 stepVelocity = velocity * kUpdateInterval;
+	//
+	_gameObject->setDesiredPosition(_gameObject->getPosition() + stepVelocity);
+}
+
+void NpcInputComponent::update()
 {
 	/** Apply gravity **/
 	if (_gameObject->OnGround == false && _gameObject->OnLadder == false)

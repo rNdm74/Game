@@ -16,6 +16,7 @@ public:
 	virtual ~IGraphicsComponent(){};
 	
 	virtual void update(Node& node) = 0;
+	virtual void updateFrame() = 0;
 
 	virtual void Up() = 0;
 	virtual void Down() = 0;
@@ -35,6 +36,7 @@ public:
 	virtual ~GraphicsComponent(){};
 	
 	virtual void update(Node& node);
+	virtual void updateFrame();
 
 	virtual void Up(){};
 	virtual void Down(){};
@@ -48,6 +50,12 @@ public:
 
 protected:
 	IGameObject* _gameObject;
+
+	AnimationFrames animationFrames;
+
+
+	int currentFrame;
+	float frameTime;
 };
 
 class PlayerGraphicsComponent : public GraphicsComponent
@@ -79,6 +87,40 @@ private:
 
 	AnimationFrames animationFrames;
 	EAnimationStates activeState;
+		
+	long idleTime;
+	long maxIdleTime;
+};
+
+class NpcGraphicsComponent : public GraphicsComponent
+{
+public:
+	NpcGraphicsComponent(IGameObject& gameObject);
+	virtual ~NpcGraphicsComponent(){};
+
+	virtual void update(Node& node) override;
+
+	virtual void Up() override;
+	virtual void Down() override;
+	virtual void Left() override;
+	virtual void Right() override;
+	virtual void Stop() override;
+	virtual void Idle() override;
+	virtual void Hurt() override;
+	virtual void Crouch() override;
+	virtual void Jump() override;
+
+private:
+	void lookLeft();
+	void lookRight();
+	void lookUp();
+	void lookDown();
+	void lookForward();
+
+	Sprite* _shadow;
+
+	AnimationFrames animationFrames;
+	EAnimationStates activeState;
 
 	int currentFrame;
 	float frameTime;
@@ -86,6 +128,8 @@ private:
 	long idleTime;
 	long maxIdleTime;
 };
+
+
 
 class ShowCaveGraphicsComponent : public GraphicsComponent
 {

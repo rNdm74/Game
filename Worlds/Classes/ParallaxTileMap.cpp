@@ -83,20 +83,43 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
         {
             Vec2 coord = Vec2(col, row);
             
-            if(_innerForegroundLayer->getTileAt(coord))
+			int foreGID = _innerForegroundLayer->getTileGIDAt(coord);
+			int backGID = _innerBackgroundLayer->getTileGIDAt(coord);
+
+            if(foreGID)
             {
-                Sprite* tile = _innerForegroundLayer->getTileAt(Vec2(coord));
+				Sprite* tile = _innerForegroundLayer->getTileAt(Vec2(coord));
                 
-                float newScale = random(1.0f, 2.0f);
+				float newScale = 1.0f;
+
+				if (foreGID == 4)
+				{
+					newScale = random(0.5f, 2.0f);
+				}
+				else
+				{
+					newScale = random(0.25f, 1.0f);
+				}
+
                 tile->setScale(newScale);
-                tile->getTexture()->setAntiAliasTexParameters();
+                tile->getTexture()->setAntiAliasTexParameters();				
             }
             
-            if(_innerBackgroundLayer->getTileGIDAt(coord))
+            if(backGID)
             {
                 Sprite* tile = _innerBackgroundLayer->getTileAt(Vec2(coord));
                 
-                float newScale = random(1.0f, 1.5f);
+				float newScale = 1.0f;
+
+				if (backGID == 4)
+				{
+					newScale = random(0.5f, 2.0f);
+				}
+				else
+				{
+					newScale = random(0.25f, 1.0f);
+				}
+
                 tile->setScale(newScale);
                 tile->getTexture()->setAntiAliasTexParameters();
             }
@@ -134,8 +157,8 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 	this->addChild(_foregroundLayer, 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
 	/** **/
-    this->addShadows(static_cast<TMXLayer&>(*_innerBackgroundLayer));
-    this->addShadows(static_cast<TMXLayer&>(*_innerForegroundLayer));
+    //this->addShadows(static_cast<TMXLayer&>(*_innerBackgroundLayer));
+    //this->addShadows(static_cast<TMXLayer&>(*_innerForegroundLayer));
 
 	this->addShadows(static_cast<TMXLayer&>(*_collisionLayer));
 	this->addShadows(static_cast<TMXLayer&>(*_ladderLayer));
@@ -394,7 +417,7 @@ void ParallaxTileMap::addShadows(TMXLayer& layer)
                 shadow->setScale(tile.getScale());
 				shadow->setPosition(tile.getPosition());
 
-				this->getChildByTag(kTagShadowLayer)->addChild(shadow);
+				this->getChildByTag(kTagShadowLayer)->addChild(shadow, tile.getZOrder());
 			}
 		}
 	}
@@ -682,6 +705,36 @@ Cave::Cave(std::string type) : super(type)
 	this->setTag(kTagCave);
 
 	this->init(TMXTiledMap::create("cave1.tmx"), Sprite::create(type)->getTexture());
+
+	float width = _mapSize.width * _tileSize.width;
+	float height = _mapSize.height * _tileSize.height;
+
+	Vec2 parallaxRatio = Vec2(1.0f, 1.0f);
+	Vec2 offset = Vec2::ZERO;
+	int bZindex = -3;
+	int fZindex = 6;
+
+	if (type == GRASS_PNG)
+	{		
+		auto grassForeground = GrassForeground::create(width);
+		grassForeground->setScaleY(-2.0f);
+		
+		//grassForeground->setRotation(180);
+		this->addChild(grassForeground, fZindex, parallaxRatio, Vec2(0.0f, height));
+		this->addChild(GrassForeground::create(width), fZindex, parallaxRatio, offset);
+	}
+	else if (type == SNOW_PNG)
+	{		
+		this->addChild(SnowForeground::create(width), fZindex, parallaxRatio, offset);
+	}
+	else if (type == SAND_PNG)
+	{		
+		this->addChild(SandForeground::create(width), fZindex, parallaxRatio, offset);
+	}
+	else if (type == DIRT_PNG)
+	{		
+		this->addChild(DirtForeground::create(width), fZindex, parallaxRatio, offset);
+	}
 };
 
 ValueMap Cave::getToSurfaceProperties()

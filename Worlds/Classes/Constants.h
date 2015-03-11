@@ -143,6 +143,7 @@ typedef std::string Type;
 #define kTagPlayer				2 
 #define kTagToSurface			3
 #define kTagToCave				4
+#define kTagNpc					5
 /****/
 #define kTagCursor				0
 #define KTagSceneLayer			1

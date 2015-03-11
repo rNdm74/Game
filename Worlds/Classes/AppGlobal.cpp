@@ -13,9 +13,7 @@ AppGlobal* AppGlobal::getInstance()
 }
 
 AppGlobal::AppGlobal() 
-{	
-	PlayerEvents.push(EGameObjectEvent::Stop);
-	
+{			
     //PlanetInstance = Planet::create("Grass");
 
     //ValueMap landingSite = PlanetInstance->getLandingSite();
@@ -93,26 +91,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerEvents.push(EGameObjectEvent::Up);
+					PlayerInstance->events.push(EGameObjectEvent::Up);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerEvents.push(EGameObjectEvent::Down);
+					PlayerInstance->events.push(EGameObjectEvent::Down);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{	
-				PlayerEvents.push(EGameObjectEvent::Left);
+				PlayerInstance->events.push(EGameObjectEvent::Left);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			{
-				PlayerEvents.push(EGameObjectEvent::Right);
+				PlayerInstance->events.push(EGameObjectEvent::Right);
 			}
 			break;
 			
@@ -121,7 +119,7 @@ void AppGlobal::initKeyboardListener()
 				PlayerInstance->JumpRequest = true;
 
 				if (PlayerInstance->OnGround)
-					PlayerEvents.push(EGameObjectEvent::Jump);
+					PlayerInstance->events.push(EGameObjectEvent::Jump);
 			}
 			break;
 		};				
@@ -134,26 +132,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerEvents.pop();
+					PlayerInstance->events.pop();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerEvents.pop();
+					PlayerInstance->events.pop();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{
-				PlayerEvents.pop();
+				PlayerInstance->events.pop();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:	
 			{
-				PlayerEvents.pop();
+				PlayerInstance->events.pop();
 			}
 			break;
 			

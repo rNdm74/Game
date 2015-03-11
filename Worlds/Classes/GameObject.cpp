@@ -157,6 +157,9 @@ Player::Player(ValueMap& properties) : super(properties)
 	_collision = new (std::nothrow) PlayerCollisionComponent(*this);
 	
 	this->setTag(kTagPlayer);	
+
+	// Player is in the stop state and it is pushed onto the event stack
+	events.push(EGameObjectEvent::Stop);
 };
 
 Player::~Player()
@@ -285,6 +288,135 @@ Rect Player::getCollisionBox()
 			
 	return collisionBox;
 };
+
+
+
+Npc* Npc::create(ValueMap& properties)
+{
+	// Create an instance of Level
+	Npc* gameObject = new (std::nothrow) Npc(properties);
+
+	if (gameObject && gameObject->init())
+	{
+		gameObject->autorelease();
+		gameObject->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(kPlayerFileName));
+		gameObject->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return gameObject;
+	}
+
+	CC_SAFE_DELETE(gameObject);
+	return nullptr;
+};
+
+Npc::Npc(ValueMap& properties) : super(properties)
+{
+	_fsm = new (std::nothrow) NpcFsmComponent(*this);
+	_input = new (std::nothrow) NpcInputComponent(*this);
+	_graphics = new (std::nothrow) NpcGraphicsComponent(*this);
+	_collision = new (std::nothrow) NpcCollisionComponent(*this);
+
+	this->setTag(kTagNpc);
+};
+
+Npc::~Npc()
+{
+	delete _fsm;
+	delete _menu;
+	delete _input;
+	delete _graphics;
+	delete _collision;
+};
+
+void Npc::update(Node* node)
+{
+	IParallaxTileMap* map = static_cast<IParallaxTileMap*>(node);
+
+	if (this->getPositionX() > map->getWidth())
+	{
+		map->setPositionX(0.0f);
+		this->setPositionX(0.0f);
+	}
+
+	if (this->getPositionX() < -this->getBoundingBox().size.width)
+	{
+		this->setPositionX(map->getWidth() - this->getBoundingBox().size.width);
+	}
+
+	_graphics->update(*node);
+
+	_fsm->update();
+	_input->update();
+	_collision->update(*node);
+
+	if (OnGround && JumpRequest)
+	{
+		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::Jump);
+	}
+};
+
+void Npc::Up()
+{
+	_input->Up();
+	_graphics->Up();
+};
+
+void Npc::Down()
+{
+	_input->Down();
+	_graphics->Down();
+
+};
+
+void Npc::Left()
+{
+	_input->Left();
+	_graphics->Left();
+};
+
+void Npc::Right()
+{
+	_input->Right();
+	_graphics->Right();
+};
+
+void Npc::Stop()
+{
+	_input->Stop();
+	_graphics->Stop();
+};
+
+
+void Npc::Idle()
+{
+	_graphics->Idle();
+	_input->Stop();
+};
+
+void Npc::Talk()
+{
+};
+
+
+Rect Npc::getCollisionBox()
+{
+	Rect collisionBox = getBoundingBox();
+
+	Vec2 diff = _desiredPosition - collisionBox.origin;
+
+	collisionBox.origin.add(diff);
+
+	return collisionBox;
+};
+
+
+
+
+
+
+
+
+
+
 
 
 ShowCave* ShowCave::create(ValueMap& properties)

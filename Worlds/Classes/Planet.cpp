@@ -117,6 +117,23 @@ GrassPlanet::GrassPlanet()
 	/** Add the planets surface and the planets cave to the planet **/
 	this->addChild(_planetSurface);	
 	this->addChild(_planetCave);
+
+	time_t rawtime;
+	struct tm * timeinfo;
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	int year = timeinfo->tm_year + 1900; 
+	int month = timeinfo->tm_mon + 1;
+	int day = timeinfo->tm_mday;
+
+	log("%02d/%02d/%04d", day, month, year);
+
+	int hour = timeinfo->tm_hour;
+	int min = timeinfo->tm_min;
+	int sec = timeinfo->tm_sec;
+
+	log("%02d:%02d:%02d", hour, min, sec);
 }
 
 

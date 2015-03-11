@@ -25,8 +25,10 @@ class CollisionComponent : public ICollisionComponent
 {
 public:
 	virtual void update(Node& node);    
-	virtual void checkTileCollision(Node& node){};
-	virtual void checkLadderCollision(Node& node){};
+
+protected:
+	virtual void checkTileCollision(Node& node);
+	virtual void checkLadderCollision(Node& node);
 };
 
 class PlayerCollisionComponent : public CollisionComponent
@@ -35,11 +37,20 @@ public:
 	PlayerCollisionComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
 	virtual ~PlayerCollisionComponent(){};
 
-	virtual void update(Node& node) override;   
-	virtual void checkTileCollision(Node& node) override;
-	virtual void checkLadderCollision(Node& node) override;
-	
+	virtual void update(Node& node) override;   	
 };
+
+class NpcCollisionComponent : public CollisionComponent
+{
+public:
+	NpcCollisionComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	virtual ~NpcCollisionComponent(){};
+
+	virtual void update(Node& node) override;
+};
+
+
+
 
 class ShowCaveCollisionComponent : public CollisionComponent
 {

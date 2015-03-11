@@ -11,6 +11,37 @@ void GraphicsComponent::update(Node& node)
     static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
 };
 
+
+void GraphicsComponent::updateFrame()
+{
+
+	/** Reset the currentFrame to init frame **/
+	currentFrame %= 2;
+
+	/** Set the sprite frame **/
+	_gameObject->setSpriteFrame(frameCache(animationFrames[_gameObject->events.top()][currentFrame]));
+
+	/** Add delay so animation effect is realisitic **/
+	if (frameTime > kFrameDelay /**  **/)
+	{
+		frameTime = 0.0f;
+		currentFrame++;
+	}
+
+	//
+	Vec2 v = _gameObject->getVelocity();
+	float velocityFactor = std::abs((v.x + v.y) / kFrameTimeFactor);
+	//log("velocityFactor: %f", velocityFactor);
+
+	frameTime += velocityFactor;
+
+	if (velocityFactor < 1.0f && _gameObject->events.top() != EGameObjectEvent::Stop)
+	{
+		_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
+	}
+};
+
+
 PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject)
 { 	
 	_gameObject = &gameObject;
@@ -24,10 +55,10 @@ PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject)
 	std::string initFrames[6][2] =
 	{
 		{ climbingFileName(1), climbingFileName(2) },
+		{ climbingFileName(1), climbingFileName(2) },
+		{ walkingFileName(1), walkingFileName(2) },
 		{ walkingFileName(1), walkingFileName(2) },
 		{ "alienBeige.png", "alienBeige.png" },
-		{ "alienBeige_hurt.png", "alienBeige_hurt.png" },
-		{ "alienBeige_duck.png", "alienBeige_duck.png" },
 		{ "alienBeige_jump.png", "alienBeige_jump.png" }
 	};
 
@@ -48,32 +79,8 @@ PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject)
 
 void PlayerGraphicsComponent::update(Node& node)
 {
-	/** Reset the currentFrame to init frame **/
-	currentFrame %= 2;
-	
-	/** Set the sprite frame **/
-	_gameObject->setSpriteFrame(frameCache(animationFrames[activeState][currentFrame]));
-
-	/** Add delay so animation effect is realisitic **/
-	if (frameTime > kFrameDelay /**  **/)
-	{
-		frameTime = 0.0f;
-		currentFrame++;
-	}
-
-	//
-	Vec2 v = _gameObject->getVelocity();
-	float velocityFactor = std::abs((v.x + v.y) / kFrameTimeFactor);
-	//log("velocityFactor: %f", velocityFactor);
-
-	frameTime += velocityFactor;
-
-	if (velocityFactor < 1.0f && activeState != EAnimationStates::IDLE)
-	{
-		_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
-	}
+	this->updateFrame();
 }
-
 
 void PlayerGraphicsComponent::Up()
 {
@@ -175,6 +182,13 @@ void PlayerGraphicsComponent::lookForward()
 {
 	_gameObject->setSpriteFrame(frameCache("alienBeige.png"));
 };
+
+
+
+
+
+
+
 
 ShowCaveGraphicsComponent::ShowCaveGraphicsComponent(IGameObject& gameObject)
 {

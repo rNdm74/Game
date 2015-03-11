@@ -56,6 +56,10 @@ protected:
 	Cave* _planetCave;
 
 	std::stack<IParallaxTileMap*> planetMaps;
+
+	int population;
+	int birthRate;
+
 };
 
 

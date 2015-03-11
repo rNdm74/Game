@@ -59,4 +59,12 @@ public:
 
 };
 
+class NpcInputComponent : public InputComponent
+{
+public:
+	NpcInputComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	void update() override;
+
+};
+
 #endif /* defined(__FranticAlien__InputComponent__) */
