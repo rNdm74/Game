@@ -77,20 +77,24 @@ PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject)
 	//_shadow->setOpacity(50);
 };
 
+
 void PlayerGraphicsComponent::update(Node& node)
 {
 	this->updateFrame();
 }
+
 
 void PlayerGraphicsComponent::Up()
 {
 	this->activeState = EAnimationStates::CLIMBING;
 };
 
+
 void PlayerGraphicsComponent::Down()
 {	
 	this->activeState = EAnimationStates::CLIMBING;
 };
+
 
 void PlayerGraphicsComponent::Left()
 {
@@ -98,15 +102,18 @@ void PlayerGraphicsComponent::Left()
 	_gameObject->setFlippedX(true);
 };
 
+
 void PlayerGraphicsComponent::Right()
 {
 	this->activeState = EAnimationStates::WALKING;
 	_gameObject->setFlippedX(false);
 };
 
+
 void PlayerGraphicsComponent::Stop()
 {
 };
+
 
 void PlayerGraphicsComponent::Idle()
 {
@@ -140,20 +147,24 @@ void PlayerGraphicsComponent::Idle()
 	idleTime++;
 };
 
+
 void PlayerGraphicsComponent::Hurt()
 {
 	this->activeState = EAnimationStates::HURT;
 };
+
 
 void PlayerGraphicsComponent::Crouch()
 {
 	this->activeState = EAnimationStates::CROUCH;
 };
 
+
 void PlayerGraphicsComponent::Jump()
 {
 	this->activeState = EAnimationStates::JUMP;
 };
+
 
 /**
 * Private functions
@@ -163,20 +174,24 @@ void PlayerGraphicsComponent::lookLeft()
 	_gameObject->setFlippedX(true);
 };
 
+
 void PlayerGraphicsComponent::lookRight()
 {
 	_gameObject->setFlippedX(false);
 };
+
 
 void PlayerGraphicsComponent::lookUp()
 {
 	_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
 };
 
+
 void PlayerGraphicsComponent::lookDown()
 {
 	_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
 };
+
 
 void PlayerGraphicsComponent::lookForward()
 {
@@ -185,8 +200,9 @@ void PlayerGraphicsComponent::lookForward()
 
 
 
-
-
+NpcGraphicsComponent::NpcGraphicsComponent(IGameObject& gameObject)
+{
+};
 
 
 
@@ -194,6 +210,7 @@ ShowCaveGraphicsComponent::ShowCaveGraphicsComponent(IGameObject& gameObject)
 {
 	_gameObject = &gameObject;
 }
+
 
 void ShowCaveGraphicsComponent::update(Node& node)
 {
