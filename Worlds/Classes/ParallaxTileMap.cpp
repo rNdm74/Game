@@ -36,6 +36,22 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 	_backgroundLayer->removeFromParentAndCleanup(false);
 	_backgroundLayer->release();
 
+    // get default layer
+    auto _innerForegroundLayer = _tileMap->getLayer("innerForeground");
+    _innerForegroundLayer->retain();
+    _innerForegroundLayer->setTexture(texture);
+    _innerForegroundLayer->setTag(kTagInnerForeground);
+    _innerForegroundLayer->removeFromParentAndCleanup(false);
+    _innerForegroundLayer->release();
+    
+    // get default layer
+    auto _innerBackgroundLayer = _tileMap->getLayer("innerBackground");
+    _innerBackgroundLayer->retain();
+    _innerBackgroundLayer->setTexture(texture);
+    _innerBackgroundLayer->setTag(kTagInnerBackground);
+    _innerBackgroundLayer->removeFromParentAndCleanup(false);
+    _innerBackgroundLayer->release();
+    
 	// get collision layer
 	auto _collisionLayer = _tileMap->getLayer("collision");
 	_collisionLayer->retain();
@@ -60,6 +76,34 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 	_foregroundLayer->removeFromParentAndCleanup(false);
 	_foregroundLayer->release();
 
+    
+    for(int col = 0; col < _mapSize.width; col++)
+    {
+        for(int row = 0; row < _mapSize.height; row++)
+        {
+            Vec2 coord = Vec2(col, row);
+            
+            if(_innerForegroundLayer->getTileAt(coord))
+            {
+                Sprite* tile = _innerForegroundLayer->getTileAt(Vec2(coord));
+                
+                float newScale = random(1.0f, 2.0f);
+                tile->setScale(newScale);
+                tile->getTexture()->setAntiAliasTexParameters();
+            }
+            
+            if(_innerBackgroundLayer->getTileGIDAt(coord))
+            {
+                Sprite* tile = _innerBackgroundLayer->getTileAt(Vec2(coord));
+                
+                float newScale = random(1.0f, 1.5f);
+                tile->setScale(newScale);
+                tile->getTexture()->setAntiAliasTexParameters();
+            }
+        }
+    }
+
+    
 	// create shadow layer
 	auto _shadowLayer = Node::create();
 	_shadowLayer->setTag(kTagShadowLayer);
@@ -78,13 +122,21 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 	/** **/
 	this->addChild(_backgroundLayer, -2, Vec2(0.9f, 1.0f), Vec2::ZERO);
 	this->addChild(_shadowLayer, -1, Vec2(1.0f, 1.0f), Vec2::ZERO);
+    
 	this->addChild(_collisionLayer, 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_ladderLayer, 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
+    
+    this->addChild(_innerBackgroundLayer, 0, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_objectLayer, 1, Vec2(1.0f, 1.0f), Vec2::ZERO);
-	this->addChild(_debugLayer, 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
+	this->addChild(_innerForegroundLayer, 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
+    
+    this->addChild(_debugLayer, 2, Vec2(1.0f, 1.0f), Vec2::ZERO);
 	this->addChild(_foregroundLayer, 3, Vec2(1.0f, 1.0f), Vec2::ZERO);
 
 	/** **/
+    this->addShadows(static_cast<TMXLayer&>(*_innerBackgroundLayer));
+    this->addShadows(static_cast<TMXLayer&>(*_innerForegroundLayer));
+
 	this->addShadows(static_cast<TMXLayer&>(*_collisionLayer));
 	this->addShadows(static_cast<TMXLayer&>(*_ladderLayer));
 	this->addShadows(static_cast<TMXLayer&>(*_foregroundLayer));
@@ -339,6 +391,7 @@ void ParallaxTileMap::addShadows(TMXLayer& layer)
 				Sprite& tile = *layer.getTileAt(Vec2(col, row));
 
 				Sprite* shadow = getShadowForNode(tile);
+                shadow->setScale(tile.getScale());
 				shadow->setPosition(tile.getPosition());
 
 				this->getChildByTag(kTagShadowLayer)->addChild(shadow);

@@ -37,8 +37,10 @@ bool GameplayScene::init()
 
     planet = PlanetFactory::create("Grass");
 	this->addChild(planet);
-		
-	player = GameObjectFactory::create("Player", planet->getLandingSite());
+	
+    ValueMap landingSite = planet->getLandingSite();
+    
+	player = GameObjectFactory::create("Player", landingSite);
 	planet->addPlayer(player);
 
 	AppGlobal::getInstance()->PlayerInstance = player;

@@ -130,6 +130,8 @@ typedef std::string Type;
 #define kTagDebugLayer			6
 #define kTagPBackgroundLayer	7
 #define kTagPForegroundLayer	8
+#define kTagInnerForeground     9
+#define kTagInnerBackground     10
 /****/
 #define kTagMountain			0
 #define kTagHill				1
