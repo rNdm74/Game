@@ -55,6 +55,9 @@ public:
 	virtual void Jump(){};
 
 protected:
+    
+    Frames getFramesFor(std::string type);
+    
 	IGameObject* _gameObject;
 			
 	int currentFrame;

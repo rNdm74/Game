@@ -15,6 +15,20 @@ GraphicsComponent::GraphicsComponent(IGameObject& gameObject)
 	frameTime = 0.0f;
 };
 
+Frames GraphicsComponent::getFramesFor(std::string type)
+{
+    return
+    {
+        { "alien" + type + "_climb1.png", "alien" + type + "_climb2.png" },
+        { "alien" + type + "_climb1.png", "alien" + type + "_climb2.png" },
+        { "alien" + type + "_walk1.png",  "alien" + type + "_walk2.png" },
+        { "alien" + type + "_walk1.png",  "alien" + type + "_walk2.png" },
+        { "alien" + type + "_stand.png" },
+        { "alien" + type + "_jump.png" },
+        { "alien" + type + ".png" }
+    };
+};
+
 void GraphicsComponent::update(Node& node)
 {
     Rect r = _gameObject->getCollisionBox();
@@ -67,8 +81,8 @@ void GraphicsComponent::Right()
 
 
 PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject) : super(gameObject)
-{	
-	frames = ANIMATION_FRAMES("Beige");
+{
+    frames = getFramesFor("Beige");
 };
 
 void PlayerGraphicsComponent::Idle()
@@ -130,5 +144,5 @@ void PlayerGraphicsComponent::lookForward()
 
 NpcGraphicsComponent::NpcGraphicsComponent(IGameObject& gameObject) : super(gameObject)
 {
-	frames = ANIMATION_FRAMES("Blue");
+	frames = getFramesFor("Blue");
 };
