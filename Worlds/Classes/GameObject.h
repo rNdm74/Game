@@ -3,6 +3,7 @@
 
 #include "Constants.h"
 
+class IAiComponent;
 class IMenuComponent;
 class IInputComponent;
 class ICollisionComponent;
@@ -223,6 +224,7 @@ public:
 	virtual cocos2d::Rect getCollisionBox() override;
 
 private: /** **/
+    IAiComponent* _ai;
 	IFsmComponent* _fsm;
 	IMenuComponent* _menu;
 	IInputComponent* _input;

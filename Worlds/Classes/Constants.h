@@ -48,6 +48,16 @@ enum ETileGrid
     CENTER = 1
 };
 
+enum ENpcStates
+{
+    DecisionState,
+    WanderState,
+    ScaredState,
+    CuriousState,
+    PoopState,
+    InteractState
+};
+
 struct TileData
 {
 	cocos2d::Rect tileRect;

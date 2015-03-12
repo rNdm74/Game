@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "ParallaxTileMap.h"
 
+#include "AiComponent.h"
 #include "FsmComponent.h"
 #include "GraphicsComponent.h"
 #include "InputComponent.h"
@@ -310,6 +311,7 @@ Npc* Npc::create(ValueMap& properties)
 
 Npc::Npc(ValueMap& properties) : super(properties)
 {
+    _ai = new (std::nothrow) NpcAiComponent(*this);
 	_fsm = new (std::nothrow) NpcFsmComponent(*this);
 	_input = new (std::nothrow) NpcInputComponent(*this);
 	_graphics = new (std::nothrow) NpcGraphicsComponent(*this);
@@ -322,8 +324,8 @@ Npc::Npc(ValueMap& properties) : super(properties)
 
 Npc::~Npc()
 {
+    delete _ai;
 	delete _fsm;
-	delete _menu;
 	delete _input;
 	delete _graphics;
 	delete _collision;
@@ -346,6 +348,7 @@ void Npc::update(Node* node)
 
 	_graphics->update(*node);
 
+    _ai->update();
 	_fsm->update();
 	_input->update();
 	_collision->update(*node);

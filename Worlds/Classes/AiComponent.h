@@ -9,39 +9,70 @@ class IAiComponent;
 struct IAiState
 {
     /** Declare the actions **/
-	virtual void ActionExample(IAiComponent& fsm) = 0;
+	virtual void ActionWander(IAiComponent& fsm) = 0;
+    virtual void ActionDecision(IAiComponent& fsm) = 0;
 };
 
 struct AiState : public IAiState
 {
 	/** Actions **/
-	virtual void ActionExample(IAiComponent& fsm);
+	virtual void ActionWander(IAiComponent& fsm);
+    virtual void ActionDecision(IAiComponent& fsm);
 };
 
-struct ExampleState : public AiState
-{	
-	void ActionExample(IAiComponent& fsm) override;
+struct WanderState : public AiState
+{
+    /** Actions **/
+	virtual void ActionWander(IAiComponent& fsm) override;
+    virtual void ActionDecision(IAiComponent& fsm) override;
 };
+
+struct DecisionState : public AiState
+{
+    /** Actions **/
+    virtual void ActionWander(IAiComponent& fsm) override;
+    virtual void ActionDecision(IAiComponent& fsm) override;
+};
+
+struct ScaredState : public AiState{};
+struct CuriousState : public AiState{};
+struct PoopState : public AiState{};
+struct InteractState : public AiState{};
 
 class IAiComponent
 {
 public:
-	ExampleState* StateExample;
+	WanderState* StateWander;
+    DecisionState* StateDecision;
+    ScaredState* StateScared;
+    CuriousState* StateCurious;
+    PoopState* StatePoop;
+    InteractState* StateInteract;
     
 	IAiComponent()
     {
-        StateExample = new ExampleState();
+        StateWander = new WanderState();
+        StateDecision = new DecisionState();
+        StateScared = new ScaredState();
+        StateCurious = new CuriousState();
+        StatePoop = new PoopState();
+        StateInteract = new InteractState();
     };
 
 	virtual ~IAiComponent()
     {
-        delete StateExample;    
+        delete StateWander;
+        delete StateDecision;
+        delete StateScared;
+        delete StateCurious;
+        delete StatePoop;
+        delete StateInteract;
 	};
 
 	virtual void update() = 0;
 
 	/** Events**/
-	virtual void EventExample() = 0;
+	virtual void EventWander() = 0;
 
 	/** Events end **/
 
@@ -49,19 +80,27 @@ public:
 
 public: /** Variables **/
     IGameObject* gameObject;
+    
+    long timeout;
+    
+    long decisionTime;
 };
 
 class AiComponent : public IAiComponent
 {
+    typedef IAiComponent super;
+    typedef AiComponent self;
+    
 public:
-	AiComponent(){};
+	AiComponent(IGameObject& gameObject);
 	virtual ~AiComponent(){};
 
 	virtual void update();
 
-	virtual void EventExample(){ currentState->ActionExample(*this); };
-	
-	virtual void setCurrentState(IAiState* newState){ currentState = newState; };
+    /** Events **/
+    virtual void EventWander();
+    
+    virtual void setCurrentState(IAiState* newState);
 
 protected:
 	IAiState* currentState;
@@ -69,8 +108,11 @@ protected:
 
 class NpcAiComponent : public AiComponent
 {
+    typedef AiComponent super;
+    typedef NpcAiComponent self;
+    
 public:
-	NpcAiComponent(IGameObject& gameObject){};
+	NpcAiComponent(IGameObject& gameObject);
 	virtual ~NpcAiComponent(){};
 };
 
