@@ -19,16 +19,20 @@ void GraphicsComponent::update(Node& node)
 {
     Rect r = _gameObject->getCollisionBox();
     static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+
+	this->updateFrame();
 };
 
 void GraphicsComponent::updateFrame()
 {
 
+	EGameObjectEvent currentEvent = _gameObject->events.top();
+
 	/** Reset the currentFrame to init frame **/
-	currentFrame %= 2;
+	currentFrame %= frames[currentEvent].size();
 
 	/** Set the sprite frame **/
-	_gameObject->setSpriteFrame(frameCache(frames[_gameObject->events.top()][currentFrame]));
+	_gameObject->setSpriteFrame(frameCache(frames[currentEvent][currentFrame]));
 
 	/** Add delay so animation effect is realisitic **/
 	if (frameTime > kFrameDelay /**  **/)
@@ -44,8 +48,9 @@ void GraphicsComponent::updateFrame()
 
 	frameTime += velocityFactor;
 
-	if (velocityFactor < 1.0f && _gameObject->events.top() != EGameObjectEvent::Stop)
+	if (velocityFactor < 1.0f && currentEvent != EGameObjectEvent::Stop)
 	{
+		currentFrame = 0;
 		_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 	}
 };
@@ -61,17 +66,10 @@ void GraphicsComponent::Right()
 };
 
 
-AnimationFrames PlayerGraphicsComponent::frames = ANIMATION_FRAMES("Green");
-
 PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject) : super(gameObject)
 {	
+	frames = ANIMATION_FRAMES("Beige");
 };
-
-
-void PlayerGraphicsComponent::update(Node& node)
-{
-	this->updateFrame();
-}
 
 void PlayerGraphicsComponent::Idle()
 {		
@@ -103,32 +101,25 @@ void PlayerGraphicsComponent::Idle()
 	idleTime++;
 };
 
-/**
-* Private functions
-*/
 void PlayerGraphicsComponent::lookLeft()
 {
 	_gameObject->setFlippedX(true);
 };
-
 
 void PlayerGraphicsComponent::lookRight()
 {
 	_gameObject->setFlippedX(false);
 };
 
-
 void PlayerGraphicsComponent::lookUp()
 {
 	_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 };
 
-
 void PlayerGraphicsComponent::lookDown()
 {
 	_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 };
-
 
 void PlayerGraphicsComponent::lookForward()
 {
@@ -139,4 +130,5 @@ void PlayerGraphicsComponent::lookForward()
 
 NpcGraphicsComponent::NpcGraphicsComponent(IGameObject& gameObject) : super(gameObject)
 {
+	frames = ANIMATION_FRAMES("Blue");
 };

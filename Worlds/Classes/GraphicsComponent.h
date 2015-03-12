@@ -28,9 +28,8 @@ public:
     virtual void Idle() = 0;
 	virtual void Hurt() = 0;
     virtual void Crouch() = 0;
-
-	static AnimationFrames frames;
 };
+
 
 
 class GraphicsComponent : public IGraphicsComponent
@@ -57,12 +56,14 @@ public:
 
 protected:
 	IGameObject* _gameObject;
-	
+			
 	int currentFrame;
 	float frameTime;
 
 	long idleTime;
 	long maxIdleTime;
+
+	Frames frames;
 };
 
 
@@ -74,9 +75,7 @@ class PlayerGraphicsComponent : public GraphicsComponent
 public:
 	PlayerGraphicsComponent(IGameObject& gameObject);
 	virtual ~PlayerGraphicsComponent(){};
-		
-	virtual void update(Node& node) override;
-
+	
     virtual void Idle() override;
 
 private:

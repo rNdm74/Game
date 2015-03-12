@@ -65,7 +65,11 @@ typedef std::array<bool, 4> CanMove;
 typedef std::string AnimationFrames[7][2];
 typedef std::string Type;
 
+typedef std::vector<std::vector<std::string>> Frames;
+
 #define DEBUG_ENABLE 1
+
+#define MAX_FRAME_STATES 7
 
 
 typedef std::array<std::string, 5> AlienTypes;
@@ -78,11 +82,10 @@ typedef std::array<std::string, 5> AlienTypes;
     { "alien"__TYPE__"_climb1.png", "alien"__TYPE__"_climb2.png" }, \
 	{ "alien"__TYPE__"_walk1.png", "alien"__TYPE__"_walk2.png" }, \
     { "alien"__TYPE__"_walk1.png", "alien"__TYPE__"_walk2.png" }, \
-    { "alien"__TYPE__"_stand.png", "alien"__TYPE__"_stand.png" }, \
-	{ "alien"__TYPE__"_jump.png", "alien"__TYPE__"_jump.png" },	\
-	{ "alien"__TYPE__".png", "alien"__TYPE__".png" } \
-};\
-
+    { "alien"__TYPE__"_stand.png" }, \
+	{ "alien"__TYPE__"_jump.png" },	\
+	{ "alien"__TYPE__".png" } \
+}\
 
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10

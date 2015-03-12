@@ -14,6 +14,10 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 	{
 		gameObject = Player::create(properties);
 	}
+	else if (className == "Npc")
+	{
+		gameObject = Npc::create(properties);
+	}
     else if(className == "ShowCave")
     {
         gameObject = ShowCave::create(properties);

@@ -316,6 +316,8 @@ Npc::Npc(ValueMap& properties) : super(properties)
 	_collision = new (std::nothrow) NpcCollisionComponent(*this);
 
 	this->setTag(kTagNpc);
+
+	events.push(EGameObjectEvent::Stop);
 };
 
 Npc::~Npc()
