@@ -150,11 +150,35 @@ void CollisionComponent::checkLadderCollision(Node& node)
 
 void ShowCaveCollisionComponent::update(Node& node)
 { 	
+
+	IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
+
+	//map.drawDebugRect(r, Color4F(1.0f, 1.0f, 0.0f, 0.1f));
+	//log("x: %f, y:%f", r.origin.x, r.origin.y);
+	Rect r1 = map.getViewportBoundingBox();
+	Rect r2 = _gameObject->getCollisionBox();
+	Rect r3 = map.getPlayer()->getCollisionBox();
+
+	if (Utils::isRectContainsRect(r1, r2) || Utils::isRectIntersectsRect(r1, r2))
+	{
+		if (r2.intersectsRect(r3))
+		{
+			map.drawDebugRect(r2, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+			map.enableForegroundOpacity(kFadeOut);
+			map.enableParallaxForegroundOpacity(kFadeOut);
+		}
+		else
+		{
+			map.enableForegroundOpacity(kFadeIn);
+			map.enableParallaxForegroundOpacity(kFadeIn);
+		}
+	}
+
 };
 
 void ToCaveCollisionComponent::update(Node& node)
 {
-	if (AppGlobal::getInstance()->PlayerEvents.top() == EGameObjectEvent::MoveToCave)
+	/*if (AppGlobal::getInstance()->PlayerEvents.top() == EGameObjectEvent::MoveToCave)
 		return;
 
 	IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
@@ -170,7 +194,7 @@ void ToCaveCollisionComponent::update(Node& node)
 		}
 					
 		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::MoveToCave);
-	}
+	}*/
 };
 
 void ToSurfaceCollisionComponent::update(Node& node)
@@ -178,7 +202,7 @@ void ToSurfaceCollisionComponent::update(Node& node)
 	//if (AppGlobal::getInstance()->PlayerEvents.top() == EGameObjectEvent::MoveToSurface)
 	//	return;
 
-	IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
+	/*IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
 
 	Rect r1 = map.getPlayer()->getCollisionBox();
 	Rect r2 = _gameObject->getCollisionBox();
@@ -191,7 +215,7 @@ void ToSurfaceCollisionComponent::update(Node& node)
 		}
 
 		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::MoveToSurface);
-	}
+	}*/
 };
 
 

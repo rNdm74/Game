@@ -18,7 +18,7 @@ void FsmState::ActionStop(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateStop
 void FsmState::ActionJump(IFsmComponent& fsm)
 {
 	//
-	AppGlobal::getInstance()->PlayerEvents.pop();
+	fsm.gameObject->events.pop();
 	// Tell the gameObject to jump
 	fsm.gameObject->Jump();
 	// Then change to the jump state

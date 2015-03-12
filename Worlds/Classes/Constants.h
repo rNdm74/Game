@@ -18,6 +18,17 @@ enum EGameObjectEvent
 	MoveToSurface,
 };
 
+enum EAnimationStates
+{
+	UpAnimation,
+	DownAnimation,
+	LeftAnimation,
+	RightAnimation,
+	StopAnimation,
+	JumpAnimation,
+	IdleAnimation
+};
+
 enum EParallaxTileMapState
 {
     LoadCave,
@@ -37,16 +48,6 @@ enum ETileGrid
     CENTER = 1
 };
 
-enum EAnimationStates
-{
-    CLIMBING,
-    WALKING,
-    IDLE,
-    HURT,
-    CROUCH,
-    JUMP
-};
-
 struct TileData
 {
 	cocos2d::Rect tileRect;
@@ -61,10 +62,27 @@ typedef std::array<cocos2d::Vec2, 7> States;
 typedef std::array<bool, 7> KeyMatrix;
 typedef std::array<bool, 4> IsMoving;
 typedef std::array<bool, 4> CanMove;
-typedef std::string AnimationFrames[6][2];
+typedef std::string AnimationFrames[7][2];
 typedef std::string Type;
 
 #define DEBUG_ENABLE 1
+
+
+typedef std::array<std::string, 5> AlienTypes;
+
+//AlienTypes alienTypes = { "Beige", "Blue", "Green", "Pink", "Yellow" };
+
+#define ANIMATION_FRAMES(__TYPE__) \
+{ \
+    { "alien"__TYPE__"_climb1.png", "alien"__TYPE__"_climb2.png" }, \
+    { "alien"__TYPE__"_climb1.png", "alien"__TYPE__"_climb2.png" }, \
+	{ "alien"__TYPE__"_walk1.png", "alien"__TYPE__"_walk2.png" }, \
+    { "alien"__TYPE__"_walk1.png", "alien"__TYPE__"_walk2.png" }, \
+    { "alien"__TYPE__"_stand.png", "alien"__TYPE__"_stand.png" }, \
+	{ "alien"__TYPE__"_jump.png", "alien"__TYPE__"_jump.png" },	\
+	{ "alien"__TYPE__".png", "alien"__TYPE__".png" } \
+};\
+
 
 #define CLOUDS_VARIETY			3
 #define CLOUDS_SPACE_BETWEEN	10

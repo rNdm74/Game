@@ -5,12 +5,21 @@
 #include "ParallaxTileMap.h"
 #include "Utils.h"
 
+GraphicsComponent::GraphicsComponent(IGameObject& gameObject)
+{
+	_gameObject = &gameObject;
+
+	idleTime = 0l;
+	maxIdleTime = 50l;
+	currentFrame = 0;
+	frameTime = 0.0f;
+};
+
 void GraphicsComponent::update(Node& node)
 {
     Rect r = _gameObject->getCollisionBox();
     static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
 };
-
 
 void GraphicsComponent::updateFrame()
 {
@@ -19,7 +28,7 @@ void GraphicsComponent::updateFrame()
 	currentFrame %= 2;
 
 	/** Set the sprite frame **/
-	_gameObject->setSpriteFrame(frameCache(animationFrames[_gameObject->events.top()][currentFrame]));
+	_gameObject->setSpriteFrame(frameCache(frames[_gameObject->events.top()][currentFrame]));
 
 	/** Add delay so animation effect is realisitic **/
 	if (frameTime > kFrameDelay /**  **/)
@@ -37,44 +46,25 @@ void GraphicsComponent::updateFrame()
 
 	if (velocityFactor < 1.0f && _gameObject->events.top() != EGameObjectEvent::Stop)
 	{
-		_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
+		_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 	}
 };
 
+void GraphicsComponent::Left()
+{
+	_gameObject->setFlippedX(true);
+};
 
-PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject)
-{ 	
-	_gameObject = &gameObject;
+void GraphicsComponent::Right()
+{
+	_gameObject->setFlippedX(false);
+};
 
-	activeState = EAnimationStates::IDLE;
-	currentFrame = 0; 
-	frameTime = 0.0f; 
-	idleTime = 0l;
-	maxIdleTime = 50l;
-			
-	std::string initFrames[6][2] =
-	{
-		{ climbingFileName(1), climbingFileName(2) },
-		{ climbingFileName(1), climbingFileName(2) },
-		{ walkingFileName(1), walkingFileName(2) },
-		{ walkingFileName(1), walkingFileName(2) },
-		{ "alienBeige.png", "alienBeige.png" },
-		{ "alienBeige_jump.png", "alienBeige_jump.png" }
-	};
 
-	for (int i = 0; i < 6; i++)
-	{
-		for (int j = 0; j < 2; j++)
-		{
-			animationFrames[i][j] = initFrames[i][j];
-		}
-	}
+AnimationFrames PlayerGraphicsComponent::frames = ANIMATION_FRAMES("Green");
 
-	//_shadow = Sprite::create();
-	//_shadow->setSpriteFrame(this->getSpriteFrame());
-	//_shadow->setAnchorPoint(Vec2(-0.1f, 0.0f)); // position it to the center of the target node
-	//_shadow->setColor(Color3B(0, 0, 0));
-	//_shadow->setOpacity(50);
+PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject) : super(gameObject)
+{	
 };
 
 
@@ -83,42 +73,8 @@ void PlayerGraphicsComponent::update(Node& node)
 	this->updateFrame();
 }
 
-
-void PlayerGraphicsComponent::Up()
-{
-	this->activeState = EAnimationStates::CLIMBING;
-};
-
-
-void PlayerGraphicsComponent::Down()
-{	
-	this->activeState = EAnimationStates::CLIMBING;
-};
-
-
-void PlayerGraphicsComponent::Left()
-{
-	this->activeState = EAnimationStates::WALKING;
-	_gameObject->setFlippedX(true);
-};
-
-
-void PlayerGraphicsComponent::Right()
-{
-	this->activeState = EAnimationStates::WALKING;
-	_gameObject->setFlippedX(false);
-};
-
-
-void PlayerGraphicsComponent::Stop()
-{
-};
-
-
 void PlayerGraphicsComponent::Idle()
-{
-	this->activeState = EAnimationStates::IDLE;
-		
+{		
 	if (idleTime > maxIdleTime)
 	{
 		idleTime = 0l;
@@ -147,25 +103,6 @@ void PlayerGraphicsComponent::Idle()
 	idleTime++;
 };
 
-
-void PlayerGraphicsComponent::Hurt()
-{
-	this->activeState = EAnimationStates::HURT;
-};
-
-
-void PlayerGraphicsComponent::Crouch()
-{
-	this->activeState = EAnimationStates::CROUCH;
-};
-
-
-void PlayerGraphicsComponent::Jump()
-{
-	this->activeState = EAnimationStates::JUMP;
-};
-
-
 /**
 * Private functions
 */
@@ -183,57 +120,23 @@ void PlayerGraphicsComponent::lookRight()
 
 void PlayerGraphicsComponent::lookUp()
 {
-	_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
+	_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 };
 
 
 void PlayerGraphicsComponent::lookDown()
 {
-	_gameObject->setSpriteFrame(frameCache("alienBeige_stand.png"));
+	_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 };
 
 
 void PlayerGraphicsComponent::lookForward()
 {
-	_gameObject->setSpriteFrame(frameCache("alienBeige.png"));
+	_gameObject->setSpriteFrame(frameCache(frames[IdleAnimation][currentFrame]));
 };
 
 
 
-NpcGraphicsComponent::NpcGraphicsComponent(IGameObject& gameObject)
+NpcGraphicsComponent::NpcGraphicsComponent(IGameObject& gameObject) : super(gameObject)
 {
-};
-
-
-
-ShowCaveGraphicsComponent::ShowCaveGraphicsComponent(IGameObject& gameObject)
-{
-	_gameObject = &gameObject;
-}
-
-
-void ShowCaveGraphicsComponent::update(Node& node)
-{
-	IParallaxTileMap& map = static_cast<IParallaxTileMap&>(node);
-	
-	//map.drawDebugRect(r, Color4F(1.0f, 1.0f, 0.0f, 0.1f));
-	//log("x: %f, y:%f", r.origin.x, r.origin.y);
-	Rect r1 = map.getViewportBoundingBox();
-	Rect r2 = _gameObject->getCollisionBox();
-	Rect r3 = map.getPlayer()->getCollisionBox();
-	
-	if (Utils::isRectContainsRect(r1, r2) || Utils::isRectIntersectsRect(r1, r2))
-	{
-		if (r2.intersectsRect(r3))
-		{
-			map.drawDebugRect(r2, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
-			map.enableForegroundOpacity(kFadeOut);
-			map.enableParallaxForegroundOpacity(kFadeOut);
-		}
-		else
-		{
-			map.enableForegroundOpacity(kFadeIn);
-			map.enableParallaxForegroundOpacity(kFadeIn);
-		}
-	}
 };

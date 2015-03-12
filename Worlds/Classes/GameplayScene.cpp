@@ -35,7 +35,7 @@ bool GameplayScene::init()
     if ( !Layer::init() )
         return false;
 
-    planet = PlanetFactory::create("Grass");
+    planet = PlanetFactory::create("Snow");
 	this->addChild(planet);
 	
     ValueMap landingSite = planet->getLandingSite();

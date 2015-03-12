@@ -155,7 +155,9 @@ SnowPlanet* SnowPlanet::create()
 SnowPlanet::SnowPlanet()
 {
 	_planetSurface = PlanetSurface::create(SNOW_PNG);
-	
+	/** Add it to the maps stack **/
+	planetMaps.push(_planetSurface);
+
 	this->addChild(_planetSurface);
 }
 

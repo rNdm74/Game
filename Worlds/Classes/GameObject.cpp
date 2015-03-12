@@ -437,20 +437,17 @@ ShowCave* ShowCave::create(ValueMap& properties)
 
 ShowCave::ShowCave(ValueMap& properties) : super(properties)
 {
-	_graphics = new (std::nothrow) ShowCaveGraphicsComponent(*this);
 	_collision = new (std::nothrow) ShowCaveCollisionComponent(*this);
 };
 
 ShowCave::~ShowCave()
 {
-    delete _graphics;
 	delete _collision;
 };
 
 void ShowCave::update(Node* node)
 {
 	_collision->update(*node);
-	_graphics->update(*node);
 };
 
 

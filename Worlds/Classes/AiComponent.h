@@ -9,18 +9,18 @@ class IAiComponent;
 struct IAiState
 {
     /** Declare the actions **/
-	//virtual void Action(IAiComponent& fsm) = 0;
+	virtual void ActionExample(IAiComponent& fsm) = 0;
 };
 
 struct AiState : public IAiState
 {
 	/** Actions **/
-	//virtual void Action(IAiComponent& fsm);
+	virtual void ActionExample(IAiComponent& fsm);
 };
 
 struct ExampleState : public AiState
 {	
-    //void Action(IAiComponent& fsm) override;
+	void ActionExample(IAiComponent& fsm) override;
 };
 
 class IAiComponent
@@ -33,9 +33,10 @@ public:
         StateExample = new ExampleState();
     };
 
-	virtual IAiComponent()
+	virtual ~IAiComponent()
     {
-        delete StateExample;    };
+        delete StateExample;    
+	};
 
 	virtual void update() = 0;
 
@@ -54,23 +55,23 @@ class AiComponent : public IAiComponent
 {
 public:
 	AiComponent(){};
-	virtual AiComponent(){};
+	virtual ~AiComponent(){};
 
-	virtual void update(){};
+	virtual void update();
 
 	virtual void EventExample(){ currentState->ActionExample(*this); };
 	
-	virtual void setCurrentState(IFsmState* newState){ currentState = newState; };
+	virtual void setCurrentState(IAiState* newState){ currentState = newState; };
 
 protected:
 	IAiState* currentState;
 };
 
-class NpcAiComponent : public FsmComponent
+class NpcAiComponent : public AiComponent
 {
 public:
 	NpcAiComponent(IGameObject& gameObject){};
-	virtual ~NpcFsmComponent(){};
+	virtual ~NpcAiComponent(){};
 };
 
 

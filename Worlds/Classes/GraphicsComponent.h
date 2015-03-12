@@ -28,13 +28,18 @@ public:
     virtual void Idle() = 0;
 	virtual void Hurt() = 0;
     virtual void Crouch() = 0;
+
+	static AnimationFrames frames;
 };
 
 
 class GraphicsComponent : public IGraphicsComponent
 {
+	typedef IGraphicsComponent super;
+	typedef GraphicsComponent self;
+
 public:
-	GraphicsComponent(){};
+	GraphicsComponent(IGameObject& gameObject);
 	virtual ~GraphicsComponent(){};
 	
 	virtual void update(Node& node);
@@ -42,8 +47,8 @@ public:
 
 	virtual void Up(){};
 	virtual void Down(){};
-	virtual void Left(){};
-	virtual void Right(){};
+	virtual void Left();
+	virtual void Right();
 	virtual void Stop(){};
     virtual void Idle(){};
 	virtual void Hurt(){};
@@ -52,32 +57,27 @@ public:
 
 protected:
 	IGameObject* _gameObject;
-
-	AnimationFrames animationFrames;
-
-
+	
 	int currentFrame;
 	float frameTime;
+
+	long idleTime;
+	long maxIdleTime;
 };
 
 
 class PlayerGraphicsComponent : public GraphicsComponent
 {
+	typedef GraphicsComponent super;
+	typedef PlayerGraphicsComponent self;
+
 public:
 	PlayerGraphicsComponent(IGameObject& gameObject);
 	virtual ~PlayerGraphicsComponent(){};
 		
 	virtual void update(Node& node) override;
 
-	virtual void Up() override;
-	virtual void Down() override;
-	virtual void Left() override;
-	virtual void Right() override;
-	virtual void Stop() override;
     virtual void Idle() override;
-	virtual void Hurt() override;
-    virtual void Crouch() override;	
-	virtual void Jump() override;
 
 private:
 	void lookLeft();
@@ -85,38 +85,19 @@ private:
 	void lookUp();
 	void lookDown();
 	void lookForward();
-	
-	Sprite* _shadow;
-
-	AnimationFrames animationFrames;
-	EAnimationStates activeState;
-		
-	long idleTime;
-	long maxIdleTime;
 };
 
 
 class NpcGraphicsComponent : public GraphicsComponent
 {
+	typedef GraphicsComponent super;
+	typedef NpcGraphicsComponent self;
+
 public:
 	NpcGraphicsComponent(IGameObject& gameObject);
 	virtual ~NpcGraphicsComponent(){};
 
 	//virtual void update(Node& node) override;
-};
-
-
-class ShowCaveGraphicsComponent : public GraphicsComponent
-{
-public:
-	ShowCaveGraphicsComponent(IGameObject& gameObject);
-	virtual ~ShowCaveGraphicsComponent(){};
-
-	virtual void update(Node& node) override;
-
-private:
-	void Show();
-	void Hide();
 };
 
 

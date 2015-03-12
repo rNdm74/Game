@@ -254,7 +254,6 @@ public: /** Variables **/
 	bool DetectedPlayer = false;
 
 private: /** Variables **/
-	IGraphicsComponent* _graphics;
 	ICollisionComponent* _collision;
 };
 

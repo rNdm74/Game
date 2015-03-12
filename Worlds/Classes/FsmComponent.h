@@ -185,6 +185,7 @@ public:
 		this->gameObject = &gameObject;
 		this->currentState = StateStop;
 	};
+
 	virtual ~NpcFsmComponent(){};
 
 	virtual void update() override;
