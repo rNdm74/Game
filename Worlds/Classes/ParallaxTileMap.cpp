@@ -374,7 +374,7 @@ void ParallaxTileMap::addObjects()
 			{
 				if (type.asString() == "Npc")
 				{
-					for (int i = 0; i < 100; i++)
+					for (int i = 0; i < 5; i++)
 					{
 						if (addObject(type.asString(), properties))
 						{
@@ -719,13 +719,13 @@ Cave::Cave(std::string type) : super(type)
 
 	this->init(TMXTiledMap::create("cave1.tmx"), Sprite::create(type)->getTexture());
 
-	float width = _mapSize.width * _tileSize.width;
-	float height = _mapSize.height * _tileSize.height;
+	//float width = _mapSize.width * _tileSize.width;
+	//float height = _mapSize.height * _tileSize.height;
 
-	Vec2 parallaxRatio = Vec2(1.0f, 1.0f);
-	Vec2 offset = Vec2::ZERO;
-	int bZindex = -3;
-	int fZindex = 6;
+	//Vec2 parallaxRatio = Vec2(1.0f, 1.0f);
+	//Vec2 offset = Vec2::ZERO;
+	//int bZindex = -3;
+	//int fZindex = 6;
 
 	//if (type == GRASS_PNG)
 	//{		

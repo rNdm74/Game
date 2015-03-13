@@ -99,13 +99,13 @@ NpcAiComponent::NpcAiComponent(IGameObject& gameObject) : super(gameObject)
 
 void AiComponent::update()
 {
-	float age = gameObject->getSprite().getScale();
-	age += gameObject->GrowFactor;
-	if (age > kAdultAge)
-		age = kAdultAge;
-
-	gameObject->getSprite().setScale(age);
-
+//	float age = gameObject->getSprite().getScale();
+//	age += gameObject->GrowFactor;
+//	if (age > kAdultAge)
+//		age = kAdultAge;
+//
+//	gameObject->getSprite().setScale(age);
+//
 	void(IAiComponent:: *ptrs[])() =
 	{
 		&IAiComponent::EventWander,

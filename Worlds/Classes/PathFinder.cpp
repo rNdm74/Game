@@ -129,8 +129,9 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 	int startIndex = startLocation.y * mapSize.width + startLocation.x;
 	int targetIndex = targetLocation.y * mapSize.width + targetLocation.x;
 
+    bool isBlocked = _map->isBlocked(targetLocation);
 	// easy first check, if the destination is blocked, we can't get there
-	if (_map->isBlocked(targetLocation) || startIndex > _nodes.size() || targetIndex > _nodes.size())
+	if (isBlocked || startIndex > _nodes.size() || targetIndex > _nodes.size())
 	{
 		return nullptr;
 	}

@@ -37,7 +37,8 @@ public: /** Variables **/
 	Events PlayerEvents;
 	IGameObject* PlayerInstance;	
 	IPlanet* PlanetInstance;
-
+    Vec2 MovePoint;
+    
 private:
     AppGlobal();
 	AppGlobal(const AppGlobal&); // Prevent construction by copying

@@ -106,12 +106,14 @@ GrassPlanet* GrassPlanet::create()
 
 GrassPlanet::GrassPlanet()
 {
+    AppGlobal::getInstance()->PlanetInstance =  this;
+    
 	/** Create the planets surface**/
 	_planetSurface = PlanetSurface::create(GRASS_PNG);
 	/** Add it to the maps stack **/
 	planetMaps.push(_planetSurface);
 
-	/** Create the planets caves **/ 
+	/** Create the planets caves **/
 	_planetCave = Cave::create(GRASS_PNG);
 	/** The caves are not visible yet **/
 	_planetCave->setVisible(false);

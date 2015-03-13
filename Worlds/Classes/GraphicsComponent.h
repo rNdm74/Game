@@ -39,7 +39,10 @@ class GraphicsComponent : public IGraphicsComponent
 
 public:
 	GraphicsComponent(IGameObject& gameObject);
-	virtual ~GraphicsComponent(){};
+	virtual ~GraphicsComponent()
+    {
+        delete _gameObject;
+    };
 	
 	virtual void update(Node& node);
 	virtual void updateFrame();

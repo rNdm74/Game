@@ -46,8 +46,8 @@ bool GameplayScene::init()
 	AppGlobal::getInstance()->PlayerInstance = player;
 	AppGlobal::getInstance()->PlanetInstance = planet;
 	
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	//Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	//Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	//Cave& cave = planet->getPlanetCave(0);
 

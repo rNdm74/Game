@@ -195,7 +195,7 @@ static const AlienTypes alienTypes = { "Beige", "Blue", "Green", "Pink", "Yellow
 #define kZoomInFactor			50000.0f
 #define kZoomOutFactor			100000.0f
 #define kBornAge				0.01f
-#define kAdultAge				0.3f
+#define kAdultAge				1.0f
 /****/
 const float kUpdateInterval =	1.0f / 60.0f;
 /**  **/

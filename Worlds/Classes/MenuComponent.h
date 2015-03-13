@@ -14,7 +14,10 @@ class IMenuComponent
 {
 public:
 	IMenuComponent(){};
-	virtual ~IMenuComponent(){};
+	virtual ~IMenuComponent()
+    {
+        delete _gameObject;
+    };
 
 	//
 	virtual bool addMenu() = 0;

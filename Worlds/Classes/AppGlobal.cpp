@@ -48,14 +48,14 @@ void AppGlobal::initMouseListener()
 
 		auto cursorMove = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
 
-		/*if (Director::getInstance()->getRunningScene()->isRunning())
+		if (Director::getInstance()->getRunningScene()->isRunning())
 		{
 			auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
 			auto cursor = layer->getChildByTag(kTagCursor);
 
 			cursor->setPosition(cursorMove);
-		}*/
+		}
 	};
 
 	listener->onMouseDown = [=](Event* event)
@@ -65,6 +65,10 @@ void AppGlobal::initMouseListener()
 		auto cursor = static_cast<Sprite*>(layer->getChildByTag(kTagCursor));
 
 		cursor->setSpriteFrame("tapTick.png");
+        
+        auto eventMouse = static_cast<EventMouse*>(event);
+        this->MovePoint = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
+
 	};
 
 	listener->onMouseUp = [=](Event* event)

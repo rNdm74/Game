@@ -4,11 +4,12 @@
 #include "Constants.h"
 
 class IAiComponent;
+class IFsmComponent;
 class IMenuComponent;
 class IInputComponent;
-class ICollisionComponent;
 class IGraphicsComponent;
-class IFsmComponent;
+class ICollisionComponent;
+class IPathfindingComponent;
 
 /**
 * A path determined by some path finding algorithm. A series of steps from
@@ -96,7 +97,9 @@ public:
 
 	/** Constructor and the Destructor **/
 	GameObject(cocos2d::ValueMap& properties);
-	virtual ~GameObject();
+    virtual ~GameObject()
+    {
+    };
 
 	/** Update the gameObject **/
 	virtual void update(Node* node){};
@@ -148,8 +151,6 @@ protected: /** **/
 	cocos2d::Vec2 _desiredPosition;
 	cocos2d::Vec2 _direction;
 	cocos2d::Vec2 _velocity;
-
-	
 };
 
 /**
@@ -168,7 +169,7 @@ public:
 	static self* create(cocos2d::ValueMap& properties);
 
 	Player(cocos2d::ValueMap& properties);
-	~Player();
+    virtual ~Player(){};
 
 	/** Update the gameObject overridden **/
 	virtual void update(Node* node) override;
@@ -200,6 +201,7 @@ private: /** **/
 	IInputComponent* _input;
 	IGraphicsComponent* _graphics;
 	ICollisionComponent* _collision;
+    IPathfindingComponent* _pathfinding;
 };
 
 
@@ -212,7 +214,7 @@ public:
 	static self* create(cocos2d::ValueMap& properties);
 
 	Npc(cocos2d::ValueMap& properties);
-	~Npc();
+    virtual ~Npc(){};
 
 	/** Update the gameObject overridden **/
 	virtual void update(Node* node) override;

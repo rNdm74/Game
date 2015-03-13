@@ -8,6 +8,8 @@ class IAiComponent;
 
 struct IAiState
 {
+    virtual ~IAiState(){};
+    
     /** Declare the actions **/
 	virtual void ActionWander(IAiComponent& fsm) = 0;
     virtual void ActionScared(IAiComponent& fsm) = 0;
@@ -108,6 +110,8 @@ public:
 		delete StateDecision;
         delete StateInteract;
 		delete StateResting;
+        
+        delete gameObject;
 	};
 
 	virtual void update() = 0;
@@ -140,7 +144,10 @@ class AiComponent : public IAiComponent
     
 public:
 	AiComponent(IGameObject& gameObject);
-	virtual ~AiComponent(){};
+	virtual ~AiComponent()
+    {
+        delete currentState;
+    };
 
 	virtual void update();
 

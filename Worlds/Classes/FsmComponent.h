@@ -8,6 +8,8 @@ class IFsmComponent;
 
 struct IFsmState
 {
+    virtual ~IFsmState(){};
+    
 	virtual void ActionUp(IFsmComponent& fsm) = 0;
 	virtual void ActionDown(IFsmComponent& fsm) = 0;
 	virtual void ActionLeft(IFsmComponent& fsm) = 0;
@@ -100,6 +102,8 @@ public:
         delete StateStop;
         delete StateIdle;
 		delete StateJump;
+        
+        delete gameObject;
     };
 
 	virtual void update() = 0;
@@ -127,9 +131,8 @@ class FsmComponent : public IFsmComponent
 
 public:
 	FsmComponent(IGameObject& gameObject);
-	virtual ~FsmComponent()
+    virtual ~FsmComponent()
 	{
-		delete gameObject;
 		delete currentState;
 	};
 

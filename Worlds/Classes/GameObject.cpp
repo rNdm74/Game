@@ -9,6 +9,7 @@
 #include "InputComponent.h"
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
+#include "PathfindingComponent.h"
 
 
 GameObject* GameObject::create(ValueMap& properties)
@@ -47,10 +48,6 @@ GameObject::GameObject(ValueMap& properties)
 	_sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 	_sprite->setPositionX(width / 2);
 	this->addChild(_sprite);
-};
-
-GameObject::~GameObject()
-{
 };
 
 ValueMap GameObject::getProperties()
@@ -156,26 +153,20 @@ Player::Player(ValueMap& properties) : super(properties)
 	_input = new (std::nothrow) PlayerInputComponent(*this);
 	_graphics = new (std::nothrow) PlayerGraphicsComponent(*this);
 	_collision = new (std::nothrow) PlayerCollisionComponent(*this);
-	
+    _pathfinding = new (std::nothrow) PlayerPathfindingComponent(*this);
+    
 	this->setTag(kTagPlayer);	
 
 	// Player is in the stop state and it is pushed onto the event stack
 	events.push(EGameObjectEvent::Stop);
 };
 
-Player::~Player()
-{
-	/*delete _fsm;
-	delete _menu;
-	delete _input;
-	delete _graphics;
-	delete _collision;*/
-};
-
 void Player::update(Node* node)
 {                
 	_graphics->update(*node);
 
+    _pathfinding->update();
+    
 	_fsm->update();
 	_input->update();
 	_collision->update(*node);	
@@ -323,16 +314,7 @@ Npc::Npc(ValueMap& properties) : super(properties)
 
 	GrowFactor = random(0.00005f, 0.0003f);
 	age = kBornAge;
-	_sprite->setScale(kBornAge);
-};
-
-Npc::~Npc()
-{
-    //delete _ai;
-	//delete _fsm;
-	//delete _input;
-	//delete _graphics;
-	//delete _collision;
+	_sprite->setScale(kAdultAge);
 };
 
 void Npc::update(Node* node)

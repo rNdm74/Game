@@ -29,7 +29,10 @@ class InputComponent : public IInputComponent
 
 public:
 	InputComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
-	virtual ~InputComponent(){};
+	virtual ~InputComponent()
+    {
+        delete _gameObject;
+    };
 
 	/** Actions **/	
 	virtual void Up();
