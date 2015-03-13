@@ -165,28 +165,15 @@ Player::Player(ValueMap& properties) : super(properties)
 
 Player::~Player()
 {
-	delete _fsm;
+	/*delete _fsm;
 	delete _menu;
 	delete _input;
 	delete _graphics;
-	delete _collision;
+	delete _collision;*/
 };
 
 void Player::update(Node* node)
-{
-    IParallaxTileMap* map = static_cast<IParallaxTileMap*>(node);
-    
-    if(this->getPositionX() > map->getWidth())
-    {
-        map->setPositionX(0.0f);
-        this->setPositionX(0.0f);
-    }
-    
-    if(this->getPositionX() < -this->getBoundingBox().size.width)
-    {
-        this->setPositionX(map->getWidth() - this->getBoundingBox().size.width);
-    }
-    
+{                
 	_graphics->update(*node);
 
 	_fsm->update();
@@ -201,12 +188,16 @@ void Player::update(Node* node)
 
 void Player::Up()
 {
+	AppGlobal::getInstance()->zoomOut();
+
 	_input->Up();
 	_graphics->Up();	
 };
 
 void Player::Down()
 {
+	AppGlobal::getInstance()->zoomOut();
+
 	_input->Down();
 	_graphics->Down();
 	
@@ -214,20 +205,26 @@ void Player::Down()
 
 void Player::Left()
 {
+	AppGlobal::getInstance()->zoomOut();
+
 	_input->Left();
 	_graphics->Left();
 };
 
 void Player::Right()
 {
+	AppGlobal::getInstance()->zoomOut();
+
 	_input->Right(); 
 	_graphics->Right();
 };
 
 void Player::Stop()
 {
+	AppGlobal::getInstance()->zoomIn();
+
 	_input->Stop();
-	_graphics->Stop();
+	_graphics->Idle();
 };
 
 void Player::Gravity()
@@ -236,6 +233,8 @@ void Player::Gravity()
 
 void Player::Idle()
 {
+	AppGlobal::getInstance()->zoomIn();
+
     _graphics->Idle();
     _input->Stop();
 };
@@ -320,43 +319,30 @@ Npc::Npc(ValueMap& properties) : super(properties)
 	this->setTag(kTagNpc);
 
 	events.push(EGameObjectEvent::Stop);
+	npcEvents.push(ENpcEvent::Decision);
+
+	GrowFactor = random(0.00005f, 0.0003f);
+	age = kBornAge;
+	_sprite->setScale(kBornAge);
 };
 
 Npc::~Npc()
 {
-    delete _ai;
-	delete _fsm;
-	delete _input;
-	delete _graphics;
-	delete _collision;
+    //delete _ai;
+	//delete _fsm;
+	//delete _input;
+	//delete _graphics;
+	//delete _collision;
 };
 
 void Npc::update(Node* node)
 {
-	IParallaxTileMap* map = static_cast<IParallaxTileMap*>(node);
-
-	if (this->getPositionX() > map->getWidth())
-	{
-		map->setPositionX(0.0f);
-		this->setPositionX(0.0f);
-	}
-
-	if (this->getPositionX() < -this->getBoundingBox().size.width)
-	{
-		this->setPositionX(map->getWidth() - this->getBoundingBox().size.width);
-	}
-
 	_graphics->update(*node);
 
     _ai->update();
 	_fsm->update();
 	_input->update();
 	_collision->update(*node);
-
-	if (OnGround && JumpRequest)
-	{
-		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::Jump);
-	}
 };
 
 void Npc::Up()
@@ -387,7 +373,7 @@ void Npc::Right()
 void Npc::Stop()
 {
 	_input->Stop();
-	_graphics->Stop();
+	_graphics->Idle();
 };
 
 

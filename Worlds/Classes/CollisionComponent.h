@@ -13,11 +13,14 @@ public:
 	ICollisionComponent(){};
 	virtual ~ICollisionComponent(){};
 
-	virtual void update(Node& node) = 0;        
-	virtual void checkTileCollision(Node& node) = 0;
-	virtual void checkLadderCollision(Node& node) = 0;
+	virtual void update(Node& node) = 0;     
 
 protected:
+	virtual void checkTileCollision(Node& node) = 0;
+	virtual void checkLadderCollision(Node& node) = 0;
+	virtual void wrapGameObject(Node& node) = 0;
+
+protected: /** Variables**/
 	IGameObject* _gameObject;
 };
 
@@ -27,6 +30,7 @@ public:
 	virtual void update(Node& node);    
 
 protected:
+	virtual void wrapGameObject(Node& node);
 	virtual void checkTileCollision(Node& node);
 	virtual void checkLadderCollision(Node& node);
 };

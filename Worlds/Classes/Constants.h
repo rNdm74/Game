@@ -14,8 +14,17 @@ enum EGameObjectEvent
     Right,
     Stop,
     Jump,
-	MoveToCave,
-	MoveToSurface,
+};
+
+enum ENpcEvent
+{
+	Wander,
+	Scared,
+	Curious,
+	DropGem,
+	Decision,
+	Interact,
+	Resting,
 };
 
 enum EAnimationStates
@@ -48,16 +57,6 @@ enum ETileGrid
     CENTER = 1
 };
 
-enum ENpcStates
-{
-    DecisionState,
-    WanderState,
-    ScaredState,
-    CuriousState,
-    PoopState,
-    InteractState
-};
-
 struct TileData
 {
 	cocos2d::Rect tileRect;
@@ -66,6 +65,8 @@ struct TileData
 };
 
 typedef std::stack<EGameObjectEvent> Events;
+typedef std::stack<ENpcEvent> NpcEvents;
+
 typedef std::stack<class IParallaxTileMap*> ActiveTileMap;
 typedef std::array<TileData, 8> TileDataArray;
 typedef std::array<cocos2d::Vec2, 7> States;
@@ -77,14 +78,15 @@ typedef std::string Type;
 
 typedef std::vector<std::vector<std::string>> Frames;
 
-#define DEBUG_ENABLE 1
+#define DEBUG_ENABLE 0
 
 #define MAX_FRAME_STATES 7
 
 
 typedef std::array<std::string, 5> AlienTypes;
 
-//AlienTypes alienTypes = { "Beige", "Blue", "Green", "Pink", "Yellow" };
+static const AlienTypes alienTypes = { "Beige", "Blue", "Green", "Pink", "Yellow" };
+//std::array<std::string, 5> alienTypes = { "Beige", "Blue", "Green", "Pink", "Yellow" };
 
 #define ANIMATION_FRAMES(__TYPE__) \
 { \
@@ -186,12 +188,14 @@ typedef std::array<std::string, 5> AlienTypes;
 #define kOpacityMin				100
 #define kOpacityMax				255
 #define kOpacityFadeFactor		10
-#define kFrameDelay				300.0f /** milliseconds **/
+#define kFrameDelay				150.0f /** milliseconds **/
 #define kFrameTimeFactor		20.0f
 #define kZoomMin				1.2f
 #define kZoomMax				1.5f
 #define kZoomInFactor			50000.0f
 #define kZoomOutFactor			100000.0f
+#define kBornAge				0.01f
+#define kAdultAge				0.3f
 /****/
 const float kUpdateInterval =	1.0f / 60.0f;
 /**  **/

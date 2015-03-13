@@ -49,13 +49,20 @@ public:
 	virtual void Left();
 	virtual void Right();
 	virtual void Stop(){};
-    virtual void Idle(){};
+    virtual void Idle() override;
 	virtual void Hurt(){};
     virtual void Crouch(){};	
 	virtual void Jump(){};
 
 protected:
-    
+	void lookLeft();
+	void lookRight();
+	void lookUp();
+	void lookDown();
+	void lookForward();
+
+protected: /** Variables **/
+	Frames getFramesForHero();
     Frames getFramesFor(std::string type);
     
 	IGameObject* _gameObject;
@@ -67,6 +74,8 @@ protected:
 	long maxIdleTime;
 
 	Frames frames;
+
+	int breath = -1;
 };
 
 
@@ -78,15 +87,6 @@ class PlayerGraphicsComponent : public GraphicsComponent
 public:
 	PlayerGraphicsComponent(IGameObject& gameObject);
 	virtual ~PlayerGraphicsComponent(){};
-	
-    virtual void Idle() override;
-
-private:
-	void lookLeft();
-	void lookRight();
-	void lookUp();
-	void lookDown();
-	void lookForward();
 };
 
 
@@ -98,8 +98,6 @@ class NpcGraphicsComponent : public GraphicsComponent
 public:
 	NpcGraphicsComponent(IGameObject& gameObject);
 	virtual ~NpcGraphicsComponent(){};
-
-	//virtual void update(Node& node) override;
 };
 
 

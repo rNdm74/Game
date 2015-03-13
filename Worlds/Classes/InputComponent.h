@@ -24,8 +24,11 @@ public:
 
 class InputComponent : public IInputComponent
 {
+	typedef IInputComponent super;
+	typedef InputComponent self;
+
 public:
-	InputComponent(){};
+	InputComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
 	virtual ~InputComponent(){};
 
 	/** Actions **/	
@@ -43,26 +46,32 @@ public:
 protected:
 	IGameObject* _gameObject;
 
-	const float _jumpLimit = 850.0f;
-	const Vec2 _jumpForce = Vec2(0.0f, 2800.0f);
-	const Vec2 _gravity = Vec2(0.0, -1850.0f);
-	const Vec2 _movement = Vec2(1800.0f, 1800.0f);
-	const Vec2 _minMovement = Vec2(-320.0f, -850.0f);
-	const Vec2 _maxMovement = Vec2(320.0f, 520.0f);
+	float _jumpLimit;
+	Vec2 _jumpForce;
+	Vec2 _gravity;
+	Vec2 _movement;
+	Vec2 _minMovement;
+	Vec2 _maxMovement;
 };
 
 class PlayerInputComponent : public InputComponent
 {
+	typedef InputComponent super;
+	typedef PlayerInputComponent self;
+
 public:
-	PlayerInputComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	PlayerInputComponent(IGameObject& gameObject);
 	void update() override;		
 
 };
 
 class NpcInputComponent : public InputComponent
 {
+	typedef InputComponent super;
+	typedef NpcInputComponent self;
+
 public:
-	NpcInputComponent(IGameObject& gameObject){ _gameObject = &gameObject; };
+	NpcInputComponent(IGameObject& gameObject);
 	void update() override;
 
 };

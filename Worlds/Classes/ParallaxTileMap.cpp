@@ -77,7 +77,7 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 	_foregroundLayer->release();
 
     
-    for(int col = 0; col < _mapSize.width; col++)
+    /*for(int col = 0; col < _mapSize.width; col++)
     {
         for(int row = 0; row < _mapSize.height; row++)
         {
@@ -124,7 +124,7 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
                 tile->getTexture()->setAntiAliasTexParameters();
             }
         }
-    }
+    }*/
 
     
 	// create shadow layer
@@ -372,10 +372,23 @@ void ParallaxTileMap::addObjects()
 
 			if (type.isNull() == false)
 			{
-				if (addObject(type.asString(), properties))
+				if (type.asString() == "Npc")
 				{
-					_objectCount++;
+					for (int i = 0; i < 100; i++)
+					{
+						if (addObject(type.asString(), properties))
+						{
+							_objectCount++;
+						}
+					}
 				}
+				else
+				{
+					if (addObject(type.asString(), properties))
+					{
+						_objectCount++;
+					}
+				}				
 			}
 		}
 	}
@@ -714,27 +727,27 @@ Cave::Cave(std::string type) : super(type)
 	int bZindex = -3;
 	int fZindex = 6;
 
-	if (type == GRASS_PNG)
-	{		
-		auto grassForeground = GrassForeground::create(width);
-		grassForeground->setScaleY(-2.0f);
-		
-		//grassForeground->setRotation(180);
-		this->addChild(grassForeground, fZindex, parallaxRatio, Vec2(0.0f, height));
-		this->addChild(GrassForeground::create(width), fZindex, parallaxRatio, offset);
-	}
-	else if (type == SNOW_PNG)
-	{		
-		this->addChild(SnowForeground::create(width), fZindex, parallaxRatio, offset);
-	}
-	else if (type == SAND_PNG)
-	{		
-		this->addChild(SandForeground::create(width), fZindex, parallaxRatio, offset);
-	}
-	else if (type == DIRT_PNG)
-	{		
-		this->addChild(DirtForeground::create(width), fZindex, parallaxRatio, offset);
-	}
+	//if (type == GRASS_PNG)
+	//{		
+	//	auto grassForeground = GrassForeground::create(width);
+	//	grassForeground->setScaleY(-2.0f);
+	//	
+	//	//grassForeground->setRotation(180);
+	//	this->addChild(grassForeground, fZindex, parallaxRatio, Vec2(0.0f, height));
+	//	this->addChild(GrassForeground::create(width), fZindex, parallaxRatio, offset);
+	//}
+	//else if (type == SNOW_PNG)
+	//{		
+	//	this->addChild(SnowForeground::create(width), fZindex, parallaxRatio, offset);
+	//}
+	//else if (type == SAND_PNG)
+	//{		
+	//	this->addChild(SandForeground::create(width), fZindex, parallaxRatio, offset);
+	//}
+	//else if (type == DIRT_PNG)
+	//{		
+	//	this->addChild(DirtForeground::create(width), fZindex, parallaxRatio, offset);
+	//}
 };
 
 ValueMap Cave::getToSurfaceProperties()

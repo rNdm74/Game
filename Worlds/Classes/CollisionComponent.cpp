@@ -19,6 +19,23 @@ void CollisionComponent::update(Node& node)
 	
 };
 
+
+void CollisionComponent::wrapGameObject(Node& node)
+{
+	float w = static_cast<IParallaxTileMap&>(node).getWidth();
+	Vec2 v = _gameObject->getPosition();
+	Size s = _gameObject->getBoundingBox().size;
+	
+	/** Wrap right to left **/
+	if (v.x > w) 
+		v.x = 0.0f;
+	/** Wrap left to right **/
+	if (v.x < -s.width) 
+		v.x = w - s.width;
+	
+	_gameObject->setPosition(v);
+};
+
 void CollisionComponent::checkTileCollision(Node& node)
 {
 	/** Game objects desired position **/
@@ -131,16 +148,18 @@ void CollisionComponent::checkLadderCollision(Node& node)
 	if (tileDataArray[ETileGrid::CENTER].GID)
 	{
 		Rect r = tileDataArray[ETileGrid::CENTER].tileRect;
+#if DEBUG_ENABLE
 		map.drawDebugRect(r, Color4F(0.5f, 1.0f, 0.0f, 0.5f));
-
+#endif // DEBUG_ENABLE
 		_gameObject->LadderOrigin = r.origin;
 		_gameObject->OnLadder = true;
 	}
 	if (tileDataArray[ETileGrid::BOTTOM].GID)
 	{
 		Rect r = tileDataArray[ETileGrid::BOTTOM].tileRect;
+#if DEBUG_ENABLE
 		map.drawDebugRect(r, Color4F(0.5f, 1.0f, 0.0f, 0.5f));
-
+#endif // DEBUG_ENABLE
 		_gameObject->LadderOrigin = r.origin;
 		_gameObject->OnLadder = true;
 	}
@@ -157,13 +176,15 @@ void ShowCaveCollisionComponent::update(Node& node)
 	//log("x: %f, y:%f", r.origin.x, r.origin.y);
 	Rect r1 = map.getViewportBoundingBox();
 	Rect r2 = _gameObject->getCollisionBox();
-	Rect r3 = map.getPlayer()->getCollisionBox();
+	Rect r3 = AppGlobal::getInstance()->PlayerInstance->getCollisionBox();
 
 	if (Utils::isRectContainsRect(r1, r2) || Utils::isRectIntersectsRect(r1, r2))
 	{
 		if (r2.intersectsRect(r3))
 		{
+#if DEBUG_ENABLE
 			map.drawDebugRect(r2, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+#endif // DEBUG_ENABLE
 			map.enableForegroundOpacity(kFadeOut);
 			map.enableParallaxForegroundOpacity(kFadeOut);
 		}
@@ -221,13 +242,19 @@ void ToSurfaceCollisionComponent::update(Node& node)
 
 void PlayerCollisionComponent::update(Node& node)
 {
+	
 	this->checkTileCollision(node);
 	this->checkLadderCollision(node);
+
+	this->wrapGameObject(node);
 }
 
 
 void NpcCollisionComponent::update(Node& node)
 {
+	
 	this->checkTileCollision(node);
 	this->checkLadderCollision(node);
+
+	this->wrapGameObject(node);
 }

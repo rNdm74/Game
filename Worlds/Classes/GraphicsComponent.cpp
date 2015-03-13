@@ -15,6 +15,46 @@ GraphicsComponent::GraphicsComponent(IGameObject& gameObject)
 	frameTime = 0.0f;
 };
 
+Frames GraphicsComponent::getFramesForHero()
+{
+	Frames frames;
+	std::vector<std::string> state;
+
+	/** Climb Frames **/
+	state.clear();
+	for (int i = 1; i <= 6; i++) state.push_back("climb (" + std::to_string(i) + ").png");
+	frames.push_back(state);
+	state.clear();
+
+	for (int i = 1; i <= 6; i++) state.push_back("climb (" + std::to_string(i) + ").png");
+	frames.push_back(state);
+
+	/** Walk Frames **/
+	state.clear();
+	for (int i = 1; i <= 8; i++) state.push_back("walk (" + std::to_string(i) + ").png");
+	frames.push_back(state);
+
+	state.clear();
+	for (int i = 1; i <= 8; i++) state.push_back("walk (" + std::to_string(i) + ").png");
+	frames.push_back(state);
+
+	/** Stand Frames **/
+	state.push_back("idle.png");
+	frames.push_back(state);
+
+	/** Jump Frames **/
+	state.clear();
+	for (int i = 1; i <= 3; i++) state.push_back("jump (" + std::to_string(i) + ").png");
+	frames.push_back(state);
+
+	/**  Stand Frames **/
+	state.clear();
+	state.push_back("idle.png");
+	frames.push_back(state);	
+	
+	return frames;
+};
+
 Frames GraphicsComponent::getFramesFor(std::string type)
 {
     return
@@ -32,14 +72,14 @@ Frames GraphicsComponent::getFramesFor(std::string type)
 void GraphicsComponent::update(Node& node)
 {
     Rect r = _gameObject->getCollisionBox();
+#if DEBUG_ENABLE
     static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-
+#endif // DEBUG_ENABLE
 	this->updateFrame();
 };
 
 void GraphicsComponent::updateFrame()
 {
-
 	EGameObjectEvent currentEvent = _gameObject->events.top();
 
 	/** Reset the currentFrame to init frame **/
@@ -80,69 +120,69 @@ void GraphicsComponent::Right()
 };
 
 
-PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject) : super(gameObject)
-{
-    frames = getFramesFor("Beige");
-};
-
-void PlayerGraphicsComponent::Idle()
+void GraphicsComponent::Idle()
 {		
-	if (idleTime > maxIdleTime)
-	{
-		idleTime = 0l;
-		maxIdleTime = random(30l, 75l);
+	/*Sprite& sprite = _gameObject->getSprite();
 
-		switch (random(0, 5))
-		{
-			case 0:
-				this->lookLeft();
-				break;
-			case 1:
-				this->lookRight();
-				break;
-			case 2:
-				this->lookUp();
-				break;
-			case 3:
-				this->lookDown();
-				break;
-			case 4:
-				this->lookForward();
-				break;
-		}
+	float scale = sprite.getScaleY();
+
+	scale += 0.001f * breath;
+
+	if (scale < 0.99f)
+	{
+		breath = 1;
+
+		scale = 0.99f;
+	}
+	if (scale > 1.0f)
+	{
+		breath = -1;
+		scale = 1.0f; 
 	}
 
-	idleTime++;
+	sprite.setScaleY(scale);*/
+
+	
 };
 
-void PlayerGraphicsComponent::lookLeft()
+void GraphicsComponent::lookLeft()
 {
 	_gameObject->setFlippedX(true);
 };
 
-void PlayerGraphicsComponent::lookRight()
+void GraphicsComponent::lookRight()
 {
 	_gameObject->setFlippedX(false);
 };
 
-void PlayerGraphicsComponent::lookUp()
+void GraphicsComponent::lookUp()
 {
+	currentFrame = 0;
 	_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 };
 
-void PlayerGraphicsComponent::lookDown()
+void GraphicsComponent::lookDown()
 {
+	currentFrame = 0;
 	_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 };
 
-void PlayerGraphicsComponent::lookForward()
+void GraphicsComponent::lookForward()
 {
+	currentFrame = 0;
 	_gameObject->setSpriteFrame(frameCache(frames[IdleAnimation][currentFrame]));
 };
 
 
 
+PlayerGraphicsComponent::PlayerGraphicsComponent(IGameObject& gameObject) : super(gameObject)
+{
+	frames = getFramesForHero();
+};
+
 NpcGraphicsComponent::NpcGraphicsComponent(IGameObject& gameObject) : super(gameObject)
 {
-	frames = getFramesFor("Blue");
+	int index = random(0, static_cast<int>(alienTypes.size()-1));
+
+	frames = getFramesFor(alienTypes[index]);
 };

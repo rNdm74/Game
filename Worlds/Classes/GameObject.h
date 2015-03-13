@@ -52,6 +52,7 @@ public:
 	virtual cocos2d::Vec2 getDesiredPosition() = 0;
 	virtual cocos2d::Vec2 getDirection() = 0;
 	virtual cocos2d::Vec2 getVelocity() = 0;
+	virtual cocos2d::Sprite& getSprite() = 0;
 	/** Getters end **/
 
 	/** Setters **/	
@@ -72,6 +73,9 @@ public: /** Variables **/
 	bool OnLadder = false;
 	bool JumpRequest = false;
 
+	long Stamina = 1000l;
+	float GrowFactor;
+
 	Events events;
 };
 
@@ -86,23 +90,23 @@ class GameObject : public IGameObject
 {
 	typedef IGameObject super;
 	typedef GameObject self;
-    
+
 public:
 	static GameObject* create(cocos2d::ValueMap& properties);
 
 	/** Constructor and the Destructor **/
 	GameObject(cocos2d::ValueMap& properties);
 	virtual ~GameObject();
-    		
+
 	/** Update the gameObject **/
 	virtual void update(Node* node){};
 
-	/** Action methods **/	
+	/** Action methods **/
 	virtual void Up(){};
 	virtual void Down(){};
 	virtual void Left(){};
 	virtual void Right(){};
-	virtual void Stop(){};	
+	virtual void Stop(){};
 	virtual void Gravity(){};
 	virtual void Idle(){};
 	virtual void Crouch(){};
@@ -122,6 +126,7 @@ public:
 	virtual cocos2d::Vec2 getDesiredPosition();
 	virtual cocos2d::Vec2 getDirection();
 	virtual cocos2d::Vec2 getVelocity();
+	virtual cocos2d::Sprite& getSprite() { return *_sprite; };
 	/** Getters end **/
 
 	/** Setters **/	
@@ -143,6 +148,8 @@ protected: /** **/
 	cocos2d::Vec2 _desiredPosition;
 	cocos2d::Vec2 _direction;
 	cocos2d::Vec2 _velocity;
+
+	
 };
 
 /**
@@ -222,6 +229,12 @@ public:
 
 	/** Getters Overridden **/
 	virtual cocos2d::Rect getCollisionBox() override;
+
+public: /** Variables **/
+	NpcEvents npcEvents;
+
+	float age;
+	
 
 private: /** **/
     IAiComponent* _ai;

@@ -24,13 +24,9 @@ void FsmState::ActionJump(IFsmComponent& fsm)
 	// Then change to the jump state
 	fsm.setCurrentState(fsm.StateJump); 
 };
-void FsmState::ActionToCave(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateToCave); };
-void FsmState::ActionToSurface(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateToSurface); };
 
 void UpState::ActionUp(IFsmComponent& fsm) /** Override **/
-{
-    AppGlobal::getInstance()->zoomOut();
-
+{   
 	Vec2 ladderOrigin = fsm.gameObject->LadderOrigin;
 	fsm.gameObject->setPositionX(ladderOrigin.x);
     
@@ -38,15 +34,12 @@ void UpState::ActionUp(IFsmComponent& fsm) /** Override **/
 };
 
 void UpState::ActionStop(IFsmComponent& fsm) /** Override **/
-{
-	//AppGlobal::getInstance()->zoomOut();
+{	
 	fsm.gameObject->HitWall();
 };
 
 void DownState::ActionDown(IFsmComponent& fsm) /** Override **/
-{
-    AppGlobal::getInstance()->zoomOut();
-    
+{    
 	Vec2 ladderOrigin = fsm.gameObject->LadderOrigin;
 	fsm.gameObject->setPositionX(ladderOrigin.x);
 
@@ -55,21 +48,16 @@ void DownState::ActionDown(IFsmComponent& fsm) /** Override **/
 
 void DownState::ActionStop(IFsmComponent& fsm) /** Override **/
 {
-	//AppGlobal::getInstance()->zoomOut();
 	fsm.gameObject->HitWall();
 };
 
 void LeftState::ActionLeft(IFsmComponent& fsm) /** Override **/
 {
-    AppGlobal::getInstance()->zoomOut();
-
 	fsm.gameObject->Left();
 };
 
 void RightState::ActionRight(IFsmComponent& fsm) /** Override **/
 {
-    AppGlobal::getInstance()->zoomOut();
-
 	fsm.gameObject->Right();
 };
 
@@ -85,11 +73,10 @@ void StopState::ActionRight(IFsmComponent& fsm) /** Override **/
 
 void StopState::ActionStop(IFsmComponent& fsm) /** Override **/
 {	
-    AppGlobal::getInstance()->zoomIn();
     fsm.gameObject->Stop();
     
     /**  Wait so many seconds then change state to idle **/
-    if (timeout > 1000l /** Reached timeout period  **/)
+    if (timeout > 100l /** Reached timeout period  **/)
     {
         /** Reset timeout period **/
         timeout = 0l;
@@ -103,7 +90,6 @@ void StopState::ActionStop(IFsmComponent& fsm) /** Override **/
 
 void IdleState::ActionStop(IFsmComponent& fsm) /** Override **/
 {
-	AppGlobal::getInstance()->zoomIn();
     fsm.gameObject->Idle();
 };
 
@@ -112,24 +98,14 @@ void JumpState::ActionJump(IFsmComponent& fsm) /** Override **/
 	log("Lets jump again!!");
 };
 
-void ToCaveState::ActionToCave(IFsmComponent& fsm) /** Override **/
+
+FsmComponent::FsmComponent(IGameObject& gameObject)
 {
-	if (AppGlobal::getInstance()->PlayerEvents.top() == EGameObjectEvent::MoveToCave)
-		AppGlobal::getInstance()->PlayerEvents.pop();
-	
-	if (AppGlobal::getInstance()->PlanetInstance->ToCave(*fsm.gameObject))
-	{
-		fsm.setCurrentState(fsm.StateStop);
-	}	
+	this->gameObject = &gameObject;
+	this->currentState = StateStop;
 };
 
-void ToSurfaceState::ActionStop(IFsmComponent& fsm) /** Override **/
-{
-	log("Lets jump again!!");
-};
-
-
-void PlayerFsmComponent::update()
+void FsmComponent::update()
 {
 	void(IFsmComponent:: *ptrs[])() =
 	{
@@ -138,32 +114,14 @@ void PlayerFsmComponent::update()
 		&IFsmComponent::EventLeft,
 		&IFsmComponent::EventRight,
 		&IFsmComponent::EventStop,
-		&IFsmComponent::EventJump,
-		&IFsmComponent::EventToCave,
-		&IFsmComponent::EventToSurface,
+		&IFsmComponent::EventJump
 	};
-	
+
 	int runningEvent = gameObject->events.top();
 
 	(this->*ptrs[runningEvent])();
-}
+};
 
-void NpcFsmComponent::update()
-{
-	void(IFsmComponent:: *ptrs[])() =
-	{
-		&IFsmComponent::EventUp,
-		&IFsmComponent::EventDown,
-		&IFsmComponent::EventLeft,
-		&IFsmComponent::EventRight,
-		&IFsmComponent::EventStop,
-		&IFsmComponent::EventJump,
-		&IFsmComponent::EventToCave,
-		&IFsmComponent::EventToSurface,
-	};
-		
-	int runningEvent = gameObject->events.top();
+PlayerFsmComponent::PlayerFsmComponent(IGameObject& gameObject) : super(gameObject){};
 
-	(this->*ptrs[runningEvent])();
-}
-
+NpcFsmComponent::NpcFsmComponent(IGameObject& gameObject) : super(gameObject){};

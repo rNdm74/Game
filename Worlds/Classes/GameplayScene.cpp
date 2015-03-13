@@ -35,9 +35,9 @@ bool GameplayScene::init()
     if ( !Layer::init() )
         return false;
 
-    planet = PlanetFactory::create("Snow");
+    planet = PlanetFactory::create("Grass");
 	this->addChild(planet);
-	
+			
     ValueMap landingSite = planet->getLandingSite();
     
 	player = GameObjectFactory::create("Player", landingSite);
@@ -46,7 +46,17 @@ bool GameplayScene::init()
 	AppGlobal::getInstance()->PlayerInstance = player;
 	AppGlobal::getInstance()->PlanetInstance = planet;
 	
-	//
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	//Cave& cave = planet->getPlanetCave(0);
+
+	//cave.setPosition(Vec2(2.0f, ((origin.y + visibleSize.height) - cave.getBoundingBox().size.height) - 2.0f));
+	//cave.setOpacity(0.5f);
+	/**  **/
+	//this->addChild(&cave);
+
+	/** **/
     this->scheduleUpdateWithPriority(42);   
     
     return true;

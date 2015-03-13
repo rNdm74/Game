@@ -21,6 +21,9 @@ AppResources::~AppResources()
 
 bool AppResources::initLoad()
 {		
+	
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("hero.plist");
+
 	textureCache->addImageAsync(HUD_PNG, CC_CALLBACK_1(AppResources::loadHudResources, this));
 
 	textureCache->addImageAsync(BACKGROUND_PNG, CC_CALLBACK_1(AppResources::loadBackgroundResources, this));

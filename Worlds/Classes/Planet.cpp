@@ -16,10 +16,12 @@ ValueMap Planet::getLandingSite()
 
 void Planet::update(float& delta)
 {	
+	//_planetCave->update(delta);
+
 	/** Updates scale creates zoom effect **/
 	this->setScale(AppGlobal::getInstance()->getScale());
-	/** Update the active map **/
 
+	/** Update the active map **/
 	planetMaps.top()->update(delta);
 
 	/** Keep active map position centered on player **/
@@ -158,6 +160,14 @@ SnowPlanet::SnowPlanet()
 	/** Add it to the maps stack **/
 	planetMaps.push(_planetSurface);
 
+	/** Create the planets caves **/
+	_planetCave = Cave::create(SNOW_PNG);
+	/** The caves are not visible yet **/
+	_planetCave->setVisible(true);
+	_planetCave->setScale(0.25f);
+	
+
+	/** Add the planets surface and the planets cave to the planet **/
 	this->addChild(_planetSurface);
 }
 
