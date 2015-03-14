@@ -1028,6 +1028,7 @@
   <object name="LandingSite" type="LandingSite" x="70" y="490" width="70" height="70"/>
   <object name="ToCave" type="ToCave" x="980" y="630" width="70" height="70"/>
   <object name="Npc" type="Npc" x="1260" y="490" width="70" height="70"/>
+  <object name="Food" type="Food" x="630" y="490" width="70" height="70"/>
  </objectgroup>
  <layer name="foreground" width="20" height="10">
   <data>
