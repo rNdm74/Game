@@ -12,13 +12,21 @@ void FsmState::ActionDown(IFsmComponent& fsm)
 	fsm.gameObject->OnGround = false;
 	fsm.setCurrentState(fsm.StateDown); 
 };
-void FsmState::ActionLeft(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateLeft); };
-void FsmState::ActionRight(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateRight); };
+void FsmState::ActionLeft(IFsmComponent& fsm)
+{ 
+	fsm.gameObject->HitWall();
+	fsm.setCurrentState(fsm.StateLeft); 
+};
+void FsmState::ActionRight(IFsmComponent& fsm)
+{ 
+	fsm.gameObject->HitWall();
+	fsm.setCurrentState(fsm.StateRight); 
+};
 void FsmState::ActionStop(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateStop); };
 void FsmState::ActionJump(IFsmComponent& fsm)
 {
 	//
-	fsm.gameObject->events.pop();
+	fsm.gameObject->removeMovementEvent(EMovementEvent::Jump);
 	// Tell the gameObject to jump
 	fsm.gameObject->Jump();
 	// Then change to the jump state
@@ -117,7 +125,7 @@ void FsmComponent::update()
 		&IFsmComponent::EventJump
 	};
 
-	int runningEvent = gameObject->events.top();
+	int runningEvent = gameObject->getCurrentMovementEvent();
 
 	(this->*ptrs[runningEvent])();
 };

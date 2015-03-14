@@ -6,36 +6,44 @@
 
 #include "cocos2d.h"
 
-enum EGameObjectEvent
+enum EMovementEvent
 {
-    Up,
-    Down,
-    Left,
-    Right,
-    Stop,
-    Jump,
+    Up					= 0,
+    Down				= 1,
+	Left				= 2,
+	Right				= 3,
+	Stop				= 4,
+	Jump				= 5,
 };
 
-enum ENpcEvent
+enum EAiEvent
 {
-	Wander,
-	Scared,
-	Curious,
-	DropGem,
-	Decision,
-	Interact,
-	Resting,
+	Wander				= 0,
+	Scared				= 1,
+	Curious				= 2,
+	DropGem				= 3,
+	Decision			= 4,
+	Interact			= 5,
+	Resting				= 6,
+	Captured			= 7,
 };
 
 enum EAnimationStates
 {
-	UpAnimation,
-	DownAnimation,
-	LeftAnimation,
-	RightAnimation,
-	StopAnimation,
-	JumpAnimation,
-	IdleAnimation
+	UpAnimation			= 0,
+	DownAnimation		= 1,
+	LeftAnimation		= 2,
+	RightAnimation		= 3,
+	StopAnimation		= 4,
+	JumpAnimation		= 5,
+	WanderAnimation		= 6,
+	ScaredAnimation		= 7,
+	CuriousAnimation	= 8,
+	DropGemAnimation	= 9,
+	DecisionAnimation	= 10,
+	InteractAnimation	= 11,
+	RestingAnimation	= 12,
+	CapturedAnimation	= 13,
 };
 
 enum EParallaxTileMapState
@@ -64,8 +72,8 @@ struct TileData
 	int GID = 0;
 };
 
-typedef std::stack<EGameObjectEvent> Events;
-typedef std::stack<ENpcEvent> NpcEvents;
+typedef std::stack<EMovementEvent> MovementEvents;
+typedef std::stack<EAiEvent> AiEvents;
 
 typedef std::stack<class IParallaxTileMap*> ActiveTileMap;
 typedef std::array<TileData, 8> TileDataArray;
@@ -78,7 +86,7 @@ typedef std::string Type;
 
 typedef std::vector<std::vector<std::string>> Frames;
 
-#define DEBUG_ENABLE 0
+#define DEBUG_ENABLE 1
 
 #define MAX_FRAME_STATES 7
 
@@ -177,6 +185,7 @@ static const AlienTypes alienTypes = { "Beige", "Blue", "Green", "Pink", "Yellow
 #define kTagToSurface			3
 #define kTagToCave				4
 #define kTagNpc					5
+#define kTagFood				6
 /****/
 #define kTagCursor				0
 #define KTagSceneLayer			1
@@ -195,7 +204,7 @@ static const AlienTypes alienTypes = { "Beige", "Blue", "Green", "Pink", "Yellow
 #define kZoomInFactor			50000.0f
 #define kZoomOutFactor			100000.0f
 #define kBornAge				0.01f
-#define kAdultAge				1.0f
+#define kAdultAge				0.75f
 /****/
 const float kUpdateInterval =	1.0f / 60.0f;
 /**  **/

@@ -34,6 +34,10 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 	{
 		gameObject = LandingSite::create(properties);
 	}
+	else if (className == "Food")
+	{
+		gameObject = Food::create(properties);
+	}
 	
 	return gameObject;
 }

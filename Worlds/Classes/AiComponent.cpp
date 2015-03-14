@@ -2,25 +2,26 @@
 #include "GameObject.h"
 
 
+void AiState::ActionCaptured(IAiComponent& fsm){ fsm.setCurrentState(fsm.StateCaptured); };
+
 void DecisionState::ActionDecision(IAiComponent& fsm)
 {
 	// Lets make a decision on what we want todo
 	// Hmmm, how about we go for a wander
-	NpcEvents& npcEvents = static_cast<Npc*>(fsm.gameObject)->npcEvents;
-
-	npcEvents.push(ENpcEvent::Wander);
+	fsm.gameObject->addAiEvent(EAiEvent::Wander);
 };
 void DecisionState::ActionWander(IAiComponent& fsm)
 {
 	// Choose an event and then change our state to wandering
 	// In this example, we are going to start walking left
 	// We request a single left event
-	int min = EGameObjectEvent::Left;
-	int max = EGameObjectEvent::Right;
+	int min = EMovementEvent::Left;
+	int max = EMovementEvent::Right;
 
-	EGameObjectEvent pickedEvent = static_cast<EGameObjectEvent>(random(min, max));
-
-	fsm.gameObject->events.push(pickedEvent); /** Well I will walk left for a little bit **/
+	EMovementEvent movementEvent = static_cast<EMovementEvent>(random(min, max));
+	
+	/** Well I will walk left for a little bit **/
+	fsm.gameObject->addMovementEvent(movementEvent);
 
 
 	// Change state
@@ -38,16 +39,12 @@ void WanderState::ActionWander(IAiComponent& fsm)
 	// Know I need todo some wandering until i get tired
 	if (fsm.gameObject->Stamina < 0l)
 	{
-		// We get rid of the walking left
-		fsm.gameObject->events.pop();
+		// We get rid of the walking left 
+		// Clear the movement events		
 		// Should have only the stop event in stack
-
-		NpcEvents& npcEvents = static_cast<Npc*>(fsm.gameObject)->npcEvents;
-
-		// Pop the wandering event
-		npcEvents.pop();
-		// Push a resting event
-		npcEvents.push(ENpcEvent::Resting);
+				
+		// Tell gameObject to rest
+		fsm.gameObject->addAiEvent(EAiEvent::Resting);
 		
 		// Change the resting state
 		fsm.setCurrentState(fsm.StateResting);
@@ -66,22 +63,22 @@ void RestingState::ActionResting(IAiComponent& fsm)
 	{
 		// Max stamina set
 		fsm.gameObject->Stamina = fsm.maxStamina;
-
-		NpcEvents& npcEvents = static_cast<Npc*>(fsm.gameObject)->npcEvents;
-		// Pop the resting event request
-		npcEvents.pop();
-
+		
 		// Push the decision event request
-		//npcEvents.push(ENpcEvent::Decision);
+		fsm.gameObject->addAiEvent(EAiEvent::Decision);
 
 		// Change the state to decision
 		fsm.setCurrentState(fsm.StateDecision);
 	}
 };
-
 void RestingState::ActionDecision(IAiComponent& fsm)
 {
 	
+};
+
+void CapturedState::ActionCaptured(IAiComponent& fsm)
+{
+	fsm.gameObject->Captured();
 };
 
 AiComponent::AiComponent(IGameObject& gameObject)
@@ -99,13 +96,6 @@ NpcAiComponent::NpcAiComponent(IGameObject& gameObject) : super(gameObject)
 
 void AiComponent::update()
 {
-//	float age = gameObject->getSprite().getScale();
-//	age += gameObject->GrowFactor;
-//	if (age > kAdultAge)
-//		age = kAdultAge;
-//
-//	gameObject->getSprite().setScale(age);
-//
 	void(IAiComponent:: *ptrs[])() =
 	{
 		&IAiComponent::EventWander,
@@ -115,9 +105,10 @@ void AiComponent::update()
 		&IAiComponent::EventDecision,
 		&IAiComponent::EventInteract,
 		&IAiComponent::EventResting,
+		&IAiComponent::EventCaptured
 	};
 	
-	int runningEvent = static_cast<Npc*>(gameObject)->npcEvents.top();
+	int runningEvent = gameObject->getCurrentAiEvent();
 
 	(this->*ptrs[runningEvent])();
 }

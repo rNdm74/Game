@@ -28,6 +28,9 @@ public:
 	virtual TileDataArray getCollisionDataAt(Vec2 position) = 0;
 	virtual TileDataArray getLadderDataAt(Vec2 position) = 0;
     virtual float getWidth() = 0;
+	virtual Vec2 getTileCoordinatesFor(Vec2 position) = 0;
+	virtual Rect getTileRectFrom(Vec2 tileCoordinates) = 0;
+	virtual cocos2d::Vector<cocos2d::Node*> getObjects() = 0;
     
 	/** Setters **/
 	virtual void enableForegroundOpacity(int fade) = 0;
@@ -74,7 +77,10 @@ public:
 	virtual TileDataArray getCollisionDataAt(Vec2 position) override;
 	virtual TileDataArray getLadderDataAt(Vec2 position) override;
     virtual float getWidth() override;
-    
+	virtual Vec2 getTileCoordinatesFor(Vec2 position) override;
+	virtual Rect getTileRectFrom(Vec2 tileCoordinates) override;
+	virtual cocos2d::Vector<cocos2d::Node*> getObjects() override;
+
     /** Setters **/
 	virtual void enableForegroundOpacity(int fade) override;
 	virtual void enableParallaxForegroundOpacity(int fade) override;
@@ -105,9 +111,8 @@ protected: /** Protected Functions **/
 	void addShadows(TMXLayer& layer);
 	/**  **/
 	Value getPropertiesForGID(int GID);
-	Vec2 getMapTransition(Vec2 direction);
-	Vec2 getTileCoordinatesFor(Vec2 position);
-	Rect getTileRectFrom(Vec2 tileCoordinates);
+	Vec2 getMapTransition(Vec2 direction);	
+	
 	/**  **/
 	TileData getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates);	
 	/**  **/

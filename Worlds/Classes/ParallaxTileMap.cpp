@@ -56,6 +56,7 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 	auto _collisionLayer = _tileMap->getLayer("collision");
 	_collisionLayer->retain();
 	_collisionLayer->setTexture(texture);
+	_collisionLayer->getTexture()->setAntiAliasTexParameters();
 	_collisionLayer->setTag(kTagCollisionLayer);
 	_collisionLayer->removeFromParentAndCleanup(false);
 	_collisionLayer->release();
@@ -171,35 +172,22 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 void ParallaxTileMap::update(float& delta)
 {
 #if DEBUG_ENABLE
-
 	this->clearDebugDraw();
-
-#endif // DEBUG_ENABLE
+#endif // DEBUG_ENABLE MUST BE RUN FIRST
 
 	auto children = this->getChildByTag(kTagObjectLayer)->getChildren();
-
+	// If there is children
 	if (children.size() > 0)
-	{
 		// Tile map is responsible for updating its children
-		for (auto& child : children)
-		{
-			IGameObject* gameObject = static_cast<IGameObject*>(child);
-			gameObject->update(this);
-
-#if DEBUG_ENABLE
-
-			this->drawDebugRect(gameObject->getBoundingBox(), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-
-#endif // DEBUG_ENABLE
-
-		}
-	}
+		for (auto& child : children) 
+			// Update the children
+			static_cast<IGameObject*>(child)->update(this);
 }
 
 bool ParallaxTileMap::isBlocked(Vec2 coordinate)
 {
 	TMXLayer& layer = static_cast<TMXLayer&>(*this->getChildByTag(kTagCollisionLayer));
-
+	
 	TileData tileData = getTileDataFromLayerAt(layer, coordinate);
 
 	return (tileData.GID != 0);
@@ -240,6 +228,12 @@ float ParallaxTileMap::getWidth()
 {
     return _tileSize.width * _mapSize.width;
 };
+
+cocos2d::Vector<cocos2d::Node*> ParallaxTileMap::getObjects()
+{
+	return this->getChildByTag(kTagObjectLayer)->getChildren();
+};
+
 
 void ParallaxTileMap::addPlayer(IGameObject* player)
 {

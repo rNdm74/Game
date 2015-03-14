@@ -60,12 +60,7 @@ bool Planet::ToCave(IGameObject& gameObject)
 	float y = properties["y"].asFloat();
 
 	gameObject.setPosition(Vec2(x, y));
-
-	while (!AppGlobal::getInstance()->PlayerEvents.empty())
-		    AppGlobal::getInstance()->PlayerEvents.pop();
-
-	AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::Stop);
-
+		
 	return true;
 };
 

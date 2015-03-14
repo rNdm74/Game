@@ -124,6 +124,10 @@ AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, b
 */
 IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 {
+	// Convert locations to tile coordinates
+	startLocation = _map->getTileCoordinatesFor(startLocation);
+	targetLocation = _map->getTileCoordinatesFor(targetLocation);
+
 	//
 	Size mapSize = _map->getMapSize();
 	int startIndex = startLocation.y * mapSize.width + startLocation.x;

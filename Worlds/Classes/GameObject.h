@@ -10,6 +10,7 @@ class IInputComponent;
 class IGraphicsComponent;
 class ICollisionComponent;
 class IPathfindingComponent;
+class IEventComponent;
 
 /**
 * A path determined by some path finding algorithm. A series of steps from
@@ -44,6 +45,7 @@ public:
 	virtual void PickUpGem() = 0;
 	virtual void Talk() = 0;
 	virtual void HitWall() = 0;
+	virtual void Captured() = 0;
 	/** Action methods end **/
 	
 	/** Getters **/
@@ -62,10 +64,17 @@ public:
 	virtual void setDesiredPosition(cocos2d::Vec2 desiredPosition) = 0;
 	virtual void setDesiredPositionX(float x) = 0;
 	virtual void setDesiredPositionY(float y) = 0;
-
 	virtual void setSpriteFrame(cocos2d::SpriteFrame* spriteFrame) = 0;
 	virtual void setFlippedX(bool flippedX) = 0;	
 	/** Setters end **/
+
+	virtual EMovementEvent getCurrentMovementEvent() = 0;
+	virtual void addMovementEvent(EMovementEvent movementEvent) = 0;	
+	virtual void removeMovementEvent(EMovementEvent movementEvent) = 0;
+
+	virtual EAiEvent getCurrentAiEvent() = 0;
+	virtual void addAiEvent(EAiEvent aiEvent) = 0;
+	virtual void removeAiEvent(EAiEvent aiEvent) = 0;
 
 public: /** Variables **/
 	cocos2d::Vec2 LadderOrigin = cocos2d::Vec2::ZERO;
@@ -76,8 +85,6 @@ public: /** Variables **/
 
 	long Stamina = 1000l;
 	float GrowFactor;
-
-	Events events;
 };
 
 /**
@@ -97,9 +104,7 @@ public:
 
 	/** Constructor and the Destructor **/
 	GameObject(cocos2d::ValueMap& properties);
-    virtual ~GameObject()
-    {
-    };
+    virtual ~GameObject(){};
 
 	/** Update the gameObject **/
 	virtual void update(Node* node){};
@@ -120,6 +125,7 @@ public:
 	virtual void PickUpGem(){};
 	virtual void Talk(){};
 	virtual void HitWall(){};
+	virtual void Captured(){};
 	/** Action methods end **/
 
 	/** Getters **/
@@ -142,6 +148,14 @@ public:
 	virtual void setSpriteFrame(cocos2d::SpriteFrame* spriteFrame);
 	virtual void setFlippedX(bool flippedX);
 	/** Setters end **/
+
+	virtual EMovementEvent getCurrentMovementEvent(){ return EMovementEvent::Stop; };
+	virtual void addMovementEvent(EMovementEvent movementEvent) {};	
+	virtual void removeMovementEvent(EMovementEvent movementEvent) {};
+
+	virtual EAiEvent getCurrentAiEvent(){ return EAiEvent::Resting; };
+	virtual void addAiEvent(EAiEvent aiEvent) {};
+	virtual void removeAiEvent(EAiEvent aiEvent) {};
 
 protected: /** **/
 	cocos2d::Sprite* _sprite;
@@ -194,6 +208,15 @@ public:
 
 	/** Getters Overridden **/
 	virtual cocos2d::Rect getCollisionBox() override;
+
+
+	virtual EMovementEvent getCurrentMovementEvent() override;
+	virtual void addMovementEvent(EMovementEvent movementEvent) override;
+	virtual void removeMovementEvent(EMovementEvent movementEvent) override;
+
+	virtual EAiEvent getCurrentAiEvent() override;
+	virtual void addAiEvent(EAiEvent aiEvent) override;
+	virtual void removeAiEvent(EAiEvent aiEvent) override;
 	
 private: /** **/
 	IFsmComponent* _fsm;
@@ -201,7 +224,8 @@ private: /** **/
 	IInputComponent* _input;
 	IGraphicsComponent* _graphics;
 	ICollisionComponent* _collision;
-    IPathfindingComponent* _pathfinding;
+    IPathfindingComponent* _pathfinding;	
+	IEventComponent* _events;
 };
 
 
@@ -227,17 +251,23 @@ public:
 	virtual void Stop() override;
 	virtual void Idle() override;
 	virtual void Talk() override;
+	virtual void Captured() override;
 	/** Action methods end **/
 
 	/** Getters Overridden **/
 	virtual cocos2d::Rect getCollisionBox() override;
 
-public: /** Variables **/
-	NpcEvents npcEvents;
+	virtual EMovementEvent getCurrentMovementEvent() override;
+	virtual void addMovementEvent(EMovementEvent movementEvent) override;
+	virtual void removeMovementEvent(EMovementEvent movementEvent) override;
 
+	virtual EAiEvent getCurrentAiEvent() override;
+	virtual void addAiEvent(EAiEvent aiEvent) override;
+	virtual void removeAiEvent(EAiEvent aiEvent) override;
+
+public: /** Variables **/
 	float age;
 	
-
 private: /** **/
     IAiComponent* _ai;
 	IFsmComponent* _fsm;
@@ -245,6 +275,7 @@ private: /** **/
 	IInputComponent* _input;
 	IGraphicsComponent* _graphics;
 	ICollisionComponent* _collision;
+	IEventComponent* _events;
 };
 
 /**
@@ -343,6 +374,23 @@ public:
 	static self* create(cocos2d::ValueMap& properties);
 	LandingSite(cocos2d::ValueMap& properties);
 	virtual ~LandingSite(){};
+};
+
+class Food : public GameObject
+{
+	typedef GameObject super;
+	typedef Food self;
+
+public:
+	static self* create(cocos2d::ValueMap& properties);
+
+	Food(cocos2d::ValueMap& properties);
+	virtual ~Food(){};
+
+	virtual void update(Node* node) override;
+
+private:
+	IGraphicsComponent* _graphics;
 };
 
 #endif /* defined(__Worlds__GAME_OBJECT_H__) */

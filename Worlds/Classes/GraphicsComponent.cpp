@@ -13,6 +13,8 @@ GraphicsComponent::GraphicsComponent(IGameObject& gameObject)
 	maxIdleTime = 50l;
 	currentFrame = 0;
 	frameTime = 0.0f;
+
+	currentAnimation = EAnimationStates::StopAnimation;
 };
 
 Frames GraphicsComponent::getFramesForHero()
@@ -55,7 +57,7 @@ Frames GraphicsComponent::getFramesForHero()
 	return frames;
 };
 
-Frames GraphicsComponent::getFramesFor(std::string type)
+Frames GraphicsComponent::getFramesForAlien(std::string type)
 {
     return
     {
@@ -69,24 +71,36 @@ Frames GraphicsComponent::getFramesFor(std::string type)
     };
 };
 
+Frames GraphicsComponent::getFramesForFood(std::string type)
+{
+	return
+	{
+		{ "slime.png", "slime_walk.png" },
+		{ "slime.png", "slime_walk.png" },
+		{ "slime.png", "slime_walk.png" },
+		{ "slime.png", "slime_walk.png" },
+		{ "slime.png", "slime_walk.png" },
+		{ "slime.png", "slime_walk.png" },
+		{ "slime.png", "slime_walk.png" }
+	};
+};
+
 void GraphicsComponent::update(Node& node)
 {
-    Rect r = _gameObject->getCollisionBox();
-#if DEBUG_ENABLE
-    static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
-#endif // DEBUG_ENABLE
 	this->updateFrame();
+#if DEBUG_ENABLE
+	//Rect r = _gameObject->getCollisionBox();
+    //static_cast<IParallaxTileMap&>(node).drawDebugRect(r, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+#endif // DEBUG_ENABLE	
 };
 
 void GraphicsComponent::updateFrame()
 {
-	EGameObjectEvent currentEvent = _gameObject->events.top();
-
 	/** Reset the currentFrame to init frame **/
-	currentFrame %= frames[currentEvent].size();
+	currentFrame %= frames[currentAnimation].size();
 
 	/** Set the sprite frame **/
-	_gameObject->setSpriteFrame(frameCache(frames[currentEvent][currentFrame]));
+	_gameObject->setSpriteFrame(frameCache(frames[currentAnimation][currentFrame]));
 
 	/** Add delay so animation effect is realisitic **/
 	if (frameTime > kFrameDelay /**  **/)
@@ -102,7 +116,7 @@ void GraphicsComponent::updateFrame()
 
 	frameTime += velocityFactor;
 
-	if (velocityFactor < 1.0f && currentEvent != EGameObjectEvent::Stop)
+	if (velocityFactor < 1.0f && currentAnimation != EAnimationStates::StopAnimation)
 	{
 		currentFrame = 0;
 		_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
@@ -112,37 +126,18 @@ void GraphicsComponent::updateFrame()
 void GraphicsComponent::Left()
 {
 	_gameObject->setFlippedX(true);
+	currentAnimation = EAnimationStates::LeftAnimation;
 };
 
 void GraphicsComponent::Right()
 {
 	_gameObject->setFlippedX(false);
+	currentAnimation = EAnimationStates::RightAnimation;
 };
 
-
 void GraphicsComponent::Idle()
-{		
-	/*Sprite& sprite = _gameObject->getSprite();
-
-	float scale = sprite.getScaleY();
-
-	scale += 0.001f * breath;
-
-	if (scale < 0.99f)
-	{
-		breath = 1;
-
-		scale = 0.99f;
-	}
-	if (scale > 1.0f)
-	{
-		breath = -1;
-		scale = 1.0f; 
-	}
-
-	sprite.setScaleY(scale);*/
-
-	
+{	
+	currentAnimation = EAnimationStates::StopAnimation;
 };
 
 void GraphicsComponent::lookLeft()
@@ -170,7 +165,7 @@ void GraphicsComponent::lookDown()
 void GraphicsComponent::lookForward()
 {
 	currentFrame = 0;
-	_gameObject->setSpriteFrame(frameCache(frames[IdleAnimation][currentFrame]));
+	_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
 };
 
 
@@ -184,5 +179,16 @@ NpcGraphicsComponent::NpcGraphicsComponent(IGameObject& gameObject) : super(game
 {
 	int index = random(0, static_cast<int>(alienTypes.size()-1));
 
-	frames = getFramesFor(alienTypes[index]);
+	frames = getFramesForAlien(alienTypes[index]);
+};
+
+void NpcGraphicsComponent::Captured()
+{
+	_gameObject->getSprite().setRotation(90.0f);
+};
+
+
+FoodGraphicsComponent::FoodGraphicsComponent(IGameObject& gameObject) : super(gameObject)
+{
+	frames = getFramesForFood("");
 };

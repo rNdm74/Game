@@ -242,7 +242,22 @@ void ToSurfaceCollisionComponent::update(Node& node)
 
 void PlayerCollisionComponent::update(Node& node)
 {
-	
+	/** Check if player collides with another object **/
+	Npc* selectedNpc = static_cast<Npc*>(AppGlobal::getInstance()->SelectedNpc);
+
+	if (selectedNpc != nullptr)
+	{
+		Rect r1 = _gameObject->getCollisionBox();
+		Rect r2 = selectedNpc->getCollisionBox();
+
+		if (r1.intersectsRect(r2))
+		{
+			selectedNpc->addAiEvent(EAiEvent::Captured);
+			AppGlobal::getInstance()->SelectedNpc = nullptr;
+		}
+	}
+	/** Check if player collides with another object END **/
+
 	this->checkTileCollision(node);
 	this->checkLadderCollision(node);
 

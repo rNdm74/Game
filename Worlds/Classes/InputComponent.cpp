@@ -97,8 +97,8 @@ PlayerInputComponent::PlayerInputComponent(IGameObject& gameObject) : super(game
 	_jumpForce = Vec2(0.0f, 2800.0f);
 	_gravity = Vec2(0.0, -1850.0f);
 	_movement = Vec2(1800.0f, 1800.0f);
-	_minMovement = Vec2(-520.0f, -850.0f);
-	_maxMovement = Vec2(520.0f, 520.0f);
+	_minMovement = Vec2(-320.0f, -850.0f);
+	_maxMovement = Vec2(320.0f, 520.0f);
 };
 
 void PlayerInputComponent::update()

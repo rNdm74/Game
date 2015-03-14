@@ -34,6 +34,8 @@ AppGlobal::AppGlobal()
 
 	//PlayerInstance = Player::create(landingSite);
 	
+	SelectedNpc = nullptr;
+
 	_scaleFactor = kZoomMin;
 }
 
@@ -95,26 +97,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->events.push(EGameObjectEvent::Up);
+					PlayerInstance->addMovementEvent(EMovementEvent::Up);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->events.push(EGameObjectEvent::Down);
+					PlayerInstance->addMovementEvent(EMovementEvent::Down);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{	
-				PlayerInstance->events.push(EGameObjectEvent::Left);
+				PlayerInstance->addMovementEvent(EMovementEvent::Left);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			{
-				PlayerInstance->events.push(EGameObjectEvent::Right);
+				PlayerInstance->addMovementEvent(EMovementEvent::Right);
 			}
 			break;
 			
@@ -123,7 +125,7 @@ void AppGlobal::initKeyboardListener()
 				PlayerInstance->JumpRequest = true;
 
 				if (PlayerInstance->OnGround)
-					PlayerInstance->events.push(EGameObjectEvent::Jump);
+					PlayerInstance->addMovementEvent(EMovementEvent::Jump);
 			}
 			break;
 		};				
@@ -136,26 +138,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->events.pop();
+					PlayerInstance->removeMovementEvent(EMovementEvent::Up);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->events.pop();
+					PlayerInstance->removeMovementEvent(EMovementEvent::Down);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{
-				PlayerInstance->events.pop();
+				PlayerInstance->removeMovementEvent(EMovementEvent::Left);
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:	
 			{
-				PlayerInstance->events.pop();
+				PlayerInstance->removeMovementEvent(EMovementEvent::Right);
 			}
 			break;
 			
@@ -242,6 +244,18 @@ void AppGlobal::initTouchListener()
 	{
         _touchEvent = true;
         
+		Vec2 targetLocation = PlanetInstance->getPlanetSurface().convertToNodeSpaceAR(touch->getLocation());
+
+		auto objects = PlanetInstance->getPlanetSurface().getObjects();
+		
+		for (auto o : objects)
+		{
+			if (o->getBoundingBox().containsPoint(targetLocation))
+			{
+				SelectedNpc = static_cast<IGameObject*>(o);
+			}
+		}
+
 		if (PlayerInstance)
 		{
 			Vec2 v1 = PlayerInstance->getCenterPosition();

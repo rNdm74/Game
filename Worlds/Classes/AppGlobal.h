@@ -33,9 +33,10 @@ public:
 	bool getIsGameSceneRunning() { return _isGameSceneRunning; };
 	void setIsGameSceneRunning(bool isRunning) { _isGameSceneRunning = isRunning; };
 	
-public: /** Variables **/	
-	Events PlayerEvents;
+public: /** Variables **/		
 	IGameObject* PlayerInstance;	
+	IGameObject* SelectedNpc;
+
 	IPlanet* PlanetInstance;
     Vec2 MovePoint;
     

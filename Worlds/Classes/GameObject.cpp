@@ -10,6 +10,7 @@
 #include "MenuComponent.h"
 #include "CollisionComponent.h"
 #include "PathfindingComponent.h"
+#include "EventComponent.h"
 
 
 GameObject* GameObject::create(ValueMap& properties)
@@ -154,11 +155,9 @@ Player::Player(ValueMap& properties) : super(properties)
 	_graphics = new (std::nothrow) PlayerGraphicsComponent(*this);
 	_collision = new (std::nothrow) PlayerCollisionComponent(*this);
     _pathfinding = new (std::nothrow) PlayerPathfindingComponent(*this);
+	_events = new (std::nothrow) PlayerEventComponent(*this);
     
 	this->setTag(kTagPlayer);	
-
-	// Player is in the stop state and it is pushed onto the event stack
-	events.push(EGameObjectEvent::Stop);
 };
 
 void Player::update(Node* node)
@@ -172,9 +171,7 @@ void Player::update(Node* node)
 	_collision->update(*node);	
 
 	if (OnGround && JumpRequest)
-	{
-		AppGlobal::getInstance()->PlayerEvents.push(EGameObjectEvent::Jump);
-	}
+		_events->addMovementEvent(EMovementEvent::Jump); 
 };
 
 void Player::Up()
@@ -280,6 +277,35 @@ Rect Player::getCollisionBox()
 	return collisionBox;
 };
 
+EMovementEvent Player::getCurrentMovementEvent()
+{
+	return _events->runningMovementEvent();
+};
+
+void Player::addMovementEvent(EMovementEvent movementEvent) 
+{
+	_events->addMovementEvent(movementEvent);
+};
+
+void Player::removeMovementEvent(EMovementEvent movementEvent)
+{
+	_events->removeMovementEvent(movementEvent);
+};
+
+EAiEvent Player::getCurrentAiEvent()
+{
+	return _events->runningAiEvent();
+};
+
+void Player::addAiEvent(EAiEvent aiEvent) 
+{
+	_events->addAiEvent(aiEvent);
+};
+
+void Player::removeAiEvent(EAiEvent aiEvent)
+{
+	_events->removeAiEvent(aiEvent);
+};
 
 
 Npc* Npc::create(ValueMap& properties)
@@ -306,12 +332,10 @@ Npc::Npc(ValueMap& properties) : super(properties)
 	_input = new (std::nothrow) NpcInputComponent(*this);
 	_graphics = new (std::nothrow) NpcGraphicsComponent(*this);
 	_collision = new (std::nothrow) NpcCollisionComponent(*this);
+	_events = new (std::nothrow) NpcEventComponent(*this);
 
 	this->setTag(kTagNpc);
-
-	events.push(EGameObjectEvent::Stop);
-	npcEvents.push(ENpcEvent::Decision);
-
+		
 	GrowFactor = random(0.00005f, 0.0003f);
 	age = kBornAge;
 	_sprite->setScale(kAdultAge);
@@ -358,7 +382,6 @@ void Npc::Stop()
 	_graphics->Idle();
 };
 
-
 void Npc::Idle()
 {
 	_graphics->Idle();
@@ -369,6 +392,11 @@ void Npc::Talk()
 {
 };
 
+void Npc::Captured()
+{
+	_input->HitWall();
+	_graphics->Captured();
+};
 
 Rect Npc::getCollisionBox()
 {
@@ -381,15 +409,35 @@ Rect Npc::getCollisionBox()
 	return collisionBox;
 };
 
+EMovementEvent Npc::getCurrentMovementEvent()
+{
+	return _events->runningMovementEvent();
+};
 
+void Npc::addMovementEvent(EMovementEvent movementEvent)
+{
+	_events->addMovementEvent(movementEvent);
+};
 
+void Npc::removeMovementEvent(EMovementEvent movementEvent)
+{
+	_events->removeMovementEvent(movementEvent);
+};
 
+EAiEvent Npc::getCurrentAiEvent()
+{
+	return _events->runningAiEvent();
+};
 
+void Npc::addAiEvent(EAiEvent aiEvent)
+{
+	_events->addAiEvent(aiEvent);
+};
 
-
-
-
-
+void Npc::removeAiEvent(EAiEvent aiEvent)
+{
+	_events->removeAiEvent(aiEvent);
+};
 
 
 ShowCave* ShowCave::create(ValueMap& properties)
@@ -496,7 +544,7 @@ LandingSite* LandingSite::create(ValueMap& properties)
 };
 
 LandingSite::LandingSite(ValueMap& properties) : super(properties)
-{			
+{	
 	auto _particle = ParticleGalaxy::createWithTotalParticles(900);
 	_particle->setAutoRemoveOnFinish(true);
 	_particle->setAnchorPoint(Vec2::ZERO);
@@ -528,4 +576,40 @@ LandingSite::LandingSite(ValueMap& properties) : super(properties)
 	_particle->setEmissionRate(100);
 
 	this->addChild(_particle, 10);
+
+	_sprite = Sprite::create("landingSite.png");
+	_sprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	this->addChild(_sprite);
+};
+
+
+Food* Food::create(ValueMap& properties)
+{
+	// Create an instance of Level
+	Food* gameObject = new (std::nothrow) Food(properties);
+
+	if (gameObject && gameObject->init())
+	{
+		gameObject->autorelease();
+		gameObject->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+		return gameObject;
+	}
+
+	CC_SAFE_DELETE(gameObject);
+	return nullptr;
+};
+
+Food::Food(ValueMap& properties) : super(properties)
+{
+	this->setTag(kTagFood);
+	_sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("buttonBlue.png"));
+
+	_graphics = new (std::nothrow) FoodGraphicsComponent(*this);
+
+	_velocity = Vec2(400.0f, 0.0f);
+};
+
+void Food::update(Node* node)
+{
+	_graphics->update(*node);
 };

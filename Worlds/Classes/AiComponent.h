@@ -18,6 +18,7 @@ struct IAiState
 	virtual void ActionDecision(IAiComponent& fsm) = 0;
 	virtual void ActionInteract(IAiComponent& fsm) = 0;
 	virtual void ActionResting(IAiComponent& fsm) = 0;
+	virtual void ActionCaptured(IAiComponent& fsm) = 0;
 };
 
 struct AiState : public IAiState
@@ -30,6 +31,7 @@ struct AiState : public IAiState
 	virtual void ActionDecision(IAiComponent& fsm){};
 	virtual void ActionInteract(IAiComponent& fsm){};
 	virtual void ActionResting(IAiComponent& fsm){};
+	virtual void ActionCaptured(IAiComponent& fsm);
 };
 
 struct WanderState : public AiState
@@ -77,6 +79,11 @@ struct RestingState : public AiState
 	virtual void ActionResting(IAiComponent& fsm) override;
 };
 
+struct CapturedState : public AiState
+{
+	/** Actions **/
+	virtual void ActionCaptured(IAiComponent& fsm) override;
+};
 
 
 class IAiComponent
@@ -89,6 +96,7 @@ public:
 	DecisionState* StateDecision;
     InteractState* StateInteract;
 	RestingState* StateResting;
+	CapturedState* StateCaptured;
     
 	IAiComponent()
     {		
@@ -99,6 +107,7 @@ public:
 		StateDecision = new DecisionState();
 		StateInteract = new InteractState();
 		StateResting = new RestingState();
+		StateCaptured = new CapturedState();
     };
 
 	virtual ~IAiComponent()
@@ -110,6 +119,7 @@ public:
 		delete StateDecision;
         delete StateInteract;
 		delete StateResting;
+		delete StateCaptured;
         
         delete gameObject;
 	};
@@ -124,6 +134,7 @@ public:
 	virtual void EventDecision() = 0;
 	virtual void EventInteract() = 0;
 	virtual void EventResting() = 0;
+	virtual void EventCaptured() = 0;
 	/** Events end **/
 
 	virtual void setCurrentState(IAiState* currentState) = 0;
@@ -159,6 +170,7 @@ public:
 	virtual void EventDecision(){ currentState->ActionDecision(*this); };
 	virtual void EventInteract(){ currentState->ActionInteract(*this); };
 	virtual void EventResting(){ currentState->ActionResting(*this); };
+	virtual void EventCaptured(){ currentState->ActionCaptured(*this); };
     
 	virtual void setCurrentState(IAiState* newState){ currentState = newState; };
 

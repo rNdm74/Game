@@ -28,6 +28,7 @@ public:
     virtual void Idle() = 0;
 	virtual void Hurt() = 0;
     virtual void Crouch() = 0;
+	virtual void Captured() = 0;
 };
 
 
@@ -56,6 +57,7 @@ public:
 	virtual void Hurt(){};
     virtual void Crouch(){};	
 	virtual void Jump(){};
+	virtual void Captured(){};
 
 protected:
 	void lookLeft();
@@ -66,7 +68,8 @@ protected:
 
 protected: /** Variables **/
 	Frames getFramesForHero();
-    Frames getFramesFor(std::string type);
+    Frames getFramesForAlien(std::string type);
+	Frames getFramesForFood(std::string type);
     
 	IGameObject* _gameObject;
 			
@@ -77,6 +80,8 @@ protected: /** Variables **/
 	long maxIdleTime;
 
 	Frames frames;
+
+	EAnimationStates currentAnimation;
 
 	int breath = -1;
 };
@@ -101,6 +106,18 @@ class NpcGraphicsComponent : public GraphicsComponent
 public:
 	NpcGraphicsComponent(IGameObject& gameObject);
 	virtual ~NpcGraphicsComponent(){};
+
+	virtual void Captured() override;
+};
+
+class FoodGraphicsComponent : public GraphicsComponent
+{
+	typedef GraphicsComponent super;
+	typedef FoodGraphicsComponent self;
+
+public:
+	FoodGraphicsComponent(IGameObject& gameObject);
+	virtual ~FoodGraphicsComponent(){};
 };
 
 
