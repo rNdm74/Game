@@ -7,15 +7,18 @@
 #include "Utils.h"
 #include "PathFinder.h"
 #include "Path.h"
+#include "AStarHeuristic.h"
 
 
 ParallaxTileMap::ParallaxTileMap(std::string type)
 {
+	
 }
 
 ParallaxTileMap::~ParallaxTileMap()
 {
 	_tileMap->release();
+	delete _pathFinder;
 }
 
 void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
@@ -23,6 +26,8 @@ void ParallaxTileMap::init(TMXTiledMap* tileMap, Texture2D* texture)
 	// create tilemap
 	_tileMap = tileMap;
 	_tileMap->retain();
+
+	_pathFinder = new AStarPathFinder(this, 100, false, new ClosestHeuristic());
 
 	//
 	_mapSize = _tileMap->getMapSize();
@@ -232,6 +237,30 @@ float ParallaxTileMap::getWidth()
 cocos2d::Vector<cocos2d::Node*> ParallaxTileMap::getObjects()
 {
 	return this->getChildByTag(kTagObjectLayer)->getChildren();
+};
+
+IGameObject* ParallaxTileMap::getSelectedGameObject(Vec2 target)
+{
+	Vec2 nodeTargetLocation = convertToNodeSpaceAR(target);
+			
+	auto children  = this->getChildByTag(kTagObjectLayer)->getChildren();
+
+	for (auto child : children)
+	{
+		Rect r = child->getBoundingBox();
+		
+		if (r.containsPoint(nodeTargetLocation))
+		{
+			return static_cast<IGameObject*>(child);
+		}
+	}			
+	
+	return nullptr;
+};
+
+IPath* ParallaxTileMap::findPath(Vec2 origin, Vec2 target)
+{
+	return _pathFinder->findPath(origin, target);
 };
 
 

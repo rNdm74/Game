@@ -14,6 +14,11 @@ ValueMap Planet::getLandingSite()
     return static_cast<LandingSite*>(node)->getProperties();
 };
 
+IGameObject* Planet::getSelectedGameObject(Vec2 target)
+{
+	return _planetSurface->getSelectedGameObject(target);
+};
+
 void Planet::update(float& delta)
 {	
 	//_planetCave->update(delta);
@@ -83,6 +88,12 @@ bool Planet::ToSurface(IGameObject& gameObject)
 
 	return true;
 };
+
+IPath* Planet::findPath(Vec2 origin, Vec2 target)
+{
+	return _planetSurface->findPath(origin, target);
+};
+
 
 GrassPlanet* GrassPlanet::create()
 {

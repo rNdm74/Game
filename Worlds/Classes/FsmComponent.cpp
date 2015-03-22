@@ -26,7 +26,7 @@ void FsmState::ActionStop(IFsmComponent& fsm){ fsm.setCurrentState(fsm.StateStop
 void FsmState::ActionJump(IFsmComponent& fsm)
 {
 	//
-	fsm.gameObject->removeMovementEvent(EMovementEvent::Jump);
+	fsm.gameObject->removeMovementEvent();
 	// Tell the gameObject to jump
 	fsm.gameObject->Jump();
 	// Then change to the jump state

@@ -12,6 +12,8 @@ public:
 	virtual ~IPathfindingComponent(){};
     
     virtual void update() = 0;
+	virtual void setPath(IPath* newPath) = 0;
+	virtual bool isPathActive() = 0;
 };
 
 class PathfindingComponent : public IPathfindingComponent
@@ -21,21 +23,25 @@ class PathfindingComponent : public IPathfindingComponent
 
 public:
 	PathfindingComponent(IGameObject& gameObject);
-	virtual ~PathfindingComponent()
-    {
-        delete _planetSurface;
-        delete _gameObject;
-        delete _pathFinder;
-        delete _path;
-    };
+	virtual ~PathfindingComponent(){};
 
 	/** Actions **/	
     void update() override;
+
+	/** Setters **/
+	virtual void setPath(IPath* newPath) override;
+	virtual bool isPathActive() override;
     
 protected:
+	Vec2 getDistance();
+	Vec2 getDirection();
+	Vec2 getNextDirection();
+	Vec2 getPathOrigin(Vec2 pathCoords);
+	
+	bool reachedPathCoords();
+
     IParallaxTileMap* _planetSurface;
-	IGameObject* _gameObject;
-    IPathFinder* _pathFinder;
+	IGameObject* _gameObject;    
     IPath* _path;
 };
 

@@ -7,9 +7,10 @@ class IGameObject;
 
 class IEventComponent
 {
-public:
-	virtual void addMovementEvent(EMovementEvent newMovementEvent) = 0;
-	virtual void removeMovementEvent(EMovementEvent movementEvent) = 0;
+public:	
+	virtual void update() = 0;
+	virtual void addMovementEvent(Vec2 direction) = 0;
+	virtual void removeMovementEvent() = 0;
 	virtual EMovementEvent runningMovementEvent() = 0;
 	virtual bool clearMovementEvents() = 0;
 #if DEBUG_ENABLE
@@ -34,8 +35,10 @@ public:
 	EventComponent(IGameObject& gameObject);
 	virtual ~EventComponent(){};	
 
-	virtual void addMovementEvent(EMovementEvent newEvent);
-	virtual void removeMovementEvent(EMovementEvent movementEvent);
+	virtual void update() override;
+
+	virtual void addMovementEvent(Vec2 direction);
+	virtual void removeMovementEvent();
 	virtual EMovementEvent runningMovementEvent();
 	virtual bool clearMovementEvents();
 #if DEBUG_ENABLE

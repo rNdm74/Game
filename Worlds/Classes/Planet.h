@@ -27,6 +27,9 @@ public:
 	virtual Cave& getPlanetCave(int index) = 0;
 	virtual bool ToCave(IGameObject& gameObject) = 0;
 	virtual bool ToSurface(IGameObject& gameObject) = 0;
+
+	virtual IPath* findPath(Vec2 origin, Vec2 target) = 0;
+	virtual IGameObject* getSelectedGameObject(Vec2 target) = 0;
 };
 
 class Planet : public IPlanet
@@ -50,6 +53,9 @@ public:
     
 	virtual bool ToCave(IGameObject& gameObject) override;
 	virtual bool ToSurface(IGameObject& gameObject) override;
+
+	virtual IPath* findPath(Vec2 origin, Vec2 target) override;
+	virtual IGameObject* getSelectedGameObject(Vec2 target) override;
 
 protected:
 	PlanetSurface* _planetSurface;

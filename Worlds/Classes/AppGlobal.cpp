@@ -45,19 +45,20 @@ void AppGlobal::initMouseListener()
 
 	listener->onMouseMove = [=](Event* event)
 	{
+		if (Director::getInstance()->getRunningScene() == nullptr) return;
+			
+
 		// Cast Event to EventMouse for position details like above
 		auto eventMouse = static_cast<EventMouse*>(event);		
 
 		auto cursorMove = Vec2(eventMouse->getCursorX(), eventMouse->getCursorY());
+				
+		auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
 
-		if (Director::getInstance()->getRunningScene()->isRunning())
-		{
-			auto layer = Director::getInstance()->getRunningScene()->getChildByTag(KTagSceneLayer);
+		auto cursor = layer->getChildByTag(kTagCursor);
 
-			auto cursor = layer->getChildByTag(kTagCursor);
-
+		if (cursor != nullptr)
 			cursor->setPosition(cursorMove);
-		}
 	};
 
 	listener->onMouseDown = [=](Event* event)
@@ -97,26 +98,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->addMovementEvent(EMovementEvent::Up);
+					PlayerInstance->addMovementEvent(Vec2(0.0f, 1.0f));
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->addMovementEvent(EMovementEvent::Down);
+					PlayerInstance->addMovementEvent(Vec2(0.0f, -1.0f));
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{	
-				PlayerInstance->addMovementEvent(EMovementEvent::Left);
+				PlayerInstance->addMovementEvent(Vec2(-1.0f, 0.0f));
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			{
-				PlayerInstance->addMovementEvent(EMovementEvent::Right);
+				PlayerInstance->addMovementEvent(Vec2(1.0f, 0.0f));
 			}
 			break;
 			
@@ -125,7 +126,7 @@ void AppGlobal::initKeyboardListener()
 				PlayerInstance->JumpRequest = true;
 
 				if (PlayerInstance->OnGround)
-					PlayerInstance->addMovementEvent(EMovementEvent::Jump);
+					PlayerInstance->addMovementEvent(Vec2(0.0f, 1.0f));
 			}
 			break;
 		};				
@@ -138,26 +139,26 @@ void AppGlobal::initKeyboardListener()
 			case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->removeMovementEvent(EMovementEvent::Up);
+					PlayerInstance->removeMovementEvent();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			{
 				if (PlayerInstance->OnLadder)
-					PlayerInstance->removeMovementEvent(EMovementEvent::Down);
+					PlayerInstance->removeMovementEvent();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			{
-				PlayerInstance->removeMovementEvent(EMovementEvent::Left);
+				PlayerInstance->removeMovementEvent();
 			}
 			break;
 			
 			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:	
 			{
-				PlayerInstance->removeMovementEvent(EMovementEvent::Right);
+				PlayerInstance->removeMovementEvent();
 			}
 			break;
 			
@@ -244,88 +245,84 @@ void AppGlobal::initTouchListener()
 	{
         _touchEvent = true;
         
-		Vec2 targetLocation = PlanetInstance->getPlanetSurface().convertToNodeSpaceAR(touch->getLocation());
+		if (PlayerInstance == nullptr || PlanetInstance == nullptr)
+			return true;
 
-		auto objects = PlanetInstance->getPlanetSurface().getObjects();
+		SelectedNpc = PlanetInstance->getSelectedGameObject(touch->getLocation());
 		
-		for (auto o : objects)
-		{
-			if (o->getBoundingBox().containsPoint(targetLocation))
-			{
-				SelectedNpc = static_cast<IGameObject*>(o);
-			}
-		}
+		Vec2 v1 = PlayerInstance->getCenterPosition();
 
-		if (PlayerInstance)
+		if (SelectedNpc == nullptr)
 		{
-			Vec2 v1 = PlayerInstance->getCenterPosition();
-			Vec2 v2 = PlayerInstance->getParent()->convertToNodeSpaceAR(touch->getLocation());
-            
-            Vec2 n = Vec2(v2 - v1).getNormalized();
-            Vec2 d = Vec2(std::round(n.x), std::round(n.y));
-            
-			if (PlayerInstance->getBoundingBox().containsPoint(v2))
+			if (PlayerInstance->isPathActive())
 			{
-				//PlayerInstance->setRunningEvent(EGameObjectEvent::Stop);
+				PlayerInstance->setPath(nullptr);
+				PlayerInstance->removeMovementEvent();
+				PlayerInstance->addMovementEvent(Vec2::ZERO);
 			}
 			else
-			{		
-				if (d.y > 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Up);
-				}
-				else if (d.y < 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Down);
-				}
-				else if (d.x < 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Left);
-				}
-				else if (d.x > 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Right);
-				}
-			}
-        }
+			{
+				Vec2 v1 = PlayerInstance->getCenterPosition();
+				Vec2 v2 = PlanetInstance->getPlanetSurface().convertToNodeSpaceAR(touch->getLocation());
 
+				IPath* path = PlanetInstance->findPath(v1, v2);
+				PlayerInstance->setPath(path);
+			}			
+		}
+		else
+		{
+			// Create and set path to travel
+			Vec2 v2 = SelectedNpc->getCenterPosition();
+			IPath* path = PlanetInstance->findPath(v1, v2);
+			PlayerInstance->setPath(path);
+		}
+		
 		return true;
 	};
 
 	listener->onTouchMoved = [=](Touch* touch, Event* e)
 	{
-        if(_touchEvent /** When we have depressed the pad **/)
-        {
-			Vec2 v1 = PlayerInstance->getCenterPosition();
-			Vec2 v2 = PlayerInstance->getParent()->convertToNodeSpaceAR(touch->getLocation());
-            
-            Vec2 n = Vec2(v2 - v1).getNormalized();
-            Vec2 d = Vec2(std::round(n.x), std::round(n.y));
-            
-			if (PlayerInstance->getBoundingBox().containsPoint(v2))
-			{
-				//PlayerInstance->setRunningEvent(EGameObjectEvent::Stop);
-			}
-			else
-			{
-				if (d.y > 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Up);
-				}
-				else if (d.y < 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Down);
-				}
-				else if (d.x < 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Left);
-				}
-				else if (d.x > 0)
-				{
-					//PlayerInstance->setRunningEvent(EGameObjectEvent::Right);
-				}
-			}
-        }
+		if (PlayerInstance == nullptr || PlanetInstance == nullptr)
+			return;
+
+		Vec2 v1 = PlayerInstance->getCenterPosition();
+		Vec2 v2 = PlanetInstance->getPlanetSurface().convertToNodeSpaceAR(touch->getLocation());
+		
+		IPath* path = PlanetInstance->findPath(v1, v2);
+		PlayerInstance->setPath(path);
+
+   //     if(_touchEvent /** When we have depressed the pad **/)
+   //     {
+			//Vec2 v1 = PlayerInstance->getCenterPosition();
+			//Vec2 v2 = PlayerInstance->getParent()->convertToNodeSpaceAR(touch->getLocation());
+   //         
+   //         Vec2 n = Vec2(v2 - v1).getNormalized();
+   //         Vec2 d = Vec2(std::round(n.x), std::round(n.y));
+   //         
+			//if (PlayerInstance->getBoundingBox().containsPoint(v2))
+			//{
+			//	//PlayerInstance->setRunningEvent(EGameObjectEvent::Stop);
+			//}
+			//else
+			//{
+			//	if (d.y > 0)
+			//	{
+			//		//PlayerInstance->setRunningEvent(EGameObjectEvent::Up);
+			//	}
+			//	else if (d.y < 0)
+			//	{
+			//		//PlayerInstance->setRunningEvent(EGameObjectEvent::Down);
+			//	}
+			//	else if (d.x < 0)
+			//	{
+			//		//PlayerInstance->setRunningEvent(EGameObjectEvent::Left);
+			//	}
+			//	else if (d.x > 0)
+			//	{
+			//		//PlayerInstance->setRunningEvent(EGameObjectEvent::Right);
+			//	}
+			//}
+   //     }
 	};
 
 	listener->onTouchEnded = [=](Touch* touch, Event* e)

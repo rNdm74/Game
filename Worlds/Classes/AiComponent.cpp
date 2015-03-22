@@ -15,13 +15,13 @@ void DecisionState::ActionWander(IAiComponent& fsm)
 	// Choose an event and then change our state to wandering
 	// In this example, we are going to start walking left
 	// We request a single left event
-	int min = EMovementEvent::Left;
-	int max = EMovementEvent::Right;
+	//int min = EMovementEvent::Left;
+	//int max = EMovementEvent::Right;
 
-	EMovementEvent movementEvent = static_cast<EMovementEvent>(random(min, max));
+	//EMovementEvent movementEvent = static_cast<EMovementEvent>(random(min, max));
 	
 	/** Well I will walk left for a little bit **/
-	fsm.gameObject->addMovementEvent(movementEvent);
+	//fsm.gameObject->addMovementEvent(Vec2());
 
 
 	// Change state

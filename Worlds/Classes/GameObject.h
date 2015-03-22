@@ -3,6 +3,7 @@
 
 #include "Constants.h"
 
+class IPath;
 class IAiComponent;
 class IFsmComponent;
 class IMenuComponent;
@@ -56,6 +57,7 @@ public:
 	virtual cocos2d::Vec2 getDirection() = 0;
 	virtual cocos2d::Vec2 getVelocity() = 0;
 	virtual cocos2d::Sprite& getSprite() = 0;
+	virtual bool isPathActive() = 0;
 	/** Getters end **/
 
 	/** Setters **/	
@@ -65,12 +67,13 @@ public:
 	virtual void setDesiredPositionX(float x) = 0;
 	virtual void setDesiredPositionY(float y) = 0;
 	virtual void setSpriteFrame(cocos2d::SpriteFrame* spriteFrame) = 0;
-	virtual void setFlippedX(bool flippedX) = 0;	
+	virtual void setFlippedX(bool flippedX) = 0;
+	virtual void setPath(IPath* newPath) = 0;
 	/** Setters end **/
 
 	virtual EMovementEvent getCurrentMovementEvent() = 0;
-	virtual void addMovementEvent(EMovementEvent movementEvent) = 0;	
-	virtual void removeMovementEvent(EMovementEvent movementEvent) = 0;
+	virtual void addMovementEvent(cocos2d::Vec2 direction) = 0;	
+	virtual void removeMovementEvent() = 0;
 
 	virtual EAiEvent getCurrentAiEvent() = 0;
 	virtual void addAiEvent(EAiEvent aiEvent) = 0;
@@ -136,6 +139,7 @@ public:
 	virtual cocos2d::Vec2 getDirection();
 	virtual cocos2d::Vec2 getVelocity();
 	virtual cocos2d::Sprite& getSprite() { return *_sprite; };
+	virtual bool isPathActive(){ return false; };
 	/** Getters end **/
 
 	/** Setters **/	
@@ -147,11 +151,12 @@ public:
 	virtual void setDesiredPositionY(float y);
 	virtual void setSpriteFrame(cocos2d::SpriteFrame* spriteFrame);
 	virtual void setFlippedX(bool flippedX);
+	virtual void setPath(IPath* newPath){};
 	/** Setters end **/
 
 	virtual EMovementEvent getCurrentMovementEvent(){ return EMovementEvent::Stop; };
-	virtual void addMovementEvent(EMovementEvent movementEvent) {};	
-	virtual void removeMovementEvent(EMovementEvent movementEvent) {};
+	virtual void addMovementEvent(cocos2d::Vec2 direction) {};
+	virtual void removeMovementEvent() {};
 
 	virtual EAiEvent getCurrentAiEvent(){ return EAiEvent::Resting; };
 	virtual void addAiEvent(EAiEvent aiEvent) {};
@@ -209,10 +214,14 @@ public:
 	/** Getters Overridden **/
 	virtual cocos2d::Rect getCollisionBox() override;
 
+	/** **/
+	virtual bool isPathActive() override;
+	/** Setters **/
+	virtual void setPath(IPath* newPath) override;
 
 	virtual EMovementEvent getCurrentMovementEvent() override;
-	virtual void addMovementEvent(EMovementEvent movementEvent) override;
-	virtual void removeMovementEvent(EMovementEvent movementEvent) override;
+	virtual void addMovementEvent(cocos2d::Vec2 direction) override;
+	virtual void removeMovementEvent() override;
 
 	virtual EAiEvent getCurrentAiEvent() override;
 	virtual void addAiEvent(EAiEvent aiEvent) override;
@@ -258,8 +267,8 @@ public:
 	virtual cocos2d::Rect getCollisionBox() override;
 
 	virtual EMovementEvent getCurrentMovementEvent() override;
-	virtual void addMovementEvent(EMovementEvent movementEvent) override;
-	virtual void removeMovementEvent(EMovementEvent movementEvent) override;
+	virtual void addMovementEvent(cocos2d::Vec2 direction) override;
+	virtual void removeMovementEvent() override;
 
 	virtual EAiEvent getCurrentAiEvent() override;
 	virtual void addAiEvent(EAiEvent aiEvent) override;

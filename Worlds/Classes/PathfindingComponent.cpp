@@ -12,68 +12,109 @@ PathfindingComponent::PathfindingComponent(IGameObject& gameObject)
 {
     _planetSurface = &AppGlobal::getInstance()->PlanetInstance->getPlanetSurface();
     _gameObject = &gameObject;
-    _pathFinder = new AStarPathFinder(_planetSurface, 100, false);
     _path = nullptr;
 };
 
 void PathfindingComponent::update()
-{    
-	// Get the selected gameobject we want to move towards
-	IGameObject* selectedNpc = AppGlobal::getInstance()->SelectedNpc;
-    
-	// If the gameObject exists 
-	if (selectedNpc != nullptr)
-    {
-		// Get the players position
-		Vec2 startLocation = _gameObject->getCenterPosition();
-		// Get the selected gameObjects position
-		Vec2 targetLocation = selectedNpc->getCenterPosition();
-
-		// Find the best path towards the selected gameObject
-        IPath* path = _pathFinder->findPath(startLocation, targetLocation);
-		
-		// If there is a path we can follow
-		if (path != nullptr)
-		{		
-			// Get the rectangle of the 1st path Vec2
-			Rect pathRect = _planetSurface->getTileRectFrom(path->peek_front());
-			
-			// If the players location is inside that rect
-			if (pathRect.containsPoint(startLocation))
-			{	
-				// Move to the next path element				
-				path->pop_front();
-				
-				// 
-				pathRect = _planetSurface->getTileRectFrom(path->peek_front());
-			}
-
-			Vec2 v1 = startLocation;
-			Vec2 v2 = Vec2(pathRect.getMidX(), pathRect.getMidY());
-									
-			Vec2 n = Vec2(v2 - v1).getNormalized();
-			Vec2 d = Vec2(std::round(n.x), std::round(n.y));
-									
-			if (d.x > 0)
-			{
-				_gameObject->addMovementEvent(EMovementEvent::Right);
-			}
-			else if (d.x < 0)
-			{
-				_gameObject->addMovementEvent(EMovementEvent::Left);
-			}
-
+{		
+	// If there is a path we can follow
+	if (_path == nullptr) return;
+	
+	// We have arrived remove the front of the path
+	if (_path->getLength() > 0 && reachedPathCoords())
+	{
+		_path->pop_front();
+	
+		_gameObject->removeMovementEvent();
+		// Whats the next direction we need to move
+		Vec2 direction = getDirection();
+		_gameObject->addMovementEvent(direction);
+	}
+										
 #if DEBUG_ENABLE
-			for (int i = 0; i < path->getLength(); i++)
-				_planetSurface->drawDebugRectAtTile(path->getStep(i), Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+	for (int i = 0; i < _path->getLength(); i++)
+		_planetSurface->drawDebugRectAtTile(_path->getStep(i), Color4F(1.0f, 1.0f, 0.0f, 0.5f));
 #endif // DEBUG_ENABLE
 
-		}		
-	}
-	else
+	// We have finished moving there is no path anymore
+	if (_path->getLength() == 0)
 	{
-		_gameObject->addMovementEvent(EMovementEvent::Stop);
+		_path = nullptr;
 	}
+};
+
+void PathfindingComponent::setPath(IPath* newPath)
+{
+	_path = newPath;
+};
+
+bool PathfindingComponent::isPathActive()
+{
+	return (_path != nullptr);
+};
+
+Vec2 PathfindingComponent::getDistance()
+{
+	if (_path->getLength() == 0)
+		return Vec2::ZERO;
+
+	Vec2 origin = _gameObject->getCenterPosition();
+
+	Vec2 front = _path->peek_front();
+	Vec2 pathOrigin = getPathOrigin(front);
+
+	return (pathOrigin - origin);
+};
+
+Vec2 PathfindingComponent::getDirection()
+{
+	if (_path->getLength() == 0)
+		return Vec2::ZERO;
+
+	Vec2 distance = getDistance();
+	Vec2 n = distance.getNormalized();
+
+	return Vec2(std::round(n.x), std::round(n.y));
+}
+
+Vec2 PathfindingComponent::getNextDirection()
+{	
+	if (_path->getLength() == 0)
+		return Vec2::ZERO;
+		
+	//Vec2 back = _path->peek_back();
+	
+	// We have reached the last path coord so should stop
+	//if (front.equals(back))
+	//	return Vec2::ZERO;
+
+	Vec2 front = _path->peek_front();
+	Vec2 next = _path->getStep(NEXT_IN_PATH);
+	
+	Vec2 pathOrigin = getPathOrigin(front);
+	Vec2 nextPathOrigin = getPathOrigin(next);
+
+	Vec2 nextDistance = nextPathOrigin - pathOrigin;
+	Vec2 n = nextDistance.getNormalized();
+	
+	return Vec2(std::round(n.x), std::round(n.y));
+};
+
+Vec2 PathfindingComponent::getPathOrigin(Vec2 pathCoords)
+{
+	Rect pathRect = _planetSurface->getTileRectFrom(pathCoords);
+	
+	return Vec2(pathRect.getMidX(), pathRect.getMidY());
+};
+
+bool PathfindingComponent::reachedPathCoords()
+{
+	Vec2 distance = getDistance();
+
+	bool reachedX = std::abs(distance.x) < 35.0f;
+	bool reachedY = std::abs(distance.y) < 35.0f;
+
+	return (reachedX  && reachedY);
 };
 
 PlayerPathfindingComponent::PlayerPathfindingComponent(IGameObject& gameObject) : super(gameObject)

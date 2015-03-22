@@ -21,7 +21,7 @@ AppResources::~AppResources()
 
 bool AppResources::initLoad()
 {		
-	
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("tibbetts.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("hero.plist");
 
 	textureCache->addImageAsync(HUD_PNG, CC_CALLBACK_1(AppResources::loadHudResources, this));

@@ -97,7 +97,7 @@ AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, b
 */
 AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic)
 {
-	
+	_map = map;
 	_heuristic = heuristic;	
 	_maxSearchDistance = maxSearchDistance;
 	_allowDiagMovement = allowDiagMovement;

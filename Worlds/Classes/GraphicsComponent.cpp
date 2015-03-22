@@ -24,35 +24,85 @@ Frames GraphicsComponent::getFramesForHero()
 
 	/** Climb Frames **/
 	state.clear();
-	for (int i = 1; i <= 6; i++) state.push_back("climb (" + std::to_string(i) + ").png");
+
+	char buff[100];
+	
+	for (int i = 0; i <= 10; i++)
+	{
+		sprintf(buff, "tibbetts_idle_%02d", i);
+		std::string buffAsStdStr = buff;
+		state.push_back(buffAsStdStr);
+	}
+
 	frames.push_back(state);
+
 	state.clear();
 
-	for (int i = 1; i <= 6; i++) state.push_back("climb (" + std::to_string(i) + ").png");
+	for (int i = 0; i <= 10; i++)
+	{
+		sprintf(buff, "tibbetts_idle_%02d", i);
+		std::string buffAsStdStr = buff;
+		state.push_back(buffAsStdStr);
+	}
+
 	frames.push_back(state);
 
 	/** Walk Frames **/
 	state.clear();
-	for (int i = 1; i <= 8; i++) state.push_back("walk (" + std::to_string(i) + ").png");
+
+	for (int i = 0; i <= 10; i++)
+	{
+		sprintf(buff, "tibbetts_walking_%02d", i);
+		std::string buffAsStdStr = buff;
+		state.push_back(buffAsStdStr);
+	}
+
 	frames.push_back(state);
 
 	state.clear();
-	for (int i = 1; i <= 8; i++) state.push_back("walk (" + std::to_string(i) + ").png");
+
+	for (int i = 0; i <= 10; i++)
+	{
+		sprintf(buff, "tibbetts_walking_%02d", i);
+		std::string buffAsStdStr = buff;
+		state.push_back(buffAsStdStr);
+	}
+
 	frames.push_back(state);
 
 	/** Stand Frames **/
-	state.push_back("idle.png");
+	state.clear();
+	for (int i = 0; i <= 10; i++)
+	{
+		sprintf(buff, "tibbetts_idle_%02d", i);
+		std::string buffAsStdStr = buff;
+		state.push_back(buffAsStdStr);
+	}
 	frames.push_back(state);
 
 	/** Jump Frames **/
 	state.clear();
-	for (int i = 1; i <= 3; i++) state.push_back("jump (" + std::to_string(i) + ").png");
+	
+	for (int i = 0; i <= 10; i++)
+	{
+		sprintf(buff, "tibbetts_jump_%02d", i);
+		std::string buffAsStdStr = buff;
+		state.push_back(buffAsStdStr);
+	}
+
 	frames.push_back(state);
 
 	/**  Stand Frames **/
 	state.clear();
-	state.push_back("idle.png");
-	frames.push_back(state);	
+
+	for (int i = 0; i <= 10; i++)
+	{
+		sprintf(buff, "tibbetts_idle_%02d", i);
+		std::string buffAsStdStr = buff;
+		state.push_back(buffAsStdStr);
+	}
+
+	frames.push_back(state);
 	
 	return frames;
 };
@@ -116,11 +166,11 @@ void GraphicsComponent::updateFrame()
 
 	frameTime += velocityFactor;
 
-	if (velocityFactor < 1.0f && currentAnimation != EAnimationStates::StopAnimation)
+	/*if (velocityFactor < 1.0f && currentAnimation != EAnimationStates::StopAnimation)
 	{
 		currentFrame = 0;
 		_gameObject->setSpriteFrame(frameCache(frames[StopAnimation][currentFrame]));
-	}
+	}*/
 };
 
 void GraphicsComponent::Left()

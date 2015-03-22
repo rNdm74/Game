@@ -89,7 +89,7 @@ typedef std::vector<std::vector<std::string>> Frames;
 #define DEBUG_ENABLE 1
 
 #define MAX_FRAME_STATES 7
-
+#define NEXT_IN_PATH 1
 
 typedef std::array<std::string, 5> AlienTypes;
 

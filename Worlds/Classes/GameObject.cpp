@@ -164,14 +164,16 @@ void Player::update(Node* node)
 {                
 	_graphics->update(*node);
 
+	_events->update();
+
     _pathfinding->update();
     
 	_fsm->update();
 	_input->update();
 	_collision->update(*node);	
 
-	if (OnGround && JumpRequest)
-		_events->addMovementEvent(EMovementEvent::Jump); 
+	//if (OnGround && JumpRequest)
+	//	_events->addMovementEvent(EMovementEvent::Jump); 
 };
 
 void Player::Up()
@@ -282,14 +284,24 @@ EMovementEvent Player::getCurrentMovementEvent()
 	return _events->runningMovementEvent();
 };
 
-void Player::addMovementEvent(EMovementEvent movementEvent) 
+void Player::setPath(IPath* newPath)
 {
-	_events->addMovementEvent(movementEvent);
+	_pathfinding->setPath(newPath);
 };
 
-void Player::removeMovementEvent(EMovementEvent movementEvent)
+bool Player::isPathActive()
 {
-	_events->removeMovementEvent(movementEvent);
+	return _pathfinding->isPathActive();
+};
+
+void Player::addMovementEvent(Vec2 direction)
+{
+	_events->addMovementEvent(direction);
+};
+
+void Player::removeMovementEvent()
+{
+	_events->removeMovementEvent();
 };
 
 EAiEvent Player::getCurrentAiEvent()
@@ -414,14 +426,14 @@ EMovementEvent Npc::getCurrentMovementEvent()
 	return _events->runningMovementEvent();
 };
 
-void Npc::addMovementEvent(EMovementEvent movementEvent)
+void Npc::addMovementEvent(Vec2 direction)
 {
-	_events->addMovementEvent(movementEvent);
+	_events->addMovementEvent(direction);
 };
 
-void Npc::removeMovementEvent(EMovementEvent movementEvent)
+void Npc::removeMovementEvent()
 {
-	_events->removeMovementEvent(movementEvent);
+	_events->removeMovementEvent();
 };
 
 EAiEvent Npc::getCurrentAiEvent()

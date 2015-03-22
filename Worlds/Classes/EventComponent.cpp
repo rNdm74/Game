@@ -8,25 +8,40 @@ EventComponent::EventComponent(IGameObject& gameObject)
 };
 
 
-/** MOVEMENT EVENTS **/
-void EventComponent::addMovementEvent(EMovementEvent newMovementEvent)
+void EventComponent::update()
 {
-	// Check event is not added
-	for (MovementEvents dump = _movementEvents; !dump.empty(); dump.pop())
-		if (newMovementEvent == dump.top())
-			return;
+	//printMovementEvents();
+	//printAiEvents();
+};
 
-	// if event is not added :: push to stack
-	_movementEvents.push(newMovementEvent);
+/** MOVEMENT EVENTS **/
+void EventComponent::addMovementEvent(Vec2 direction)
+{
+	EMovementEvent movementEvent = EMovementEvent::Stop;
+
+	if (direction.x > 0) // Right
+		movementEvent = EMovementEvent::Right;
+	else if (direction.x < 0) // Left
+		movementEvent = EMovementEvent::Left;
+	else if (direction.y > 0) // Jump
+		movementEvent = EMovementEvent::Jump;
+	else if (direction.y < 0) // do nothing
+		movementEvent = EMovementEvent::Down;
+
+	if (movementEvent == EMovementEvent::Jump)
+		_movementEvents.push(EMovementEvent::Stop);
+
+	_movementEvents.push(movementEvent);
 
 #if DEBUG_ENABLE
-	log((getMovementEventName(newMovementEvent) + " movement event is being pushed to the stack").c_str());
+	log((getMovementEventName(movementEvent) + " movement event is being pushed to the stack").c_str());
 #endif // DEBUG_ENABLE
 };
 
-void EventComponent::removeMovementEvent(EMovementEvent movementEvent)
+void EventComponent::removeMovementEvent()
 {
 	// Pop the stack
+	EMovementEvent movementEvent = _movementEvents.top();
 	_movementEvents.pop();
 
 #if DEBUG_ENABLE
@@ -39,7 +54,7 @@ EMovementEvent EventComponent::runningMovementEvent()
 	// Peek stack
 	return _movementEvents.top();
 #if DEBUG_ENABLE
-	log((getMovementEventName(_movementEvents.top()) + " currently running movement event").c_str());
+	//log((getMovementEventName(_movementEvents.top()) + " currently running movement event").c_str());
 #endif // DEBUG_ENABLE
 };
 
@@ -58,9 +73,9 @@ bool EventComponent::clearMovementEvents()
 void EventComponent::printMovementEvents()
 {
 	for (MovementEvents dump = _movementEvents; !dump.empty(); dump.pop())
-		log(("Event: " + getMovementEventName(dump.top())).c_str());
+		log(("Movement Event: " + getMovementEventName(dump.top())).c_str());
 
-	log(("(" + std::to_string(_movementEvents.size()) + " elements)").c_str());
+	log(("(" + std::to_string(_movementEvents.size()) + " movement elements)").c_str());
 };
 #endif // DEBUG_ENABLE
 /** MOVEMENT EVENTS END **/
@@ -111,9 +126,9 @@ bool EventComponent::clearAiEvents()
 void EventComponent::printAiEvents()
 {
 	for (AiEvents dump = _aiEvents; !dump.empty(); dump.pop())
-		log(("Event: " + getAiEventName(dump.top())).c_str());
+		log(("Ai Event: " + getAiEventName(dump.top())).c_str());
 
-	log(("(" + std::to_string(_aiEvents.size()) + " elements)").c_str());
+	log(("(" + std::to_string(_aiEvents.size()) + " ai elements)").c_str());
 };
 #endif // DEBUG_ENABLE
 /** AI EVENTS END**/

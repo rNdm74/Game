@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "Constants.h"
 
+class IPath;
 class IGameObject;
 
 using namespace cocos2d;
@@ -31,10 +32,14 @@ public:
 	virtual Vec2 getTileCoordinatesFor(Vec2 position) = 0;
 	virtual Rect getTileRectFrom(Vec2 tileCoordinates) = 0;
 	virtual cocos2d::Vector<cocos2d::Node*> getObjects() = 0;
+	virtual IGameObject* getSelectedGameObject(Vec2 target) = 0;
     
 	/** Setters **/
 	virtual void enableForegroundOpacity(int fade) = 0;
 	virtual void enableParallaxForegroundOpacity(int fade) = 0;
+
+	/** Pathfinding **/
+	virtual IPath* findPath(Vec2 origin, Vec2 target) = 0;
 
 	/** Player **/
 	virtual void addPlayer(IGameObject* player) = 0;
@@ -80,11 +85,15 @@ public:
 	virtual Vec2 getTileCoordinatesFor(Vec2 position) override;
 	virtual Rect getTileRectFrom(Vec2 tileCoordinates) override;
 	virtual cocos2d::Vector<cocos2d::Node*> getObjects() override;
+	virtual IGameObject* getSelectedGameObject(Vec2 target) override;
 
     /** Setters **/
 	virtual void enableForegroundOpacity(int fade) override;
 	virtual void enableParallaxForegroundOpacity(int fade) override;
     
+	/** Pathfinding **/
+	virtual IPath* findPath(Vec2 origin, Vec2 target) override;
+
 	/** Player **/
 	virtual void addPlayer(IGameObject* player);
 	virtual void removePlayer();
@@ -130,6 +139,8 @@ protected: /** Variables **/
 	int _objectCount;
 	Size _tileSize;
 	Size _mapSize;	
+	
+	class IPathFinder* _pathFinder;
 	class ParallaxTileMapFsm* _fsm;
 };
 

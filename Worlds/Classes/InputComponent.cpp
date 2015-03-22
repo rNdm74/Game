@@ -93,7 +93,7 @@ void InputComponent::HitWall()
 
 PlayerInputComponent::PlayerInputComponent(IGameObject& gameObject) : super(gameObject)
 {
-	_jumpLimit = 850.0f;
+	_jumpLimit = 520.0f;
 	_jumpForce = Vec2(0.0f, 2800.0f);
 	_gravity = Vec2(0.0, -1850.0f);
 	_movement = Vec2(1800.0f, 1800.0f);
