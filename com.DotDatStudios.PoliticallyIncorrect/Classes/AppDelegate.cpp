@@ -4,8 +4,8 @@
 
 USING_NS_CC;
 
-AppDelegate::AppDelegate() {
-
+AppDelegate::AppDelegate()
+{
 }
 
 AppDelegate::~AppDelegate() 
@@ -42,62 +42,90 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
 
-    //
-	//glview->setDesignResolutionSize(1920, 1080, ResolutionPolicy::NO_BORDER);
-
-
 	auto fileUtils = FileUtils::getInstance();
 	auto screenSize = glview->getFrameSize();
 	std::vector<std::string> resDirOrders;
-	Vec2 designResolution = Vec2::ZERO;
+    Size designSize = Size(2048, 1536);
 	
 	// check which assets the devices requires
-	if (2048 == screenSize.width || 2048 == screenSize.height || screenSize.width >= 1920 || screenSize.height >= 1920)
-	{
-		resDirOrders.push_back("ipadhd");
-		resDirOrders.push_back("ipad");
-		resDirOrders.push_back("iphonehd5");
-		resDirOrders.push_back("iphonehd");
-		resDirOrders.push_back("iphone");
+//	if (2048 == screenSize.width ||
+//        1920 == screenSize.width ||
+//        2048 == screenSize.height ||
+//        1920 == screenSize.height)
+//	{
+//		resDirOrders.push_back("ipadhd");
+//		resDirOrders.push_back("ipad");
+//		resDirOrders.push_back("iphonehd5");
+//		resDirOrders.push_back("iphonehd");
+//		resDirOrders.push_back("iphone");
+//
+//		designSize = Size(2048, 1536);
+//	}
+//	else if (1024 == screenSize.width || 1024 == screenSize.height)
+//	{
+//		resDirOrders.push_back("ipad");
+//		resDirOrders.push_back("iphonehd5");
+//		resDirOrders.push_back("iphonehd");
+//		resDirOrders.push_back("iphone");
+//
+//		designSize = Size(1024, 768);
+//	}
+//	else if (1136 == screenSize.width || 1136 == screenSize.height)
+//	{
+//		resDirOrders.push_back("iphonehd5");
+//		resDirOrders.push_back("iphonehd");
+//		resDirOrders.push_back("iphone");
+//
+//		designSize = Size(1136, 640);
+//	}
+//	else if (960 == screenSize.width || 960 == screenSize.height)
+//	{
+//		//resDirOrders.push_back("iphonehd");
+//		resDirOrders.push_back("iphone");
+//
+//		designSize = Size(960, 640);
+//	}
+//	else
+//	{
+//		resDirOrders.push_back("iphone");
+//
+//		designSize = Size(480, 320);
+//	}
 
-		designResolution = Vec2(2048, 1536);
-	}
-	else if (1024 == screenSize.width || 1024 == screenSize.height)
-	{
-		resDirOrders.push_back("ipad");
-		resDirOrders.push_back("iphonehd5");
-		resDirOrders.push_back("iphonehd");
-		resDirOrders.push_back("iphone");
-
-		designResolution = Vec2(1024, 768);
-	}
-	else if (1136 == screenSize.width || 1136 == screenSize.height)
-	{
-		resDirOrders.push_back("iphonehd5");
-		resDirOrders.push_back("iphonehd");
-		resDirOrders.push_back("iphone");
-
-		designResolution = Vec2(1136, 640);
-	}
-	else if (960 == screenSize.width || 960 == screenSize.height)
-	{
-		//resDirOrders.push_back("iphonehd");
-		resDirOrders.push_back("iphone");
-
-		designResolution = Vec2(960, 640);
-	}
-	else
-	{
-		resDirOrders.push_back("iphone");
-
-		designResolution = Vec2(480, 320);
-	}
-
+    
+    // Configure design resolution for game
+    glview->setDesignResolutionSize
+    (
+     designSize.width,
+     designSize.height,
+     ResolutionPolicy::NO_BORDER
+     );
+    
+    if (screenSize.height > 768)
+    {
+        resDirOrders.push_back("ipadhd");
+    }
+    else if (screenSize.height < 768 && screenSize.height > 320)
+    {
+        resDirOrders.push_back("iphone");
+    }
+    else
+    {
+        resDirOrders.push_back("iphone");
+    }
+    
 	fileUtils->setSearchPaths(resDirOrders);
 
-	// Configure design resolution for game
-	glview->setDesignResolutionSize(designResolution.x, designResolution.y, ResolutionPolicy::NO_BORDER);
-
+    for(auto i : resDirOrders)
+    {
+        log(i.c_str());
+    }
+    
+    float contentScaleFactor = screenSize.height / designSize.height;
+    log("scalefactor: %f", contentScaleFactor);
+    director->setContentScaleFactor(contentScaleFactor);
+    
+    
     // create a scene. it's an autorelease object
     auto scene = SplashScene::createScene();
 

@@ -161,7 +161,7 @@ bool GameplayScene::init()
 
 	for (auto child : bedroom->getChildren())
 	{
-		static_cast<Sprite*>(child)->getTexture()->setAntiAliasTexParameters();
+		//static_cast<Sprite*>(child)->getTexture()->setAntiAliasTexParameters();
 	}
 
 	/** **/
