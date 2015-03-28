@@ -59,14 +59,17 @@ bool SplashScene::init()
     fadeActions.insert(0, FadeIn::create(0.5));
         
     label->runAction(Sequence::create(fadeActions));
-    
+		    
     return true;
 }
 
 void SplashScene::loadMenuScene()
 {        
-    auto menuScene = MenuScene::createScene();
-    Director::getInstance()->replaceScene(menuScene);
+    //auto menuScene = MenuScene::createScene();
+    //Director::getInstance()->replaceScene(menuScene);
+
+	auto gameplayScene = GameplayScene::createScene();
+	Director::getInstance()->replaceScene(gameplayScene);
 }
 
 /**
@@ -101,7 +104,7 @@ bool MenuScene::init()
 	keyListener->onKeyPressed = CC_CALLBACK_2(MenuScene::onKeyPressed, this);
 	keyListener->onKeyReleased = CC_CALLBACK_2(MenuScene::onKeyReleased, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
-
+		
 	return true;
 }
 
@@ -140,3 +143,55 @@ void MenuScene::Quit(Ref* sender)
 */
 
 
+/**
+* GameplayScene
+*/
+
+// on "init" you need to initialize your instance
+bool GameplayScene::init()
+{
+	//////////////////////////////
+	// 1. super init first
+	if (!Layer::init())
+		return false;
+
+	// Create the tilemap
+	TMXTiledMap* bedroom = TMXTiledMap::create("bedroom.tmx");
+	this->addChild(bedroom);
+
+	for (auto child : bedroom->getChildren())
+	{
+		static_cast<Sprite*>(child)->getTexture()->setAntiAliasTexParameters();
+	}
+
+	/** **/
+	this->scheduleUpdateWithPriority(42);
+
+	return true;
+}
+
+void GameplayScene::Pause(Ref* sender)
+{
+	Scene* menuScene = MenuScene::createScene();
+	Director::getInstance()->pushScene(menuScene);
+}
+
+void GameplayScene::GameplaySceneFinished(Ref* sender)
+{
+	//auto gameplayFinishedScene = GameplayFinishedScene::createScene();
+	//Director::getInstance()->replaceScene(gameplayFinishedScene);
+}
+
+void GameplayScene::update(float delta)
+{
+	
+}
+
+void GameplayScene::actionFinished()
+{
+}
+
+
+/**
+* GameplayScene END
+*/
