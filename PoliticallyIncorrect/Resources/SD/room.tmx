@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="isometric" renderorder="left-down" width="13" height="10" tilewidth="180" tileheight="90" nextobjectid="242">
+ <tileset firstgid="1" name="floor" tilewidth="180" tileheight="90">
+  <image source="floor.png" width="362" height="275"/>
+ </tileset>
+ <tileset firstgid="7" name="objects" tilewidth="182" tileheight="273">
+  <tile id="0">
+   <image width="182" height="233" source="wall_east.png"/>
+  </tile>
+  <tile id="1">
+   <image width="182" height="273" source="wall_north.png"/>
+  </tile>
+  <tile id="2">
+   <image width="182" height="273" source="wall_south.png"/>
+  </tile>
+  <tile id="3">
+   <image width="182" height="233" source="wall_west.png"/>
+  </tile>
+ </tileset>
+ <layer name="floor" width="13" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAPMGLBzEDMikQTo4cVTd9A2cNCBB5KekgFANSwAOU=
+  </data>
+ </layer>
+ <objectgroup color="#00007f" name="outerwalls">
+  <object id="155" name="wall_west.png" type="Wall" gid="10" x="180" y="90" width="90" height="90"/>
+  <object id="166" name="wall_east.png" type="Wall" gid="7" x="90" y="180" width="90" height="90"/>
+  <object id="170" name="wall_north.png" type="Wall" gid="8" x="180" y="900" width="90" height="90"/>
+  <object id="184" name="wall_south.png" type="Wall" gid="9" x="990" y="810" width="90" height="90"/>
+  <object id="185" name="wall_west.png" type="Wall" gid="10" x="270" y="90" width="90" height="90"/>
+  <object id="186" name="wall_west.png" type="Wall" gid="10" x="360" y="90" width="90" height="90"/>
+  <object id="187" name="wall_west.png" type="Wall" gid="10" x="450" y="90" width="90" height="90"/>
+  <object id="188" name="wall_west.png" type="Wall" gid="10" x="540" y="90" width="90" height="90"/>
+  <object id="189" name="wall_west.png" type="Wall" gid="10" x="630" y="90" width="90" height="90"/>
+  <object id="190" name="wall_west.png" type="Wall" gid="10" x="720" y="90" width="90" height="90"/>
+  <object id="191" name="wall_west.png" type="Wall" gid="10" x="810" y="90" width="90" height="90"/>
+  <object id="192" name="wall_west.png" type="Wall" gid="10" x="900" y="90" width="90" height="90"/>
+  <object id="194" name="wall_east.png" type="Wall" gid="7" x="90" y="270" width="90" height="90"/>
+  <object id="195" name="wall_east.png" type="Wall" gid="7" x="90" y="360" width="90" height="90"/>
+  <object id="196" name="wall_east.png" type="Wall" gid="7" x="90" y="450" width="90" height="90"/>
+  <object id="197" name="wall_east.png" type="Wall" gid="7" x="90" y="540" width="90" height="90"/>
+  <object id="198" name="wall_east.png" type="Wall" gid="7" x="90" y="630" width="90" height="90"/>
+  <object id="199" name="wall_east.png" type="Wall" gid="7" x="90" y="720" width="90" height="90"/>
+  <object id="200" name="wall_east.png" type="Wall" gid="7" x="90" y="810" width="90" height="90"/>
+  <object id="201" name="wall_north.png" type="Wall" gid="8" x="270" y="900" width="90" height="90"/>
+  <object id="202" name="wall_north.png" type="Wall" gid="8" x="360" y="900" width="90" height="90"/>
+  <object id="203" name="wall_north.png" type="Wall" gid="8" x="450" y="900" width="90" height="90"/>
+  <object id="204" name="wall_north.png" type="Wall" gid="8" x="540" y="900" width="90" height="90"/>
+  <object id="205" name="wall_north.png" type="Wall" gid="8" x="630" y="900" width="90" height="90"/>
+  <object id="206" name="wall_north.png" type="Wall" gid="8" x="720" y="900" width="90" height="90"/>
+  <object id="207" name="wall_north.png" type="Wall" gid="8" x="810" y="900" width="90" height="90"/>
+  <object id="208" name="wall_north.png" type="Wall" gid="8" x="900" y="900" width="90" height="90"/>
+  <object id="210" name="wall_south.png" type="Wall" gid="9" x="990" y="720" width="90" height="90"/>
+  <object id="211" name="wall_south.png" type="Wall" gid="9" x="990" y="630" width="90" height="90"/>
+  <object id="212" name="wall_south.png" type="Wall" gid="9" x="990" y="540" width="90" height="90"/>
+  <object id="213" name="wall_south.png" type="Wall" gid="9" x="990" y="450" width="90" height="90"/>
+  <object id="214" name="wall_south.png" type="Wall" gid="9" x="990" y="360" width="90" height="90"/>
+  <object id="215" name="wall_south.png" type="Wall" gid="9" x="990" y="180" width="90" height="90"/>
+ </objectgroup>
+ <objectgroup name="innerwalls">
+  <object id="227" name="wall_south.png" type="Wall" gid="9" x="630" y="450" width="90" height="90"/>
+  <object id="228" name="wall_south.png" type="Wall" gid="9" x="630" y="360" width="90" height="90"/>
+  <object id="229" name="wall_north.png" type="Wall" gid="8" x="540" y="540" width="90" height="90"/>
+  <object id="230" name="wall_south.png" type="Wall" gid="9" x="630" y="270" width="90" height="90"/>
+  <object id="231" name="wall_south.png" type="Wall" gid="9" x="630" y="180" width="90" height="90"/>
+  <object id="232" name="wall_north.png" type="Wall" gid="8" x="180" y="540" width="90" height="90"/>
+  <object id="233" name="wall_north.png" type="Wall" gid="8" x="270" y="540" width="90" height="90"/>
+  <object id="238" name="wall_south.png" type="Wall" gid="9" x="360" y="540" width="90" height="90"/>
+  <object id="239" name="wall_south.png" type="Wall" gid="9" x="360" y="720" width="90" height="90"/>
+  <object id="240" name="wall_south.png" type="Wall" gid="9" x="360" y="810" width="90" height="90"/>
+  <object id="241" name="wall_north.png" type="Wall" gid="8" x="450" y="540" width="90" height="90"/>
+ </objectgroup>
+</map>

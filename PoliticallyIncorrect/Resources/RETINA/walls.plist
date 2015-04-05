@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>wall_east.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,0},{182,233}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{182,233}}</string>
+				<key>sourceSize</key>
+				<string>{182,233}</string>
+			</dict>
+
+			<key>wall_north.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{183,0},{182,273}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{182,273}}</string>
+				<key>sourceSize</key>
+				<string>{182,273}</string>
+			</dict>
+
+			<key>wall_south.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{183,274},{182,273}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{182,273}}</string>
+				<key>sourceSize</key>
+				<string>{182,273}</string>
+			</dict>
+
+			<key>wall_west.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,234},{182,233}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{182,233}}</string>
+				<key>sourceSize</key>
+				<string>{182,233}</string>
+			</dict>
+
+		</dict>
+
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>size</key>
+			<string>{366,548}</string>
+			<key>textureFileName</key>
+			<string>walls.png</string>
+			</dict>
+		</dict>
+</plist>
