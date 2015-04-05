@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "Constants.h"
 
+class ExtendedTMXTiledMap;
 
 class IScene : public cocos2d::Layer
 {
@@ -56,6 +57,9 @@ private:
 
 class GameplayScene : public IScene
 {
+	typedef IScene super;
+	typedef GameplayScene self;
+
 public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameplayScene);
@@ -72,6 +76,10 @@ private:
 
 	void Pause(Ref* sender);
 	void GameplaySceneFinished(Ref* sender);
+
+	ExtendedTMXTiledMap* bedroom;
+	cocos2d::ParallaxNode* _objectLayer;
+	int direction;
 };
 
 #endif // __PoliticallyIncorrect__Scenes_H__

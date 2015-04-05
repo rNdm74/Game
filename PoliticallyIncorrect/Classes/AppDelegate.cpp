@@ -31,9 +31,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	if(!glview)
 	{
 		glview = GLViewImpl::create(APP_NAME);
+		//glview = GLViewImpl::createWithRect(APP_NAME, Rect(0, 0, 2560, 1440), 1.0f);
 		//glview = GLViewImpl::createWithRect(APP_NAME, Rect(0, 0, 1920, 1080), 1.0f);
-		
-        director->setOpenGLView(glview);
+		//glview = GLViewImpl::createWithRect(APP_NAME, Rect(0, 0, 480, 320), 1.0f);
+        
+		director->setOpenGLView(glview);
     }
 
     // turn on display FPS
@@ -44,9 +46,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
 	auto screenSize = glview->getFrameSize();
-	auto designSize = cocos2d::Size(SCREEN_WIDTH_RETINA, SCREEN_HEIGHT_RETINA);
-	auto gameSize = cocos2d::Size(GAME_WIDTH_RETINA, GAME_HEIGHT_RETINA);
-
+	auto designSize = cocos2d::Size(920, 640);
+	
 	std::vector<std::string> searchPaths;
 
 	if (screenSize.height <= SCREEN_HEIGHT_SD) 
@@ -67,11 +68,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 		director->setContentScaleFactor(SCREEN_HEIGHT_RETINA / designSize.height);
 		cocos2d::log("Set RETINA Design Res");
 	}
-
+	
 	FileUtils::getInstance()->setSearchPaths(searchPaths);
 
 	glview->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::NO_BORDER);
-
+	
     // create a scene. it's an autorelease object
     auto scene = SplashScene::createScene();
 

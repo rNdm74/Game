@@ -156,21 +156,77 @@ bool GameplayScene::init()
 	if (!Layer::init())
 		return false;
 
-	// Create the tilemap
-	ExtendedTMXTiledMap* bedroom = ExtendedTMXTiledMap::create("bedroom.tmx");
-	//TMXTiledMap* bedroom = TMXTiledMap::create("bedroom.tmx");
-	this->addChild(bedroom);
-			
-	// Scale must be set on all objects added to the game
-	bedroom->setScale(Director::getInstance()->getContentScaleFactor());
+	/**LOAD BEDROOM RESOURCES **/
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("wall.plist");
 
-	for (auto child : bedroom->getChildren())
-	{
-		//static_cast<Sprite*>(child)->getTexture()->setAntiAliasTexParameters();
+	// Create the tilemap
+	bedroom = ExtendedTMXTiledMap::create("room.tmx");
+	bedroom->setTag(TAG_BEDROOM);
+		
+	this->addChild(bedroom);
+	
+	bedroom->initGameObjects();
+
+	for (const auto& child : bedroom->getChildren())
+	{	
+		//static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
 	}
+
+	bedroom->setScale(Director::getInstance()->getContentScaleFactor());
 
 	/** **/
 	this->scheduleUpdateWithPriority(42);
+
+
+	//  Create a "one by one" touch event listener
+	// (processes one touch at a time)
+	auto listener1 = EventListenerTouchOneByOne::create();
+
+	// trigger when you push down
+	listener1->onTouchBegan = [](Touch* touch, Event* event){
+
+		auto target = event->getCurrentTarget();
+		auto bedroom = static_cast<ExtendedTMXTiledMap*>(target->getChildByTag(TAG_BEDROOM));
+
+		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
+
+		Vec2 tileCoord = bedroom->getTileCoordFromTouch(touchLocation);
+
+		bedroom->selectTile(tileCoord);
+					
+		return true; // if you are consuming it
+	};
+
+	// trigger when moving touch
+	listener1->onTouchMoved = [](Touch* touch, Event* event){
+		// your code
+		auto target = event->getCurrentTarget();
+
+		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
+
+		Vec2 oldTouchLocation = touch->getPreviousLocationInView();
+		oldTouchLocation = Director::getInstance()->convertToGL(oldTouchLocation);
+		oldTouchLocation = target->convertToNodeSpace(oldTouchLocation);
+
+		Vec2 translation = touchLocation - oldTouchLocation;
+		Vec2 newPos = target->getPosition() + translation;
+		target->setPosition(newPos);
+	};
+
+	// trigger when you let up
+	listener1->onTouchEnded = [=](Touch* touch, Event* event){
+		auto target = event->getCurrentTarget();
+		auto bedroom = static_cast<ExtendedTMXTiledMap*>(target->getChildByTag(TAG_BEDROOM));
+
+		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
+
+		Vec2 tileCoord = bedroom->getTileCoordFromTouch(touchLocation);
+
+		bedroom->deselectTile(tileCoord);
+	};
+
+	// Add listener
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
 
 	return true;
 }
@@ -189,7 +245,22 @@ void GameplayScene::GameplaySceneFinished(Ref* sender)
 
 void GameplayScene::update(float delta)
 {
-	
+	//Vec2 position = bedroom->getPosition();
+
+	//Vec2 movement = Vec2(150, 250);
+
+	//if (position.x > -30)
+	//	direction = -1;
+
+	//if (position.x < -1024)
+	//	direction = 1;
+
+	//Vec2 movementStep = (movement * delta) * direction;
+
+	//position.x += movementStep.x;
+	////log("%f", position.x);
+
+	//bedroom->setPosition(position);
 }
 
 void GameplayScene::actionFinished()

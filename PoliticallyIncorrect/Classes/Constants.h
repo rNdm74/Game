@@ -23,8 +23,14 @@
 
 static const std::string APP_NAME = "POLITICALLY INCORRECT";
 
+/** TAGS **/
+
+#define TAG_BEDROOM 0
+
+/** MACROS **/
+
 /**
-* define a create function for a specific type, such as Layer
+* define a init function for a specific type, such as Layer
 * @param \__TYPE__  class type to add create(), such as Layer
 */
 #define INIT_FUNC(__TYPE__) \
@@ -34,6 +40,29 @@ static cocos2d::Scene* createScene() \
 	auto layer = __TYPE__::create(); \
 	scene->addChild(layer); \
 	return scene; \
+}
+
+/**
+* define a create function for a specific type, such as Layer
+* @param \__TYPE__  class type to add create(), such as Layer
+*/
+#define CREATE_FUNC_GAMEOBJECT(__TYPE__) \
+static __TYPE__* create(cocos2d::ValueMap& properties) \
+{ \
+	std::string frameName = properties["name"].asString(); \
+	cocos2d::SpriteFrame* gameObjectFrame = cocos2d::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName); \
+    __TYPE__ *pRet = new(std::nothrow) __TYPE__(properties); \
+    if (pRet && gameObjectFrame && pRet->initWithSpriteFrame(gameObjectFrame)) \
+	    { \
+        pRet->autorelease(); \
+        return pRet; \
+	    } \
+	    else \
+    { \
+        delete pRet; \
+        pRet = NULL; \
+        return NULL; \
+    } \
 }
 
 #endif //__PoliticallyIncorrect__Constants_H__
