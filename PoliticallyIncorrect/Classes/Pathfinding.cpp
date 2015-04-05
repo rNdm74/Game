@@ -1,4 +1,5 @@
 #include "Pathfinding.h"
+#include "Components.h"
 
 USING_NS_CC;
 
@@ -184,63 +185,7 @@ int SearchGraphNode::compareTo(ISearchGraphNode* searchGraphNode)
 * @param maxSearchDistance The maximum depth we'll search before giving up
 * @param allowDiagMovement True if the search should try diaganol movement
 */
-AStarPathFinder* AStarPathFinder::create(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement)
-{
-	// Create an instance of Level
-	AStarPathFinder* node = new AStarPathFinder(map, maxSearchDistance, allowDiagMovement);
-
-	if (node)
-	{
-		// Add it to autorelease pool
-		node->autorelease();
-	}
-	else
-	{
-		// Otherwise delete
-		delete node;
-		node = 0;
-	}
-
-	return node;
-}
-
-
-/**
-* Create a path finder
-*
-* @param parallaxTileMap The ParallaxTileMap to be searched
-* @param maxSearchDistance The maximum depth we'll search before giving up
-* @param allowDiagMovement True if the search should try diaganol movement
-*/
-AStarPathFinder* AStarPathFinder::create(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic)
-{
-	// Create an instance of Level
-	AStarPathFinder* node = new AStarPathFinder(map, maxSearchDistance, allowDiagMovement, heuristic);
-
-	if (node)
-	{
-		// Add it to autorelease pool
-		node->autorelease();
-	}
-	else
-	{
-		// Otherwise delete
-		delete node;
-		node = 0;
-	}
-
-	return node;
-}
-
-
-/**
-* Create a path finder
-*
-* @param parallaxTileMap The ParallaxTileMap to be searched
-* @param maxSearchDistance The maximum depth we'll search before giving up
-* @param allowDiagMovement True if the search should try diaganol movement
-*/
-AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement)
+AStarPathFinder::AStarPathFinder(ExtendedTMXTiledMap* map, int maxSearchDistance, bool allowDiagMovement)
 {
 	_map = map;
 	_heuristic = new AStarHeuristic();
@@ -267,7 +212,7 @@ AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, b
 * @param allowDiagMovement True if the search should try diaganol movement
 * @param heuristic The heuristic used to determine the search order of the ParallaxTileMap
 */
-AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic)
+AStarPathFinder::AStarPathFinder(ExtendedTMXTiledMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic)
 {
 	_map = map;
 	_heuristic = heuristic;
@@ -297,8 +242,8 @@ AStarPathFinder::AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, b
 IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 {
 	// Convert locations to tile coordinates
-	startLocation = _map->getTileCoordinatesFor(startLocation);
-	targetLocation = _map->getTileCoordinatesFor(targetLocation);
+	startLocation = _map->getTileCoordFrom(startLocation);
+	targetLocation = _map->getTileCoordFrom(targetLocation);
 
 	//
 	Size mapSize = _map->getMapSize();

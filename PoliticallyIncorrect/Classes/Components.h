@@ -4,12 +4,16 @@
 #include "cocos2d.h"
 #include "Constants.h"
 
+class IPath;
+class AStarPathFinder;
 class IGameObject;
 
 class ExtendedTMXTiledMap : public cocos2d::TMXTiledMap
 {
 public:
-	cocos2d::Vec2 velocity;
+    
+    cocos2d::Vec2 source;
+    cocos2d::Vec2 destination;
 
 public:
 	static ExtendedTMXTiledMap* create(const std::string& tmxFile);
@@ -23,10 +27,17 @@ public:
 
 	virtual void initGameObjects();
 	
-	virtual cocos2d::Vec2 getTileCoordFromTouch(cocos2d::Vec2 position);
-	virtual void selectTile(cocos2d::Vec2 coord);
+	virtual cocos2d::Vec2 getTileCoordFrom(cocos2d::Vec2 position);
+	
+    /**  **/
+    virtual void selectTile(cocos2d::Vec2 coord);
 	virtual void deselectTile(cocos2d::Vec2 coord);
 
+    /** Pathfinding **/
+    virtual bool isBlocked(cocos2d::Vec2 coordinate);
+    virtual float getCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
+    virtual IPath* getPath(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
+    
 private:
 	virtual bool initGameObject(std::string className, cocos2d::ValueMap& properties);
 
@@ -38,6 +49,8 @@ private:
 		
 	cocos2d::DrawNode* _debugLayer;
 	cocos2d::TMXLayer* floorLayer;
+    
+    AStarPathFinder* pathfinder;
 };
 
 #endif // __PoliticallyIncorrect__Components_H__

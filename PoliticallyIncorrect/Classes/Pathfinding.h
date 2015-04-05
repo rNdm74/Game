@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 
+class ExtendedTMXTiledMap;
+
 class Pathfinding
 {
 	typedef Pathfinding self;
@@ -43,7 +45,7 @@ public:
 	virtual float getX(unsigned int index) = 0;
 	virtual float getY(unsigned int index) = 0;
 
-	virtual bool contains(Vec2 step) = 0;
+	virtual bool contains(cocos2d::Vec2 step) = 0;
 
 	virtual cocos2d::Vec2 peek_front() = 0;
 	virtual cocos2d::Vec2 peek_back() = 0;
@@ -70,7 +72,7 @@ public:
 	virtual float getX(unsigned int index);
 	virtual float getY(unsigned int index);
 
-	virtual bool contains(Vec2 step);
+	virtual bool contains(cocos2d::Vec2 step);
 
 	virtual cocos2d::Vec2 peek_front();
 	virtual cocos2d::Vec2 peek_back();
@@ -105,10 +107,6 @@ public:
 	int depth;
 };
 
-
-/**
-* A single node in the search graph
-*/
 class SearchGraphNode : public ISearchGraphNode
 {
 public:
@@ -128,22 +126,18 @@ public:
 	virtual IPath* findPath(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation) = 0;
 };
 
-class AStarPathFinder : public IPathFinder, public Ref
+class AStarPathFinder : public IPathFinder
 {
 public:
-	// 
-	static AStarPathFinder* create(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement);
-	static AStarPathFinder* create(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic);
-
-	AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement);
-	AStarPathFinder(IParallaxTileMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic);
+    AStarPathFinder(ExtendedTMXTiledMap* map, int maxSearchDistance, bool allowDiagMovement);
+	AStarPathFinder(ExtendedTMXTiledMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic);
 	virtual ~AStarPathFinder(){};
 
 	IPath* findPath(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
 	float getMovementCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
 	float getHeuristicCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
 
-	void setMap(IParallaxTileMap* map);
+	void setMap(ExtendedTMXTiledMap* map);
 
 protected:
 	ISearchGraphNode* getFirstInOpen();
@@ -165,7 +159,7 @@ private:
 	std::vector<ISearchGraphNode*> _nodes;
 
 	/** The ParallaxTileMap being searched */
-	IParallaxTileMap* _map;
+	ExtendedTMXTiledMap* _map;
 
 	/** The maximum depth of search we're willing to accept before giving up */
 	int _maxSearchDistance;

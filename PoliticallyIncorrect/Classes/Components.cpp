@@ -1,6 +1,7 @@
 #include "Components.h"
 #include "GameObjectFactory.h"
 #include "GameObject.h"
+#include "Pathfinding.h"
 
 USING_NS_CC;
 
@@ -18,12 +19,21 @@ ExtendedTMXTiledMap* ExtendedTMXTiledMap::create(const std::string& tmxFile)
 
 ExtendedTMXTiledMap::ExtendedTMXTiledMap()
 {
+    
+    pathfinder = new AStarPathFinder(this, 100, true, new ClosestHeuristic());
+    
+    //pathfinder->findPath(<#cocos2d::Vec2 startLocation#>, <#cocos2d::Vec2 targetLocation#>);
+    
+    source = Vec2::ZERO;
+    destination = Vec2::ZERO;
 	
 };
 
 ExtendedTMXTiledMap::~ExtendedTMXTiledMap()
 {
 	floorLayer->release();
+    
+    delete pathfinder;
 };
 
 void ExtendedTMXTiledMap::update(float delta)
@@ -98,9 +108,7 @@ bool ExtendedTMXTiledMap::initGameObject(std::string className, ValueMap& proper
 						
 		this->addChild(o);		
 		this->setChildZOrder(o, tileCoord);
-
-		//o->setOpacity(100);
-
+        
 		return true;
 	}
 
@@ -155,7 +163,7 @@ Vec2 ExtendedTMXTiledMap::getTileCoordFrom(IGameObject* gameObject)
 	return Vec2(x,y);
 };
 
-Vec2 ExtendedTMXTiledMap::getTileCoordFromTouch(Vec2 position)
+Vec2 ExtendedTMXTiledMap::getTileCoordFrom(Vec2 position)
 {
 	Vec2 pos = position;
 	float halfMapWidth = _mapSize.width * 0.5;
@@ -172,4 +180,23 @@ Vec2 ExtendedTMXTiledMap::getTileCoordFromTouch(Vec2 position)
 	float posY = (int)(invereseTileY - tilePosDiv.x + halfMapWidth);
 
 	return Vec2(posX, posY);
+};
+
+bool ExtendedTMXTiledMap::isBlocked(Vec2 coordinate)
+{
+    TMXLayer* layer = this->getLayer("collision");
+    
+    Sprite* tile = layer->getTileAt(coordinate);
+    
+    return (tile != nullptr);
+}
+
+float ExtendedTMXTiledMap::getCost(Vec2 startLocation, Vec2 targetLocation)
+{
+    return 1;
+}
+
+IPath* ExtendedTMXTiledMap::getPath(Vec2 startLocation, Vec2 targetLocation)
+{
+    return pathfinder->findPath(startLocation, targetLocation);
 };

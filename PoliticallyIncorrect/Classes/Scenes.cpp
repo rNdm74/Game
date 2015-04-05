@@ -1,5 +1,6 @@
 #include "Scenes.h"
 #include "Components.h"
+#include "Pathfinding.h"
 
 USING_NS_CC;
 
@@ -164,7 +165,7 @@ bool GameplayScene::init()
 	bedroom->setTag(TAG_BEDROOM);
 		
 	this->addChild(bedroom);
-	
+    
 	bedroom->initGameObjects();
 
 	for (const auto& child : bedroom->getChildren())
@@ -173,7 +174,7 @@ bool GameplayScene::init()
 	}
 
 	bedroom->setScale(Director::getInstance()->getContentScaleFactor());
-
+    
 	/** **/
 	this->scheduleUpdateWithPriority(42);
 
@@ -186,14 +187,26 @@ bool GameplayScene::init()
 	listener1->onTouchBegan = [](Touch* touch, Event* event){
 
 		auto target = event->getCurrentTarget();
-		auto bedroom = static_cast<ExtendedTMXTiledMap*>(target->getChildByTag(TAG_BEDROOM));
+        auto node = target->getChildByTag(TAG_BEDROOM);
+		auto bedroom = static_cast<ExtendedTMXTiledMap*>(node);
 
 		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
 
-		Vec2 tileCoord = bedroom->getTileCoordFromTouch(touchLocation);
+		Vec2 tileCoord = bedroom->getTileCoordFrom(touchLocation);
 
 		bedroom->selectTile(tileCoord);
-					
+        
+        
+        if(bedroom->source.equals(Vec2::ZERO))
+        {
+            bedroom->source = touchLocation;
+        }
+        else
+        {
+            IPath* path = bedroom->getPath(bedroom->source, touchLocation);
+            log("finding path");
+        }
+        
 		return true; // if you are consuming it
 	};
 
@@ -220,7 +233,7 @@ bool GameplayScene::init()
 
 		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
 
-		Vec2 tileCoord = bedroom->getTileCoordFromTouch(touchLocation);
+		Vec2 tileCoord = bedroom->getTileCoordFrom(touchLocation);
 
 		bedroom->deselectTile(tileCoord);
 	};
@@ -266,7 +279,6 @@ void GameplayScene::update(float delta)
 void GameplayScene::actionFinished()
 {
 }
-
 
 /**
 * GameplayScene END
