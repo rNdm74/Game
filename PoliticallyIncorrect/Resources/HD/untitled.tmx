@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="staggered" renderorder="right-down" width="20" height="20" tilewidth="180" tileheight="90" staggeraxis="y" staggerindex="odd" nextobjectid="1">
+ <tileset firstgid="1" name="grass" tilewidth="180" tileheight="90">
+  <image source="C:/Users/rNdm/Desktop/grass.png" width="540" height="540"/>
+ </tileset>
+ <layer name="Tile Layer 2" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBiaQJDK5nFQ2TxaAGr7mZ2B+v4ejOHINdAOGAWjYJgCAFzfAEw=
+  </data>
+ </layer>
+ <layer name="Tile Layer 2" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzN0t0KgCAMBWDtHwOx93/ZtovgECa2HaLBQKZ8HGQhPNdoaKbV8tj5/u7p3ULwZvCSdHR4OFerSG9Erzbv9XaYDUarlc/rHTBbjdY9n/697kgieVl6cli1/StwZnhY15tM8iwZv/bemmzvBLUVA78=
+  </data>
+ </layer>
+</map>
