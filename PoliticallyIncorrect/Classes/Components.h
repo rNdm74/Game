@@ -28,6 +28,8 @@ public:
 	virtual void initGameObjects();
 	
 	virtual cocos2d::Vec2 getTileCoordFrom(cocos2d::Vec2 position);
+	virtual cocos2d::Vec2 getTileCoordFrom(IGameObject* gameObject);
+
 	
     /**  **/
     virtual void selectTile(cocos2d::Vec2 coord);
@@ -40,9 +42,7 @@ public:
     
 private:
 	virtual bool initGameObject(std::string className, cocos2d::ValueMap& properties);
-
-	virtual cocos2d::Vec2 getTileCoordFrom(IGameObject* gameObject);
-	
+		
 	virtual void setChildZOrder(IGameObject* gameObject, cocos2d::Vec2 tileCoord);
 
 	int _objectCount;
@@ -51,6 +51,8 @@ private:
 	cocos2d::TMXLayer* floorLayer;
     
     AStarPathFinder* pathfinder;
+
+	IGameObject* playerInstance;
 };
 
 #endif // __PoliticallyIncorrect__Components_H__

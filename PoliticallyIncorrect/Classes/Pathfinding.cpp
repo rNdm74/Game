@@ -314,11 +314,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 				}
 
 				// determine the location of the neighbour and evaluate it
-				Vec2 neighbourLocation = Vec2
-					(
-					x + current->coordinate.x,
-					y + current->coordinate.y
-					);
+				Vec2 neighbourLocation = Vec2(x + current->coordinate.x, y + current->coordinate.y);
 
 				//
 				if (this->isValidLocation(startLocation, neighbourLocation))

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 
 // Objects that are interactable
+#include "Player.h"
 #include "Wall.h"
 
 USING_NS_CC;
@@ -10,7 +11,11 @@ IGameObject* GameObjectFactory::create(std::string className, ValueMap& properti
 {
 	IGameObject* gameObject = nullptr;
 
-	if (className == "Wall")
+	if (className == "Player")
+	{
+		gameObject = Player::create(properties);
+	}
+	else if (className == "Wall")
 	{
 		gameObject = Wall::create(properties);
 	}

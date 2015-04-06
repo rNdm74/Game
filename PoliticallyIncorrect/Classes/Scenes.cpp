@@ -1,6 +1,7 @@
 #include "Scenes.h"
 #include "Components.h"
 #include "Pathfinding.h"
+#include "GameObject.h"
 
 USING_NS_CC;
 
@@ -159,11 +160,13 @@ bool GameplayScene::init()
 
 	/**LOAD BEDROOM RESOURCES **/
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("wall.plist");
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("player.plist");
 
 	// Create the tilemap
 	bedroom = ExtendedTMXTiledMap::create("room.tmx");
 	bedroom->setTag(TAG_BEDROOM);
-		
+	bedroom->setPosition(Vec2::ZERO);
+	bedroom->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	this->addChild(bedroom);
     
 	bedroom->initGameObjects();
@@ -190,23 +193,32 @@ bool GameplayScene::init()
         auto node = target->getChildByTag(TAG_BEDROOM);
 		auto bedroom = static_cast<ExtendedTMXTiledMap*>(node);
 
+		IGameObject* player = static_cast<IGameObject*>(bedroom->getChildByTag(TAG_PLAYER));
+		
+		Vec2 pos = bedroom->getTileCoordFrom(player);
+		
+		
 		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
-
 		Vec2 tileCoord = bedroom->getTileCoordFrom(touchLocation);
-
 		bedroom->selectTile(tileCoord);
         
+		IPath* path = bedroom->getPath(pos, touchLocation);
         
-        if(bedroom->source.equals(Vec2::ZERO))
-        {
-            bedroom->source = touchLocation;
-        }
-        else
-        {
-            IPath* path = bedroom->getPath(bedroom->source, touchLocation);
-            log("finding path");
-        }
-        
+		if (path)
+		{
+			log("We have found a path!!");
+
+			while (path->getLength() > 0)
+			{
+				Vec2 step = path->pop_front();
+				bedroom->selectTile(step);
+
+				log("Step - x:%f, y:%f", step.x, step.y);
+			}
+		}
+
+		
+
 		return true; // if you are consuming it
 	};
 
@@ -229,13 +241,30 @@ bool GameplayScene::init()
 	// trigger when you let up
 	listener1->onTouchEnded = [=](Touch* touch, Event* event){
 		auto target = event->getCurrentTarget();
-		auto bedroom = static_cast<ExtendedTMXTiledMap*>(target->getChildByTag(TAG_BEDROOM));
+		auto node = target->getChildByTag(TAG_BEDROOM);
+		auto bedroom = static_cast<ExtendedTMXTiledMap*>(node);
+
+		IGameObject* player = static_cast<IGameObject*>(bedroom->getChildByTag(TAG_PLAYER));
+		
+		Vec2 pos = player->getPosition();		
+		pos = target->convertToNodeSpace(pos);
 
 		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
-
 		Vec2 tileCoord = bedroom->getTileCoordFrom(touchLocation);
-
 		bedroom->deselectTile(tileCoord);
+
+		IPath* path = bedroom->getPath(pos, touchLocation);
+
+		if (path)
+		{
+			log("We have found a path!!");
+		}
+
+		while (path && path->getLength() > 0)
+		{
+			Vec2 step = path->pop_front();
+			bedroom->deselectTile(step);
+		}
 	};
 
 	// Add listener
@@ -258,22 +287,7 @@ void GameplayScene::GameplaySceneFinished(Ref* sender)
 
 void GameplayScene::update(float delta)
 {
-	//Vec2 position = bedroom->getPosition();
-
-	//Vec2 movement = Vec2(150, 250);
-
-	//if (position.x > -30)
-	//	direction = -1;
-
-	//if (position.x < -1024)
-	//	direction = 1;
-
-	//Vec2 movementStep = (movement * delta) * direction;
-
-	//position.x += movementStep.x;
-	////log("%f", position.x);
-
-	//bedroom->setPosition(position);
+	bedroom->update(delta);
 }
 
 void GameplayScene::actionFinished()

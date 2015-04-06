@@ -19,25 +19,23 @@ ExtendedTMXTiledMap* ExtendedTMXTiledMap::create(const std::string& tmxFile)
 
 ExtendedTMXTiledMap::ExtendedTMXTiledMap()
 {
-    
-    pathfinder = new AStarPathFinder(this, 100, true, new ClosestHeuristic());
-    
-    //pathfinder->findPath(<#cocos2d::Vec2 startLocation#>, <#cocos2d::Vec2 targetLocation#>);
-    
     source = Vec2::ZERO;
-    destination = Vec2::ZERO;
-	
+    destination = Vec2::ZERO;	
 };
 
 ExtendedTMXTiledMap::~ExtendedTMXTiledMap()
 {
 	floorLayer->release();
     
-    delete pathfinder;
+    //delete pathfinder;
 };
 
 void ExtendedTMXTiledMap::update(float delta)
 {
+	if (playerInstance == nullptr)
+		return;
+
+	//this->setPositionOnPlayer(playerInstance->getBoundingBox());
 };
 
 void ExtendedTMXTiledMap::setPositionOnPlayer(Rect collisionBox)
@@ -48,11 +46,11 @@ void ExtendedTMXTiledMap::setPositionOnPlayer(Rect collisionBox)
 	Vec2 p = Vec2(r.origin.x + (r.size.width / 2), r.origin.y);
 	//p.x += v.x * kUpdateInterval;
 
-	float s = this->getParent()->getScale();
+	float s = this->getParent()->getScale();// *CC_CONTENT_SCALE_FACTOR();
 
 	Size m = _mapSize;
 	Size t = _tileSize;
-	Size w = Director::getInstance()->getWinSize() / s;
+	Size w = Director::getInstance()->getWinSize() * CC_CONTENT_SCALE_FACTOR();
 
 	float x = MAX(p.x, w.width / 2);
 	float y = MAX(p.y, w.height / 2);
@@ -89,7 +87,8 @@ void ExtendedTMXTiledMap::initGameObjects()
 		}
 	}
 
-	log("Loaded objects");
+	playerInstance = static_cast<IGameObject*>(this->getChildByTag(TAG_PLAYER));
+	log("Loaded objects \n player instance is now loaded");
 };
 
 bool ExtendedTMXTiledMap::initGameObject(std::string className, ValueMap& properties)
@@ -198,5 +197,7 @@ float ExtendedTMXTiledMap::getCost(Vec2 startLocation, Vec2 targetLocation)
 
 IPath* ExtendedTMXTiledMap::getPath(Vec2 startLocation, Vec2 targetLocation)
 {
+	pathfinder = new AStarPathFinder(this, 100, false, new ClosestHeuristic());
+
     return pathfinder->findPath(startLocation, targetLocation);
 };

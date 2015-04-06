@@ -18,14 +18,17 @@
 #define GAME_WIDTH_RETINA   2112
 #define GAME_HEIGHT_RETINA  1408
 
-#define TAG_GAMEOBJECT_DOOR	 0
-#define TAG_GAMEOBJECT_LIGHT 1
+
 
 static const std::string APP_NAME = "POLITICALLY INCORRECT";
 
 /** TAGS **/
 
-#define TAG_BEDROOM 0
+#define TAG_BEDROOM		0
+
+#define TAG_DOOR		0
+#define TAG_LIGHT		1
+#define TAG_PLAYER		3
 
 /** MACROS **/
 

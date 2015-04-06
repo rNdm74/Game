@@ -24,6 +24,8 @@ public:
 class GameObject : public IGameObject
 {
 public:
+	CREATE_FUNC_GAMEOBJECT(GameObject);
+
 	GameObject(cocos2d::ValueMap& properties);
 	virtual ~GameObject(){};
 	virtual void update(float delta);
