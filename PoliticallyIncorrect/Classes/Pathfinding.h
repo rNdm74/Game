@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 
 class ExtendedTMXTiledMap;
+class IGameObject;
 
 class Pathfinding
 {
@@ -123,6 +124,8 @@ class IPathFinder
 public:
 	IPathFinder(){};
 	virtual ~IPathFinder(){};
+	virtual IPath* findPathFromPositions(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation) = 0;
+	virtual IPath* findPathForPlayer(IGameObject* player, cocos2d::Vec2 targetLocation) = 0;
 	virtual IPath* findPath(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation) = 0;
 };
 
@@ -133,13 +136,18 @@ public:
 	AStarPathFinder(ExtendedTMXTiledMap* map, int maxSearchDistance, bool allowDiagMovement, IAStarHeuristic* heuristic);
 	virtual ~AStarPathFinder(){};
 
+	IPath* findPathFromPositions(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);	
+	IPath* findPathForPlayer(IGameObject* player, cocos2d::Vec2 targetLocation);
 	IPath* findPath(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
+
 	float getMovementCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
 	float getHeuristicCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
 
 	void setMap(ExtendedTMXTiledMap* map);
 
 protected:
+	
+
 	ISearchGraphNode* getFirstInOpen();
 	void addToOpen(ISearchGraphNode* searchGraphNode);
 	bool inOpenList(ISearchGraphNode* searchGraphNode);

@@ -22,6 +22,9 @@
 
 static const std::string APP_NAME = "POLITICALLY INCORRECT";
 
+static const cocos2d::Color4F DEBUG_RECT_COLOR = cocos2d::Color4F(1.0f, 0.3f, 0.3f, 0.5f);
+static const cocos2d::Color4F SELECTED_RECT_COLOR = cocos2d::Color4F(0.3f, 0.3f, 1.0f, 0.5f);
+
 /** TAGS **/
 
 #define TAG_BEDROOM		0

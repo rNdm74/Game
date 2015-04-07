@@ -1,5 +1,6 @@
 #include "Pathfinding.h"
 #include "Components.h"
+#include "GameObject.h"
 
 USING_NS_CC;
 
@@ -229,7 +230,23 @@ AStarPathFinder::AStarPathFinder(ExtendedTMXTiledMap* map, int maxSearchDistance
 	}
 }
 
+IPath* AStarPathFinder::findPathFromPositions(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation)
+{
+	// Convert locations to tile coordinates
+	startLocation = _map->getTileCoordFrom(startLocation);
+	targetLocation = _map->getTileCoordFrom(targetLocation);
 
+	return findPath(startLocation, targetLocation);
+};
+
+IPath* AStarPathFinder::findPathForPlayer(IGameObject* player, cocos2d::Vec2 targetLocation)
+{
+	Vec2 pos = _map->convertToWorldSpace(player->getPosition());
+	Vec2 startLocation = _map->getTileCoordFrom(pos);
+	targetLocation = _map->getTileCoordFrom(targetLocation);
+
+	return findPath(startLocation, targetLocation);
+};
 /**
 * Find a path from the starting location provided (Vec2 startLocation) to the target
 * location (Vec2 targetLocation) avoiding blockages and attempting to honour costs
@@ -240,11 +257,7 @@ AStarPathFinder::AStarPathFinder(ExtendedTMXTiledMap* map, int maxSearchDistance
 * @return The path found from start to end, or null if no path can be found.
 */
 IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
-{
-	// Convert locations to tile coordinates
-	startLocation = _map->getTileCoordFrom(startLocation);
-	targetLocation = _map->getTileCoordFrom(targetLocation);
-
+{	
 	//
 	Size mapSize = _map->getMapSize();
 	int startIndex = startLocation.y * mapSize.width + startLocation.x;
@@ -320,9 +333,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 				if (this->isValidLocation(startLocation, neighbourLocation))
 				{
 					// the cost to get to this node is cost the current plus the movement
-
 					// cost to reach this node. Note that the heursitic value is only used
-
 					// in the sorted open list
 
 					float nextStepCost = current->cost + this->getMovementCost(current->coordinate, neighbourLocation);
@@ -330,10 +341,8 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 					ISearchGraphNode* neighbour = _nodes[neighbourIndex];
 
 					// if the new cost we've determined for this node is lower than 
-
 					// it has been previously makes sure the node hasn'e've
 					// determined that there might have been a better path to get to
-
 					// this node so it needs to be re-evaluated
 
 					if (nextStepCost < neighbour->cost)
@@ -350,9 +359,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 					}
 
 					// if the node hasn't already been processed and discarded then
-
 					// reset it's cost to our current cost and add it as a next possible
-
 					// step (i.e. to the open list)
 
 					if (inOpenList(neighbour) == false && inClosedList(neighbour) == false)
@@ -376,9 +383,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 	}
 
 	// At this point we've definitely found a path so we can uses the parent
-
 	// references of the nodes to find out way from the target location back
-
 	// to the start recording the nodes on the way.
 
 	IPath* path = new Path();

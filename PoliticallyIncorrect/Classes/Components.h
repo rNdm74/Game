@@ -6,14 +6,12 @@
 
 class IPath;
 class AStarPathFinder;
+class Player;
 class IGameObject;
 
 class ExtendedTMXTiledMap : public cocos2d::TMXTiledMap
 {
 public:
-    
-    cocos2d::Vec2 source;
-    cocos2d::Vec2 destination;
 
 public:
 	static ExtendedTMXTiledMap* create(const std::string& tmxFile);
@@ -22,14 +20,13 @@ public:
 	virtual ~ExtendedTMXTiledMap();
 
 	virtual void update(float delta);
-
-	virtual void setPositionOnPlayer(cocos2d::Rect collisionBox);	
-
+		
 	virtual void initGameObjects();
 	
+	virtual bool isTileCoordValid(cocos2d::Vec2 coord);
 	virtual cocos2d::Vec2 getTileCoordFrom(cocos2d::Vec2 position);
 	virtual cocos2d::Vec2 getTileCoordFrom(IGameObject* gameObject);
-
+	virtual cocos2d::Rect getTileRectFrom(cocos2d::Vec2 coord);
 	
     /**  **/
     virtual void selectTile(cocos2d::Vec2 coord);
@@ -38,7 +35,22 @@ public:
     /** Pathfinding **/
     virtual bool isBlocked(cocos2d::Vec2 coordinate);
     virtual float getCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
-    virtual IPath* getPath(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
+	virtual IPath* findPath(cocos2d::Vec2 sourceCoordinate, cocos2d::Vec2 targetCoordinate);
+
+	/** Debug **/
+	virtual void drawRect(cocos2d::Rect rect);
+
+	/** Player methods **/
+	virtual void setPositionOnPlayer();
+	virtual cocos2d::Vec2 getPlayerPosition();
+	virtual void selectPlayer();
+	virtual void deselectPlayer();
+	virtual bool playerIsSelected();
+	virtual void playerSetPath();
+	virtual void playerUnSetPath();
+	virtual bool playerHasActivePath();
+	virtual void movePlayerAlongPath(IPath* path);
+
     
 private:
 	virtual bool initGameObject(std::string className, cocos2d::ValueMap& properties);
@@ -52,7 +64,7 @@ private:
     
     AStarPathFinder* pathfinder;
 
-	IGameObject* playerInstance;
+	Player* playerInstance;
 };
 
 #endif // __PoliticallyIncorrect__Components_H__

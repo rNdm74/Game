@@ -159,47 +159,90 @@ bool GameplayScene::init()
 		return false;
 
 	/**LOAD BEDROOM RESOURCES **/
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("floor.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("wall.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("player.plist");
 
 	// Create the tilemap
-	map = ExtendedTMXTiledMap::create("room.tmx");
-	map->setTag(TAG_BEDROOM);
-	map->setPosition(Vec2::ZERO);
-	map->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-	this->addChild(map);
+	_map = ExtendedTMXTiledMap::create("room.tmx");
+	_map->setTag(TAG_BEDROOM);
+	_map->setPosition(Vec2(0, 0));
+	_map->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	this->addChild(_map);
     
-	map->setScale(CC_CONTENT_SCALE_FACTOR());
-    
+	_map->setScale(CC_CONTENT_SCALE_FACTOR());
+	_map->initGameObjects();
+
+	_map->setPositionOnPlayer();
 	/** **/
 	this->scheduleUpdateWithPriority(42);
 
 
 	//  Create a "one by one" touch event listener
 	// (processes one touch at a time)
-	auto listener1 = EventListenerTouchOneByOne::create();
+	auto listener = EventListenerTouchOneByOne::create();
 
 	// trigger when you push down
-	listener1->onTouchBegan = [](Touch* touch, Event* event)
+	listener->onTouchBegan = [](Touch* touch, Event* event)
     {
         auto target = event->getCurrentTarget();
         auto node = target->getChildByTag(TAG_BEDROOM);
         auto map = static_cast<ExtendedTMXTiledMap*>(node);
+        		
+		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
+		Vec2 tileCoord = map->getTileCoordFrom(touchLocation);		
+		//log("Tile - x:%f, y:%f", tileCoord.x, tileCoord.y);
+
+		if (map->isTileCoordValid(tileCoord))			
+			map->selectTile(tileCoord);
+				
+		Vec2 windowPosition = map->getPlayerPosition();		
+		Vec2 playerLocation = target->convertToNodeSpace(windowPosition);		
+		Vec2 playerTileCoord = map->getTileCoordFrom(playerLocation);
+
+		
+
+		if (tileCoord.equals(playerTileCoord) && map->playerIsSelected() == false)
+		{
+			map->selectPlayer();
+		}
+		else if (tileCoord.equals(playerTileCoord) && map->playerIsSelected())
+		{
+			map->deselectPlayer();
+		}
+		else if (map->playerHasActivePath())
+		{
+			map->deselectPlayer();
+		}
+
+		log("playerLocation - x:%f, y:%f", playerTileCoord.x, playerTileCoord.y);
+		
+		if (map->playerIsSelected())
+		{
+			//
+			// Tell player to follow this path
+			//
+			map->movePlayerAlongPath(map->findPath(playerTileCoord, tileCoord));
+
+			/*IPath* path = map->findPath(playerTileCoord, tileCoord);
         
-        Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
-        Vec2 tileCoord = map->getTileCoordFrom(touchLocation);
-        
-        
-        Size mapSize =map->getMapSize();
-        log("max X:%f, man Y:%f", mapSize.width, mapSize.height);
-        log("x:%f, y:%f", tileCoord.x, tileCoord.y);
-        map->selectTile(tileCoord);
-        
+			if (path)
+			{
+				map->playerSetPath();
+
+				while (path->getLength() > 0)
+				{
+					Rect r = map->getTileRectFrom(path->pop_front());
+					map->drawRect(r);
+				}
+			}*/
+		}
+
 		return true; // if you are consuming it
 	};
 
 	// trigger when moving touch
-	listener1->onTouchMoved = [](Touch* touch, Event* event)
+	listener->onTouchMoved = [](Touch* touch, Event* event)
     {
 		// your code
 		auto target = event->getCurrentTarget();
@@ -213,22 +256,27 @@ bool GameplayScene::init()
 		Vec2 translation = touchLocation - oldTouchLocation;
 		Vec2 newPos = target->getPosition() + translation;
 		target->setPosition(newPos);
+
+		//log("Target - x:%f, y:%f", target->getPositionX(), target->getPositionY());
 	};
 
 	// trigger when you let up
-	listener1->onTouchEnded = [=](Touch* touch, Event* event)
+	listener->onTouchEnded = [=](Touch* touch, Event* event)
     {
         auto target = event->getCurrentTarget();
         auto node = target->getChildByTag(TAG_BEDROOM);
         auto map = static_cast<ExtendedTMXTiledMap*>(node);
         
-        Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
-        Vec2 tileCoord = map->getTileCoordFrom(touchLocation);
-        map->deselectTile(tileCoord);
+		//log("Map - x:%f, y:%f", map->getPositionX(), map->getPositionY());
+
+		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
+		Vec2 tileCoord = map->getTileCoordFrom(touchLocation);
+		if (map->isTileCoordValid(tileCoord))
+			map->deselectTile(tileCoord);
     };
 
 	// Add listener
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
 	return true;
 }
@@ -247,7 +295,7 @@ void GameplayScene::GameplaySceneFinished(Ref* sender)
 
 void GameplayScene::update(float delta)
 {
-	map->update(delta);
+	_map->update(delta);
 }
 
 void GameplayScene::actionFinished()

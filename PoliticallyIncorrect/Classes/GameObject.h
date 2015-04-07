@@ -14,10 +14,15 @@
 class IGameObject : public cocos2d::Sprite
 {
 public:
+	bool Selected;
+	class IPath* ActivePath;
+
+public:
 	IGameObject(){};
 	virtual ~IGameObject(){};
 	virtual void update(float delta) = 0;
 
+	virtual cocos2d::Vec2 getCenterPosition() = 0;
 	virtual cocos2d::Size getObjectSize() = 0;
 };
 
@@ -30,6 +35,7 @@ public:
 	virtual ~GameObject(){};
 	virtual void update(float delta);
 
+	virtual cocos2d::Vec2 getCenterPosition() { return cocos2d::Vec2(getBoundingBox().getMidX(), getBoundingBox().getMidY()); };
 	virtual cocos2d::Size getObjectSize() { return _objectSize; };
 	virtual void setObjectSize(cocos2d::Size objectSize) { _objectSize = objectSize; };
 

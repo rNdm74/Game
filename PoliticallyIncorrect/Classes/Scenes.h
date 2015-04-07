@@ -5,6 +5,7 @@
 #include "Constants.h"
 
 class ExtendedTMXTiledMap;
+class IGameObject;
 
 class IScene : public cocos2d::Layer
 {
@@ -77,9 +78,10 @@ private:
 	void Pause(Ref* sender);
 	void GameplaySceneFinished(Ref* sender);
 
-	ExtendedTMXTiledMap* map;
-	cocos2d::ParallaxNode* _objectLayer;
-	int direction;
+	ExtendedTMXTiledMap* _map;
+
+public:		
+	IGameObject* PlayerInstance;
 };
 
 #endif // __PoliticallyIncorrect__Scenes_H__

@@ -1,6 +1,7 @@
 #include "Components.h"
 #include "GameObjectFactory.h"
 #include "GameObject.h"
+#include "Player.h"
 #include "Pathfinding.h"
 
 USING_NS_CC;
@@ -25,34 +26,32 @@ ExtendedTMXTiledMap::ExtendedTMXTiledMap()
 
 ExtendedTMXTiledMap::~ExtendedTMXTiledMap()
 {
-	//floorLayer->release();
-    
+	//floorLayer->release();    
     //delete pathfinder;
 };
 
 void ExtendedTMXTiledMap::update(float delta)
 {
-	//if (playerInstance == nullptr)
-	//	return;
+	if (playerInstance == nullptr)
+		return;
 
-    _debugLayer->clear();
-    _debugLayer->drawRect(Vec2::ZERO, Vec2(100,100), Color4F(1.0f, 0.3f, 0.3f, 0.5f));
-	//this->setPositionOnPlayer(playerInstance->getBoundingBox());
+	for (auto child : this->getChildren())
+	{
+		child->update(delta);
+	}
+
+	//this->setPositionOnPlayer();
 };
 
-void ExtendedTMXTiledMap::setPositionOnPlayer(Rect collisionBox)
-{
-	//Vec2 v = this->getPlayer()->getVelocity();
-	Rect r = collisionBox; // this->getPlayer()->getCollisionBox();
-	/** Bottom middle of sprite **/
-	Vec2 p = Vec2(r.origin.x + (r.size.width / 2), r.origin.y);
-	//p.x += v.x * kUpdateInterval;
-
-	float s = this->getParent()->getScale();// *CC_CONTENT_SCALE_FACTOR();
-
+void ExtendedTMXTiledMap::setPositionOnPlayer()
+{	
+	Vec2 playerPosition = playerInstance->getPosition();
+	Size playerSize = playerInstance->getObjectSize() / 2;
+	Vec2 p = this->convertToWorldSpace(Vec2(playerPosition.x + playerSize.width, playerPosition.y + playerSize.height));
+		
 	Size m = _mapSize;
 	Size t = _tileSize;
-	Size w = Director::getInstance()->getWinSize() * CC_CONTENT_SCALE_FACTOR();
+	Size w = Director::getInstance()->getWinSize();
 
 	float x = MAX(p.x, w.width / 2);
 	float y = MAX(p.y, w.height / 2);
@@ -63,6 +62,7 @@ void ExtendedTMXTiledMap::setPositionOnPlayer(Rect collisionBox)
 	Vec2 cov = Vec2(w.width / 2, w.height / 2);
 	Vec2 vp = cov - ap;
 
+	log("Map - x:%f, y:%f", this->getPositionX(), this->getPositionY());
 	this->setPosition(vp);
 };
 
@@ -86,7 +86,7 @@ void ExtendedTMXTiledMap::initGameObjects()
 		}
 	}
 
-	playerInstance = static_cast<IGameObject*>(this->getChildByTag(TAG_PLAYER));
+	playerInstance = static_cast<Player*>(this->getChildByTag(TAG_PLAYER));
 	log("Loaded objects \n player instance is now loaded");
 };
 
@@ -122,30 +122,76 @@ void ExtendedTMXTiledMap::setChildZOrder(IGameObject* gameObject, Vec2 tileCoord
 };
 
 void ExtendedTMXTiledMap::selectTile(cocos2d::Vec2 coord)
-{
+{	
     Sprite* tile = this->getLayer("ground")->getTileAt(coord);
 
 	if (tile)
 	{
-		tile->setColor(ccc3(100, 100, 100));
+		this->drawRect(tile->getBoundingBox());
+		//tile->setColor(ccc3(100, 100, 100));
 	}
 
 };
 
 void ExtendedTMXTiledMap::deselectTile(cocos2d::Vec2 coord)
 {
+	_debugLayer->clear();
+
 	Sprite* tile = this->getLayer("ground")->getTileAt(coord);
 
 	if (tile)
-	{
-		tile->setColor(ccc3(255, 255, 255));
+	{		
+		//tile->setColor(ccc3(255, 255, 255));
 	}
 
 };
 
+void ExtendedTMXTiledMap::movePlayerAlongPath(IPath* path)
+{
+	if (path)
+	{
+		playerInstance->moveTo(path->pop_back());
+	}	
+};
+
+Vec2 ExtendedTMXTiledMap::getPlayerPosition()
+{ 
+	return this->convertToWorldSpace(playerInstance->getCenterPosition()); 
+};
+
+void ExtendedTMXTiledMap::selectPlayer() 
+{ 
+	playerInstance->Selected = true; 
+	playerInstance->setColor(ccc3(100, 100, 100));
+};
+void ExtendedTMXTiledMap::deselectPlayer() 
+{ 
+	playerInstance->Selected = false; 
+	playerInstance->setColor(ccc3(255, 255, 255));
+};
+
+bool ExtendedTMXTiledMap::playerIsSelected() 
+{ 
+	return playerInstance->Selected; 
+};
+
+void ExtendedTMXTiledMap::playerSetPath()
+{ 
+	//playerInstance->ActivePath = true; 
+};
+void ExtendedTMXTiledMap::playerUnSetPath()
+{ 
+	//playerInstance->ActivePath = false; 
+};
+bool ExtendedTMXTiledMap::playerHasActivePath()
+{ 
+	return false;
+	//return playerInstance->ActivePath; 
+};
+
 Vec2 ExtendedTMXTiledMap::getTileCoordFrom(IGameObject* gameObject)
 {	
-	Vec2 position = gameObject->getPosition();
+	Vec2 position = gameObject->getPosition() - this->getPosition();
 	Size size = gameObject->getObjectSize();
 
 	// Calculate the map height in pixels
@@ -155,15 +201,16 @@ Vec2 ExtendedTMXTiledMap::getTileCoordFrom(IGameObject* gameObject)
 	float flippedY = (mapHeightPixels - position.y) - _tileSize.height;
 
 	// Calculate the x and y coordinates - 1 for zero based coordinate
-	float x = floor(position.x / size.width) - 1;
-	float y = floor(flippedY / size.height) - 1;
+	float x = floor(position.x / size.width);
+	float y = floor(flippedY / size.height);
 
 	return Vec2(x,y);
 };
 
 Vec2 ExtendedTMXTiledMap::getTileCoordFrom(Vec2 position)
 {
-	Vec2 pos = position;
+	Vec2 pos = position - this->getPosition();
+
 	float halfMapWidth = _mapSize.width * 0.5;
 	float mapHeight = _mapSize.height;
 	float tileWidth = _tileSize.width;
@@ -174,19 +221,15 @@ Vec2 ExtendedTMXTiledMap::getTileCoordFrom(Vec2 position)
 
 	// Cast int to make sure that result is in whole numbers
 
-	float posX = (int)(invereseTileY + tilePosDiv.x - halfMapWidth);
-	float posY = (int)(invereseTileY - tilePosDiv.x + halfMapWidth);
+	float coordX = (int)(invereseTileY + tilePosDiv.x - halfMapWidth);
+	float coordY = (int)(invereseTileY - tilePosDiv.x + halfMapWidth);
 
-	return Vec2(posX, posY);
+	return Vec2(coordX, coordY);
 };
 
 bool ExtendedTMXTiledMap::isBlocked(Vec2 coordinate)
-{
-    TMXLayer* layer = this->getLayer("collision");
-    
-    Sprite* tile = layer->getTileAt(coordinate);
-    
-    return (tile != nullptr);
+{       
+	return (this->getLayer("collision")->getTileAt(coordinate) != nullptr);
 }
 
 float ExtendedTMXTiledMap::getCost(Vec2 startLocation, Vec2 targetLocation)
@@ -194,9 +237,45 @@ float ExtendedTMXTiledMap::getCost(Vec2 startLocation, Vec2 targetLocation)
     return 1;
 }
 
-IPath* ExtendedTMXTiledMap::getPath(Vec2 startLocation, Vec2 targetLocation)
+IPath* ExtendedTMXTiledMap::findPath(Vec2 sourceCoordinate, Vec2 targetCoordinate)
 {
 	pathfinder = new AStarPathFinder(this, 100, false, new ClosestHeuristic());
+				
+	return pathfinder->findPath(sourceCoordinate, targetCoordinate);
+};
 
-    return pathfinder->findPath(startLocation, targetLocation);
+bool ExtendedTMXTiledMap::isTileCoordValid(Vec2 coord)
+{
+	return (coord.y < _mapSize.height && coord.y >= 0 && coord.x < _mapSize.width && coord.x >= 0);
+};
+
+void ExtendedTMXTiledMap::drawRect(Rect r)
+{
+	Vec2* points = new Vec2[5];
+		
+	// left
+	points[0] = Vec2(r.getMinX(), r.getMidY());
+	points[1] = Vec2(r.getMidX(), r.getMinY());
+	_debugLayer->drawLine(points[0], points[1], DEBUG_RECT_COLOR);
+
+	// bottom	
+	points[2] = Vec2(r.getMaxX(), r.getMidY());
+	_debugLayer->drawLine(points[1], points[2], DEBUG_RECT_COLOR);
+		
+	// right
+	points[3] = Vec2(r.getMidX(), r.getMaxY());	
+	_debugLayer->drawLine(points[2], points[3], DEBUG_RECT_COLOR);
+
+	// top
+	points[4] = Vec2(r.getMinX(), r.getMidY());
+	_debugLayer->drawLine(points[3], points[4], DEBUG_RECT_COLOR);
+
+	_debugLayer->drawSolidPoly(points, 5, DEBUG_RECT_COLOR);
+
+	_debugLayer->drawPoint(Vec2(r.getMidX(), r.getMidY()), 2.0f, DEBUG_RECT_COLOR);
+};
+
+Rect ExtendedTMXTiledMap::getTileRectFrom(Vec2 coord)
+{
+	return this->getLayer("ground")->getTileAt(coord)->getBoundingBox();
 };

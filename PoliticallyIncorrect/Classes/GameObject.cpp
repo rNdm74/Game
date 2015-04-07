@@ -21,5 +21,5 @@ GameObject::GameObject(ValueMap& properties)
 
 void GameObject::update(float delta)
 {
-    
+	log("I'm updating");
 };
