@@ -77,7 +77,7 @@ private:
 	void Pause(Ref* sender);
 	void GameplaySceneFinished(Ref* sender);
 
-	ExtendedTMXTiledMap* bedroom;
+	ExtendedTMXTiledMap* map;
 	cocos2d::ParallaxNode* _objectLayer;
 	int direction;
 };

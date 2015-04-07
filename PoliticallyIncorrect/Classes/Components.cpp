@@ -19,22 +19,24 @@ ExtendedTMXTiledMap* ExtendedTMXTiledMap::create(const std::string& tmxFile)
 
 ExtendedTMXTiledMap::ExtendedTMXTiledMap()
 {
-    source = Vec2::ZERO;
-    destination = Vec2::ZERO;	
+    _debugLayer = DrawNode::create();
+    this->addChild(_debugLayer, 99);
 };
 
 ExtendedTMXTiledMap::~ExtendedTMXTiledMap()
 {
-	floorLayer->release();
+	//floorLayer->release();
     
     //delete pathfinder;
 };
 
 void ExtendedTMXTiledMap::update(float delta)
 {
-	if (playerInstance == nullptr)
-		return;
+	//if (playerInstance == nullptr)
+	//	return;
 
+    _debugLayer->clear();
+    _debugLayer->drawRect(Vec2::ZERO, Vec2(100,100), Color4F(1.0f, 0.3f, 0.3f, 0.5f));
 	//this->setPositionOnPlayer(playerInstance->getBoundingBox());
 };
 
@@ -66,9 +68,6 @@ void ExtendedTMXTiledMap::setPositionOnPlayer(Rect collisionBox)
 
 void ExtendedTMXTiledMap::initGameObjects()
 {
-	floorLayer = this->getLayer("floor");
-	floorLayer->retain();
-	
 	// loop over the object groups in this tmx file
 	for (auto& objectGroup : this->getObjectGroups())
 	{
@@ -100,7 +99,7 @@ bool ExtendedTMXTiledMap::initGameObject(std::string className, ValueMap& proper
 	if (o != nullptr)
 	{		
 		Vec2 tileCoord = this->getTileCoordFrom(o);				
-		Vec2 tilePos = floorLayer->getPositionAt(tileCoord);
+		Vec2 tilePos = this->getLayer("ground")->getPositionAt(tileCoord);
 						
 		o->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 		o->setPosition(tilePos);
@@ -124,7 +123,7 @@ void ExtendedTMXTiledMap::setChildZOrder(IGameObject* gameObject, Vec2 tileCoord
 
 void ExtendedTMXTiledMap::selectTile(cocos2d::Vec2 coord)
 {
-	Sprite* tile = floorLayer->getTileAt(coord);
+    Sprite* tile = this->getLayer("ground")->getTileAt(coord);
 
 	if (tile)
 	{
@@ -135,7 +134,7 @@ void ExtendedTMXTiledMap::selectTile(cocos2d::Vec2 coord)
 
 void ExtendedTMXTiledMap::deselectTile(cocos2d::Vec2 coord)
 {
-	Sprite* tile = floorLayer->getTileAt(coord);
+	Sprite* tile = this->getLayer("ground")->getTileAt(coord);
 
 	if (tile)
 	{

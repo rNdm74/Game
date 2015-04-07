@@ -48,7 +48,7 @@ private:
 	int _objectCount;
 		
 	cocos2d::DrawNode* _debugLayer;
-	cocos2d::TMXLayer* floorLayer;
+	cocos2d::TMXLayer* groundLayer;
     
     AStarPathFinder* pathfinder;
 

@@ -163,20 +163,13 @@ bool GameplayScene::init()
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("player.plist");
 
 	// Create the tilemap
-	bedroom = ExtendedTMXTiledMap::create("room.tmx");
-	bedroom->setTag(TAG_BEDROOM);
-	bedroom->setPosition(Vec2::ZERO);
-	bedroom->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-	this->addChild(bedroom);
+	map = ExtendedTMXTiledMap::create("room.tmx");
+	map->setTag(TAG_BEDROOM);
+	map->setPosition(Vec2::ZERO);
+	map->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+	this->addChild(map);
     
-	bedroom->initGameObjects();
-
-	for (const auto& child : bedroom->getChildren())
-	{	
-		//static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
-	}
-
-	bedroom->setScale(Director::getInstance()->getContentScaleFactor());
+	map->setScale(CC_CONTENT_SCALE_FACTOR());
     
 	/** **/
 	this->scheduleUpdateWithPriority(42);
@@ -187,43 +180,27 @@ bool GameplayScene::init()
 	auto listener1 = EventListenerTouchOneByOne::create();
 
 	// trigger when you push down
-	listener1->onTouchBegan = [](Touch* touch, Event* event){
-
-		auto target = event->getCurrentTarget();
+	listener1->onTouchBegan = [](Touch* touch, Event* event)
+    {
+        auto target = event->getCurrentTarget();
         auto node = target->getChildByTag(TAG_BEDROOM);
-		auto bedroom = static_cast<ExtendedTMXTiledMap*>(node);
-
-		IGameObject* player = static_cast<IGameObject*>(bedroom->getChildByTag(TAG_PLAYER));
-		
-		Vec2 pos = bedroom->getTileCoordFrom(player);
-		
-		
-		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
-		Vec2 tileCoord = bedroom->getTileCoordFrom(touchLocation);
-		bedroom->selectTile(tileCoord);
+        auto map = static_cast<ExtendedTMXTiledMap*>(node);
         
-		IPath* path = bedroom->getPath(pos, touchLocation);
+        Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
+        Vec2 tileCoord = map->getTileCoordFrom(touchLocation);
         
-		if (path)
-		{
-			log("We have found a path!!");
-
-			while (path->getLength() > 0)
-			{
-				Vec2 step = path->pop_front();
-				bedroom->selectTile(step);
-
-				log("Step - x:%f, y:%f", step.x, step.y);
-			}
-		}
-
-		
-
+        
+        Size mapSize =map->getMapSize();
+        log("max X:%f, man Y:%f", mapSize.width, mapSize.height);
+        log("x:%f, y:%f", tileCoord.x, tileCoord.y);
+        map->selectTile(tileCoord);
+        
 		return true; // if you are consuming it
 	};
 
 	// trigger when moving touch
-	listener1->onTouchMoved = [](Touch* touch, Event* event){
+	listener1->onTouchMoved = [](Touch* touch, Event* event)
+    {
 		// your code
 		auto target = event->getCurrentTarget();
 
@@ -239,33 +216,16 @@ bool GameplayScene::init()
 	};
 
 	// trigger when you let up
-	listener1->onTouchEnded = [=](Touch* touch, Event* event){
-		auto target = event->getCurrentTarget();
-		auto node = target->getChildByTag(TAG_BEDROOM);
-		auto bedroom = static_cast<ExtendedTMXTiledMap*>(node);
-
-		IGameObject* player = static_cast<IGameObject*>(bedroom->getChildByTag(TAG_PLAYER));
-		
-		Vec2 pos = player->getPosition();		
-		pos = target->convertToNodeSpace(pos);
-
-		Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
-		Vec2 tileCoord = bedroom->getTileCoordFrom(touchLocation);
-		bedroom->deselectTile(tileCoord);
-
-		IPath* path = bedroom->getPath(pos, touchLocation);
-
-		if (path)
-		{
-			log("We have found a path!!");
-		}
-
-		while (path && path->getLength() > 0)
-		{
-			Vec2 step = path->pop_front();
-			bedroom->deselectTile(step);
-		}
-	};
+	listener1->onTouchEnded = [=](Touch* touch, Event* event)
+    {
+        auto target = event->getCurrentTarget();
+        auto node = target->getChildByTag(TAG_BEDROOM);
+        auto map = static_cast<ExtendedTMXTiledMap*>(node);
+        
+        Vec2 touchLocation = target->convertTouchToNodeSpace(touch);
+        Vec2 tileCoord = map->getTileCoordFrom(touchLocation);
+        map->deselectTile(tileCoord);
+    };
 
 	// Add listener
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
@@ -287,7 +247,7 @@ void GameplayScene::GameplaySceneFinished(Ref* sender)
 
 void GameplayScene::update(float delta)
 {
-	bedroom->update(delta);
+	map->update(delta);
 }
 
 void GameplayScene::actionFinished()
