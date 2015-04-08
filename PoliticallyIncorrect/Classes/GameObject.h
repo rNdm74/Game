@@ -14,9 +14,11 @@
 class IGameObject : public cocos2d::Sprite
 {
 public:
+	bool Moving;
 	bool Selected;
-	class IPath* ActivePath;
 
+	class IPath* ActivePath;
+	
 public:
 	IGameObject(){};
 	virtual ~IGameObject(){};

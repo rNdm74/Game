@@ -26,28 +26,22 @@ ExtendedTMXTiledMap::ExtendedTMXTiledMap()
 
 ExtendedTMXTiledMap::~ExtendedTMXTiledMap()
 {
-	//floorLayer->release();    
-    //delete pathfinder;
+	playerPath = nullptr;
 };
 
 void ExtendedTMXTiledMap::update(float delta)
-{
-	if (playerInstance == nullptr)
-		return;
-
+{	
 	for (auto child : this->getChildren())
 	{
 		child->update(delta);
-	}
-
-	//this->setPositionOnPlayer();
+	}	
 };
 
 void ExtendedTMXTiledMap::setPositionOnPlayer()
 {	
-	Vec2 playerPosition = playerInstance->getPosition();
-	Size playerSize = playerInstance->getObjectSize() / 2;
-	Vec2 p = this->convertToWorldSpace(Vec2(playerPosition.x + playerSize.width, playerPosition.y + playerSize.height));
+	Vec2 p1 = playerInstance->getCenterPosition();
+	Vec2 p2 = this->convertToWorldSpace(p1);
+	Vec2 p = p2 - this->getPosition();
 		
 	Size m = _mapSize;
 	Size t = _tileSize;
@@ -62,7 +56,6 @@ void ExtendedTMXTiledMap::setPositionOnPlayer()
 	Vec2 cov = Vec2(w.width / 2, w.height / 2);
 	Vec2 vp = cov - ap;
 
-	log("Map - x:%f, y:%f", this->getPositionX(), this->getPositionY());
 	this->setPosition(vp);
 };
 
@@ -127,7 +120,7 @@ void ExtendedTMXTiledMap::selectTile(cocos2d::Vec2 coord)
 
 	if (tile)
 	{
-		this->drawRect(tile->getBoundingBox());
+		this->drawRect(tile->getBoundingBox(), DEBUG_RECT_COLOR);
 		//tile->setColor(ccc3(100, 100, 100));
 	}
 
@@ -146,12 +139,9 @@ void ExtendedTMXTiledMap::deselectTile(cocos2d::Vec2 coord)
 
 };
 
-void ExtendedTMXTiledMap::movePlayerAlongPath(IPath* path)
+void ExtendedTMXTiledMap::movePlayerAlongPath(IPath& path)
 {
-	if (path)
-	{
-		playerInstance->moveTo(path->pop_back());
-	}	
+	playerInstance->moveAlong(path);
 };
 
 Vec2 ExtendedTMXTiledMap::getPlayerPosition()
@@ -232,14 +222,40 @@ bool ExtendedTMXTiledMap::isBlocked(Vec2 coordinate)
 	return (this->getLayer("collision")->getTileAt(coordinate) != nullptr);
 }
 
-float ExtendedTMXTiledMap::getCost(Vec2 startLocation, Vec2 targetLocation)
-{
-    return 1;
+float ExtendedTMXTiledMap::getCost(Vec2 startLocation, Vec2 neighbourCoordinate)
+{	
+	// Initial cost
+	float cost = 10.0f;
+
+	// Diagonal tile
+	float tx = abs(neighbourCoordinate.x - startLocation.x);
+	float ty = abs(neighbourCoordinate.y - startLocation.y);
+				
+	// Diagonal tile and there are no collision tiles surrounding it
+	if (tx == 1 && ty == 1)
+	{
+		cost = 14.0f; // higher cost		
+	}	
+
+	//log("tx: %f, ty:%f", tx, ty);	
+	//log("cost: %f", cost);
+	
+	return cost;
 }
+
+int ExtendedTMXTiledMap::calculateCostFactor(TileDataArray tileDataArray)
+{
+	int costFactor = 0;
+
+	for (auto t : tileDataArray)
+		if (t.GID > 0) costFactor++;
+
+	return costFactor;
+};
 
 IPath* ExtendedTMXTiledMap::findPath(Vec2 sourceCoordinate, Vec2 targetCoordinate)
 {
-	pathfinder = new AStarPathFinder(this, 100, false, new ClosestHeuristic());
+	pathfinder = new AStarPathFinder(this, 100, true, new ClosestHeuristic());
 				
 	return pathfinder->findPath(sourceCoordinate, targetCoordinate);
 };
@@ -249,33 +265,86 @@ bool ExtendedTMXTiledMap::isTileCoordValid(Vec2 coord)
 	return (coord.y < _mapSize.height && coord.y >= 0 && coord.x < _mapSize.width && coord.x >= 0);
 };
 
-void ExtendedTMXTiledMap::drawRect(Rect r)
+void ExtendedTMXTiledMap::drawRect(Rect r, Color4F color)
 {
 	Vec2* points = new Vec2[5];
 		
 	// left
 	points[0] = Vec2(r.getMinX(), r.getMidY());
 	points[1] = Vec2(r.getMidX(), r.getMinY());
-	_debugLayer->drawLine(points[0], points[1], DEBUG_RECT_COLOR);
+	_debugLayer->drawLine(points[0], points[1], color);
 
 	// bottom	
 	points[2] = Vec2(r.getMaxX(), r.getMidY());
-	_debugLayer->drawLine(points[1], points[2], DEBUG_RECT_COLOR);
+	_debugLayer->drawLine(points[1], points[2], color);
 		
 	// right
 	points[3] = Vec2(r.getMidX(), r.getMaxY());	
-	_debugLayer->drawLine(points[2], points[3], DEBUG_RECT_COLOR);
+	_debugLayer->drawLine(points[2], points[3], color);
 
 	// top
 	points[4] = Vec2(r.getMinX(), r.getMidY());
-	_debugLayer->drawLine(points[3], points[4], DEBUG_RECT_COLOR);
+	_debugLayer->drawLine(points[3], points[4], color);
 
-	_debugLayer->drawSolidPoly(points, 5, DEBUG_RECT_COLOR);
+	_debugLayer->drawSolidPoly(points, 5, color);
 
-	_debugLayer->drawPoint(Vec2(r.getMidX(), r.getMidY()), 2.0f, DEBUG_RECT_COLOR);
+	_debugLayer->drawPoint(Vec2(r.getMidX(), r.getMidY()), 2.0f, color);
 };
 
 Rect ExtendedTMXTiledMap::getTileRectFrom(Vec2 coord)
 {
 	return this->getLayer("ground")->getTileAt(coord)->getBoundingBox();
 };
+
+TileData ExtendedTMXTiledMap::getTileDataFromLayerAt(TMXLayer& layer, Vec2 tileCoordinates)
+{
+	int tileGID = 0;
+	TileData tileData;
+
+	// Make sure the coordinates are valid
+	if (isTileCoordValid(tileCoordinates))
+		tileGID = layer.getTileGIDAt(tileCoordinates);
+
+	// create tiledata object
+	if (tileGID)
+	{
+		tileData.GID = tileGID;
+		tileData.tileRect = getTileRectFrom(tileCoordinates);
+		tileData.tileCoordinates = tileCoordinates;
+	}
+
+	return tileData;
+}
+
+TileDataArray ExtendedTMXTiledMap::getTileDataArrayFromLayerAt(TMXLayer& layer, Vec2 coords)
+{
+	// local variables
+	int count = 0;
+	TileDataArray tileDataArray;
+	
+	// 3x3 grid
+	for (int i = 0; i < 9; i++)
+	{
+		// get column and row
+		int col = i % 3;
+		int row = static_cast<int>(i / 3);
+
+		// disregard col & row (1,1)
+		if (col == 1 && row == 1) continue;
+
+		//
+		Vec2 gridCoordinates = Vec2(coords.x + (col - 1), coords.y + (row - 1));
+
+		//
+		tileDataArray[count++] = this->getTileDataFromLayerAt(layer, gridCoordinates);
+	}
+
+	// sort tileDataArray for faster checking
+	std::swap(tileDataArray[0], tileDataArray[6]); // bottom	now in position 0 //	OLD | NEW
+	std::swap(tileDataArray[2], tileDataArray[3]); // left		now in position 2 //	--- + ---
+	std::swap(tileDataArray[3], tileDataArray[4]); // right		now in position 3 //	012 | 415
+	std::swap(tileDataArray[4], tileDataArray[6]); // top left	now in position 4 //	3 4 | 2 3 
+	std::swap(tileDataArray[5], tileDataArray[6]); // top right now in position 5 //	567 | 607
+
+	return tileDataArray;
+}

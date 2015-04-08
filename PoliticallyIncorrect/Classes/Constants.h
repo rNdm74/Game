@@ -22,13 +22,20 @@
 
 static const std::string APP_NAME = "POLITICALLY INCORRECT";
 
-static const cocos2d::Color4F DEBUG_RECT_COLOR = cocos2d::Color4F(1.0f, 0.3f, 0.3f, 0.5f);
-static const cocos2d::Color4F SELECTED_RECT_COLOR = cocos2d::Color4F(0.3f, 0.3f, 1.0f, 0.5f);
+static const cocos2d::Color4F DEBUG_RECT_COLOR = cocos2d::Color4F(1.0f, 0.3f, 0.3f, 0.3f);
+static const cocos2d::Color4F SELECTED_RECT_COLOR = cocos2d::Color4F(0.3f, 0.3f, 1.0f, 0.3f);
+
+struct TileData
+{
+	cocos2d::Rect tileRect;
+	cocos2d::Vec2 tileCoordinates;
+	int GID = 0;
+};
+
+typedef std::array<TileData, 8> TileDataArray;
 
 /** TAGS **/
-
 #define TAG_BEDROOM		0
-
 #define TAG_DOOR		0
 #define TAG_LIGHT		1
 #define TAG_PLAYER		3

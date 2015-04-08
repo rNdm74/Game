@@ -12,6 +12,7 @@ class IGameObject;
 class ExtendedTMXTiledMap : public cocos2d::TMXTiledMap
 {
 public:
+	IPath* playerPath;
 
 public:
 	static ExtendedTMXTiledMap* create(const std::string& tmxFile);
@@ -28,17 +29,21 @@ public:
 	virtual cocos2d::Vec2 getTileCoordFrom(IGameObject* gameObject);
 	virtual cocos2d::Rect getTileRectFrom(cocos2d::Vec2 coord);
 	
-    /**  **/
+    /**  Tiles **/
     virtual void selectTile(cocos2d::Vec2 coord);
 	virtual void deselectTile(cocos2d::Vec2 coord);
+	virtual TileData getTileDataFromLayerAt(cocos2d::TMXLayer& layer, cocos2d::Vec2 tileCoordinates);
+	virtual TileDataArray getTileDataArrayFromLayerAt(cocos2d::TMXLayer& layer, cocos2d::Vec2 coords);
+
 
     /** Pathfinding **/
     virtual bool isBlocked(cocos2d::Vec2 coordinate);
-    virtual float getCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
+	virtual float getCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 neighbourCoordinate);
+	virtual int calculateCostFactor(TileDataArray tileDataArray);
 	virtual IPath* findPath(cocos2d::Vec2 sourceCoordinate, cocos2d::Vec2 targetCoordinate);
 
 	/** Debug **/
-	virtual void drawRect(cocos2d::Rect rect);
+	virtual void drawRect(cocos2d::Rect rect, cocos2d::Color4F color);
 
 	/** Player methods **/
 	virtual void setPositionOnPlayer();
@@ -49,8 +54,9 @@ public:
 	virtual void playerSetPath();
 	virtual void playerUnSetPath();
 	virtual bool playerHasActivePath();
-	virtual void movePlayerAlongPath(IPath* path);
+	virtual void movePlayerAlongPath(IPath& path);
 
+	
     
 private:
 	virtual bool initGameObject(std::string className, cocos2d::ValueMap& properties);

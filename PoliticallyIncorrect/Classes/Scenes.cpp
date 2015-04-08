@@ -169,6 +169,7 @@ bool GameplayScene::init()
 	_map->setPosition(Vec2(0, 0));
 	_map->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	this->addChild(_map);
+	_map->playerPath = nullptr;
     
 	_map->setScale(CC_CONTENT_SCALE_FACTOR());
 	_map->initGameObjects();
@@ -176,6 +177,29 @@ bool GameplayScene::init()
 	_map->setPositionOnPlayer();
 	/** **/
 	this->scheduleUpdateWithPriority(42);
+
+	auto collisionLayer = _map->getLayer("collision");
+	auto movementCostLayer = _map->getLayer("movementCost");
+
+	for (int col = 0; col < collisionLayer->getLayerSize().width; col++)
+	{
+		for (int row = 0; row < collisionLayer->getLayerSize().height; row++)
+		{
+			auto tile = collisionLayer->getTileAt(Vec2(col, row));
+
+			if (tile)
+			{
+				tile->setVisible(false);
+			}
+
+			tile = movementCostLayer->getTileAt(Vec2(col, row));
+
+			if (tile)
+			{
+				tile->setVisible(false);
+			}
+		}
+	}
 
 
 	//  Create a "one by one" touch event listener
@@ -196,47 +220,7 @@ bool GameplayScene::init()
 		if (map->isTileCoordValid(tileCoord))			
 			map->selectTile(tileCoord);
 				
-		Vec2 windowPosition = map->getPlayerPosition();		
-		Vec2 playerLocation = target->convertToNodeSpace(windowPosition);		
-		Vec2 playerTileCoord = map->getTileCoordFrom(playerLocation);
-
 		
-
-		if (tileCoord.equals(playerTileCoord) && map->playerIsSelected() == false)
-		{
-			map->selectPlayer();
-		}
-		else if (tileCoord.equals(playerTileCoord) && map->playerIsSelected())
-		{
-			map->deselectPlayer();
-		}
-		else if (map->playerHasActivePath())
-		{
-			map->deselectPlayer();
-		}
-
-		log("playerLocation - x:%f, y:%f", playerTileCoord.x, playerTileCoord.y);
-		
-		if (map->playerIsSelected())
-		{
-			//
-			// Tell player to follow this path
-			//
-			map->movePlayerAlongPath(map->findPath(playerTileCoord, tileCoord));
-
-			/*IPath* path = map->findPath(playerTileCoord, tileCoord);
-        
-			if (path)
-			{
-				map->playerSetPath();
-
-				while (path->getLength() > 0)
-				{
-					Rect r = map->getTileRectFrom(path->pop_front());
-					map->drawRect(r);
-				}
-			}*/
-		}
 
 		return true; // if you are consuming it
 	};
@@ -273,6 +257,32 @@ bool GameplayScene::init()
 		Vec2 tileCoord = map->getTileCoordFrom(touchLocation);
 		if (map->isTileCoordValid(tileCoord))
 			map->deselectTile(tileCoord);
+
+		Vec2 windowPosition = map->getPlayerPosition();
+		Vec2 playerLocation = target->convertToNodeSpace(windowPosition);
+		Vec2 playerTileCoord = map->getTileCoordFrom(playerLocation);
+
+
+		if (tileCoord.equals(playerTileCoord) && map->playerIsSelected() == false)
+		{
+			map->selectPlayer();
+		}
+		else if (tileCoord.equals(playerTileCoord) && map->playerIsSelected())
+		{
+			map->deselectPlayer();
+		}
+		else if (map->playerHasActivePath())
+		{
+			map->deselectPlayer();
+		}
+
+		//log("playerLocation - x:%f, y:%f", playerTileCoord.x, playerTileCoord.y);
+
+		if (map->playerIsSelected())
+		{
+			// tell player to move along path
+			map->movePlayerAlongPath(*map->findPath(playerTileCoord, tileCoord));
+		}
     };
 
 	// Add listener
@@ -304,4 +314,4 @@ void GameplayScene::actionFinished()
 
 /**
 * GameplayScene END
-*/
+*/                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            

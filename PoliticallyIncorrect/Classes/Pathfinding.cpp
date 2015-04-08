@@ -284,7 +284,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 
 	// while we haven't exceeded our max search depth
 	int maxDepth = 0;
-
+	
 	while ((maxDepth < _maxSearchDistance) && (_open.size() != 0))
 	{
 		// pull out the first node in our open list, this is determined to 
@@ -302,6 +302,8 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 
 		// search through all the neighbours of the current node evaluating
 
+		
+
 		// them as next steps
 		for (int x = -1; x < 2; x++)
 		{
@@ -313,9 +315,9 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 				{
 					continue;
 				}
+				
 
 				// if we're not allowing diagonal movement then only 
-
 				// one of x or y can be set
 
 				if (_allowDiagMovement == false)
@@ -328,10 +330,31 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 
 				// determine the location of the neighbour and evaluate it
 				Vec2 neighbourLocation = Vec2(x + current->coordinate.x, y + current->coordinate.y);
+				
+				// Is the neighbour location in the non diagonal area??
+				// This is so we will not cut the corners
+				
+				if (_map->isTileCoordValid(neighbourLocation))
+				{
+					auto nonDiagonalArea = _map->getLayer("movementCost");
 
+					if (nonDiagonalArea)
+					{
+						bool isInNonDiagonal = nonDiagonalArea->tileAt(neighbourLocation);
+
+						if (isInNonDiagonal)
+						{
+							if ((x != 0) && (y != 0))
+							{
+								continue;
+							}
+						}
+					}
+				};
+				
 				//
 				if (this->isValidLocation(startLocation, neighbourLocation))
-				{
+				{	
 					// the cost to get to this node is cost the current plus the movement
 					// cost to reach this node. Note that the heursitic value is only used
 					// in the sorted open list
@@ -341,8 +364,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 					ISearchGraphNode* neighbour = _nodes[neighbourIndex];
 
 					// if the new cost we've determined for this node is lower than 
-					// it has been previously makes sure the node hasn'e've
-					// determined that there might have been a better path to get to
+					// it has been previously make sure the node hasn't determined that there might have been a better path to get to
 					// this node so it needs to be re-evaluated
 
 					if (nextStepCost < neighbour->cost)
@@ -369,7 +391,7 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 						maxDepth = std::max(maxDepth, neighbour->setParent(current));
 						addToOpen(neighbour);
 					}
-				}
+				}				
 			}
 		}
 	}
@@ -410,9 +432,9 @@ IPath* AStarPathFinder::findPath(Vec2 startLocation, Vec2 targetLocation)
 * @param targetLocation The Vec2 coordinate of the target location
 * @return The cost of movement through the given tile
 */
-float AStarPathFinder::getMovementCost(Vec2 startLocation, Vec2 targetLocation)
+float AStarPathFinder::getMovementCost(Vec2 startLocation, Vec2 neighbourCoordinate)
 {
-	return _map->getCost(startLocation, targetLocation);
+	return _map->getCost(startLocation, neighbourCoordinate);
 }
 
 

@@ -79,6 +79,7 @@ private:
 	void GameplaySceneFinished(Ref* sender);
 
 	ExtendedTMXTiledMap* _map;
+	
 
 public:		
 	IGameObject* PlayerInstance;

@@ -140,7 +140,7 @@ public:
 	IPath* findPathForPlayer(IGameObject* player, cocos2d::Vec2 targetLocation);
 	IPath* findPath(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
 
-	float getMovementCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
+	float getMovementCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 neighbourCoordinate);
 	float getHeuristicCost(cocos2d::Vec2 startLocation, cocos2d::Vec2 targetLocation);
 
 	void setMap(ExtendedTMXTiledMap* map);

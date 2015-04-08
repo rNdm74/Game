@@ -19,7 +19,8 @@ public:
 
 	virtual void update(float delta) override;
 
-	virtual void moveTo(cocos2d::Vec2 coord);
+	virtual void moveAlong(IPath& path);
+	virtual void move();
 };
 
 #endif // __PoliticallyIncorrect__Player_H__
