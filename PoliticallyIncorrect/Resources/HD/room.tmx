@@ -2,18 +2,31 @@
 <map version="1.0" orientation="isometric" renderorder="right-down" width="20" height="20" tilewidth="180" tileheight="90" nextobjectid="4">
  <tileset firstgid="1" name="floor" tilewidth="180" tileheight="90">
   <image source="floor.png" width="362" height="366"/>
+  <tile id="0">
+   <properties>
+    <property name="MovementCost" value="1"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="ground" width="20" height="20">
+  <properties>
+   <property name="MovementCost" value=""/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eJxjYWBgYBnFo3gUj+JRPIpJxACb3QZB
+   eJxjZ2BgYKcyZsaCSRVnRjOPEQkzkyjOSMA8Rqg4Lj2kmkcN95EbfowMmOE3Gr+j8Uuv+MXmvpEYv4MlvWDLb9TEAD9dBhc=
   </data>
  </layer>
  <objectgroup name="player">
-  <object id="1" name="collision_tile.png" type="Player" x="720" y="810" width="90" height="90"/>
+  <object id="1" name="collision_tile.png" type="Player" x="810" y="810" width="90" height="90"/>
  </objectgroup>
  <layer name="collision" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJylk1EKwDAMQvu1+x95v0Py1HSBklLEWGvPyfWUq8EfwdIcPSe86w6veiZ9UycczXR63f57Rr4ohvANB/HRjE25nGjf6nPvdqM16Wr5Up5uvfzLl3Iy8TV5ouxuy/25pKPJ+99cN9lLPuos592Gj+6WcFOR78r3AmxMBBs=
+   eJxjYKA+YMOCSRVnQzMP3XxSxNHFsMljA+SaRw33kRt+DAyY4UdtMBq/pIljM2+4xi82943E+KW2edTMb9QEAOi2A3M=
+  </data>
+ </layer>
+ <layer name="movementCost" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjY2BgYGNABWxImBhxQnIMZIjjkmPDQZML2LBgSs3DRhOyG10/LnMJiaObRUo8ootjC5vR+MVOE7IbXT8ucwmJD/b4JeRXSsMPnxp6xy89ALXzGyXpBZscAMIYArM=
   </data>
  </layer>
 </map>
